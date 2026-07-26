@@ -43,11 +43,13 @@ jobs:
       - name: Add Server Host to Known Hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 51.89.113.223 >> ~/.ssh/known_hosts
+          chmod 700 ~/.ssh
+          ssh-keyscan -p 22 51.89.113.223 >> ~/.ssh/known_hosts 2>/dev/null || true
+          chmod 600 ~/.ssh/known_hosts || true
 
       - name: Sync Backend Core Files (/home/zhpebukm/tena-core)
         run: |
-          rsync -avz --delete \
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
             --exclude='.git' \
             --exclude='.github' \
             --exclude='node_modules' \
@@ -62,7 +64,7 @@ jobs:
 
       - name: Sync Frontend Public Files (/home/zhpebukm/tena.host)
         run: |
-          rsync -avz --delete \
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
             --exclude='storage' \
             --exclude='uploads' \
             ./public/ zhpebukm@51.89.113.223:/home/zhpebukm/tena.host/
