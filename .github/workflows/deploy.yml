@@ -54,9 +54,9 @@ jobs:
           port: 1624
           username: zhpebukm
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./*,!node_modules,!tests,!.git,!.github,!.env*"
           target: /home/zhpebukm/tena-core/
           rm: false
-          strip_prefix: ""
 
       - name: Sync Frontend Public Files (/home/zhpebukm/tena.host)
         uses: appleboy/scp-action@v0.1.7
@@ -67,7 +67,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "public/*"
           target: /home/zhpebukm/tena.host/
-          strip_prefix: "public"
+          strip_components: 1
 
       - name: Execute Server Deployment & Optimizations
         uses: appleboy/ssh-action@v1.0.3
