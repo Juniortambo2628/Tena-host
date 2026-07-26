@@ -9,8 +9,11 @@ use Illuminate\Support\Facades\Storage;
 class MediaUploadService
 {
     private const MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20MB
+
     private const MAX_VIDEO_SIZE = 20 * 1024 * 1024; // 20MB
+
     private const VIDEO_MAX_WIDTH = 1920;
+
     private const VIDEO_MAX_HEIGHT = 1080;
 
     private const ALLOWED_IMAGE_TYPES = [
@@ -47,7 +50,7 @@ class MediaUploadService
 
         $originalPath = $file->storeAs(
             "{$directory}/originals",
-            "{$originalName}_{$timestamp}." . $file->getClientOriginalExtension(),
+            "{$originalName}_{$timestamp}.".$file->getClientOriginalExtension(),
             'public'
         );
 
@@ -63,7 +66,7 @@ class MediaUploadService
         return LandingMedia::create([
             'section_id' => $sectionId,
             'media_key' => $mediaKey,
-            'original_path' => '/storage/' . $originalPath,
+            'original_path' => '/storage/'.$originalPath,
             'optimized_path' => null,
             'thumbnail_path' => null,
             'mime_type' => $mimeType,
@@ -84,7 +87,7 @@ class MediaUploadService
 
         $originalPath = $file->storeAs(
             "{$directory}/videos",
-            "{$originalName}_{$timestamp}." . $file->getClientOriginalExtension(),
+            "{$originalName}_{$timestamp}.".$file->getClientOriginalExtension(),
             'public'
         );
 
@@ -135,7 +138,7 @@ class MediaUploadService
         return LandingMedia::create([
             'section_id' => $sectionId,
             'media_key' => $mediaKey,
-            'original_path' => '/storage/' . $originalPath,
+            'original_path' => '/storage/'.$originalPath,
             'optimized_path' => null,
             'thumbnail_path' => null,
             'mime_type' => $file->getMimeType(),

@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\LandingSection;
 use App\Models\LandingContent;
 use App\Models\LandingMedia;
+use App\Models\LandingSection;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class LandingContentSeeder extends Seeder
 {

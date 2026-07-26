@@ -41,6 +41,7 @@ class LandingMedia extends Model
         if ($this->optimized_path && Storage::exists($this->optimized_path)) {
             return Storage::url($this->optimized_path);
         }
+
         return $this->original_path;
     }
 
@@ -52,6 +53,7 @@ class LandingMedia extends Model
         if ($this->thumbnail_path && Storage::exists($this->thumbnail_path)) {
             return Storage::url($this->thumbnail_path);
         }
+
         return $this->path;
     }
 
@@ -83,6 +85,7 @@ class LandingMedia extends Model
             $bytes /= 1024;
             $i++;
         }
-        return round($bytes, 1) . ' ' . $units[$i];
+
+        return round($bytes, 1).' '.$units[$i];
     }
 }

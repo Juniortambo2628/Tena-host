@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->reportable(function (\Throwable $e) {
-            \Log::error('Unhandled exception: ' . $e->getMessage(), [
+            \Log::error('Unhandled exception: '.$e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
@@ -40,7 +40,10 @@ return Application::configure(basePath: dirname(__DIR__))
                     return response()->json(['message' => 'Unauthenticated.'], 401);
                 }
                 $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
-                if ($status < 400) $status = 500;
+                if ($status < 400) {
+                    $status = 500;
+                }
+
                 return response()->json(['error' => $e->getMessage()], $status);
             }
         });

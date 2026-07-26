@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\LandingSection;
 use App\Models\LandingContent;
 use App\Models\LandingMedia;
+use App\Models\LandingSection;
 use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -26,7 +25,7 @@ class LandingController extends Controller
         $sections = LandingSection::with(['contents', 'media'])
             ->orderBy('sort_order')
             ->get()
-            ->map(fn($section) => [
+            ->map(fn ($section) => [
                 'id' => $section->id,
                 'section_key' => $section->section_key,
                 'title' => $section->title,
@@ -36,7 +35,7 @@ class LandingController extends Controller
                 'is_active' => $section->is_active,
                 'sort_order' => $section->sort_order,
                 'content' => $section->contents->pluck('value', 'content_key')->toArray(),
-                'media' => $section->media->keyBy('media_key')->map(fn($m) => [
+                'media' => $section->media->keyBy('media_key')->map(fn ($m) => [
                     'id' => $m->id,
                     'media_key' => $m->media_key,
                     'original_path' => $m->original_path,
@@ -172,7 +171,7 @@ class LandingController extends Controller
         // Delete existing media with same key in this section
         LandingMedia::where('section_id', $section->id)
             ->where('media_key', $data['media_key'])
-            ->each(fn($m) => $this->mediaService->delete($m));
+            ->each(fn ($m) => $this->mediaService->delete($m));
 
         $media = LandingMedia::create([
             'section_id' => $section->id,
@@ -207,16 +206,17 @@ class LandingController extends Controller
         try {
             $media = $this->mediaService->upload($request->file('file'), 'landing', $section->id, $request->input('media_key'));
         } catch (\Throwable $e) {
-            \Log::error('Media upload failed: ' . $e->getMessage(), [
+            \Log::error('Media upload failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
             ]);
+
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
         // Delete existing media with same key
         LandingMedia::where('section_id', $section->id)
             ->where('media_key', $request->input('media_key'))
-            ->each(fn($m) => $this->mediaService->delete($m));
+            ->each(fn ($m) => $this->mediaService->delete($m));
 
         $media->update([
             'section_id' => $section->id,
@@ -269,12 +269,14 @@ class LandingController extends Controller
         // Check public disk first, then physical public directory
         if (Storage::disk('public')->exists($path)) {
             $filename = basename($media->original_path);
+
             return Storage::disk('public')->download($path, $filename);
         }
 
         $fullPath = public_path($path);
         if (file_exists($fullPath)) {
             $filename = basename($media->original_path);
+
             return response()->download($fullPath, $filename);
         }
 
@@ -289,7 +291,7 @@ class LandingController extends Controller
         $media = LandingMedia::with('section:id,section_key,title')
             ->orderByDesc('created_at')
             ->get()
-            ->map(fn($m) => [
+            ->map(fn ($m) => [
                 'id' => $m->id,
                 'media_key' => $m->media_key,
                 'original_path' => $m->original_path,

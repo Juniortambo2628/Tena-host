@@ -2,11 +2,10 @@
 
 /**
  * Tena.host Production Entry Point
- * 
+ *
  * Target Location: /home/zhpebukm/tena.host/api/index.php
  * Points to the backend core located at: /home/zhpebukm/tena-core/
  */
-
 define('LARAVEL_START', microtime(true));
 
 // Maintenance mode check
