@@ -32,7 +32,7 @@ jobs:
 
       - name: Install NPM Dependencies & Build Production Assets
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm run build
 
       - name: Setup SSH Key
