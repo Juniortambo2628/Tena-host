@@ -2,6 +2,7 @@
 
 .welcome-page {
     @apply min-h-screen bg-white text-[#1b1b1b] font-sans selection:bg-[#FFD300] selection:text-black;
+    overflow-x: hidden;
 }
 
 .welcome-nav {

@@ -42,7 +42,7 @@ export default function SectionHeader({
             {(title || titleHighlight) && (
                 <h2 className={titleClasses}>{renderTitle()}</h2>
             )}
-            {subtitle && <p className={subtitleClasses}>{subtitle}</p>}
+            {subtitle && <p className={subtitleClasses} dangerouslySetInnerHTML={{ __html: subtitle }} />}
         </div>
     );
 }

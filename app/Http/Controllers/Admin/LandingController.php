@@ -204,7 +204,14 @@ class LandingController extends Controller
             'sort_order' => 'sometimes|integer|min:0',
         ]);
 
-        $media = $this->mediaService->upload($request->file('file'));
+        try {
+            $media = $this->mediaService->upload($request->file('file'), 'landing', $section->id, $request->input('media_key'));
+        } catch (\Throwable $e) {
+            \Log::error('Media upload failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
 
         // Delete existing media with same key
         LandingMedia::where('section_id', $section->id)

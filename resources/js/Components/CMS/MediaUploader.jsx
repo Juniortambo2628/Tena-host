@@ -1,13 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { FilePond, registerPlugin } from 'react-filepond';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { router } from '@inertiajs/react';
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import { Search } from 'lucide-react';
-import 'filepond/dist/filepond.min.css';
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import './MediaUploader.css';
-
-registerPlugin(FilePondPluginImagePreview);
 
 export default function MediaUploader({
     sectionId,
@@ -22,40 +16,59 @@ export default function MediaUploader({
     label = 'Drop file here or click to browse',
 }) {
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadError, setUploadError] = useState('');
+    const [isChanging, setIsChanging] = useState(false);
     const [mode, setMode] = useState('upload');
     const [libraryItems, setLibraryItems] = useState([]);
     const [libraryLoading, setLibraryLoading] = useState(false);
     const [librarySearch, setLibrarySearch] = useState('');
+    const fileInputRef = useRef(null);
 
-    const serverConfig = {
-        process: {
-            url: route('admin.landing.media.upload', { section: sectionId }),
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-            },
-            formData: (file) => {
-                const fd = new FormData();
-                fd.append('file', file);
-                fd.append('media_key', mediaKey);
-                fd.append('_token', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
-                return fd;
-            },
-            onload: (response) => {
-                setIsUploading(false);
-                const data = JSON.parse(response);
-                if (onUpload) onUpload(data.media);
-                return data;
-            },
-            onerror: () => {
-                setIsUploading(false);
-            },
-        },
-        revert: null,
-        restore: null,
-        load: null,
-        fetch: null,
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    const handleFileSelect = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > maxSize) {
+            setUploadError(`File exceeds ${(maxSize / 1024 / 1024).toFixed(0)}MB limit`);
+            return;
+        }
+
+        setIsUploading(true);
+        setUploadError('');
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('media_key', mediaKey);
+        formData.append('_token', csrfToken);
+
+        try {
+            const res = await fetch(route('admin.landing.media.upload', { section: sectionId }), {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData,
+            });
+
+            if (!res.ok) {
+                const data = await res.json().catch(() => null);
+                throw new Error(data?.error || `Upload failed (${res.status})`);
+            }
+
+            const data = await res.json();
+            setIsUploading(false);
+            setIsChanging(false);
+            if (onUpload) onUpload(data.media);
+        } catch (err) {
+            setUploadError(err.message || 'Upload failed');
+            setIsUploading(false);
+        }
+
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const loadLibrary = async () => {
@@ -115,6 +128,25 @@ export default function MediaUploader({
         window.open(url, '_blank');
     };
 
+    const renderUploadInput = () => (
+        <div className="cms-uploader__dropzone" onClick={() => fileInputRef.current?.click()}>
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept={accept?.join(',') || 'image/*,video/*'}
+                onChange={handleFileSelect}
+                style={{ display: 'none' }}
+            />
+            <div className="cms-uploader__dropzone-content">
+                <svg className="cms-uploader__dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                <span className="cms-uploader__dropzone-text">{label}</span>
+                <span className="cms-uploader__dropzone-hint">Max {(maxSize / 1024 / 1024).toFixed(0)}MB</span>
+            </div>
+        </div>
+    );
+
     if (existingMedia) {
         const isVideo = existingMedia.mime_type?.startsWith('video/');
         const thumbnailUrl = existingMedia.thumbnail_path || existingMedia.original_path;
@@ -142,6 +174,11 @@ export default function MediaUploader({
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </button>
+                        <button onClick={() => setIsChanging(!isChanging)} className="cms-media-card__action" title="Change Media">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                        </button>
                         <a
                             href={route('admin.landing.media.download', { media: existingMedia.id })}
                             className="cms-media-card__action"
@@ -165,6 +202,86 @@ export default function MediaUploader({
                         <span className="cms-media-card__dims">{existingMedia.width}x{existingMedia.height}</span>
                     )}
                 </div>
+
+                {isChanging && (
+                    <div className="cms-media-card__changer">
+                        <div className="cms-media-slot__toggle">
+                            <button
+                                onClick={() => setMode('upload')}
+                                className={`cms-media-slot__toggle-btn ${mode === 'upload' ? 'cms-media-slot__toggle-btn--active' : ''}`}
+                            >
+                                Upload New
+                            </button>
+                            <button
+                                onClick={() => setMode('library')}
+                                className={`cms-media-slot__toggle-btn ${mode === 'library' ? 'cms-media-slot__toggle-btn--active' : ''}`}
+                            >
+                                From Library
+                            </button>
+                        </div>
+
+                        {mode === 'upload' ? (
+                            <div className="cms-uploader cms-uploader--compact">
+                                {renderUploadInput()}
+                                {isUploading && (
+                                    <div className="cms-uploader__progress">
+                                        <div className="cms-uploader__spinner" />
+                                        <span>Uploading...</span>
+                                    </div>
+                                )}
+                                {uploadError && (
+                                    <div className="cms-uploader__error">{uploadError}</div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="cms-library">
+                                <div className="cms-library__search">
+                                    <Search size={14} className="cms-library__search-icon" />
+                                    <input
+                                        type="text"
+                                        value={librarySearch}
+                                        onChange={(e) => setLibrarySearch(e.target.value)}
+                                        placeholder="Search media library..."
+                                        className="cms-library__search-input"
+                                    />
+                                </div>
+                                <div className="cms-library__grid custom-scrollbar">
+                                    {libraryLoading ? (
+                                        <div className="cms-library__empty">
+                                            <div className="cms-uploader__spinner" />
+                                            <span>Loading library...</span>
+                                        </div>
+                                    ) : filteredLibrary.length === 0 ? (
+                                        <div className="cms-library__empty">
+                                            {librarySearch ? 'No media matches your search.' : 'No media in the library yet.'}
+                                        </div>
+                                    ) : (
+                                        filteredLibrary.map(item => (
+                                            <button
+                                                key={item.id}
+                                                onClick={() => { handleSelectFromLibrary(item); setIsChanging(false); }}
+                                                className="cms-library__item"
+                                            >
+                                                <div className="cms-library__item-preview">
+                                                    {item.mime_type?.startsWith('video/') ? (
+                                                        <video src={item.original_path} className="cms-library__item-thumb" preload="metadata" />
+                                                    ) : (
+                                                        <img src={item.thumbnail_path || item.original_path} alt={item.media_key} className="cms-library__item-thumb" />
+                                                    )}
+                                                    <div className="cms-library__item-overlay">Use</div>
+                                                </div>
+                                                <div className="cms-library__item-info">
+                                                    <span className="cms-library__item-key">{item.media_key}</span>
+                                                    <span className="cms-library__item-section">{item.section_title || item.section_key}</span>
+                                                </div>
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         );
     }
@@ -191,27 +308,15 @@ export default function MediaUploader({
 
             {mode === 'upload' ? (
                 <div className="cms-uploader">
-                    <FilePond
-                        server={serverConfig}
-                        labelIdle={label}
-                        acceptedFileTypes={accept || ['image/*', 'video/*']}
-                        maxFileSize={maxSize}
-                        maxFiles={1}
-                        imagePreviewHeight={170}
-                        imageCropAspectRatio="16:10"
-                        imageResizeTargetWidth={1200}
-                        imageResizeTargetHeight={675}
-                        stylePanelLayout="compact"
-                        styleButtonRemoveItemPosition="right"
-                        onaddfilestart={() => setIsUploading(true)}
-                        onprocessfile={() => setIsUploading(false)}
-                        onerror={() => setIsUploading(false)}
-                    />
+                    {renderUploadInput()}
                     {isUploading && (
                         <div className="cms-uploader__progress">
                             <div className="cms-uploader__spinner" />
-                            <span>Optimizing...</span>
+                            <span>Uploading...</span>
                         </div>
+                    )}
+                    {uploadError && (
+                        <div className="cms-uploader__error">{uploadError}</div>
                     )}
                 </div>
             ) : (

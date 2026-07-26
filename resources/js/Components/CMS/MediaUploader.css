@@ -4,6 +4,31 @@
     @apply relative;
 }
 
+.cms-uploader__dropzone {
+    @apply border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer
+           hover:border-[#FFD300] hover:bg-[#FFD300]/5 transition-all duration-200;
+}
+
+.cms-uploader__dropzone-content {
+    @apply flex flex-col items-center gap-2;
+}
+
+.cms-uploader__dropzone-icon {
+    @apply w-8 h-8 text-black/20;
+}
+
+.cms-uploader__dropzone-text {
+    @apply text-sm text-black/50 font-medium;
+}
+
+.cms-uploader__dropzone-hint {
+    @apply text-[10px] text-black/25;
+}
+
+.cms-uploader__error {
+    @apply mt-2 px-3 py-2 bg-red-50 text-red-600 text-xs rounded-lg;
+}
+
 .cms-uploader__progress {
     @apply absolute inset-0 flex items-center justify-center gap-2 bg-white/80 backdrop-blur-sm rounded-xl z-10;
 }
@@ -52,6 +77,15 @@
 
 .cms-media-card__dims {
     @apply text-[10px] font-mono text-black/30;
+}
+
+/* Changer panel (inline below preview) */
+.cms-media-card__changer {
+    @apply border-t border-gray-100 p-3 space-y-3 bg-gray-50/50;
+}
+
+.cms-uploader--compact {
+    @apply text-sm;
 }
 
 /* Media Slot (empty state with toggle) */

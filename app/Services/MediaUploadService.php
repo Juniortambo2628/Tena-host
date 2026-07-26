@@ -5,51 +5,38 @@ namespace App\Services;
 use App\Models\LandingMedia;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManagerStatic as Image;
 
 class MediaUploadService
 {
     private const MAX_IMAGE_SIZE = 20 * 1024 * 1024; // 20MB
     private const MAX_VIDEO_SIZE = 20 * 1024 * 1024; // 20MB
-    private const IMAGE_WIDTH = 1200;
-    private const THUMBNAIL_WIDTH = 400;
-    private const JPEG_QUALITY = 85;
     private const VIDEO_MAX_WIDTH = 1920;
     private const VIDEO_MAX_HEIGHT = 1080;
 
-    /**
-     * Allowed MIME types.
-     */
     private const ALLOWED_IMAGE_TYPES = [
         'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
     ];
 
     private const ALLOWED_VIDEO_TYPES = [
-        'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo',
+        'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msavi',
     ];
 
-    /**
-     * Upload and process media file.
-     */
-    public function upload(UploadedFile $file, string $directory = 'landing'): LandingMedia
+    public function upload(UploadedFile $file, string $directory = 'landing', ?int $sectionId = null, ?string $mediaKey = null): LandingMedia
     {
         $mimeType = $file->getMimeType();
 
         if (in_array($mimeType, self::ALLOWED_IMAGE_TYPES)) {
-            return $this->uploadImage($file, $directory);
+            return $this->uploadImage($file, $directory, $sectionId, $mediaKey);
         }
 
         if (in_array($mimeType, self::ALLOWED_VIDEO_TYPES)) {
-            return $this->uploadVideo($file, $directory);
+            return $this->uploadVideo($file, $directory, $sectionId, $mediaKey);
         }
 
         throw new \InvalidArgumentException("Unsupported file type: {$mimeType}");
     }
 
-    /**
-     * Upload and optimize image.
-     */
-    private function uploadImage(UploadedFile $file, string $directory): LandingMedia
+    private function uploadImage(UploadedFile $file, string $directory, ?int $sectionId = null, ?string $mediaKey = null): LandingMedia
     {
         if ($file->getSize() > self::MAX_IMAGE_SIZE) {
             throw new \InvalidArgumentException('Image exceeds 20MB limit.');
@@ -58,64 +45,35 @@ class MediaUploadService
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $timestamp = time();
 
-        // Store original
         $originalPath = $file->storeAs(
             "{$directory}/originals",
             "{$originalName}_{$timestamp}." . $file->getClientOriginalExtension(),
             'public'
         );
 
-        // Create optimized version
-        $manager = Image::make($file);
-        $width = $manager->width();
-        $height = $manager->height();
-
-        // Resize if wider than target
-        if ($width > self::IMAGE_WIDTH) {
-            $manager->resize(self::IMAGE_WIDTH, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
+        $width = null;
+        $height = null;
+        $fullPath = Storage::disk('public')->path($originalPath);
+        $dims = @getimagesize($fullPath);
+        if ($dims) {
+            $width = $dims[0];
+            $height = $dims[1];
         }
 
-        $optimizedName = "{$originalName}_{$timestamp}_opt.webp";
-        $optimizedPath = "{$directory}/optimized/{$optimizedName}";
-
-        Storage::disk('public')->makeDirectory("{$directory}/optimized");
-        $manager->encodeWebP(self::JPEG_QUALITY)->save(
-            Storage::disk('public')->path($optimizedPath)
-        );
-
-        // Create thumbnail
-        $thumbManager = Image::make($file);
-        $thumbManager->resize(self::THUMBNAIL_WIDTH, null, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        $thumbName = "{$originalName}_{$timestamp}_thumb.webp";
-        $thumbPath = "{$directory}/thumbnails/{$thumbName}";
-
-        Storage::disk('public')->makeDirectory("{$directory}/thumbnails");
-        $thumbManager->encodeWebP(self::JPEG_QUALITY)->save(
-            Storage::disk('public')->path($thumbPath)
-        );
-
         return LandingMedia::create([
-            'original_path' => '/' . Storage::disk('public')->url($originalPath),
-            'optimized_path' => $optimizedPath,
-            'thumbnail_path' => $thumbPath,
-            'mime_type' => 'image/webp',
-            'file_size' => Storage::disk('public')->size($optimizedPath),
-            'width' => $manager->width(),
-            'height' => $manager->height(),
+            'section_id' => $sectionId,
+            'media_key' => $mediaKey,
+            'original_path' => '/storage/' . $originalPath,
+            'optimized_path' => null,
+            'thumbnail_path' => null,
+            'mime_type' => $mimeType,
+            'file_size' => Storage::disk('public')->size($originalPath),
+            'width' => $width,
+            'height' => $height,
         ]);
     }
 
-    /**
-     * Upload and compress video.
-     */
-    private function uploadVideo(UploadedFile $file, string $directory): LandingMedia
+    private function uploadVideo(UploadedFile $file, string $directory, ?int $sectionId = null, ?string $mediaKey = null): LandingMedia
     {
         if ($file->getSize() > self::MAX_VIDEO_SIZE) {
             throw new \InvalidArgumentException('Video exceeds 20MB limit.');
@@ -124,14 +82,12 @@ class MediaUploadService
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $timestamp = time();
 
-        // Store original
         $originalPath = $file->storeAs(
             "{$directory}/videos",
             "{$originalName}_{$timestamp}." . $file->getClientOriginalExtension(),
             'public'
         );
 
-        // Get video dimensions using ffmpeg if available
         $width = null;
         $height = null;
         $duration = null;
@@ -153,7 +109,6 @@ class MediaUploadService
                 }
             }
 
-            // Compress video with ffmpeg if available
             $ffmpegPath = $this->findFfmpegBinary('ffmpeg');
             if ($ffmpegPath) {
                 $compressedName = "{$originalName}_{$timestamp}_compressed.mp4";
@@ -178,7 +133,9 @@ class MediaUploadService
         }
 
         return LandingMedia::create([
-            'original_path' => '/' . Storage::disk('public')->url($originalPath),
+            'section_id' => $sectionId,
+            'media_key' => $mediaKey,
+            'original_path' => '/storage/' . $originalPath,
             'optimized_path' => null,
             'thumbnail_path' => null,
             'mime_type' => $file->getMimeType(),
@@ -189,9 +146,6 @@ class MediaUploadService
         ]);
     }
 
-    /**
-     * Delete media files.
-     */
     public function delete(LandingMedia $media): void
     {
         $paths = array_filter([
@@ -210,9 +164,6 @@ class MediaUploadService
         $media->delete();
     }
 
-    /**
-     * Find ffmpeg/ffprobe binary path.
-     */
     private function findFfmpegBinary(string $binary): ?string
     {
         $paths = [
@@ -227,7 +178,6 @@ class MediaUploadService
             }
         }
 
-        // Try system PATH
         $output = @shell_exec("where {$binary} 2>nul") ?: @shell_exec("which {$binary} 2>/dev/null");
         if ($output) {
             return trim(explode("\n", $output)[0]);
@@ -236,17 +186,11 @@ class MediaUploadService
         return null;
     }
 
-    /**
-     * Get allowed MIME types.
-     */
     public static function getAllowedTypes(): array
     {
         return array_merge(self::ALLOWED_IMAGE_TYPES, self::ALLOWED_VIDEO_TYPES);
     }
 
-    /**
-     * Get max file size.
-     */
     public static function getMaxFileSize(): int
     {
         return max(self::MAX_IMAGE_SIZE, self::MAX_VIDEO_SIZE);

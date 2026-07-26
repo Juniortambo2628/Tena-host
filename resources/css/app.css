@@ -22,6 +22,7 @@
 body {
     background-color: white;
     color: var(--bs-dark);
+    overflow-x: hidden;
 }
 
 /* ROI Calculator Styles */

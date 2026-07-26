@@ -26,3 +26,4 @@ Homestead.yaml
 Thumbs.db
 temp_laravel
 legacy/vendor
+legacy/cookies.txt
