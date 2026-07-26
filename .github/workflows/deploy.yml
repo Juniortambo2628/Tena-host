@@ -88,11 +88,10 @@ jobs:
             cp /home/zhpebukm/tena-core/public/index.php /home/zhpebukm/tena.host/api/index.php
             cp /home/zhpebukm/tena-core/public/index.php /home/zhpebukm/tena.host/index.php
 
-            # Create public storage symlink
-            php /home/zhpebukm/tena-core/artisan storage:link --force || true
-            if [ -d "/home/zhpebukm/tena-core/storage/app/public" ]; then
-              ln -sfn /home/zhpebukm/tena-core/storage/app/public /home/zhpebukm/tena.host/storage
-            fi
+            # Create public storage symlink directly via shell (avoiding PHP exec restriction)
+            mkdir -p /home/zhpebukm/tena-core/storage/app/public
+            ln -sfn /home/zhpebukm/tena-core/storage/app/public /home/zhpebukm/tena.host/storage
+            ln -sfn /home/zhpebukm/tena-core/storage/app/public /home/zhpebukm/tena-core/public/storage
 
             echo "===> Configuring Production .env"
             if [ ! -f "/home/zhpebukm/tena-core/.env" ]; then
@@ -136,6 +135,7 @@ jobs:
             echo "===> Running Migrations & Optimizations"
             cd /home/zhpebukm/tena-core
             php artisan migrate --force
+            php artisan db:seed --force
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
