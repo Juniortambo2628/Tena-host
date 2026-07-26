@@ -36,6 +36,9 @@ return Application::configure(basePath: dirname(__DIR__))
         });
         $exceptions->renderable(function (\Throwable $e) {
             if (request()->expectsJson() || request()->header('X-Inertia') || request()->header('X-Requested-With')) {
+                if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                    return response()->json(['message' => 'Unauthenticated.'], 401);
+                }
                 $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
                 if ($status < 400) $status = 500;
                 return response()->json(['error' => $e->getMessage()], $status);

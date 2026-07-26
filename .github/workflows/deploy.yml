@@ -1,0 +1,152 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ master, main ]
+
+jobs:
+  deploy:
+    name: Build & Deploy to cPanel Production Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath, ctype, fileinfo, json, tokenizer
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Composer Dependencies (Production)
+        run: |
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install NPM Dependencies & Build Production Assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Setup SSH Key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add Server Host to Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 51.89.113.223 >> ~/.ssh/known_hosts
+
+      - name: Sync Backend Core Files (/home/zhpebukm/tena-core)
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='.env*' \
+            --exclude='storage/*.key' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/data/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            ./ zhpebukm@51.89.113.223:/home/zhpebukm/tena-core/
+
+      - name: Sync Frontend Public Files (/home/zhpebukm/tena.host)
+        run: |
+          rsync -avz --delete \
+            --exclude='storage' \
+            --exclude='uploads' \
+            ./public/ zhpebukm@51.89.113.223:/home/zhpebukm/tena.host/
+
+      - name: Execute Server Deployment & Optimizations
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 51.89.113.223
+          username: zhpebukm
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            echo "===> Creating Directories & Symlinks"
+            mkdir -p /home/zhpebukm/tena.host/api
+            mkdir -p /home/zhpebukm/tena-core/storage/framework/{cache,sessions,views}
+            mkdir -p /home/zhpebukm/tena-core/storage/logs
+
+            # Ensure entrypoint exists in api directory
+            cp /home/zhpebukm/tena-core/public/index.php /home/zhpebukm/tena.host/api/index.php
+            cp /home/zhpebukm/tena-core/public/index.php /home/zhpebukm/tena.host/index.php
+
+            # Create public storage symlink
+            php /home/zhpebukm/tena-core/artisan storage:link --force || true
+            if [ -d "/home/zhpebukm/tena-core/storage/app/public" ]; then
+              ln -sfn /home/zhpebukm/tena-core/storage/app/public /home/zhpebukm/tena.host/storage
+            fi
+
+            echo "===> Configuring Production .env"
+            if [ ! -f "/home/zhpebukm/tena-core/.env" ]; then
+              cat << 'EOF' > /home/zhpebukm/tena-core/.env
+            APP_NAME="Tena Host"
+            APP_ENV=production
+            APP_KEY=${{ secrets.APP_KEY }}
+            APP_DEBUG=false
+            APP_URL=https://tena.host
+
+            LOG_CHANNEL=daily
+            LOG_DEPRECATIONS_CHANNEL=null
+            LOG_LEVEL=error
+
+            DB_CONNECTION=mysql
+            DB_HOST=127.0.0.1
+            DB_PORT=3306
+            DB_DATABASE=zhpebukm_tenahost
+            DB_USERNAME=zhpebukm_tenahost
+            DB_PASSWORD="Tena.host@2026"
+
+            BROADCAST_DRIVER=log
+            CACHE_DRIVER=file
+            FILESYSTEM_DISK=public
+            QUEUE_CONNECTION=sync
+            SESSION_DRIVER=file
+            SESSION_LIFETIME=120
+
+            MAIL_MAILER=smtp
+            MAIL_HOST=mail.tena.host
+            MAIL_PORT=465
+            MAIL_USERNAME=info@tena.host
+            MAIL_PASSWORD="Tena.host@2026"
+            MAIL_ENCRYPTION=tls
+            MAIL_FROM_ADDRESS="info@tena.host"
+            MAIL_FROM_NAME="${APP_NAME}"
+            EOF
+              cd /home/zhpebukm/tena-core && php artisan key:generate --force
+            fi
+
+            echo "===> Running Migrations & Optimizations"
+            cd /home/zhpebukm/tena-core
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan event:cache
+
+            echo "===> Setting Correct Permissions"
+            chmod -R 755 /home/zhpebukm/tena-core
+            chmod -R 775 /home/zhpebukm/tena-core/storage
+            chmod -R 775 /home/zhpebukm/tena-core/bootstrap/cache
+            chmod -R 755 /home/zhpebukm/tena.host
+
+            echo "===> Verifying File Structure"
+            ls -la /home/zhpebukm/tena-core/
+            ls -la /home/zhpebukm/tena.host/
+            ls -la /home/zhpebukm/tena.host/api/
+
+            echo "===> Deployment Completed Successfully!"

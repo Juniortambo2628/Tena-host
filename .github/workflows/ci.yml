@@ -1,13 +1,14 @@
-name: CI
+name: Test & Autofix Suite
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ master, main, develop ]
   pull_request:
-    branches: [main, develop]
+    branches: [ master, main, develop ]
 
 jobs:
-  laravel-tests:
+  test-and-lint:
+    name: Run Tests and Code Formatting
     runs-on: ubuntu-latest
 
     services:
@@ -21,29 +22,31 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath
+          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath, ctype, fileinfo, json, tokenizer
           coverage: none
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Install NPM dependencies
         run: npm ci
 
-      - name: Prepare environment
+      - name: Setup test environment
         run: |
           cp .env.example .env
           php artisan key:generate
@@ -58,7 +61,7 @@ jobs:
           DB_PASSWORD: root
         run: php artisan migrate --force
 
-      - name: Run Pest tests
+      - name: Run Pest test suite
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -68,8 +71,12 @@ jobs:
           DB_PASSWORD: root
         run: php artisan test
 
-      - name: Build frontend assets
-        run: npm run build
+      - name: Run Pint Code Auto-Fixer
+        run: |
+          vendor/bin/pint || true
 
-      - name: Run Laravel Pint
-        run: vendor/bin/pint --test
+      - name: Commit Pint Auto-Fixes if needed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-fix PHP code style with Laravel Pint"
+          branch: ${{ github.head_ref || github.ref_name }}
