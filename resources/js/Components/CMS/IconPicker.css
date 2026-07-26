@@ -1,0 +1,83 @@
+@reference "tailwindcss";
+
+.cms-icon-picker {
+    @apply relative;
+}
+
+.cms-icon-picker__label {
+    @apply block text-xs font-semibold uppercase tracking-widest text-black/50 mb-1.5;
+}
+
+.cms-icon-picker__trigger {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl border border-black/10 bg-white cursor-pointer
+           hover:border-[#FFD300]/50 transition-all;
+}
+
+.cms-icon-picker__selected {
+    @apply w-8 h-8 flex items-center justify-center text-black/60;
+}
+
+.cms-icon-picker__class-name {
+    @apply text-xs text-black/30 font-mono flex-1 truncate;
+}
+
+.cms-icon-picker__chevron {
+    @apply w-4 h-4 text-black/30 flex-shrink-0 transition-transform;
+}
+
+.cms-icon-picker__empty {
+    @apply text-sm text-black/30;
+}
+
+.cms-icon-picker__dropdown {
+    @apply absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-black/10
+           z-50 overflow-hidden;
+    max-height: 360px;
+}
+
+.cms-icon-picker__search-wrap {
+    @apply relative px-4 pt-4 pb-2;
+}
+
+.cms-icon-picker__search-icon {
+    @apply absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-black/30;
+}
+
+.cms-icon-picker__search {
+    @apply w-full pl-8 pr-4 py-2.5 rounded-xl border border-black/10 bg-gray-50 text-sm
+           focus:outline-none focus:ring-2 focus:ring-[#FFD300]/50 focus:border-[#FFD300];
+}
+
+.cms-icon-picker__categories {
+    @apply overflow-y-auto px-4 pb-4 max-h-[280px];
+}
+
+.cms-icon-picker__clear {
+    @apply w-full text-center text-xs font-bold text-red-400 py-2 mb-2 rounded-lg
+           hover:bg-red-50 transition-colors;
+}
+
+.cms-icon-picker__category {
+    @apply mb-3;
+}
+
+.cms-icon-picker__category-title {
+    @apply text-[10px] font-bold uppercase tracking-widest text-black/30 mb-2;
+}
+
+.cms-icon-picker__grid {
+    @apply grid grid-cols-8 gap-1;
+}
+
+.cms-icon-picker__icon {
+    @apply w-9 h-9 flex items-center justify-center rounded-lg text-sm text-black/50
+           hover:bg-[#FFD300]/10 hover:text-[#FFD300] transition-all cursor-pointer;
+}
+
+.cms-icon-picker__icon--active {
+    @apply bg-[#FFD300] text-black shadow-md scale-110;
+}
+
+.cms-icon-picker__no-results {
+    @apply text-center text-sm text-black/30 py-8;
+}

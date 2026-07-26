@@ -1,0 +1,105 @@
+@reference "tailwindcss";
+
+.tabbed-modal__container {
+    @apply bg-white/95 backdrop-blur-2xl overflow-hidden rounded-[3rem] flex flex-col md:flex-row min-h-[600px] border border-black/5 shadow-2xl shadow-black/10;
+}
+
+.tabbed-modal__sidebar {
+    @apply w-full md:w-72 bg-gray-50/50 border-r border-black/5 p-10 flex flex-col;
+}
+
+.tabbed-modal__header {
+    @apply mb-10;
+}
+
+.tabbed-modal__title {
+    @apply text-black text-2xl font-bold tracking-tight leading-none;
+}
+
+.tabbed-modal__description {
+    @apply text-black/40 text-[10px] font-semibold mt-4 leading-relaxed;
+}
+
+.tabbed-modal__tabs {
+    @apply flex-1 space-y-2;
+}
+
+.tabbed-modal__tab-button {
+    @apply w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all text-left;
+}
+
+.tabbed-modal__tab-button--active {
+    @apply bg-black text-[#FFD300] shadow-xl shadow-black/10 scale-[1.02];
+}
+
+.tabbed-modal__tab-button--inactive {
+    @apply text-black/40 hover:text-black hover:bg-black/5;
+}
+
+.tabbed-modal__tab-number {
+    @apply text-[10px] font-semibold;
+}
+
+.tabbed-modal__tab-number--active {
+    @apply opacity-100;
+}
+
+.tabbed-modal__tab-number--inactive {
+    @apply opacity-20 group-hover:opacity-100;
+}
+
+.tabbed-modal__tab-label {
+    @apply text-sm;
+}
+
+.tabbed-modal__footer {
+    @apply mt-auto pt-8 border-t border-black/5;
+}
+
+.tabbed-modal__cancel {
+    @apply w-full;
+}
+
+.tabbed-modal__content-area {
+    @apply flex-1 p-10 flex flex-col;
+}
+
+.tabbed-modal__content {
+    @apply flex-1;
+}
+
+.tabbed-modal__step-header {
+    @apply mb-8;
+}
+
+.tabbed-modal__step-counter {
+    @apply text-[10px] font-semibold text-black/20;
+}
+
+.tabbed-modal__step-title {
+    @apply text-2xl font-bold text-black mt-1;
+}
+
+.tabbed-modal__action-bar {
+    @apply mt-10 flex justify-between items-center bg-black/5 p-6 rounded-[2rem];
+}
+
+.tabbed-modal__indicators {
+    @apply flex gap-2;
+}
+
+.tabbed-modal__step-indicator {
+    @apply h-1.5 rounded-full transition-all duration-500;
+}
+
+.tabbed-modal__step-indicator--active {
+    @apply w-8 bg-black;
+}
+
+.tabbed-modal__step-indicator--inactive {
+    @apply w-1.5 bg-black/10;
+}
+
+.tabbed-modal__actions {
+    @apply flex gap-4;
+}

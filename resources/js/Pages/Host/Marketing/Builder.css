@@ -1,0 +1,269 @@
+@reference "tailwindcss";
+
+.host-builder-grid {
+    @apply grid grid-cols-1 lg:grid-cols-4 gap-8;
+}
+
+.host-builder-sidebar {
+    @apply space-y-6;
+}
+
+.host-builder-card {
+    @apply p-6;
+}
+
+.host-builder-card-title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-4;
+}
+
+.host-builder-card-title-mb6 {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-6;
+}
+
+.host-builder-input {
+    @apply w-full bg-black/5 border-none rounded-xl px-4 py-3 font-bold text-sm focus:ring-2 focus:ring-black/10;
+}
+
+.host-builder-type-grid {
+    @apply grid grid-cols-2 gap-2;
+}
+
+.host-builder-type-btn {
+    @apply flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all;
+}
+
+.host-builder-type-btn-active {
+    @apply bg-black text-[#FFD300] border-black shadow-lg shadow-black/10;
+}
+
+.host-builder-type-btn-inactive {
+    @apply bg-black/5 text-black/40 border-transparent hover:bg-black/10;
+}
+
+.host-builder-type-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.host-builder-audience-fields {
+    @apply space-y-4;
+}
+
+.host-builder-field-label {
+    @apply block text-[10px] font-semibold uppercase tracking-widest text-black/20 mb-2;
+}
+
+.host-builder-select {
+    @apply w-full bg-black/5 border-none rounded-xl text-xs font-bold py-3 px-4 outline-none focus:ring-2 focus:ring-black/10;
+}
+
+.host-builder-actions {
+    @apply flex gap-2;
+}
+
+.host-builder-action-btn {
+    @apply flex-1 py-3 text-[10px];
+}
+
+.host-builder-canvas-area {
+    @apply lg:col-span-3 space-y-6;
+}
+
+.host-builder-toolbar {
+    @apply bg-white/40 backdrop-blur-xl border border-black/5 rounded-3xl p-4 flex items-center justify-between;
+}
+
+.host-builder-toolbar-btns {
+    @apply flex items-center gap-2;
+}
+
+.host-builder-toolbar-btn {
+    @apply flex items-center gap-2 px-6 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-all;
+}
+
+.host-builder-toolbar-btn-active {
+    @apply bg-black text-[#FFD300] shadow-lg shadow-black/10 scale-105;
+}
+
+.host-builder-toolbar-btn-inactive {
+    @apply text-black/40 hover:text-black hover:bg-black/5;
+}
+
+.host-builder-canvas {
+    @apply bg-white/60 backdrop-blur-md border border-black/5 rounded-[3rem] min-h-[600px] flex flex-col p-12 relative overflow-hidden;
+}
+
+.host-builder-canvas-bg {
+    @apply absolute inset-0 opacity-[0.03] pointer-events-none;
+}
+
+.host-builder-canvas-inner {
+    @apply flex-1 flex items-center justify-center;
+}
+
+.host-builder-email-preview {
+    @apply w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden relative z-10;
+}
+
+.host-builder-email-header {
+    @apply h-40 bg-black flex items-center justify-center;
+}
+
+.host-builder-email-body {
+    @apply p-10 space-y-6 text-center;
+}
+
+.host-builder-email-heading {
+    @apply text-3xl font-semibold tracking-tight leading-none;
+}
+
+.host-builder-email-desc {
+    @apply text-black/40 font-medium text-sm leading-relaxed;
+}
+
+.host-builder-email-cta {
+    @apply w-full py-4 bg-black text-[#FFD300] font-semibold uppercase tracking-widest rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-all;
+}
+
+.host-builder-sms-preview {
+    @apply p-6 bg-[#f2f2f7] min-h-[200px] flex items-end;
+}
+
+.host-builder-sms-bubble {
+    @apply bg-white p-4 rounded-2xl rounded-bl-none shadow-sm max-w-[80%];
+}
+
+.host-builder-sms-text {
+    @apply text-sm font-medium text-black;
+}
+
+.host-builder-sms-footer {
+    @apply text-[8px] font-semibold text-black/20 uppercase mt-2 block;
+}
+
+.host-builder-audience-panel {
+    @apply flex-1 flex items-center justify-center relative z-10;
+}
+
+.host-builder-audience-container {
+    @apply w-full max-w-lg space-y-8;
+}
+
+.host-builder-audience-heading-wrap {
+    @apply text-center mb-8;
+}
+
+.host-builder-audience-heading {
+    @apply text-2xl font-semibold tracking-tight;
+}
+
+.host-builder-audience-desc {
+    @apply text-sm font-medium text-black/40 mt-2;
+}
+
+.host-builder-audience-form {
+    @apply bg-white rounded-3xl shadow-2xl p-8 space-y-6;
+}
+
+.host-builder-audience-label {
+    @apply block text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-3;
+}
+
+.host-builder-audience-select {
+    @apply w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold text-sm focus:ring-4 focus:ring-black/5 transition-all;
+}
+
+.host-builder-audience-date-grid {
+    @apply grid grid-cols-2 gap-4;
+}
+
+.host-builder-audience-date-input {
+    @apply bg-black/5 border-none rounded-2xl px-4 py-3 outline-none font-bold text-sm focus:ring-4 focus:ring-black/5 transition-all;
+}
+
+.host-builder-audience-estimate {
+    @apply p-4 bg-[#FFD300]/10 rounded-2xl border border-[#FFD300]/20;
+}
+
+.host-builder-audience-estimate-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/50 mb-1;
+}
+
+.host-builder-audience-estimate-value {
+    @apply text-2xl font-semibold;
+}
+
+.host-builder-audience-estimate-note {
+    @apply text-xs font-medium text-black/40 mt-1;
+}
+
+.host-builder-schedule-panel {
+    @apply flex-1 flex items-center justify-center relative z-10;
+}
+
+.host-builder-schedule-container {
+    @apply w-full max-w-lg space-y-8;
+}
+
+.host-builder-schedule-heading-wrap {
+    @apply text-center mb-8;
+}
+
+.host-builder-schedule-heading {
+    @apply text-2xl font-semibold tracking-tight;
+}
+
+.host-builder-schedule-desc {
+    @apply text-sm font-medium text-black/40 mt-2;
+}
+
+.host-builder-schedule-form {
+    @apply bg-white rounded-3xl shadow-2xl p-8 space-y-6;
+}
+
+.host-builder-schedule-label {
+    @apply block text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-3;
+}
+
+.host-builder-schedule-timing-grid {
+    @apply grid grid-cols-2 gap-3;
+}
+
+.host-builder-schedule-timing-btn {
+    @apply p-4 rounded-2xl border text-left transition-all;
+}
+
+.host-builder-schedule-timing-btn-active {
+    @apply bg-black text-white border-black;
+}
+
+.host-builder-schedule-timing-btn-inactive {
+    @apply bg-black/5 border-transparent hover:bg-black/10;
+}
+
+.host-builder-schedule-timing-title {
+    @apply text-sm font-semibold;
+}
+
+.host-builder-schedule-timing-sub {
+    @apply text-[10px] font-bold opacity-50 mt-1;
+}
+
+.host-builder-schedule-datetime {
+    @apply w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold text-sm focus:ring-4 focus:ring-black/5 transition-all;
+}
+
+.host-builder-schedule-delay-select {
+    @apply w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold text-sm focus:ring-4 focus:ring-black/5 transition-all;
+}
+
+.host-builder-schedule-summary {
+    @apply p-4 bg-black/[0.03] rounded-2xl;
+}
+
+.host-builder-schedule-summary-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30 mb-2;
+}
+
+.host-builder-schedule-summary-text {
+    @apply text-sm font-bold;
+}

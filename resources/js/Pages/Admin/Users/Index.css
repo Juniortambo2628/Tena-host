@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.users-pagination-bar {
+    @apply px-8 py-6 border-t border-black/5 flex justify-between items-center bg-gray-50/50;
+}
+
+.users-pagination-info {
+    @apply text-[10px] font-semibold text-black/40;
+}
+
+.users-pagination-links {
+    @apply flex gap-2;
+}
+
+.users-pagination-link {
+    @apply px-4 py-2 rounded-lg text-[10px] font-semibold transition-colors;
+}
+
+.users-pagination-link-active {
+    @apply bg-black text-[#FFD300];
+}
+
+.users-pagination-link-inactive {
+    @apply bg-black/5 text-black hover:bg-black/10;
+}
+
+.users-pagination-disabled {
+    @apply px-4 py-2 rounded-lg text-[10px] font-semibold text-black/30 bg-black/5 cursor-not-allowed;
+}

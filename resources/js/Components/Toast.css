@@ -1,0 +1,14 @@
+@reference "tailwindcss";
+
+.tena-toast {
+    border-radius: 1rem !important;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25) !important;
+    padding: 0.875rem 1.25rem !important;
+    font-family: system-ui, -apple-system, sans-serif !important;
+}
+
+.tena-toast-progress {
+    background: #FFD300 !important;
+    height: 3px !important;
+}

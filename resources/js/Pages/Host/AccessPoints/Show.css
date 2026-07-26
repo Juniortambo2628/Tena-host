@@ -1,0 +1,57 @@
+@reference "tailwindcss";
+
+.host-accesspoints-show {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.host-accesspoints-show-main {
+    @apply lg:col-span-2 space-y-8;
+}
+
+.host-accesspoints-show-sidebar {
+    @apply space-y-6;
+}
+
+.host-accesspoints-status-icon-online {
+    @apply w-16 h-16 rounded-2xl flex items-center justify-center bg-green-100 text-green-600;
+}
+
+.host-accesspoints-status-icon-offline {
+    @apply w-16 h-16 rounded-2xl flex items-center justify-center bg-red-100 text-red-600;
+}
+
+.host-accesspoints-show-name {
+    @apply text-2xl font-bold tracking-tight;
+}
+
+.host-accesspoints-show-mac {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mt-1;
+}
+
+.host-accesspoints-show-stats {
+    @apply grid grid-cols-2 gap-6;
+}
+
+.host-accesspoints-stat-card {
+    @apply p-4 bg-black/[0.02] rounded-2xl;
+}
+
+.host-accesspoints-stat-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 block mb-2;
+}
+
+.host-accesspoints-stat-online {
+    @apply text-sm font-bold text-green-600;
+}
+
+.host-accesspoints-stat-offline {
+    @apply text-sm font-bold text-red-600;
+}
+
+.host-accesspoints-stat-value {
+    @apply text-sm font-bold;
+}
+
+.host-accesspoints-back-link {
+    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors;
+}

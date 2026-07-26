@@ -1,0 +1,121 @@
+@reference "tailwindcss";
+
+.host-marketing-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-12 items-start;
+}
+
+.host-marketing-editor {
+    @apply space-y-8;
+}
+
+.host-marketing-editor-header {
+    @apply px-10 py-6 border-b border-black/5 bg-black/[0.02];
+}
+
+.host-marketing-editor-title {
+    @apply text-[10px] font-semibold text-black/40;
+}
+
+.host-marketing-editor-body {
+    @apply p-10 space-y-10;
+}
+
+.host-marketing-label {
+    @apply block text-[10px] font-semibold text-black/40 mb-4 ml-1;
+}
+
+.host-marketing-upload-zone {
+    @apply border-4 border-dashed border-black/5 rounded-[2.5rem] p-12 flex flex-col items-center justify-center text-black/20 hover:border-[#FFD300]/30 hover:bg-[#FFD300]/5 transition-all cursor-pointer;
+}
+
+.host-marketing-upload-icon {
+    @apply w-16 h-16 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-sm transition-transform;
+}
+
+.host-marketing-upload-zone:hover .host-marketing-upload-icon {
+    @apply scale-110;
+}
+
+.host-marketing-upload-text {
+    @apply font-semibold text-[10px] text-center;
+}
+
+.host-marketing-upload-browse {
+    @apply text-[#d89e00];
+}
+
+.host-marketing-form-section {
+    @apply space-y-6;
+}
+
+.host-marketing-input {
+    @apply w-full bg-black/5 border-none rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-black/5 transition-all text-sm;
+}
+
+.host-marketing-textarea {
+    @apply w-full bg-black/5 border-none rounded-2xl px-6 py-6 font-bold outline-none focus:ring-4 focus:ring-black/5 transition-all min-h-[200px] text-sm leading-relaxed;
+}
+
+.host-marketing-tags {
+    @apply flex gap-2 mt-4;
+}
+
+.host-marketing-tag {
+    @apply px-4 py-2 bg-white rounded-xl text-[10px] font-semibold text-black/40 hover:text-black transition-colors shadow-sm;
+}
+
+.host-marketing-preview-container {
+    @apply lg:sticky lg:top-8 flex flex-col items-center;
+}
+
+.host-marketing-preview-frame {
+    @apply w-full max-w-[420px] relative;
+}
+
+.host-marketing-preview-decoration {
+    @apply absolute -inset-4 border border-black/5 rounded-[4rem] pointer-events-none opacity-50;
+}
+
+.host-marketing-preview-device {
+    @apply bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-black/5 z-10 relative;
+}
+
+.host-marketing-preview-header {
+    @apply p-8 text-center border-b border-black/5;
+}
+
+.host-marketing-preview-brand {
+    @apply text-2xl font-bold tracking-tighter;
+}
+
+.host-marketing-preview-subtitle {
+    @apply text-[10px] font-semibold text-black/20 mt-1;
+}
+
+.host-marketing-preview-image {
+    @apply aspect-video bg-black/5 flex items-center justify-center overflow-hidden;
+}
+
+.host-marketing-preview-image img {
+    @apply w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000;
+}
+
+.host-marketing-preview-body {
+    @apply p-10 space-y-6;
+}
+
+.host-marketing-preview-heading {
+    @apply text-2xl font-bold leading-tight tracking-tight;
+}
+
+.host-marketing-preview-desc {
+    @apply text-sm text-black/40 leading-relaxed font-bold;
+}
+
+.host-marketing-preview-footer {
+    @apply p-8 bg-black/[0.02] border-t border-black/5 text-center;
+}
+
+.host-marketing-preview-footer-text {
+    @apply text-[10px] font-semibold text-black/20;
+}

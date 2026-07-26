@@ -1,0 +1,73 @@
+@reference "tailwindcss";
+
+.host-guests-show {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.host-guests-show-contact {
+    @apply space-y-8;
+}
+
+.host-guests-show-info {
+    @apply lg:col-span-2 space-y-8;
+}
+
+.host-guests-show-label {
+    @apply block text-[10px] font-semibold text-black/20 mb-1;
+}
+
+.host-guests-show-value {
+    @apply font-bold text-sm text-black;
+}
+
+.host-guests-show-address-note {
+    @apply text-[10px] font-bold text-black/40 mt-1 uppercase tracking-tight italic;
+}
+
+.host-guests-marketing-card {
+    @apply bg-black text-white;
+}
+
+.host-guests-marketing-title {
+    @apply text-[10px] font-semibold text-white/40;
+}
+
+.host-guests-marketing-desc {
+    @apply text-xs font-medium text-white/70 leading-relaxed mb-6;
+}
+
+.host-guests-visit-table {
+    @apply w-full text-left border-collapse;
+}
+
+.host-guests-visit-header {
+    @apply bg-black/[0.02];
+}
+
+.host-guests-visit-header-cell {
+    @apply px-8 py-4 text-[10px] font-semibold text-black/30;
+}
+
+.host-guests-visit-row {
+    @apply hover:bg-black/[0.02] transition-colors;
+}
+
+.host-guests-visit-cell {
+    @apply px-8 py-6 font-bold;
+}
+
+.host-guests-visit-device {
+    @apply px-8 py-6 text-black/50 font-medium;
+}
+
+.host-guests-visit-status {
+    @apply text-[10px] font-semibold px-3 py-1 bg-green-500/10 text-green-600 rounded-full;
+}
+
+.host-guests-notes-textarea {
+    @apply w-full bg-black/5 border-none rounded-2xl p-6 outline-none font-bold text-sm focus:ring-4 focus:ring-black/5 transition-all min-h-[120px];
+}
+
+.host-guests-notes-actions {
+    @apply flex justify-end mt-4;
+}

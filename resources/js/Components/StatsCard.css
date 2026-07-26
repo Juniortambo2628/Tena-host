@@ -1,0 +1,49 @@
+@reference "tailwindcss";
+
+.stats-card {
+    @apply relative overflow-hidden;
+}
+
+.stats-card__background {
+    @apply absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl z-0;
+}
+
+.stats-card__content {
+    @apply relative p-8 z-10;
+}
+
+.stats-card__header {
+    @apply flex justify-between items-start mb-6;
+}
+
+.stats-card__icon {
+    @apply p-3 bg-red-500/20 rounded-2xl border border-red-500/20 transition-colors group-hover:bg-red-500/30;
+}
+
+.stats-card__trend {
+    @apply text-sm font-medium px-3 py-1 rounded-full;
+}
+
+.stats-card__trend--up {
+    @apply bg-green-500/20 text-green-400;
+}
+
+.stats-card__trend--down {
+    @apply bg-red-500/20 text-red-400;
+}
+
+.stats-card__title {
+    @apply text-gray-400 text-sm font-medium uppercase tracking-wider mb-2;
+}
+
+.stats-card__value-wrapper {
+    @apply flex items-baseline gap-2;
+}
+
+.stats-card__value {
+    @apply text-4xl font-bold text-white tracking-tight;
+}
+
+.stats-card__bar {
+    @apply absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500 opacity-0 transition-opacity group-hover:opacity-100;
+}

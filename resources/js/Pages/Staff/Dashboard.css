@@ -1,0 +1,109 @@
+@reference "tailwindcss";
+
+.staff-dashboard-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.staff-main-content {
+    @apply lg:col-span-2 space-y-8;
+}
+
+.staff-table-header {
+    @apply px-8 py-6 border-b border-black/5 flex justify-between items-center;
+}
+
+.staff-table-header h3 {
+    @apply font-semibold text-xs text-black/50;
+}
+
+.staff-table {
+    @apply w-full text-left border-collapse;
+}
+
+.staff-table thead tr {
+    @apply bg-black/[0.02];
+}
+
+.staff-table th {
+    @apply px-8 py-4 text-[10px] font-semibold text-black/30;
+}
+
+.staff-table tbody {
+    @apply divide-y divide-black/5;
+}
+
+.staff-table tbody tr {
+    @apply hover:bg-black/[0.01] transition-colors;
+}
+
+.staff-table td {
+    @apply px-8 py-6;
+}
+
+.staff-table-empty {
+    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+}
+
+.staff-guest-item {
+    @apply px-8 py-5 flex items-center justify-between hover:bg-black/[0.01] transition-colors;
+}
+
+.staff-guest-avatar {
+    @apply w-10 h-10 rounded-xl bg-[#FFD300]/10 flex items-center justify-center text-[#d89e00] font-bold text-sm;
+}
+
+.staff-guest-name {
+    @apply font-bold text-sm;
+}
+
+.staff-guest-property {
+    @apply text-[10px] text-black/40 font-bold;
+}
+
+.staff-guest-date {
+    @apply text-[10px] font-semibold text-black/30;
+}
+
+.staff-sidebar {
+    @apply space-y-6;
+}
+
+.staff-sidebar-header {
+    @apply flex items-center gap-4 mb-6;
+}
+
+.staff-sidebar-icon {
+    @apply w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center;
+}
+
+.staff-sidebar-title {
+    @apply text-sm font-bold;
+}
+
+.staff-sidebar-subtitle {
+    @apply text-[10px] font-semibold text-black/40;
+}
+
+.staff-order-item {
+    @apply p-4 bg-black/[0.02] rounded-2xl;
+}
+
+.staff-order-header {
+    @apply flex justify-between items-start mb-2;
+}
+
+.staff-order-name {
+    @apply font-bold text-sm;
+}
+
+.staff-order-price {
+    @apply text-[10px] font-semibold text-[#FFD300];
+}
+
+.staff-order-details {
+    @apply text-[10px] text-black/40 font-bold;
+}
+
+.staff-empty {
+    @apply text-[10px] font-semibold text-black/30 text-center py-4;
+}

@@ -1,0 +1,249 @@
+@reference "tailwindcss";
+
+.host-marketing-index-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.host-marketing-index-main {
+    @apply lg:col-span-2 space-y-8;
+}
+
+.host-marketing-index-table-header {
+    @apply px-8 py-6 border-b border-black/5 flex justify-between items-center;
+}
+
+.host-marketing-index-table-title {
+    @apply font-semibold text-xs uppercase tracking-widest text-black/50;
+}
+
+.host-marketing-index-view-all {
+    @apply text-[10px] font-semibold text-black/30 uppercase tracking-widest hover:text-black transition-colors;
+}
+
+.host-marketing-index-table-wrapper {
+    @apply overflow-x-auto;
+}
+
+.host-marketing-index-table {
+    @apply w-full text-left border-collapse;
+}
+
+.host-marketing-index-table-head-row {
+    @apply bg-black/[0.02];
+}
+
+.host-marketing-index-table-th {
+    @apply px-8 py-4 text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.host-marketing-index-table-body {
+    @apply divide-y divide-black/5;
+}
+
+.host-marketing-index-table-row {
+    @apply hover:bg-black/[0.01] transition-colors;
+}
+
+.host-marketing-index-table-cell {
+    @apply px-8 py-6;
+}
+
+.host-marketing-index-campaign-info {
+    @apply flex flex-col;
+}
+
+.host-marketing-index-campaign-name {
+    @apply font-semibold text-sm;
+}
+
+.host-marketing-index-campaign-date {
+    @apply text-[10px] text-black/40 font-bold mt-0.5;
+}
+
+.host-marketing-index-campaign-type {
+    @apply flex items-center gap-2;
+}
+
+.host-marketing-index-campaign-type-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/60;
+}
+
+.host-marketing-index-status-dot {
+    @apply w-1.5 h-1.5 rounded-full;
+}
+
+.host-marketing-index-status-active {
+    @apply bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)];
+}
+
+.host-marketing-index-status-inactive {
+    @apply bg-black/20;
+}
+
+.host-marketing-index-status-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/60;
+}
+
+.host-marketing-index-performance {
+    @apply px-8 py-6 font-semibold text-sm;
+}
+
+.host-marketing-index-actions {
+    @apply flex items-center gap-1 opacity-0 transition-opacity;
+}
+
+.host-marketing-index-table-row:hover .host-marketing-index-actions {
+    @apply opacity-100;
+}
+
+.host-marketing-index-action-btn {
+    @apply p-2 hover:bg-black/5 rounded-lg transition-colors;
+}
+
+.host-marketing-index-action-btn-green {
+    @apply p-2 hover:bg-green-50 rounded-lg transition-colors;
+}
+
+.host-marketing-index-action-btn-red {
+    @apply p-2 hover:bg-red-50 rounded-lg transition-colors;
+}
+
+.host-marketing-index-action-icon {
+    @apply text-black/40 transition-colors;
+}
+
+.host-marketing-index-action-btn:hover .host-marketing-index-action-icon {
+    @apply text-black;
+}
+
+.host-marketing-index-action-icon-green {
+    @apply text-black/40 transition-colors;
+}
+
+.host-marketing-index-action-btn-green:hover .host-marketing-index-action-icon-green {
+    @apply text-green-500;
+}
+
+.host-marketing-index-action-icon-yellow {
+    @apply text-black/40 transition-colors;
+}
+
+.host-marketing-index-action-btn:hover .host-marketing-index-action-icon-yellow {
+    @apply text-[#FFD300];
+}
+
+.host-marketing-index-action-icon-red {
+    @apply text-black/40 transition-colors;
+}
+
+.host-marketing-index-action-btn-red:hover .host-marketing-index-action-icon-red {
+    @apply text-red-500;
+}
+
+.host-marketing-index-sidebar {
+    @apply space-y-6;
+}
+
+.host-marketing-index-ai-card {
+    @apply bg-white overflow-hidden relative;
+}
+
+.host-marketing-index-ai-bg {
+    @apply absolute top-0 right-0 p-4 opacity-5;
+}
+
+.host-marketing-index-ai-content {
+    @apply relative z-10 text-black;
+}
+
+.host-marketing-index-ai-header {
+    @apply flex items-center gap-2 mb-6;
+}
+
+.host-marketing-index-ai-title {
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40;
+}
+
+.host-marketing-index-ai-heading {
+    @apply text-2xl font-semibold mb-4 tracking-tight leading-tight;
+}
+
+.host-marketing-index-suggestions {
+    @apply space-y-4 mb-8;
+}
+
+.host-marketing-index-suggestion {
+    @apply flex items-center justify-between cursor-pointer;
+}
+
+.host-marketing-index-suggestion-text {
+    @apply text-sm text-black/60 transition-colors;
+}
+
+.host-marketing-index-suggestion:hover .host-marketing-index-suggestion-text {
+    @apply text-black;
+}
+
+.host-marketing-index-suggestion-lift {
+    @apply text-xs font-semibold text-[#FFD300];
+}
+
+.host-marketing-index-automation-card {
+    @apply p-6;
+}
+
+.host-marketing-index-automation-title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-6 flex items-center gap-2;
+}
+
+.host-marketing-index-automation-list {
+    @apply space-y-4;
+}
+
+.host-marketing-index-trigger {
+    @apply flex items-center justify-between p-4 bg-black/5 rounded-2xl border border-black/5 hover:border-black/10 transition-all;
+}
+
+.host-marketing-index-trigger-label {
+    @apply text-xs font-bold text-black/70;
+}
+
+.host-marketing-index-trigger-toggle-wrap {
+    @apply flex items-center gap-3;
+}
+
+.host-marketing-index-trigger-status {
+    @apply text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.host-marketing-index-trigger-status-enabled {
+    @apply text-green-600;
+}
+
+.host-marketing-index-trigger-status-disabled {
+    @apply text-black/30;
+}
+
+.host-marketing-index-trigger-toggle {
+    @apply w-10 h-6 rounded-full p-1 transition-colors duration-300 flex items-center;
+}
+
+.host-marketing-index-trigger-toggle-on {
+    @apply bg-black;
+}
+
+.host-marketing-index-trigger-toggle-off {
+    @apply bg-black/10;
+}
+
+.host-marketing-index-trigger-knob {
+    @apply w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-300;
+}
+
+.host-marketing-index-trigger-knob-on {
+    @apply translate-x-4;
+}
+
+.host-marketing-index-trigger-knob-off {
+    @apply translate-x-0;
+}

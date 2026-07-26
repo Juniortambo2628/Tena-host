@@ -1,0 +1,108 @@
+@reference "tailwindcss";
+
+.roi-card {
+    @apply bg-white/90 border-2 border-[#FFD300] rounded-[20px] p-8 shadow-xl max-w-5xl mx-auto;
+}
+
+.roi-layout {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-12;
+}
+
+.roi-form {
+    @apply space-y-6;
+}
+
+.roi-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.roi-range {
+    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#FFD300];
+}
+
+.roi-input-row {
+    @apply flex justify-between items-center mt-2;
+}
+
+.roi-number-input {
+    @apply block w-24 rounded-full border-gray-300 shadow-sm text-center;
+    border-color: #FFD300;
+    --tw-ring-color: rgba(255, 211, 0, 0.5);
+}
+
+.roi-range-label {
+    @apply text-sm text-gray-500;
+}
+
+.roi-radio-group {
+    @apply flex gap-4;
+}
+
+.roi-radio-label {
+    @apply inline-flex items-center;
+}
+
+.roi-radio-input {
+    @apply text-[#FFD300];
+    accent-color: #FFD300;
+}
+
+.roi-radio-text {
+    @apply ml-2;
+}
+
+.roi-manager-section {
+    @apply transition-all duration-300;
+}
+
+.roi-manager-section-active {
+    @apply opacity-100 max-h-40;
+}
+
+.roi-manager-section-inactive {
+    @apply opacity-50 max-h-40 grayscale;
+}
+
+.roi-reset-btn {
+    @apply text-gray-500 hover:text-gray-800 underline text-sm;
+}
+
+.roi-results-panel {
+    @apply bg-gray-50 p-6 rounded-2xl;
+}
+
+.roi-results-title {
+    @apply text-xl font-bold mb-6;
+}
+
+.roi-results-list {
+    @apply space-y-4;
+}
+
+.roi-result-card {
+    @apply p-4 rounded-xl border border-[#FFD300]/20 bg-white shadow-sm transition-all duration-300;
+}
+
+.roi-result-card-updating {
+    @apply opacity-70 scale-95;
+}
+
+.roi-result-card-idle {
+    @apply opacity-100 scale-100;
+}
+
+.roi-result-label {
+    @apply text-gray-600 text-sm font-medium mb-1;
+}
+
+.roi-result-value {
+    @apply text-[#FFD300] font-bold text-2xl;
+}
+
+.roi-result-value-total {
+    @apply text-[#FFD300] font-bold text-4xl;
+}
+
+.roi-results-divider {
+    @apply mt-8 pt-4 border-t border-gray-200;
+}

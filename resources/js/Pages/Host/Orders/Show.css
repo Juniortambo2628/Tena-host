@@ -1,0 +1,21 @@
+@reference "tailwindcss";
+
+.host-orders-show {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.host-orders-show-main {
+    @apply lg:col-span-2 space-y-8;
+}
+
+.host-orders-show-sidebar {
+    @apply space-y-6;
+}
+
+.host-orders-show-sidebar-header {
+    @apply flex items-center gap-4 mb-6;
+}
+
+.host-orders-show-sidebar-icon {
+    @apply w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center;
+}

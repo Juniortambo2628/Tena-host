@@ -1,0 +1,10 @@
+@reference "tailwindcss";
+
+.primary-button {
+    @apply flex items-center justify-center gap-2 rounded-[1rem] font-bold text-[10px] transition-all duration-300 transform active:scale-95 bg-[#1b1b1b] text-white shadow-sm hover:shadow-md hover:-translate-y-0.5;
+    padding: 0.75rem 1.25rem;
+}
+
+.primary-button--disabled {
+    @apply opacity-25;
+}

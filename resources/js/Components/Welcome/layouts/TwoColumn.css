@@ -1,0 +1,67 @@
+@reference "tailwindcss";
+
+.two-column {
+    @apply flex flex-col lg:flex-row items-center gap-12 lg:gap-16;
+}
+
+.two-column--reverse {
+    @apply lg:flex-row-reverse;
+}
+
+.two-column-image-col {
+    @apply w-full lg:w-1/2;
+}
+
+.two-column-image-wrap {
+    @apply relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:scale-[1.02] transition-transform duration-500;
+}
+
+.two-column-image-wrap img {
+    @apply w-full h-auto;
+}
+
+.two-column-text-col {
+    @apply w-full lg:w-1/2;
+}
+
+.two-column-text-card {
+    @apply p-8;
+}
+
+.two-column-label {
+    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
+}
+
+.two-column-heading {
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    @apply text-3xl font-bold mb-6 leading-tight text-[#1b1b1b];
+}
+
+.two-column-desc {
+    @apply text-gray-600 mb-8;
+}
+
+.two-column-features-list {
+    @apply space-y-6;
+}
+
+.two-column-feature-row {
+    @apply flex items-start;
+}
+
+.two-column-feature-icon-wrap {
+    @apply flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-gray-50 text-[#FFD300] text-xl mr-4;
+}
+
+.two-column-feature-title {
+    @apply font-bold text-gray-900 mb-1;
+}
+
+.two-column-feature-desc {
+    @apply text-gray-500 text-sm leading-relaxed;
+}
+
+.two-column-cta {
+    @apply mt-8;
+}

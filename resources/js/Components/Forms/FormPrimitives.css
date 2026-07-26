@@ -1,0 +1,107 @@
+@reference "tailwindcss";
+
+.form-field {
+    @apply block;
+}
+
+.form-field__label {
+    @apply block text-[10px] font-semibold text-black/30 mb-3 ml-1;
+}
+
+.form-field__label-required {
+    @apply text-red-500 ml-1;
+}
+
+.form-field__hint {
+    @apply mt-2 text-xs font-bold text-black/40;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    @apply w-full bg-black/5 border-none rounded-2xl px-5 py-3 font-medium outline-none focus:ring-4 focus:ring-black/5 transition-all text-sm;
+}
+
+.form-textarea {
+    @apply resize-y;
+}
+
+.form-select {
+    @apply appearance-none;
+}
+
+.form-toggle {
+    @apply flex items-center justify-between p-6 bg-black/[0.02] rounded-2xl border border-black/5 cursor-pointer;
+}
+
+.form-toggle__label {
+    @apply pr-4;
+}
+
+.form-toggle__title {
+    @apply font-bold text-sm;
+}
+
+.form-toggle__description {
+    @apply text-xs font-medium text-black/40 mt-1;
+}
+
+.form-toggle__switch {
+    @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors;
+}
+
+.form-toggle__switch--checked {
+    @apply bg-black;
+}
+
+.form-toggle__switch--unchecked {
+    @apply bg-black/10;
+}
+
+.form-toggle__knob {
+    @apply inline-block h-4 w-4 transform rounded-full bg-white transition-transform;
+}
+
+.form-toggle__knob--checked {
+    @apply translate-x-6;
+}
+
+.form-toggle__knob--unchecked {
+    @apply translate-x-1;
+}
+
+.form-checkbox {
+    @apply flex items-center gap-3 cursor-pointer;
+}
+
+.form-checkbox__box {
+    @apply h-5 w-5 rounded-md border-2 flex items-center justify-center transition-colors;
+}
+
+.form-checkbox__box--checked {
+    @apply bg-black border-black;
+}
+
+.form-checkbox__box--unchecked {
+    @apply border-black/20;
+}
+
+.form-checkbox__icon {
+    @apply w-3 h-3 text-[#FFD300];
+}
+
+.form-checkbox__label {
+    @apply text-sm font-bold text-black/70;
+}
+
+.form-actions {
+    @apply flex items-center gap-6 pt-2;
+}
+
+.form-success {
+    @apply text-[10px] font-semibold text-green-500 transition-opacity opacity-0;
+}
+
+.form-success--visible {
+    @apply opacity-100;
+}

@@ -1,0 +1,121 @@
+@reference "tailwindcss";
+
+.dashboard {
+    @apply py-12;
+}
+
+.dashboard-container {
+    @apply max-w-7xl mx-auto px-6 sm:px-8;
+}
+
+.stats-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12;
+}
+
+.table-section {
+    @apply relative;
+}
+
+.table-section-bg {
+    @apply absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-3xl border border-white/20 rounded-[2.5rem] z-0 shadow-2xl;
+}
+
+.table-section-content {
+    @apply relative z-10 overflow-hidden rounded-[2.5rem];
+}
+
+.table-header {
+    @apply p-8 border-b border-white/10 flex justify-between items-center bg-white/5;
+}
+
+.table-header-title {
+    @apply text-xl font-bold text-white;
+}
+
+.view-all-btn {
+    @apply text-red-400 hover:text-red-300 text-sm font-medium transition-colors;
+}
+
+.table-scroll {
+    @apply overflow-x-auto;
+}
+
+.data-table {
+    @apply w-full text-left border-collapse;
+}
+
+.data-table thead tr {
+    @apply bg-white/5;
+}
+
+.data-table th {
+    @apply p-6 text-gray-400 font-medium uppercase tracking-wider text-xs;
+}
+
+.data-table th.text-right {
+    @apply text-right;
+}
+
+.data-table tbody {
+    @apply divide-y divide-white/10;
+}
+
+.data-table tbody tr {
+    @apply hover:bg-white/5 transition-all;
+}
+
+.data-table td {
+    @apply p-6;
+}
+
+.table-name {
+    @apply italic font-medium text-white;
+}
+
+.table-email {
+    @apply text-gray-400 font-mono text-sm;
+}
+
+.table-property-info {
+    @apply flex flex-col;
+}
+
+.table-property-type {
+    @apply text-white text-sm capitalize;
+}
+
+.table-location {
+    @apply text-xs text-gray-500;
+}
+
+.table-action-btn {
+    @apply px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-sm font-medium text-white transition-all transform hover:scale-105;
+}
+
+.modal-content {
+    @apply space-y-6;
+}
+
+.modal-grid {
+    @apply grid grid-cols-2 gap-6;
+}
+
+.modal-label {
+    @apply text-xs uppercase text-gray-500 font-bold block mb-1;
+}
+
+.modal-value {
+    @apply text-white text-lg;
+}
+
+.modal-message {
+    @apply text-gray-300 leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/10;
+}
+
+.modal-close-btn {
+    @apply px-8 py-3 bg-red-500 hover:bg-red-600 rounded-2xl font-bold text-white transition-all shadow-xl shadow-red-500/20;
+}
+
+.modal-footer {
+    @apply flex justify-end pt-4;
+}

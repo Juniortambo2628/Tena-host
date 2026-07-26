@@ -1,0 +1,57 @@
+@reference "tailwindcss";
+
+.system-page__grid {
+    @apply mb-8;
+}
+
+.system-page__stat-card {
+    @apply flex items-center gap-4;
+}
+
+.system-page__stat-icon {
+    @apply p-3 rounded-2xl;
+}
+
+.system-page__stat-icon--php {
+    @apply bg-black/5 text-[#FFD300];
+}
+
+.system-page__stat-icon--laravel {
+    @apply bg-red-100 text-red-600;
+}
+
+.system-page__stat-icon--database {
+    @apply bg-green-100 text-green-600;
+}
+
+.system-page__stat-icon--server-time {
+    @apply bg-orange-100 text-orange-600;
+}
+
+.system-page__stat-label {
+    @apply text-[10px] font-semibold text-black/40;
+}
+
+.system-page__stat-value {
+    @apply text-xl font-bold;
+}
+
+.system-page__stat-value--small {
+    @apply text-sm font-bold;
+}
+
+.system-page__logs-title {
+    @apply text-lg font-bold mb-6;
+}
+
+.system-page__logs {
+    @apply bg-black text-white p-6 rounded-2xl font-mono text-xs h-64 overflow-y-auto;
+}
+
+.system-page__logs-command {
+    @apply text-green-400;
+}
+
+.system-page__logs-line {
+    @apply text-gray-500;
+}

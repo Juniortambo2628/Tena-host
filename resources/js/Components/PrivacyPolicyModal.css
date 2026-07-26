@@ -1,0 +1,53 @@
+@reference "tailwindcss";
+
+.privacy-policy-modal__content {
+    @apply space-y-8 p-4;
+}
+
+.privacy-policy-modal__header {
+    @apply flex items-center gap-4 p-6 bg-black/5 rounded-3xl;
+}
+
+.privacy-policy-modal__header-icon {
+    @apply text-black;
+}
+
+.privacy-policy-modal__heading {
+    @apply text-lg font-bold tracking-tight;
+}
+
+.privacy-policy-modal__subtitle {
+    @apply text-[10px] font-semibold text-black/40 uppercase tracking-widest;
+}
+
+.privacy-policy-modal__points {
+    @apply space-y-6;
+}
+
+.privacy-policy-modal__point {
+    @apply flex gap-4;
+}
+
+.privacy-policy-modal__point-icon {
+    @apply mt-1 p-2 bg-black/[0.02] rounded-xl text-black/30 transition-all group-hover:text-black group-hover:bg-black/5;
+}
+
+.privacy-policy-modal__point-content {
+    @apply space-y-1;
+}
+
+.privacy-policy-modal__point-title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black;
+}
+
+.privacy-policy-modal__point-text {
+    @apply text-sm font-bold text-black/50 leading-relaxed;
+}
+
+.privacy-policy-modal__footer {
+    @apply pt-4 border-t border-black/5;
+}
+
+.privacy-policy-modal__footer-text {
+    @apply text-[10px] font-bold text-black/30 leading-relaxed italic;
+}

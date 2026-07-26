@@ -1,0 +1,51 @@
+import PageShell from '@/Layouts/PageShell';
+import DeleteUserForm from './Partials/DeleteUserForm';
+import UpdatePasswordForm from './Partials/UpdatePasswordForm';
+import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+import TwoFactorAuthenticationForm from './Partials/TwoFactorAuthenticationForm';
+import GlassCard from '@/Components/Dashboard/GlassCard';
+import './Edit.css';
+
+export default function Edit({
+    mustVerifyEmail,
+    status,
+    twoFactorEnabled,
+    userEmail,
+}) {
+    return (
+        <PageShell
+            title="Your Account"
+            headTitle="Profile"
+            breadcrumbs={[
+                { label: 'Settings', href: '#' },
+                { label: 'Profile' },
+            ]}
+        >
+            <div className="profile-page">
+                <GlassCard>
+                    <UpdateProfileInformationForm
+                        mustVerifyEmail={mustVerifyEmail}
+                        status={status}
+                        className="max-w-xl"
+                    />
+                </GlassCard>
+
+                <GlassCard>
+                    <TwoFactorAuthenticationForm
+                        className="max-w-xl"
+                        enabled={twoFactorEnabled}
+                        userEmail={userEmail}
+                    />
+                </GlassCard>
+
+                <GlassCard>
+                    <UpdatePasswordForm className="max-w-xl" />
+                </GlassCard>
+
+                <GlassCard>
+                    <DeleteUserForm className="max-w-xl" />
+                </GlassCard>
+            </div>
+        </PageShell>
+    );
+}

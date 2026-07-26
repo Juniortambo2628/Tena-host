@@ -1,0 +1,21 @@
+@reference "tailwindcss";
+
+.placeholder-page {
+    @apply flex flex-col items-center justify-center h-full text-center p-8;
+}
+
+.placeholder-page__icon-wrapper {
+    @apply p-6 bg-black/5 rounded-full mb-6 max-w-sm mx-auto;
+}
+
+.placeholder-page__icon {
+    @apply text-black/40;
+}
+
+.placeholder-page__title {
+    @apply text-2xl font-bold text-black mb-2;
+}
+
+.placeholder-page__message {
+    @apply text-gray-500 font-bold max-w-md mx-auto;
+}

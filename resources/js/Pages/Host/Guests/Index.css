@@ -1,0 +1,97 @@
+@reference "tailwindcss";
+
+.host-guests-index {
+    @apply space-y-8;
+}
+
+.host-guests-table {
+    @apply w-full text-left border-collapse;
+}
+
+.host-guests-table-header {
+    @apply bg-black/[0.02];
+}
+
+.host-guests-table-header-cell {
+    @apply px-8 py-5 text-[10px] font-semibold text-black/30;
+}
+
+.host-guests-table-row {
+    @apply hover:bg-black/[0.01] transition-colors;
+}
+
+.host-guests-table-cell {
+    @apply px-8 py-6;
+}
+
+.host-guests-avatar {
+    @apply w-10 h-10 rounded-xl bg-[#FFD300]/10 flex items-center justify-center text-[#d89e00] font-bold text-sm;
+}
+
+.host-guests-name-link {
+    @apply font-bold text-sm hover:text-[#FFD300] transition-colors;
+}
+
+.host-guests-id-badge {
+    @apply text-[10px] font-bold text-black/30;
+}
+
+.host-guests-email {
+    @apply text-sm font-bold text-black/70;
+}
+
+.host-guests-phone {
+    @apply text-[10px] font-semibold text-black/30;
+}
+
+.host-guests-property {
+    @apply text-[10px] font-semibold text-black/50;
+}
+
+.host-guests-visits {
+    @apply text-sm font-bold;
+}
+
+.host-guests-last-date {
+    @apply text-[10px] font-bold text-black/30;
+}
+
+.host-guests-actions {
+    @apply flex items-center gap-1 opacity-0 transition-opacity;
+}
+
+.host-guests-table-row:hover .host-guests-actions {
+    @apply opacity-100;
+}
+
+.host-guests-edit-btn {
+    @apply p-2 hover:bg-black/5 rounded-lg text-black/40 hover:text-black transition-colors;
+}
+
+.host-guests-delete-btn {
+    @apply p-2 hover:bg-red-50 rounded-lg text-black/40 hover:text-red-500 transition-colors;
+}
+
+.host-guests-empty {
+    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+}
+
+.host-guests-pagination {
+    @apply px-8 py-6 border-t border-black/5 flex justify-center items-center gap-2;
+}
+
+.host-guests-pagination-link {
+    @apply px-4 py-2 rounded-lg text-[10px] font-semibold transition-colors;
+}
+
+.host-guests-pagination-active {
+    @apply bg-black text-[#FFD300];
+}
+
+.host-guests-pagination-inactive {
+    @apply bg-black/5 text-black hover:bg-black/10;
+}
+
+.host-guests-pagination-disabled {
+    @apply px-4 py-2 rounded-lg text-[10px] font-semibold text-black/30 bg-black/5 cursor-not-allowed;
+}

@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.problem-images-grid {
+    @apply grid grid-cols-2 gap-4;
+}
+
+.problem-image-item {
+    @apply rounded-2xl overflow-hidden;
+}
+
+.problem-image-item img {
+    @apply w-full h-full object-cover;
+}
+
+.problem-image-item:first-child {
+    @apply col-span-2;
+}

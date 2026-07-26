@@ -1,0 +1,57 @@
+@reference "tailwindcss";
+
+.cookies-consent {
+    @apply fixed bottom-8 left-8 right-8 md:left-auto md:w-[420px] z-[100];
+}
+
+.cookies-consent__card {
+    @apply bg-white/80 backdrop-blur-2xl p-6 rounded-[2.5rem] border border-black/5 shadow-2xl shadow-black/10;
+}
+
+.cookies-consent__header {
+    @apply flex items-start gap-4 mb-5;
+}
+
+.cookies-consent__icon {
+    @apply p-3 bg-black/5 rounded-2xl;
+}
+
+.cookies-consent__cookie-icon {
+    @apply text-black;
+}
+
+.cookies-consent__content {
+    @apply flex-1;
+}
+
+.cookies-consent__title {
+    @apply text-sm font-bold text-black mb-1;
+}
+
+.cookies-consent__text {
+    @apply text-xs font-bold text-black/40 leading-relaxed;
+}
+
+.cookies-consent__links {
+    @apply mt-3 flex flex-wrap gap-x-4 gap-y-1;
+}
+
+.cookies-consent__link {
+    @apply text-[10px] font-semibold text-black/30 hover:text-black transition-colors underline decoration-black/10 underline-offset-4;
+}
+
+.cookies-consent__close {
+    @apply text-black/20 hover:text-black transition-colors;
+}
+
+.cookies-consent__actions {
+    @apply flex gap-3;
+}
+
+.cookies-consent__accept {
+    @apply flex-1 py-4 bg-black text-[#FFD300] rounded-2xl text-[10px] font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-black/10;
+}
+
+.cookies-consent__decline {
+    @apply px-6 py-4 bg-black/5 text-black rounded-2xl text-[10px] font-bold hover:bg-black/10 transition-colors;
+}

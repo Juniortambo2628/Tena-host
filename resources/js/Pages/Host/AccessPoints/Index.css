@@ -1,0 +1,41 @@
+@reference "tailwindcss";
+
+.host-accesspoints-index {
+    @apply space-y-8;
+}
+
+.host-accesspoints-ap-cell {
+    @apply flex flex-col;
+}
+
+.host-accesspoints-ap-name {
+    @apply font-bold text-sm;
+}
+
+.host-accesspoints-ap-mac {
+    @apply text-[10px] text-black/40 font-bold;
+}
+
+.host-accesspoints-property {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/50;
+}
+
+.host-accesspoints-status-online {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold tracking-widest bg-green-100 text-green-700;
+}
+
+.host-accesspoints-status-offline {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold tracking-widest bg-red-100 text-red-700;
+}
+
+.host-accesspoints-clients {
+    @apply text-sm font-bold;
+}
+
+.host-accesspoints-view-link {
+    @apply p-2 hover:bg-black/5 rounded-lg text-black/40 hover:text-black transition-colors text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.host-accesspoints-modal-grid {
+    @apply grid grid-cols-2 gap-4;
+}

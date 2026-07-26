@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.detailed-features-wrapper {
+    @apply overflow-hidden;
+}

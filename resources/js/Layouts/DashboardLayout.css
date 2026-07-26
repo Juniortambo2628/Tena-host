@@ -1,0 +1,446 @@
+@reference "tailwindcss";
+
+.dashboard-layout {
+    @apply h-screen bg-[#FDFCF7] text-black font-sans flex overflow-hidden relative;
+}
+
+.dashboard-layout__bg {
+    @apply absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-fixed;
+    background-size: cover;
+}
+
+.dashboard-layout__sidebar {
+    @apply sticky top-0 h-screen z-10 w-72 flex-none flex flex-col transition-all duration-500 ease-in-out;
+}
+
+.dashboard-layout__sidebar--open {
+    @apply ml-0;
+}
+
+.dashboard-layout__sidebar--closed {
+    @apply -ml-72;
+}
+
+.dashboard-layout__brand {
+    @apply p-6;
+}
+
+.dashboard-layout__brand-link {
+    @apply flex items-center gap-3;
+}
+
+.dashboard-layout__logo {
+    @apply w-12 h-12 rounded-xl shadow-md border border-black/5;
+}
+
+.dashboard-layout__brand-text {
+    @apply text-2xl font-bold tracking-tighter;
+}
+
+.dashboard-layout__nav {
+    @apply flex-1 px-6 py-4 space-y-1 overflow-y-auto;
+}
+
+.dashboard-layout__nav-link {
+    @apply flex items-center gap-4 px-5 py-3.5 rounded-2xl font-semibold transition-all duration-300;
+}
+
+.dashboard-layout__nav-link--inactive {
+    @apply text-black/40 hover:text-black hover:bg-black/5;
+}
+
+.dashboard-layout__nav-link--active {
+    @apply bg-black text-[#FFD300] shadow-xl shadow-black/10;
+}
+
+.dashboard-layout__nav-icon {
+    @apply transition-transform group-hover:scale-110;
+}
+
+.dashboard-layout__nav-icon--inactive {
+    @apply text-black/40 group-hover:text-black;
+}
+
+.dashboard-layout__nav-icon--active {
+    @apply text-[#FFD300];
+}
+
+.dashboard-layout__nav-label {
+    @apply text-sm tracking-tight;
+}
+
+.dashboard-layout__nav-indicator {
+    @apply ml-auto w-1.5 h-1.5 rounded-full bg-[#FFD300];
+}
+
+.dashboard-layout__user {
+    @apply p-6 mt-auto border-t border-black/5 flex-none;
+}
+
+.dashboard-layout__user-row {
+    @apply flex items-center gap-3;
+}
+
+.dashboard-layout__user-avatar {
+    @apply w-10 h-10 rounded-full bg-black text-[#FFD300] flex items-center justify-center font-bold;
+}
+
+.dashboard-layout__user-name {
+    @apply font-bold text-sm leading-none;
+}
+
+.dashboard-layout__user-role {
+    @apply text-xs text-gray-500 mt-1 uppercase tracking-wider;
+}
+
+.dashboard-layout__main {
+    @apply flex-1 flex flex-col min-w-0 p-4 relative z-10 transition-all duration-500;
+}
+
+.dashboard-layout__content {
+    @apply flex-1 bg-white/40 backdrop-blur-2xl border border-white/40 rounded-[3rem] shadow-2xl flex flex-col overflow-hidden relative;
+}
+
+.dashboard-layout__scroller {
+    @apply flex-1 overflow-y-auto flex flex-col;
+}
+
+.dashboard-layout__header {
+    @apply px-8 py-4 flex justify-between items-center sticky top-0 z-[60] bg-[#FDFCF7]/60 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+}
+
+.dashboard-layout__header-left {
+    @apply flex items-center gap-6;
+}
+
+.dashboard-layout__sidebar-toggle {
+    @apply w-12 h-12 flex items-center justify-center bg-black/5 hover:bg-black/10 rounded-2xl transition-all active:scale-90;
+}
+
+.dashboard-layout__sidebar-toggle-icon {
+    @apply text-black/60;
+}
+
+.dashboard-layout__nav-heading {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/20 transform rotate-90 hidden md:block;
+}
+
+.dashboard-layout__header-right {
+    @apply flex items-center gap-6;
+}
+
+.dashboard-layout__header-actions {
+    @apply hidden md:flex items-center gap-8 mr-10;
+}
+
+.dashboard-layout__search-button {
+    @apply flex items-center gap-2 text-xs font-semibold text-black/40 hover:text-black transition-colors;
+}
+
+.dashboard-layout__menu {
+    @apply relative;
+}
+
+.dashboard-layout__menu-button {
+    @apply flex items-center gap-2 text-xs font-semibold text-black/40 hover:text-black transition-colors;
+}
+
+.dashboard-layout__menu-icon-wrapper {
+    @apply relative;
+}
+
+.dashboard-layout__menu-badge {
+    @apply absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-white;
+}
+
+.dashboard-layout__menu-items {
+    @apply absolute right-0 mt-6 w-80 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50;
+}
+
+.dashboard-layout__menu-items--narrow {
+    @apply absolute right-0 mt-6 w-56 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50;
+}
+
+.dashboard-layout__menu-items--profile {
+    @apply absolute right-0 mt-6 w-64 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50;
+}
+
+.dashboard-layout__menu-header {
+    @apply px-6 py-4 border-b border-black/5 bg-black/[0.01];
+}
+
+.dashboard-layout__menu-title {
+    @apply text-[10px] font-semibold text-black/30;
+}
+
+.dashboard-layout__menu-list {
+    @apply py-2;
+}
+
+.dashboard-layout__menu-item {
+    @apply flex items-start gap-4 px-6 py-4 w-full text-left transition-colors;
+}
+
+.dashboard-layout__menu-item--active {
+    @apply bg-black/5;
+}
+
+.dashboard-layout__menu-dot {
+    @apply mt-1 w-2 h-2 rounded-full flex-none;
+}
+
+.dashboard-layout__menu-dot--success {
+    @apply bg-green-500;
+}
+
+.dashboard-layout__menu-dot--warning {
+    @apply bg-[#FFD300];
+}
+
+.dashboard-layout__menu-item-content {
+    @apply flex-1;
+}
+
+.dashboard-layout__menu-item-title {
+    @apply text-xs font-bold text-black/80;
+}
+
+.dashboard-layout__menu-item-time {
+    @apply text-[10px] text-black/30 font-semibold mt-1 tracking-widest;
+}
+
+.dashboard-layout__menu-footer {
+    @apply px-6 py-4 border-t border-black/5 text-center;
+}
+
+.dashboard-layout__menu-footer-link {
+    @apply text-[10px] font-semibold text-black/40 hover:text-black transition-colors;
+}
+
+.dashboard-layout__help-item {
+    @apply flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-xs font-bold transition-colors;
+}
+
+.dashboard-layout__help-item--active {
+    @apply bg-black/5;
+}
+
+.dashboard-layout__help-item-icon {
+    @apply w-8 h-8 rounded-xl bg-black/5 flex items-center justify-center;
+}
+
+.dashboard-layout__help-item-icon-svg {
+    @apply text-black/40;
+}
+
+.dashboard-layout__profile-button {
+    @apply w-12 h-12 rounded-2xl bg-black flex items-center justify-center text-[#FFD300] font-bold text-xs shadow-xl shadow-black/20 hover:scale-110 transition-transform cursor-pointer focus:outline-none;
+}
+
+.dashboard-layout__profile-header {
+    @apply px-6 py-6 border-b border-black/5 bg-black/[0.01];
+}
+
+.dashboard-layout__profile-name {
+    @apply text-xs font-bold text-black;
+}
+
+.dashboard-layout__profile-email {
+    @apply text-[10px] font-semibold text-black/30 mt-1 italic;
+}
+
+.dashboard-layout__profile-item {
+    @apply flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-xs font-bold transition-colors;
+}
+
+.dashboard-layout__profile-item--active {
+    @apply bg-black/5;
+}
+
+.dashboard-layout__profile-item-icon {
+    @apply w-8 h-8 rounded-xl bg-black/5 flex items-center justify-center;
+}
+
+.dashboard-layout__profile-item-icon-svg {
+    @apply text-black/40;
+}
+
+.dashboard-layout__sign-out {
+    @apply flex items-center gap-3 px-4 py-3 w-full rounded-2xl text-xs font-bold transition-colors;
+}
+
+.dashboard-layout__sign-out--inactive {
+    @apply text-black/60;
+}
+
+.dashboard-layout__sign-out--active {
+    @apply bg-red-50 text-red-600;
+}
+
+.dashboard-layout__sign-out-icon {
+    @apply w-8 h-8 rounded-xl flex items-center justify-center transition-colors;
+}
+
+.dashboard-layout__sign-out-icon--inactive {
+    @apply bg-black/5 text-black/40;
+}
+
+.dashboard-layout__sign-out-icon--active {
+    @apply bg-red-500 text-white;
+}
+
+.dashboard-layout__page {
+    @apply px-8 pb-8 flex-1;
+}
+
+.dashboard-layout__overlay-top {
+    @apply absolute top-0 inset-x-0 h-32 bg-gradient-to-b from-white/10 to-transparent pointer-events-none;
+}
+
+.dashboard-layout__overlay-bottom {
+    @apply absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white/10 to-transparent pointer-events-none;
+}
+
+.dashboard-layout__search-dialog {
+    @apply relative z-[100];
+}
+
+.dashboard-layout__search-overlay {
+    @apply fixed inset-0 bg-black/40 backdrop-blur-xl;
+}
+
+.dashboard-layout__search-container {
+    @apply fixed inset-0 overflow-y-auto;
+}
+
+.dashboard-layout__search-panel-wrapper {
+    @apply flex min-h-full items-start justify-center p-4 pt-[15vh];
+}
+
+.dashboard-layout__search-panel {
+    @apply w-full max-w-2xl transform overflow-hidden rounded-[3rem] bg-white shadow-2xl transition-all border border-black/5;
+}
+
+.dashboard-layout__search-body {
+    @apply p-6;
+}
+
+.dashboard-layout__search-input-group {
+    @apply flex items-center gap-6 mb-8;
+}
+
+.dashboard-layout__search-icon {
+    @apply text-black/20 group-focus-within:text-black transition-colors;
+}
+
+.dashboard-layout__search-input {
+    @apply flex-1 bg-transparent border-none p-0 text-xl font-bold placeholder:text-black/10 focus:ring-0;
+}
+
+.dashboard-layout__search-close {
+    @apply w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center text-black/30 hover:bg-black/10 hover:text-black transition-all;
+}
+
+.dashboard-layout__search-sections {
+    @apply space-y-8;
+}
+
+.dashboard-layout__search-section-title {
+    @apply text-[10px] font-semibold text-black/20 mb-4 px-2;
+}
+
+.dashboard-layout__quick-search-grid {
+    @apply grid grid-cols-2 gap-3;
+}
+
+.dashboard-layout__quick-search-item {
+    @apply flex items-center gap-4 p-4 bg-black/5 border border-transparent hover:border-black/5 hover:bg-white transition-all rounded-2xl text-left;
+}
+
+.dashboard-layout__quick-search-icon {
+    @apply w-8 h-8 rounded-xl bg-white flex items-center justify-center text-black/20 transition-colors group-hover:text-black;
+}
+
+.dashboard-layout__quick-search-label {
+    @apply text-xs font-bold text-black/60 transition-colors group-hover:text-black;
+}
+
+.dashboard-layout__command-list {
+    @apply space-y-2;
+}
+
+.dashboard-layout__command-item {
+    @apply flex items-center justify-between w-full px-6 py-4 hover:bg-black/5 transition-colors rounded-2xl;
+}
+
+.dashboard-layout__command-item-left {
+    @apply flex items-center gap-4;
+}
+
+.dashboard-layout__command-item-icon {
+    @apply text-black/20 transition-colors group-hover:text-black;
+}
+
+.dashboard-layout__command-item-label {
+    @apply text-xs font-bold text-black/60 transition-colors group-hover:text-black;
+}
+
+.dashboard-layout__command-item-shortcut {
+    @apply text-[10px] font-semibold text-black/10 transition-colors group-hover:text-black/30 bg-black/5 px-2 py-1 rounded-md;
+}
+
+.dashboard-layout__search-footer {
+    @apply bg-black/5 px-6 py-3 flex justify-between items-center;
+}
+
+.dashboard-layout__search-footer-hints {
+    @apply flex gap-4;
+}
+
+.dashboard-layout__search-footer-hint {
+    @apply text-[10px] font-semibold text-black/30;
+}
+
+.dashboard-layout__search-footer-powered {
+    @apply flex items-center gap-2;
+}
+
+.dashboard-layout__search-footer-label {
+    @apply text-[10px] font-semibold text-black/30;
+}
+
+.dashboard-layout__search-footer-brand {
+    @apply text-xs font-bold tracking-tighter text-black/20;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@utility animate-fade-in {
+    animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}

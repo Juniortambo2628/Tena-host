@@ -1,0 +1,170 @@
+@import '../../legacy/css/bootstrap.min.css';
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #FFD300;
+    --color-secondary: #ffb100;
+    --color-dark: #1b1b1b;
+    --color-light: #f8f9fa;
+}
+
+/* Legacy Root Variables Compatibility */
+:root {
+    --bs-primary: #FFD300;
+    --bs-secondary: #ffb100;
+    --bs-white: #ffffff;
+    --bs-dark: #1b1b1b;
+    --bs-light: #f8f9fa;
+    --bs-primary-rgb: 255, 211, 0;
+    --bs-secondary-rgb: 255, 177, 0;
+}
+
+body {
+    background-color: white;
+    color: var(--bs-dark);
+}
+
+/* ROI Calculator Styles */
+.roi-result {
+    font-weight: 700;
+    color: var(--bs-primary);
+    transition: all 0.3s ease;
+}
+
+.roi-result.updating {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.roi-result.updated {
+    transform: scale(1.05);
+}
+
+/* Glassmorphism Utilities */
+.glassmorphism-modal {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Text Utilities */
+.font-standard-heading {
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    font-weight: 700;
+    color: black;
+}
+
+.font-standard-section-pill {
+    background-color: #1b1b1b;
+    color: #FFD300;
+    padding: 7.5px 17.5px;
+    border-radius: 8.5px;
+    font-weight: 700;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+.outlined-content {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--bs-primary);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Component Overrides */
+.btn-primary {
+    background-color: #1b1b1b !important;
+    color: #FFD300 !important;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-control,
+.form-select {
+    border-radius: 50rem !important;
+    /* Pill shape */
+    padding: 0.75rem 1.5rem;
+    border: 1px solid #ced4da;
+}
+
+@layer base {
+    body {
+        @apply bg-gray-950 text-gray-100 antialiased;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+}
+
+@layer components {
+    .glass-effect {
+        @apply bg-white/5 backdrop-blur-xl border border-white/10;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-red-500/20 rounded-full hover:bg-red-500/40 transition-colors;
+    }
+
+    .animate-gradient {
+        background-size: 200% 200%;
+        animation: gradient 8s ease infinite;
+    }
+
+    @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .tena-btn {
+        @apply flex items-center justify-center gap-2 rounded-[1rem] font-bold tracking-wide text-[10px] transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .tena-btn-primary {
+        @apply bg-[#1b1b1b] text-white shadow-sm hover:shadow-md hover:-translate-y-0.5;
+    }
+
+    .tena-btn-secondary {
+        @apply bg-[#FFD300] text-black shadow-sm hover:shadow-md hover:-translate-y-0.5;
+    }
+
+    .tena-btn-white {
+        @apply bg-white text-black border border-black/10 shadow-sm hover:shadow-md;
+    }
+
+    .tena-btn-ghost {
+        @apply bg-transparent text-black border border-black/10 hover:bg-black/5;
+    }
+
+    .tena-btn-danger {
+        @apply bg-red-600 text-white shadow-sm hover:shadow-md hover:-translate-y-0.5;
+    }
+}

@@ -1,0 +1,57 @@
+@reference "tailwindcss";
+
+.landing-cms {
+    @apply max-w-6xl mx-auto;
+}
+
+.landing-cms__header {
+    @apply flex items-center justify-between mb-8 px-1;
+}
+
+.landing-cms__header-info {
+    @apply space-y-1;
+}
+
+.landing-cms__header-text {
+    @apply text-xs font-bold text-black/40 uppercase tracking-widest;
+}
+
+.landing-cms__header-actions {
+    @apply flex items-center gap-3;
+}
+
+.landing-cms__saving {
+    @apply flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#FFD300];
+}
+
+.landing-cms__saving-dot {
+    @apply w-2 h-2 rounded-full bg-[#FFD300] animate-pulse;
+}
+
+.landing-cms__sections {
+    @apply space-y-3;
+}
+
+.landing-cms__section-wrapper {
+    @apply flex items-start gap-2 transition-opacity;
+}
+
+.landing-cms__section-wrapper--dragging {
+    @apply opacity-50;
+}
+
+.landing-cms__drag-handle {
+    @apply mt-4 p-2 text-black/20 hover:text-black/50 cursor-grab active:cursor-grabbing transition-colors;
+}
+
+.landing-cms__section-editor {
+    @apply flex-1;
+}
+
+.landing-cms__footer {
+    @apply mt-8 text-center;
+}
+
+.landing-cms__footer-text {
+    @apply text-[10px] font-bold text-black/30 uppercase tracking-widest;
+}

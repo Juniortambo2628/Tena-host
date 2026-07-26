@@ -1,0 +1,193 @@
+@reference "tailwindcss";
+
+.host-analytics-back {
+    @apply mb-6;
+}
+
+.host-analytics-back-link {
+    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
+}
+
+.host-analytics-stats-grid {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-6 mb-8;
+}
+
+.host-analytics-main-grid {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.host-analytics-chart-section {
+    @apply lg:col-span-2;
+}
+
+.host-analytics-chart-header {
+    @apply flex justify-between items-center mb-8;
+}
+
+.host-analytics-chart-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-1;
+}
+
+.host-analytics-chart-title {
+    @apply text-2xl font-semibold;
+}
+
+.host-analytics-chart-legend {
+    @apply flex items-center gap-4;
+}
+
+.host-analytics-chart-legend-item {
+    @apply flex items-center gap-2;
+}
+
+.host-analytics-chart-dot {
+    @apply w-2 h-2 rounded-full;
+}
+
+.host-analytics-chart-dot-yellow {
+    @apply bg-[#FFD300];
+}
+
+.host-analytics-chart-dot-black {
+    @apply bg-black;
+}
+
+.host-analytics-chart-legend-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+}
+
+.host-analytics-chart-container {
+    @apply h-[400px] w-full;
+}
+
+.host-analytics-sidebar {
+    @apply space-y-6;
+}
+
+.host-analytics-interaction-card {
+    @apply p-8;
+}
+
+.host-analytics-interaction-title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-6;
+}
+
+.host-analytics-device-list {
+    @apply space-y-6;
+}
+
+.host-analytics-device-item {
+    @apply flex items-center justify-between;
+}
+
+.host-analytics-device-label {
+    @apply text-xs font-bold text-black/60 uppercase tracking-widest;
+}
+
+.host-analytics-device-value-wrap {
+    @apply flex items-center gap-3;
+}
+
+.host-analytics-device-value {
+    @apply text-sm font-semibold text-black;
+}
+
+.host-analytics-device-trend-up {
+    @apply text-[10px] font-semibold text-green-500;
+}
+
+.host-analytics-device-trend-down {
+    @apply text-[10px] font-semibold text-red-500;
+}
+
+.host-analytics-divider {
+    @apply h-px bg-black/5 w-full my-8;
+}
+
+.host-analytics-domains-title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-4;
+}
+
+.host-analytics-domains-list {
+    @apply space-y-3;
+}
+
+.host-analytics-domain-item {
+    @apply flex items-center justify-between;
+}
+
+.host-analytics-domain-name {
+    @apply text-xs font-semibold text-black/40;
+}
+
+.host-analytics-domain-bar-wrap {
+    @apply flex items-center gap-4 flex-1 ml-6;
+}
+
+.host-analytics-domain-bar-bg {
+    @apply h-1 bg-black/5 flex-1 rounded-full overflow-hidden;
+}
+
+.host-analytics-domain-bar {
+    @apply h-full bg-black rounded-full;
+}
+
+.host-analytics-domain-percent {
+    @apply text-[10px] font-semibold text-black w-8;
+}
+
+.host-analytics-ai-card {
+    @apply bg-black text-white;
+}
+
+.host-analytics-ai-icon {
+    @apply text-[#FFD300] mb-6;
+}
+
+.host-analytics-ai-title {
+    @apply text-xl font-semibold mb-2 tracking-tight;
+}
+
+.host-analytics-ai-desc {
+    @apply text-sm text-white/50 font-medium leading-relaxed;
+}
+
+.host-analytics-ai-highlight {
+    @apply text-[#FFD300];
+}
+
+.host-analytics-stat-card {
+}
+
+.host-analytics-stat-card-inner {
+    @apply p-6;
+}
+
+.host-analytics-stat-icon-wrap {
+    @apply flex items-center gap-3 mb-4;
+}
+
+.host-analytics-stat-icon {
+    @apply w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center transition-colors;
+}
+
+.host-analytics-stat-card:hover .host-analytics-stat-icon {
+    @apply bg-black text-white;
+}
+
+.host-analytics-stat-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+}
+
+.host-analytics-stat-value {
+    @apply text-3xl font-semibold tracking-tight mb-1;
+}
+
+.host-analytics-stat-sub {
+    @apply text-[10px] font-bold text-black/30 transition-colors uppercase tracking-widest;
+}
+
+.host-analytics-stat-card:hover .host-analytics-stat-sub {
+    @apply text-black/60;
+}
+}

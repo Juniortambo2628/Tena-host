@@ -1,0 +1,45 @@
+@reference "tailwindcss";
+
+.delete-form-section {
+    @apply space-y-6;
+}
+
+.delete-form-header {
+    @apply mb-8;
+}
+
+.delete-form-title {
+    @apply text-[10px] font-semibold text-red-500 mb-2;
+}
+
+.delete-form-desc {
+    @apply text-sm font-bold text-black/60;
+}
+
+.delete-modal-form {
+    @apply p-10;
+}
+
+.delete-modal-title {
+    @apply text-2xl font-bold tracking-tight mb-4;
+}
+
+.delete-modal-desc {
+    @apply text-sm font-bold text-black/60 leading-relaxed mb-8;
+}
+
+.delete-modal-fields {
+    @apply space-y-3;
+}
+
+.delete-modal-label {
+    @apply block text-[10px] font-semibold text-black/30 ml-1;
+}
+
+.delete-modal-input {
+    @apply w-full bg-black/5 border-none rounded-2xl px-6 py-4 font-bold outline-none focus:ring-4 focus:ring-black/5 transition-all text-sm;
+}
+
+.delete-modal-actions {
+    @apply mt-10 flex gap-4;
+}

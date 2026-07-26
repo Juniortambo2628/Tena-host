@@ -1,0 +1,125 @@
+@reference "tailwindcss";
+
+.welcome-page {
+    @apply min-h-screen bg-white text-[#1b1b1b] font-sans selection:bg-[#FFD300] selection:text-black;
+}
+
+.welcome-nav {
+    @apply fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100;
+}
+
+.welcome-nav-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.welcome-nav-inner {
+    @apply flex justify-between items-center h-20;
+}
+
+.welcome-nav-logo {
+    @apply flex items-center;
+}
+
+.welcome-nav-logo img {
+    @apply h-12 w-12 rounded-xl;
+}
+
+.welcome-nav-links {
+    @apply hidden md:flex items-center space-x-10;
+}
+
+.welcome-nav-link {
+    @apply text-sm font-bold uppercase tracking-widest text-black hover:text-[#FFD300] transition-colors;
+}
+
+.welcome-nav-actions {
+    @apply flex items-center space-x-4;
+}
+
+.welcome-login-btn {
+    @apply text-sm font-bold uppercase tracking-widest px-6 py-2 border-2 border-black rounded-none bg-transparent text-black hover:bg-black hover:text-white transition-all;
+}
+
+.welcome-join-btn {
+    @apply text-sm font-bold uppercase tracking-widest px-6 py-2.5 bg-[#FFD300] text-black rounded-xl shadow-lg shadow-[#FFD300]/20 hover:scale-[1.05] active:scale-[0.98] transition-all;
+}
+
+.welcome-footer {
+    @apply bg-[#1b1b1b] text-white py-16;
+}
+
+.welcome-footer-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.welcome-footer-grid {
+    @apply grid grid-cols-1 md:grid-cols-4 gap-12 mb-12;
+}
+
+.welcome-footer-brand {
+    @apply col-span-1 md:col-span-1;
+}
+
+.welcome-footer-brand-link {
+    @apply mb-6 block;
+}
+
+.welcome-footer-brand-link img {
+    @apply h-12 w-12 rounded-xl;
+}
+
+.welcome-footer-brand-desc {
+    @apply text-gray-400 text-sm leading-relaxed mb-6;
+}
+
+.welcome-footer-heading-gold {
+    @apply font-bold mb-6 text-[#FFD300] text-lg;
+}
+
+.welcome-footer-heading {
+    @apply font-bold mb-6 text-white text-lg;
+}
+
+.welcome-footer-links {
+    @apply space-y-3 text-sm text-gray-400;
+}
+
+.welcome-footer-link {
+    @apply hover:text-white flex items-center;
+}
+
+.welcome-footer-link i {
+    @apply text-xs mr-2 text-[#FFD300];
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.welcome-footer-link-simple {
+    @apply hover:text-white;
+}
+
+.welcome-footer-contact {
+    @apply flex items-center gap-2;
+}
+
+.welcome-footer-contact i {
+    @apply text-[#FFD300];
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.welcome-footer-bottom {
+    @apply border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500;
+}
+
+.welcome-footer-brand-name {
+    @apply text-white;
+}
+
+.welcome-footer-bottom-links {
+    @apply flex space-x-6 mt-4 md:mt-0;
+}
+
+.welcome-footer-bottom-link {
+    @apply hover:text-white transition-colors;
+}

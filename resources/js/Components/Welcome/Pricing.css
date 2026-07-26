@@ -1,0 +1,77 @@
+@reference "tailwindcss";
+
+.pricing-cards-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-8 mb-16;
+}
+
+.pricing-card {
+    @apply h-full bg-white/90;
+}
+
+.pricing-card-inner {
+    @apply text-center h-full flex flex-col items-center;
+}
+
+.pricing-card-label {
+    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
+}
+
+.pricing-card-price {
+    @apply text-5xl font-bold mb-2;
+}
+
+.pricing-card-price-unit {
+    @apply text-lg font-normal text-gray-500;
+}
+
+.pricing-card-desc {
+    @apply text-gray-600 mb-8 flex-grow;
+}
+
+.pricing-card-cta-dark {
+    @apply w-full bg-black text-white hover:bg-gray-800;
+}
+
+.pricing-card-cta-outline {
+    @apply w-full py-3 rounded-xl border-2 border-black text-black font-medium hover:bg-gray-50 transition-colors;
+}
+
+.pricing-cta-section {
+    @apply max-w-4xl mx-auto mt-20;
+}
+
+.pricing-cta-card {
+    @apply bg-white relative overflow-hidden;
+}
+
+.pricing-cta-decoration {
+    @apply absolute top-0 right-0 w-32 h-32 bg-[#FFD300]/20 rounded-bl-full -mr-8 -mt-8;
+}
+
+.pricing-cta-content {
+    @apply relative z-10 text-center p-8;
+}
+
+.pricing-cta-label {
+    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
+}
+
+.pricing-cta-text {
+    @apply text-lg text-gray-700 leading-relaxed mb-8 max-w-2xl mx-auto;
+}
+
+.pricing-cta-button {
+    @apply px-8 py-3 rounded-xl border-2 border-black text-black font-bold hover:bg-gray-50 transition-colors inline-flex items-center;
+}
+
+.pricing-footer {
+    @apply text-center mt-12;
+}
+
+.pricing-footer-text {
+    @apply text-gray-500;
+}
+
+.pricing-footer-link {
+    @apply text-[#ffb100] hover:underline;
+}

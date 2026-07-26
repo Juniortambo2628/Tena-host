@@ -1,0 +1,165 @@
+@reference "tailwindcss";
+
+.guest-portal-page {
+    @apply min-h-screen bg-[#FDFCF7] text-black font-sans selection:bg-[#FFD300] flex flex-col items-center;
+}
+
+.guest-portal-hero {
+    @apply w-full h-[35vh] relative overflow-hidden;
+}
+
+.guest-portal-hero img {
+    @apply w-full h-full object-cover;
+}
+
+.guest-portal-hero-overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-[#FDFCF7] via-transparent to-black/20;
+}
+
+.guest-portal-logo-overlay {
+    @apply absolute top-8 left-8;
+}
+
+.guest-portal-logo-box {
+    @apply bg-white/20 backdrop-blur-md p-3 rounded-2xl border border-white/20;
+}
+
+.guest-portal-logo-box img {
+    @apply w-10 h-10 rounded-xl;
+}
+
+.guest-portal-content {
+    @apply w-full max-w-lg px-8 -mt-12 relative z-10 flex-1 flex flex-col;
+}
+
+.guest-portal-property-card {
+    @apply bg-white/70 backdrop-blur-2xl border border-white p-8 rounded-[2.5rem] shadow-2xl shadow-black/5 mb-8;
+}
+
+.guest-portal-welcome-label {
+    @apply text-[10px] font-semibold text-black/30 mb-2 block;
+}
+
+.guest-portal-property-name {
+    @apply text-4xl font-bold tracking-tighter leading-none mb-4;
+}
+
+.guest-portal-property-address {
+    @apply flex items-center gap-2 text-black/50 mb-6;
+}
+
+.guest-portal-property-address span {
+    @apply text-xs font-bold leading-tight uppercase tracking-wide;
+}
+
+.guest-portal-wifi-card {
+    @apply flex items-center gap-4 p-4 bg-black text-[#FFD300] rounded-2xl shadow-xl shadow-black/10;
+}
+
+.guest-portal-wifi-icon {
+    @apply w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center;
+}
+
+.guest-portal-wifi-info {
+    @apply flex-1;
+}
+
+.guest-portal-wifi-label {
+    @apply text-[10px] font-semibold text-white/40;
+}
+
+.guest-portal-wifi-name {
+    @apply text-sm font-bold tracking-tight;
+}
+
+.guest-portal-wifi-connect {
+    @apply px-4 py-2 bg-[#FFD300] text-black text-[10px] font-bold rounded-lg active:scale-95 transition-all;
+}
+
+.guest-portal-quick-info {
+    @apply grid grid-cols-2 gap-4 mb-8;
+}
+
+.guest-portal-info-card {
+    @apply bg-white border border-black/5 p-6 rounded-3xl hover:border-[#FFD300] transition-colors;
+}
+
+.guest-portal-info-card-clickable {
+    @apply cursor-pointer;
+}
+
+.guest-portal-info-icon {
+    @apply w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center mb-4 transition-colors;
+}
+
+.guest-portal-info-card:hover .guest-portal-info-icon {
+    @apply bg-[#FFD300]/10;
+}
+
+.guest-portal-info-label {
+    @apply text-[10px] font-semibold text-black/30 mb-1;
+}
+
+.guest-portal-info-title {
+    @apply font-bold text-sm;
+}
+
+.guest-portal-amenities {
+    @apply mb-12;
+}
+
+.guest-portal-amenities-title {
+    @apply text-[10px] font-semibold text-black/30 mb-6 px-2;
+}
+
+.guest-portal-amenities-list {
+    @apply space-y-3;
+}
+
+.guest-portal-amenity-item {
+    @apply flex items-center justify-between p-5 bg-white border border-black/5 rounded-2xl hover:border-black/10 transition-all;
+}
+
+.guest-portal-amenity-icon {
+    @apply w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center text-black/30 transition-colors;
+}
+
+.guest-portal-amenity-item:hover .guest-portal-amenity-icon {
+    @apply text-black;
+}
+
+.guest-portal-amenity-name {
+    @apply text-sm font-bold text-black/80 block;
+}
+
+.guest-portal-amenity-price {
+    @apply text-[10px] font-semibold text-[#FFD300];
+}
+
+.guest-portal-amenity-order-btn {
+    @apply px-4 py-2 bg-black text-[#FFD300] text-[10px] font-bold rounded-xl active:scale-95 transition-all disabled:opacity-50;
+}
+
+.guest-portal-footer {
+    @apply mt-auto py-12 text-center;
+}
+
+.guest-portal-footer-badge {
+    @apply flex items-center justify-center gap-2 mb-2;
+}
+
+.guest-portal-footer-label {
+    @apply text-[10px] font-semibold text-black/30;
+}
+
+.guest-portal-footer-brand {
+    @apply flex items-center justify-center gap-2;
+}
+
+.guest-portal-footer-brand img {
+    @apply w-5 h-5 rounded-sm grayscale opacity-30;
+}
+
+.guest-portal-footer-brand-name {
+    @apply text-sm font-bold tracking-tighter text-black/20;
+}

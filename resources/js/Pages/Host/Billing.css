@@ -1,0 +1,185 @@
+@reference "tailwindcss";
+
+.host-billing-container {
+    @apply max-w-4xl mx-auto space-y-8;
+}
+
+.host-billing-heading {
+    @apply text-2xl font-bold text-black tracking-tight;
+}
+
+.host-billing-subheading {
+    @apply text-gray-500 font-medium mt-2;
+}
+
+.host-billing-plan-card {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-8 shadow-xl;
+}
+
+.host-billing-plan-header {
+    @apply flex items-center justify-between;
+}
+
+.host-billing-plan-title {
+    @apply text-xl font-bold text-black;
+}
+
+.host-billing-plan-desc {
+    @apply text-gray-500 font-bold mt-1;
+}
+
+.host-billing-plan-ending {
+    @apply text-red-500 ml-2;
+}
+
+.host-billing-plan-badge {
+    @apply px-6 py-2 bg-black text-[#FFD300] font-semibold rounded-xl tracking-widest text-xs;
+}
+
+.host-billing-methods-grid {
+    @apply grid md:grid-cols-2 gap-8;
+}
+
+.host-billing-payment-card {
+    @apply bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-8 shadow-xl;
+}
+
+.host-billing-payment-title {
+    @apply text-lg font-bold text-black mb-6;
+}
+
+.host-billing-tabs {
+    @apply flex p-1 bg-black/5 rounded-xl mb-8;
+}
+
+.host-billing-tab {
+    @apply flex-1 py-2 rounded-lg text-xs font-semibold transition-all;
+}
+
+.host-billing-tab-active-card {
+    @apply bg-black text-[#FFD300] shadow-lg;
+}
+
+.host-billing-tab-active-mpesa {
+    @apply bg-[#4CAF50] text-white shadow-lg;
+}
+
+.host-billing-tab-inactive {
+    @apply text-black/40 hover:text-black;
+}
+
+.host-billing-form {
+    @apply space-y-6;
+}
+
+.host-billing-card-element {
+    @apply p-4 bg-white rounded-xl border border-black/5;
+}
+
+.host-billing-card-element-inner {
+    @apply py-2;
+}
+
+.host-billing-error {
+    @apply text-red-500 text-xs font-bold;
+}
+
+.host-billing-submit-btn {
+    @apply w-full py-4 bg-black text-[#FFD300] rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+.host-billing-secured-text {
+    @apply text-[10px] text-gray-400 text-center font-semibold uppercase tracking-widest;
+}
+
+.host-billing-field-label {
+    @apply block text-xs font-semibold tracking-widest text-gray-500 mb-2;
+}
+
+.host-billing-input-wrapper {
+    @apply relative;
+}
+
+.host-billing-input-icon {
+    @apply absolute left-4 top-1/2 -translate-y-1/2 text-gray-400;
+}
+
+.host-billing-input {
+    @apply w-full pl-12 pr-4 py-3 bg-white border border-black/5 rounded-xl focus:ring-2 focus:ring-[#4CAF50] focus:border-transparent font-bold;
+}
+
+.host-billing-field-error {
+    @apply text-red-500 text-xs mt-1 font-bold;
+}
+
+.host-billing-mpesa-btn {
+    @apply w-full py-4 bg-[#4CAF50] text-white rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+}
+
+.host-billing-mpesa-text {
+    @apply text-[10px] text-gray-400 text-center font-semibold uppercase tracking-widest;
+}
+
+.host-billing-simulate-section {
+    @apply mt-8 pt-8 border-t border-black/5;
+}
+
+.host-billing-simulate-btn {
+    @apply w-full py-3 bg-gray-100 text-gray-600 rounded-xl font-semibold hover:bg-gray-200 transition-colors text-xs;
+}
+
+.host-billing-tx-section {
+    @apply space-y-4;
+}
+
+.host-billing-tx-title {
+    @apply text-lg font-bold text-black;
+}
+
+.host-billing-tx-list {
+    @apply space-y-3;
+}
+
+.host-billing-tx-card {
+    @apply bg-white/40 backdrop-blur border border-white/60 p-4 rounded-xl flex items-center justify-between;
+}
+
+.host-billing-tx-info {
+    @apply flex items-center gap-3;
+}
+
+.host-billing-tx-status-icon {
+    @apply w-10 h-10 rounded-full flex items-center justify-center;
+}
+
+.host-billing-tx-status-completed {
+    @apply bg-green-100 text-green-600;
+}
+
+.host-billing-tx-status-pending {
+    @apply bg-yellow-100 text-yellow-600;
+}
+
+.host-billing-tx-status-failed {
+    @apply bg-red-100 text-red-600;
+}
+
+.host-billing-tx-amount {
+    @apply font-bold text-sm;
+}
+
+.host-billing-tx-date {
+    @apply text-[10px] uppercase font-semibold tracking-widest text-black/40;
+}
+
+.host-billing-tx-status-badge {
+    @apply text-[10px] font-semibold tracking-widest px-2 py-1 rounded-md;
+}
+
+.host-billing-empty {
+    @apply text-center p-8 border-2 border-dashed border-black/5 rounded-2xl;
+}
+
+.host-billing-empty-text {
+    @apply text-black/40 font-bold text-sm;
+}

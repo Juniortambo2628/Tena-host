@@ -1,0 +1,37 @@
+@reference "tailwindcss";
+
+.section-wrapper {
+    @apply py-24;
+}
+
+.section-wrapper--white {
+    @apply bg-white;
+}
+
+.section-wrapper--gray {
+    @apply bg-gray-50;
+}
+
+.section-wrapper--dark {
+    @apply bg-[#1b1b1b] text-white;
+}
+
+.section-wrapper--sm {
+    @apply py-16;
+}
+
+.section-wrapper--lg {
+    @apply py-32;
+}
+
+.section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.section-container--narrow {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.section-container--wide {
+    @apply max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8;
+}

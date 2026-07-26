@@ -1,0 +1,51 @@
+@reference "tailwindcss";
+
+.feature-card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col;
+}
+
+.feature-card--flat {
+    @apply border-0 shadow-none;
+}
+
+.feature-card--outlined {
+    @apply border-2 border-[#FFD300];
+}
+
+.feature-card-image-wrap {
+    @apply relative h-48 overflow-hidden;
+}
+
+.feature-card-image {
+    @apply w-full h-full object-cover;
+}
+
+.feature-card-image-overlay {
+    @apply absolute inset-0 bg-[#1b1b1b]/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300;
+}
+
+.feature-card-content {
+    @apply p-6 flex-1 flex flex-col;
+}
+
+.feature-card-icon-wrap {
+    @apply mb-4 flex items-center justify-center w-16 h-16 rounded-xl bg-gray-50;
+}
+
+.feature-card-icon-wrap i {
+    @apply text-[#FFD300] text-3xl;
+}
+
+.feature-card-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    @apply text-xl font-bold text-[#1b1b1b] mb-3;
+}
+
+.feature-card-desc {
+    @apply text-gray-600 text-sm leading-relaxed flex-1;
+}
+
+.feature-card-step {
+    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-xs px-3 py-1.5 rounded-full mb-4 self-start;
+}

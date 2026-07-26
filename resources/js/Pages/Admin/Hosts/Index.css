@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.hosts-pagination-bar {
+    @apply px-8 py-6 border-t border-black/5 flex justify-between items-center bg-gray-50/50;
+}
+
+.hosts-pagination-info {
+    @apply text-[10px] font-semibold text-black/40 uppercase tracking-widest;
+}
+
+.hosts-pagination-links {
+    @apply flex gap-2;
+}
+
+.hosts-pagination-link {
+    @apply px-4 py-2 rounded-lg text-[10px] font-bold transition-colors;
+}
+
+.hosts-pagination-link-active {
+    @apply bg-black text-[#FFD300];
+}
+
+.hosts-pagination-link-inactive {
+    @apply bg-black/5 text-black hover:bg-black/10;
+}
+
+.hosts-pagination-disabled {
+    @apply px-4 py-2 rounded-lg text-[10px] font-bold text-black/30 bg-black/5 cursor-not-allowed;
+}

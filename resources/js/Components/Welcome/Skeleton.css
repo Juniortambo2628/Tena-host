@@ -1,0 +1,25 @@
+@reference "tailwindcss";
+
+.skeleton {
+    @apply bg-gray-200 animate-pulse;
+}
+
+.skeleton-hero {
+    @apply pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-44 bg-gray-50;
+}
+
+.skeleton-hero__container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.skeleton-hero__content {
+    @apply flex flex-col lg:flex-row items-center gap-12;
+}
+
+.skeleton-hero__text {
+    @apply w-full lg:w-1/2 space-y-3;
+}
+
+.skeleton-hero__image {
+    @apply w-full lg:w-1/2 h-80;
+}

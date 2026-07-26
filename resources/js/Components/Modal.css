@@ -1,0 +1,34 @@
+@reference "tailwindcss";
+
+.modal {
+    @apply relative z-50;
+}
+
+.modal__backdrop {
+    @apply fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in;
+}
+
+.modal__wrapper {
+    @apply fixed inset-0 z-10 w-screen overflow-y-auto;
+}
+
+.modal__container {
+    @apply flex min-h-full items-center justify-center p-4 text-center sm:p-0;
+}
+
+.modal__panel {
+    @apply relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full dark:bg-gray-800;
+}
+
+.modal__panel--sm { @apply sm:max-w-sm; }
+.modal__panel--md { @apply sm:max-w-md; }
+.modal__panel--lg { @apply sm:max-w-lg; }
+.modal__panel--xl { @apply sm:max-w-xl; }
+.modal__panel--2xl { @apply sm:max-w-2xl; }
+
+.modal__enter { @apply ease-out duration-300; }
+.modal__enter-from { @apply opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95; }
+.modal__enter-to { @apply opacity-100 translate-y-0 sm:scale-100; }
+.modal__leave { @apply ease-in duration-200; }
+.modal__leave-from { @apply opacity-100 translate-y-0 sm:scale-100; }
+.modal__leave-to { @apply opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95; }

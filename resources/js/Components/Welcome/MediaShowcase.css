@@ -1,0 +1,47 @@
+@reference "tailwindcss";
+
+.media-showcase {
+    @apply max-w-5xl mx-auto space-y-8;
+}
+
+.media-showcase__header {
+    @apply text-center space-y-3;
+}
+
+.media-showcase__heading {
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    @apply text-3xl md:text-4xl font-bold;
+}
+
+.media-showcase__description {
+    @apply text-gray-500 text-lg max-w-2xl mx-auto;
+}
+
+.media-showcase__container {
+    @apply relative rounded-3xl overflow-hidden shadow-2xl shadow-black/10 aspect-video;
+}
+
+.media-showcase__video,
+.media-showcase__image {
+    @apply w-full h-full object-cover;
+}
+
+.media-showcase__overlay {
+    @apply absolute inset-0 bg-gradient-to-t from-[#FFD300]/90 via-[#FFD300]/40 to-transparent
+           flex items-end justify-center pb-16;
+}
+
+.media-showcase__brand {
+    @apply text-center;
+}
+
+.media-showcase__logo {
+    @apply w-16 h-16 rounded-2xl mx-auto mb-4 shadow-lg;
+}
+
+.media-showcase__tagline {
+    @apply text-[#1b1b1b] text-xl md:text-2xl font-bold tracking-tight;
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+}

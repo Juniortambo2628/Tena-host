@@ -1,0 +1,104 @@
+@reference "tailwindcss";
+
+.hero-wrapper {
+    @apply pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-44 bg-gray-50;
+}
+
+.hero-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.hero-main-card {
+    @apply bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden;
+}
+
+.hero-content {
+    @apply flex flex-col lg:flex-row items-center gap-12 p-8 md:p-12 lg:p-16;
+}
+
+.hero-text {
+    @apply w-full lg:w-1/2;
+}
+
+.hero-badge-wrap {
+    @apply mb-6;
+}
+
+.hero-badge {
+    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide;
+}
+
+.hero-title {
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    @apply text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-[#1b1b1b] leading-[1.1] mb-6;
+}
+
+.hero-title-highlight {
+    @apply text-[#FFD300];
+}
+
+.hero-subtitle {
+    @apply text-lg text-gray-600 mb-8 max-w-lg leading-relaxed;
+}
+
+.hero-cta-group {
+    @apply flex flex-col sm:flex-row gap-4;
+}
+
+.hero-btn-primary {
+    @apply px-8 py-4 bg-[#1b1b1b] text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-base;
+}
+
+.hero-btn-secondary {
+    @apply px-8 py-4 bg-transparent text-[#1b1b1b] border-2 border-[#1b1b1b] rounded-xl font-bold hover:bg-[#1b1b1b] hover:text-white transition-all duration-300 text-base;
+}
+
+.hero-image-col {
+    @apply w-full lg:w-1/2;
+}
+
+.hero-image-wrap {
+    @apply relative rounded-2xl overflow-hidden;
+}
+
+.hero-image {
+    @apply w-full h-auto object-cover rounded-2xl;
+    aspect-ratio: 4/3;
+}
+
+.hero-features-row {
+    @apply mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.hero-feature-item {
+    @apply flex-none;
+}
+
+.hero-feature-card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:-translate-y-1 transition-transform duration-300 h-full flex flex-col;
+}
+
+.hero-feature-image-wrap {
+    @apply relative h-40 overflow-hidden;
+}
+
+.hero-feature-image {
+    @apply w-full h-full object-cover;
+}
+
+.hero-feature-image-overlay {
+    @apply absolute inset-0 bg-[#1b1b1b]/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300;
+}
+
+.hero-feature-content {
+    @apply p-5 flex-1 flex flex-col;
+}
+
+.hero-feature-title {
+    @apply text-base font-bold text-[#1b1b1b] mb-2;
+}
+
+.hero-feature-desc {
+    @apply text-gray-500 text-sm leading-relaxed flex-1;
+}

@@ -1,0 +1,73 @@
+@reference "tailwindcss";
+
+.dashboard-hero {
+    @apply sticky top-0 z-20 -mx-10 px-10 py-4 mb-6 bg-[#FDFCF7]/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+}
+
+.dashboard-hero__header {
+    @apply flex flex-col md:flex-row md:items-end justify-between gap-6;
+}
+
+.dashboard-hero__title-block {
+    @apply block;
+}
+
+.dashboard-hero__breadcrumbs {
+    @apply flex items-center gap-2 text-[10px] font-semibold text-black/30 mb-2;
+}
+
+.dashboard-hero__breadcrumb-link {
+    @apply hover:text-black transition-colors;
+}
+
+.dashboard-hero__breadcrumb-separator {
+    @apply opacity-30;
+}
+
+.dashboard-hero__breadcrumb-current {
+    @apply text-black/60;
+}
+
+.dashboard-hero__title {
+    @apply text-3xl md:text-4xl font-bold text-black tracking-tight leading-none;
+}
+
+.dashboard-hero__actions {
+    @apply flex flex-wrap items-center gap-3;
+}
+
+.dashboard-hero__stats {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-4 mt-6;
+}
+
+.dashboard-hero__stat {
+    @apply flex flex-col;
+}
+
+.dashboard-hero__stat-label {
+    @apply text-[10px] font-semibold text-black/30 mb-1;
+}
+
+.dashboard-hero__stat-row {
+    @apply flex items-baseline gap-2;
+}
+
+.dashboard-hero__stat-value {
+    @apply text-2xl font-bold text-black;
+}
+
+.dashboard-hero__stat-trend {
+    @apply text-[10px] font-bold;
+}
+
+.dashboard-hero__stat-trend--positive {
+    @apply text-green-500;
+}
+
+.dashboard-hero__stat-trend--negative {
+    @apply text-red-500;
+}
+
+.dashboard-hero__divider {
+    @apply h-px bg-black/5 w-full mt-6;
+}

@@ -1,0 +1,101 @@
+@reference "tailwindcss";
+
+.guidebook-page {
+    @apply min-h-screen bg-[#FFD300] flex flex-col items-center p-6 pb-20 font-sans;
+}
+
+.guidebook-header {
+    @apply w-full max-w-sm flex flex-col items-center pt-8 pb-10;
+}
+
+.guidebook-logo {
+    @apply w-20 h-20 rounded-2xl shadow-xl mb-4;
+}
+
+.guidebook-label {
+    @apply text-[10px] font-semibold uppercase tracking-[0.3em] text-black/40;
+}
+
+.guidebook-feature-card {
+    @apply w-full max-w-sm bg-white rounded-[2.5rem] overflow-hidden shadow-2xl mb-8;
+}
+
+.guidebook-feature-image {
+    @apply aspect-square bg-gray-100 relative overflow-hidden;
+}
+
+.guidebook-feature-image img {
+    @apply w-full h-full object-cover transition-transform duration-700;
+}
+
+.guidebook-feature-card:hover .guidebook-feature-image img {
+    @apply scale-110;
+}
+
+.guidebook-feature-info {
+    @apply absolute inset-x-6 bottom-6;
+}
+
+.guidebook-feature-info-box {
+    @apply bg-white/95 backdrop-blur-md rounded-2xl p-6 shadow-xl text-center;
+}
+
+.guidebook-feature-name {
+    @apply text-xl font-bold tracking-tight mb-1;
+}
+
+.guidebook-feature-address {
+    @apply text-xs font-bold text-gray-400;
+}
+
+.guidebook-amenities {
+    @apply w-full max-w-sm mb-8;
+}
+
+.guidebook-amenities-title {
+    @apply text-[10px] font-semibold text-black/30 mb-4 px-2;
+}
+
+.guidebook-amenities-list {
+    @apply space-y-3;
+}
+
+.guidebook-amenity-item {
+    @apply bg-white/90 backdrop-blur-sm p-4 rounded-2xl flex items-center gap-3 shadow-lg;
+}
+
+.guidebook-amenity-icon {
+    @apply w-8 h-8 rounded-lg bg-[#fcf5e5] border border-[#FFD300]/30 flex items-center justify-center text-black;
+}
+
+.guidebook-amenity-name {
+    @apply text-sm font-bold;
+}
+
+.guidebook-modules {
+    @apply w-full max-w-sm grid grid-cols-2 gap-4;
+}
+
+.guidebook-module-btn {
+    @apply bg-white/90 backdrop-blur-sm p-6 rounded-[2rem] text-left flex flex-col gap-4 shadow-xl hover:bg-white transition-all active:scale-95;
+}
+
+.guidebook-module-icon {
+    @apply w-10 h-10 rounded-xl bg-[#fcf5e5] border border-[#FFD300]/30 flex items-center justify-center text-black shadow-inner;
+}
+
+.guidebook-module-name {
+    @apply text-sm font-bold mb-1 transition-colors;
+}
+
+.guidebook-module-btn:hover .guidebook-module-name {
+    @apply text-[#FFD300];
+}
+
+.guidebook-module-desc {
+    @apply text-[10px] font-bold text-gray-500 leading-tight line-clamp-2 uppercase tracking-tight;
+}
+
+.guidebook-footer {
+    @apply mt-12 text-black/30 font-semibold text-[10px];
+}

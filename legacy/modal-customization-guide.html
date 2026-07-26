@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Customization Guide - Tena</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    
+    <style>
+        .guide-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .modal-custom {
+            --bs-modal-bg: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            --bs-modal-border-color: var(--bs-primary);
+            --bs-modal-border-width: 2px;
+            --bs-modal-border-radius: 20px;
+            --bs-modal-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-custom .modal-content {
+            background: var(--bs-modal-bg);
+            border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
+            border-radius: var(--bs-modal-border-radius);
+            box-shadow: var(--bs-modal-box-shadow);
+        }
+        
+        .modal-custom .modal-header {
+            border-bottom: 1px solid rgba(255, 211, 0, 0.3);
+            background: rgba(255, 211, 0, 0.1);
+        }
+        
+        .modal-custom .modal-title {
+            color: var(--bs-primary);
+            font-weight: bold;
+        }
+        
+        .modal-custom .btn-close {
+            filter: invert(1);
+        }
+        
+        .modal-custom .modal-body {
+            color: white;
+        }
+        
+        .modal-custom .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 211, 0, 0.3);
+            color: white;
+        }
+        
+        .modal-custom .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 0.2rem rgba(255, 211, 0, 0.25);
+            color: white;
+        }
+        
+        .modal-custom .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .modal-custom .btn-primary {
+            background: var(--bs-primary);
+            color: #000;
+            border: none;
+            font-weight: 600;
+        }
+        
+        .modal-custom .btn-primary:hover {
+            background: #e6c200;
+            transform: translateY(-2px);
+        }
+        
+        .modal-animated {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal-backdrop-custom {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body style="background: #f8f9fa; padding: 2rem;">
+    <div class="container">
+        <h1 class="text-center mb-5">Modal Dialog Customization Guide</h1>
+        
+        <!-- Basic Customization -->
+        <div class="guide-section">
+            <h2>1. Basic Modal Customization</h2>
+            <p>Here's how to customize your modal dialogs to match the Tena theme:</p>
+            
+            <h4>CSS Variables Approach (Recommended)</h4>
+            <div class="code-block">
+/* Add this to your CSS file */
+.modal-custom {
+    --bs-modal-bg: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+    --bs-modal-border-color: var(--bs-primary);
+    --bs-modal-border-width: 2px;
+    --bs-modal-border-radius: 20px;
+    --bs-modal-box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-custom .modal-content {
+    background: var(--bs-modal-bg);
+    border: var(--bs-modal-border-width) solid var(--bs-modal-border-color);
+    border-radius: var(--bs-modal-border-radius);
+    box-shadow: var(--bs-modal-box-shadow);
+}
+            </div>
+            
+            <h4>HTML Usage</h4>
+            <div class="code-block">
+&lt;div class="modal fade modal-custom" id="customModal" tabindex="-1"&gt;
+    &lt;div class="modal-dialog modal-dialog-centered"&gt;
+        &lt;div class="modal-content"&gt;
+            &lt;div class="modal-header"&gt;
+                &lt;h5 class="modal-title"&gt;Custom Modal&lt;/h5&gt;
+                &lt;button type="button" class="btn-close" data-bs-dismiss="modal"&gt;&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class="modal-body"&gt;
+                Your content here
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+        </div>
+        
+        <!-- Advanced Styling -->
+        <div class="guide-section">
+            <h2>2. Advanced Modal Styling</h2>
+            
+            <h4>Complete Custom Modal Styles</h4>
+            <div class="code-block">
+/* Complete custom modal styling */
+.modal-custom .modal-header {
+    border-bottom: 1px solid rgba(255, 211, 0, 0.3);
+    background: rgba(255, 211, 0, 0.1);
+    border-radius: 18px 18px 0 0;
+}
+
+.modal-custom .modal-title {
+    color: var(--bs-primary);
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.modal-custom .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.modal-custom .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-custom .modal-body {
+    color: white;
+    padding: 2rem;
+}
+
+.modal-custom .form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 211, 0, 0.3);
+    color: white;
+    border-radius: 10px;
+}
+
+.modal-custom .form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(255, 211, 0, 0.25);
+    color: white;
+}
+
+.modal-custom .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.modal-custom .btn-primary {
+    background: var(--bs-primary);
+    color: #000;
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.modal-custom .btn-primary:hover {
+    background: #e6c200;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 211, 0, 0.3);
+}
+            </div>
+        </div>
+        
+        <!-- Animations -->
+        <div class="guide-section">
+            <h2>3. Modal Animations</h2>
+            
+            <h4>Custom Animation Classes</h4>
+            <div class="code-block">
+/* Modal animations */
+.modal-animated {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-backdrop-custom {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+            </div>
+            
+            <h4>JavaScript for Enhanced Animations</h4>
+            <div class="code-block">
+// Enhanced modal animations
+document.addEventListener('DOMContentLoaded', function() {
+    const modals = document.querySelectorAll('.modal');
+    
+    modals.forEach(modal => {
+        modal.addEventListener('show.bs.modal', function() {
+            // Add animation class when modal opens
+            this.classList.add('modal-animated');
+            
+            // Create custom backdrop
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop-custom';
+            backdrop.id = 'custom-backdrop';
+            document.body.appendChild(backdrop);
+        });
+        
+        modal.addEventListener('hidden.bs.modal', function() {
+            // Remove animation class
+            this.classList.remove('modal-animated');
+            
+            // Remove custom backdrop
+            const backdrop = document.getElementById('custom-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        });
+    });
+});
+            </div>
+        </div>
+        
+        <!-- Different Modal Types -->
+        <div class="guide-section">
+            <h2>4. Different Modal Types</h2>
+            
+            <h4>Waitlist Modal (Current)</h4>
+            <div class="code-block">
+&lt;div class="modal fade modal-custom" id="waitlistModal" tabindex="-1"&gt;
+    &lt;div class="modal-dialog modal-dialog-centered modal-lg"&gt;
+        &lt;div class="modal-content"&gt;
+            &lt;div class="modal-header"&gt;
+                &lt;h5 class="modal-title"&gt;Join the Tena Waitlist&lt;/h5&gt;
+                &lt;button type="button" class="btn-close" data-bs-dismiss="modal"&gt;&lt;/button&gt;
+            &lt;/div&gt;
+            &lt;div class="modal-body"&gt;
+                &lt;form&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Email Address&lt;/label&gt;
+                        &lt;input type="email" class="form-control" placeholder="Enter your email"&gt;
+                    &lt;/div&gt;
+                    &lt;div class="mb-3"&gt;
+                        &lt;label class="form-label"&gt;Property Type&lt;/label&gt;
+                        &lt;select class="form-control"&gt;
+                            &lt;option&gt;Vacation Rental&lt;/option&gt;
+                            &lt;option&gt;Hotel&lt;/option&gt;
+                            &lt;option&gt;Other&lt;/option&gt;
+                        &lt;/select&gt;
+                    &lt;/div&gt;
+                &lt;/form&gt;
+            &lt;/div&gt;
+            &lt;div class="modal-footer"&gt;
+                &lt;button type="button" class="btn btn-secondary" data-bs-dismiss="modal"&gt;Cancel&lt;/button&gt;
+                &lt;button type="button" class="btn btn-primary"&gt;Join Waitlist&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+            
+            <h4>Confirmation Modal</h4>
+            <div class="code-block">
+&lt;div class="modal fade modal-custom" id="confirmModal" tabindex="-1"&gt;
+    &lt;div class="modal-dialog modal-dialog-centered"&gt;
+        &lt;div class="modal-content"&gt;
+            &lt;div class="modal-body text-center"&gt;
+                &lt;i class="fas fa-question-circle fa-3x text-primary mb-3"&gt;&lt;/i&gt;
+                &lt;h5 class="mb-3"&gt;Are you sure?&lt;/h5&gt;
+                &lt;p class="text-muted"&gt;This action cannot be undone.&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class="modal-footer justify-content-center"&gt;
+                &lt;button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal"&gt;Cancel&lt;/button&gt;
+                &lt;button type="button" class="btn btn-primary"&gt;Confirm&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+            </div>
+        </div>
+        
+        <!-- Live Examples -->
+        <div class="guide-section">
+            <h2>5. Live Examples</h2>
+            <p>Click the buttons below to see the customized modals in action:</p>
+            
+            <div class="d-flex gap-3 flex-wrap">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal1">
+                    Basic Custom Modal
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                    Waitlist Modal
+                </button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+                    Confirmation Modal
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Example Modals -->
+    <div class="modal fade modal-custom" id="exampleModal1" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Basic Custom Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>This is a basic custom modal with Tena theming applied.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Action</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade modal-custom" id="exampleModal2" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Join the Tena Waitlist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Property Type</label>
+                            <select class="form-control">
+                                <option>Vacation Rental</option>
+                                <option>Hotel</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message (Optional)</label>
+                            <textarea class="form-control" rows="3" placeholder="Tell us about your property..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Join Waitlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade modal-custom" id="exampleModal3" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <i class="fas fa-question-circle fa-3x text-primary mb-3"></i>
+                    <h5 class="mb-3">Are you sure?</h5>
+                    <p class="text-muted">This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Enhanced modal animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = document.querySelectorAll('.modal-custom');
+            
+            modals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function() {
+                    this.classList.add('modal-animated');
+                });
+                
+                modal.addEventListener('hidden.bs.modal', function() {
+                    this.classList.remove('modal-animated');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

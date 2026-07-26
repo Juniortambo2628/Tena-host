@@ -1,0 +1,101 @@
+@reference "tailwindcss";
+
+.email-preview {
+    @apply flex flex-col h-full bg-black/5 rounded-[2.5rem] overflow-hidden border border-black/5;
+}
+
+.email-preview__toolbar {
+    @apply p-6 bg-white flex items-center justify-between border-b border-black/5;
+}
+
+.email-preview__toolbar-section {
+    @apply flex items-center gap-4;
+}
+
+.email-preview__template-tabs {
+    @apply flex bg-black/5 p-1 rounded-xl;
+}
+
+.email-preview__template-button {
+    @apply px-4 py-2 rounded-lg text-[10px] font-bold transition-all;
+}
+
+.email-preview__template-button--inactive {
+    @apply text-black/40 hover:text-black;
+}
+
+.email-preview__template-button--active {
+    @apply bg-black text-[#FFD300] shadow-lg shadow-black/10;
+}
+
+.email-preview__view-tabs {
+    @apply flex items-center gap-2 bg-black/5 p-1 rounded-xl;
+}
+
+.email-preview__view-button {
+    @apply p-2 rounded-lg transition-all;
+}
+
+.email-preview__view-button--inactive {
+    @apply text-black/40 hover:text-black;
+}
+
+.email-preview__view-button--active {
+    @apply bg-white text-black shadow-sm;
+}
+
+.email-preview__stage {
+    @apply flex-1 p-8 overflow-y-auto flex justify-center items-start bg-black/[0.02];
+}
+
+.email-preview__frame {
+    @apply bg-white shadow-2xl shadow-black/5 rounded-3xl overflow-hidden border border-black/5 min-h-[600px];
+}
+
+.email-preview__inbox-header {
+    @apply p-6 border-b border-black/5 flex items-center gap-4 bg-white sticky top-0 z-10;
+}
+
+.email-preview__sender-avatar {
+    @apply w-10 h-10 rounded-full bg-black flex items-center justify-center text-[#FFD300];
+}
+
+.email-preview__sender-info {
+    @apply flex-1 min-w-0;
+}
+
+.email-preview__sender-name {
+    @apply text-sm font-bold;
+}
+
+.email-preview__recipient {
+    @apply text-[10px] font-bold text-black/40 truncate;
+}
+
+.email-preview__content-frame {
+    @apply h-[600px] overflow-hidden;
+}
+
+.email-preview__iframe {
+    @apply w-full h-full border-none;
+}
+
+.email-preview__footer {
+    @apply px-8 py-4 bg-white/50 backdrop-blur-xl border-t border-black/5 flex items-center justify-between;
+}
+
+.email-preview__footer-status {
+    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+}
+
+.email-preview__live-indicator {
+    @apply flex items-center gap-1;
+}
+
+.email-preview__live-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse;
+}
+
+.email-preview__live-label {
+    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest font-mono;
+}

@@ -1,0 +1,97 @@
+@reference "tailwindcss";
+
+.layout-two-column {
+    @apply grid grid-cols-1 lg:grid-cols-12 items-start gap-8;
+}
+
+.layout-two-column--align-center {
+    @apply items-center;
+}
+
+.layout-three-column {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+}
+
+.layout-main-column {
+    @apply space-y-8;
+}
+
+.layout-main-column--span-2 {
+    @apply lg:col-span-2;
+}
+
+.layout-main-column--span-5 {
+    @apply lg:col-span-5;
+}
+
+.layout-main-column--span-6 {
+    @apply lg:col-span-6;
+}
+
+.layout-main-column--span-7 {
+    @apply lg:col-span-7;
+}
+
+.layout-main-column--span-8 {
+    @apply lg:col-span-8;
+}
+
+.layout-main-column--span-9 {
+    @apply lg:col-span-9;
+}
+
+.layout-main-column--span-10 {
+    @apply lg:col-span-10;
+}
+
+.layout-main-column--span-12 {
+    @apply lg:col-span-12;
+}
+
+.layout-sidebar-column {
+    @apply space-y-6;
+}
+
+.layout-sidebar-column--span-3 {
+    @apply lg:col-span-3;
+}
+
+.layout-sidebar-column--span-4 {
+    @apply lg:col-span-4;
+}
+
+.layout-sidebar-column--span-5 {
+    @apply lg:col-span-5;
+}
+
+.layout-sidebar-column--span-7 {
+    @apply lg:col-span-7;
+}
+
+.layout-sticky-column {
+    @apply sticky top-28;
+}
+
+.layout-sticky-column--span-4 {
+    @apply lg:col-span-4;
+}
+
+.page-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+}
+
+.page-grid--cols-2 {
+    @apply lg:grid-cols-2;
+}
+
+.page-grid--cols-3 {
+    @apply lg:grid-cols-3;
+}
+
+.page-grid--cols-4 {
+    @apply lg:grid-cols-4;
+}
+
+.page-grid--cols-12 {
+    @apply lg:grid-cols-12;
+}

@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.pill-button__icon {
+    @apply text-current opacity-80;
+}

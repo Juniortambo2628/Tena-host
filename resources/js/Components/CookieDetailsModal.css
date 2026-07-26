@@ -1,0 +1,61 @@
+@reference "tailwindcss";
+
+.cookie-details-modal__content {
+    @apply space-y-8 p-4;
+}
+
+.cookie-details-modal__header {
+    @apply flex items-center gap-4 p-6 bg-black/5 rounded-3xl;
+}
+
+.cookie-details-modal__header-icon {
+    @apply text-black;
+}
+
+.cookie-details-modal__heading {
+    @apply text-lg font-bold tracking-tight;
+}
+
+.cookie-details-modal__subtitle {
+    @apply text-[10px] font-semibold text-black/40 uppercase tracking-widest;
+}
+
+.cookie-details-modal__list {
+    @apply space-y-6;
+}
+
+.cookie-details-modal__item {
+    @apply flex gap-4;
+}
+
+.cookie-details-modal__icon {
+    @apply mt-1 p-2 bg-black/[0.02] rounded-xl text-black/30 transition-all h-fit group-hover:text-black group-hover:bg-black/5;
+}
+
+.cookie-details-modal__details {
+    @apply space-y-2 flex-1;
+}
+
+.cookie-details-modal__title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black;
+}
+
+.cookie-details-modal__description {
+    @apply text-sm font-bold text-black/50 leading-relaxed;
+}
+
+.cookie-details-modal__tags {
+    @apply flex flex-wrap gap-2 pt-1;
+}
+
+.cookie-details-modal__tag {
+    @apply px-2 py-1 bg-black/5 rounded-lg text-[9px] font-mono font-bold text-black/40;
+}
+
+.cookie-details-modal__footer {
+    @apply pt-4 border-t border-black/5;
+}
+
+.cookie-details-modal__footer-text {
+    @apply text-[10px] font-bold text-black/30 leading-relaxed italic;
+}

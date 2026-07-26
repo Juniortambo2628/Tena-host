@@ -1,0 +1,73 @@
+@reference "tailwindcss";
+
+.json-array-editor {
+    @apply space-y-3;
+}
+
+.json-array-editor__header {
+    @apply flex items-center justify-between;
+}
+
+.json-array-editor__label {
+    @apply text-xs font-semibold uppercase tracking-widest text-black/50;
+}
+
+.json-array-editor__add {
+    @apply flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-[#FFD300]
+           bg-[#FFD300]/10 rounded-lg hover:bg-[#FFD300]/20 transition-colors;
+}
+
+.json-array-editor__items {
+    @apply space-y-3;
+}
+
+.json-array-editor__item {
+    @apply bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-4;
+}
+
+.json-array-editor__item-header {
+    @apply flex items-center gap-3;
+}
+
+.json-array-editor__item-num {
+    @apply w-7 h-7 rounded-full bg-black text-[#FFD300] flex items-center justify-center
+           text-xs font-bold flex-shrink-0;
+}
+
+.json-array-editor__item-title {
+    @apply font-semibold text-sm flex-1 truncate;
+}
+
+.json-array-editor__item-remove {
+    @apply p-1.5 rounded-lg text-black/20 hover:text-red-500 hover:bg-red-50 transition-all;
+}
+
+.json-array-editor__item-fields {
+    @apply space-y-3;
+}
+
+.json-array-editor__field {
+    @apply space-y-1.5;
+}
+
+.json-array-editor__field-label {
+    @apply block text-[10px] font-bold uppercase tracking-widest text-black/40;
+}
+
+.json-array-editor__input {
+    @apply w-full px-4 py-2.5 rounded-xl border border-black/10 bg-white text-sm
+           focus:outline-none focus:ring-2 focus:ring-[#FFD300]/50 focus:border-[#FFD300]
+           transition-all placeholder:text-black/30;
+}
+
+.json-array-editor__textarea {
+    @apply w-full px-4 py-2.5 rounded-xl border border-black/10 bg-white text-sm resize-y
+           focus:outline-none focus:ring-2 focus:ring-[#FFD300]/50 focus:border-[#FFD300]
+           transition-all placeholder:text-black/30;
+}
+
+.json-array-editor__empty-add {
+    @apply flex items-center justify-center gap-2 w-full py-8 rounded-2xl border-2 border-dashed
+           border-black/10 text-black/30 hover:text-[#FFD300] hover:border-[#FFD300]/30
+           transition-all cursor-pointer;
+}

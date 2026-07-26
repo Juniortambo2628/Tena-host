@@ -1,0 +1,142 @@
+@reference "tailwindcss";
+
+.cms-uploader {
+    @apply relative;
+}
+
+.cms-uploader__progress {
+    @apply absolute inset-0 flex items-center justify-center gap-2 bg-white/80 backdrop-blur-sm rounded-xl z-10;
+}
+
+.cms-uploader__spinner {
+    @apply w-4 h-4 border-2 border-[#FFD300] border-t-transparent rounded-full animate-spin;
+}
+
+.cms-media-card {
+    @apply bg-white rounded-xl border border-black/5 overflow-hidden;
+}
+
+.cms-media-card__preview {
+    @apply relative h-48 bg-gray-50 overflow-hidden;
+}
+
+.cms-media-card__image {
+    @apply w-full h-full object-cover;
+}
+
+.cms-media-card__video {
+    @apply w-full h-full object-cover;
+}
+
+.cms-media-card__overlay {
+    @apply absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-200
+           flex items-center justify-center gap-2 opacity-0 hover:opacity-100;
+}
+
+.cms-media-card__action {
+    @apply p-2.5 bg-white/90 rounded-xl text-gray-700 hover:text-black hover:bg-white
+           transition-all shadow-lg backdrop-blur-sm cursor-pointer;
+}
+
+.cms-media-card__action--danger {
+    @apply text-red-500 hover:text-red-600;
+}
+
+.cms-media-card__info {
+    @apply px-3 py-2 flex items-center justify-between;
+}
+
+.cms-media-card__key {
+    @apply text-[10px] font-bold uppercase tracking-widest text-black/40 truncate;
+}
+
+.cms-media-card__dims {
+    @apply text-[10px] font-mono text-black/30;
+}
+
+/* Media Slot (empty state with toggle) */
+.cms-media-slot {
+    @apply bg-white rounded-xl border border-black/5 overflow-hidden;
+}
+
+.cms-media-slot__header {
+    @apply flex items-center justify-between px-4 py-3 border-b border-gray-100;
+}
+
+.cms-media-slot__key {
+    @apply text-[10px] font-bold uppercase tracking-widest text-black/40;
+}
+
+.cms-media-slot__toggle {
+    @apply flex bg-gray-100 rounded-lg p-0.5;
+}
+
+.cms-media-slot__toggle-btn {
+    @apply px-3 py-1 text-[10px] font-semibold rounded-md transition-all
+           text-black/40 hover:text-black/60;
+}
+
+.cms-media-slot__toggle-btn--active {
+    @apply bg-white text-black shadow-sm;
+}
+
+/* Library Browser */
+.cms-library {
+    @apply p-4 space-y-3;
+}
+
+.cms-library__search {
+    @apply relative;
+}
+
+.cms-library__search-icon {
+    @apply absolute left-3 top-1/2 -translate-y-1/2 text-black/20;
+}
+
+.cms-library__search-input {
+    @apply w-full pl-9 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl
+           focus:outline-none focus:border-[#FFD300] focus:ring-1 focus:ring-[#FFD300]/20
+           placeholder:text-gray-300 transition-all;
+}
+
+.cms-library__grid {
+    @apply grid grid-cols-3 gap-2 max-h-60 overflow-y-auto;
+}
+
+.cms-library__item {
+    @apply relative rounded-lg overflow-hidden border border-gray-100
+           hover:border-[#FFD300] hover:shadow-md transition-all cursor-pointer text-left;
+}
+
+.cms-library__item-preview {
+    @apply aspect-square bg-gray-50 overflow-hidden;
+}
+
+.cms-library__item-thumb {
+    @apply w-full h-full object-cover;
+}
+
+.cms-library__item-info {
+    @apply px-2 py-1.5 space-y-0.5;
+}
+
+.cms-library__item-key {
+    @apply block text-[9px] font-bold uppercase tracking-widest text-black/40 truncate;
+}
+
+.cms-library__item-section {
+    @apply block text-[9px] text-black/25 truncate;
+}
+
+.cms-library__item:hover .cms-library__item-overlay {
+    @apply opacity-100;
+}
+
+.cms-library__item-overlay {
+    @apply absolute inset-0 flex items-center justify-center bg-black/40 text-white text-xs font-bold
+           opacity-0 transition-opacity pointer-events-none;
+}
+
+.cms-library__empty {
+    @apply col-span-3 text-center text-sm text-black/30 py-8;
+}

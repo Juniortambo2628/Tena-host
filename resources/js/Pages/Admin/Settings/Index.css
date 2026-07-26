@@ -1,0 +1,89 @@
+@reference "tailwindcss";
+
+.settings-page__tabs {
+    @apply space-y-2;
+}
+
+.settings-page__tab {
+    @apply w-full flex items-center gap-3 px-6 py-4 rounded-2xl text-xs font-semibold uppercase tracking-widest transition-all;
+}
+
+.settings-page__tab--inactive {
+    @apply bg-white text-black/40 hover:bg-black/5 hover:text-black;
+}
+
+.settings-page__tab--active {
+    @apply bg-black text-[#FFD300] shadow-xl shadow-black/10;
+}
+
+.settings-page__status {
+    @apply mt-8 px-6 py-4 rounded-2xl bg-black/[0.02] border border-black/5;
+}
+
+.settings-page__status-row {
+    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/40;
+}
+
+.settings-page__status-dot {
+    @apply w-2 h-2 rounded-full bg-yellow-400 animate-pulse;
+}
+
+.settings-page__status-icon--saved {
+    @apply text-green-500;
+}
+
+.settings-page__status-icon--error {
+    @apply text-red-500;
+}
+
+.settings-page__card {
+    @apply p-8;
+}
+
+.settings-page__card-inner {
+    @apply space-y-6 max-w-2xl;
+}
+
+.settings-page__card-header {
+    @apply flex items-center gap-4 mb-4;
+}
+
+.settings-page__card-icon {
+    @apply p-3 bg-black/5 rounded-2xl;
+}
+
+.settings-page__card-title {
+    @apply font-semibold text-lg;
+}
+
+.settings-page__card-subtitle {
+    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+}
+
+.settings-page__hint {
+    @apply p-4 rounded-2xl bg-black/[0.02] border border-black/5 text-[10px] font-bold text-black/50 leading-relaxed;
+}
+
+.settings-page__template-section {
+    @apply space-y-4;
+}
+
+.settings-page__template-title {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30 border-b border-black/5 pb-2;
+}
+
+.settings-page__color-field {
+    @apply flex items-center gap-3;
+}
+
+.settings-page__color-picker {
+    @apply w-12 h-12 bg-transparent border-none cursor-pointer rounded-xl overflow-hidden;
+}
+
+.settings-page__color-input {
+    @apply flex-1 font-mono text-xs uppercase;
+}
+
+.settings-page__preview-wrapper {
+    @apply sticky top-28 h-[800px];
+}

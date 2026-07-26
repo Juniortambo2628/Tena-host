@@ -1,0 +1,57 @@
+@reference "tailwindcss";
+
+.host-amenities-show {
+    @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+.host-amenities-show-main {
+    @apply lg:col-span-2 space-y-8;
+}
+
+.host-amenities-show-sidebar {
+    @apply space-y-6;
+}
+
+.host-amenities-show-image {
+    @apply w-24 h-24 rounded-2xl object-cover;
+}
+
+.host-amenities-show-placeholder {
+    @apply w-24 h-24 rounded-2xl bg-black/5 flex items-center justify-center text-black/20 font-semibold text-2xl;
+}
+
+.host-amenities-show-name {
+    @apply text-2xl font-bold tracking-tight;
+}
+
+.host-amenities-show-desc {
+    @apply text-sm text-black/50 font-medium mt-2;
+}
+
+.host-amenities-show-stats {
+    @apply grid grid-cols-2 gap-6;
+}
+
+.host-amenities-stat-card {
+    @apply p-4 bg-black/[0.02] rounded-2xl;
+}
+
+.host-amenities-stat-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 block mb-2;
+}
+
+.host-amenities-stat-value {
+    @apply text-2xl font-bold;
+}
+
+.host-amenities-stat-active {
+    @apply inline-flex items-center gap-1.5 text-sm font-bold text-green-600;
+}
+
+.host-amenities-stat-inactive {
+    @apply inline-flex items-center gap-1.5 text-sm font-bold text-red-600;
+}
+
+.host-amenities-back-link {
+    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors;
+}

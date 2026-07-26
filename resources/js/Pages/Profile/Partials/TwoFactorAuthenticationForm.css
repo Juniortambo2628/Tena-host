@@ -1,0 +1,121 @@
+@reference "tailwindcss";
+
+.twofa-header {
+    @apply mb-8;
+}
+
+.twofa-header-title {
+    @apply flex items-center gap-3 mb-2 text-black;
+}
+
+.twofa-header-title h2 {
+    @apply text-xl font-bold tracking-tight;
+}
+
+.twofa-header-desc {
+    @apply text-sm font-medium text-black/40 leading-relaxed;
+}
+
+.twofa-content {
+    @apply space-y-6;
+}
+
+.twofa-status-card {
+    @apply flex items-center justify-between p-6 bg-black/[0.03] rounded-3xl border border-black/5 hover:border-black/10 transition-colors;
+}
+
+.twofa-status-info {
+    @apply flex items-center gap-4;
+}
+
+.twofa-status-icon {
+    @apply p-3 rounded-2xl transition-colors;
+}
+
+.twofa-status-icon-enabled {
+    @apply bg-green-500 text-white;
+}
+
+.twofa-status-icon-disabled {
+    @apply bg-black/5 text-black/20;
+}
+
+.twofa-status-label {
+    @apply text-sm font-bold text-black;
+}
+
+.twofa-status-desc {
+    @apply text-xs font-medium text-black/40;
+}
+
+.twofa-toggle {
+    @apply relative inline-flex h-8 w-14 items-center rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50;
+}
+
+.twofa-toggle-enabled {
+    @apply bg-black;
+}
+
+.twofa-toggle-disabled {
+    @apply bg-black/10;
+}
+
+.twofa-toggle-knob {
+    @apply inline-block h-6 w-6 transform rounded-full bg-white transition-transform duration-200;
+}
+
+.twofa-toggle-knob-enabled {
+    @apply translate-x-7;
+}
+
+.twofa-toggle-knob-disabled {
+    @apply translate-x-1;
+}
+
+.twofa-setup-card {
+    @apply p-8 bg-black text-white rounded-[2rem] space-y-6 shadow-2xl shadow-black/20;
+}
+
+.twofa-setup-header {
+    @apply space-y-2 text-center;
+}
+
+.twofa-setup-title {
+    @apply text-2xl font-bold tracking-tight leading-none;
+}
+
+.twofa-setup-desc {
+    @apply text-sm font-medium text-white/50;
+}
+
+.twofa-qr-container {
+    @apply flex justify-center bg-white p-6 rounded-3xl;
+}
+
+.twofa-verification {
+    @apply space-y-4;
+}
+
+.twofa-verification-field {
+    @apply space-y-1.5;
+}
+
+.twofa-verification-label {
+    @apply text-[10px] font-semibold text-white/30 px-1;
+}
+
+.twofa-verification-input {
+    @apply w-full bg-white/10 border-none rounded-2xl px-6 py-4 text-center text-2xl font-bold tracking-[0.5em] placeholder:text-white/5 focus:ring-2 focus:ring-white/10 transition-all;
+}
+
+.twofa-setup-actions {
+    @apply flex gap-4;
+}
+
+.twofa-cancel-btn {
+    @apply flex-1 py-4 text-xs font-bold text-white/40 hover:text-white transition-colors;
+}
+
+.twofa-confirm-btn {
+    @apply flex-1 py-4 bg-white text-black rounded-2xl text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50;
+}

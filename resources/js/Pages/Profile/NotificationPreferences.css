@@ -1,0 +1,89 @@
+@reference "tailwindcss";
+
+.notifications-page {
+    @apply max-w-2xl space-y-6;
+}
+
+.notifications-page__card {
+    @apply p-8;
+}
+
+.notifications-page__header {
+    @apply flex items-center gap-4 mb-8;
+}
+
+.notifications-page__header-icon {
+    @apply p-3 bg-black/5 rounded-2xl;
+}
+
+.notifications-page__header-icon-svg {
+    @apply text-black;
+}
+
+.notifications-page__title {
+    @apply font-bold text-lg;
+}
+
+.notifications-page__subtitle {
+    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+}
+
+.notifications-page__list {
+    @apply space-y-6;
+}
+
+.notifications-page__item {
+    @apply p-6 bg-black/[0.02] rounded-2xl border border-black/5;
+}
+
+.notifications-page__item-header {
+    @apply flex items-start justify-between mb-4;
+}
+
+.notifications-page__item-title {
+    @apply font-bold text-sm;
+}
+
+.notifications-page__item-description {
+    @apply text-xs font-medium text-black/40 mt-1;
+}
+
+.notifications-page__channels {
+    @apply flex items-center gap-6;
+}
+
+.notifications-page__channel {
+    @apply flex items-center gap-3 cursor-pointer;
+}
+
+.notifications-page__channel-switch {
+    @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors;
+}
+
+.notifications-page__channel-switch--checked {
+    @apply bg-black;
+}
+
+.notifications-page__channel-switch--unchecked {
+    @apply bg-black/10;
+}
+
+.notifications-page__channel-knob {
+    @apply inline-block h-4 w-4 transform rounded-full bg-white transition-transform;
+}
+
+.notifications-page__channel-knob--checked {
+    @apply translate-x-6;
+}
+
+.notifications-page__channel-knob--unchecked {
+    @apply translate-x-1;
+}
+
+.notifications-page__channel-icon {
+    @apply text-black/40;
+}
+
+.notifications-page__channel-label {
+    @apply text-xs font-bold text-black/60;
+}

@@ -1,0 +1,117 @@
+@reference "tailwindcss";
+
+.registrations-page__table-wrapper {
+    @apply overflow-x-auto;
+}
+
+.registrations-page__table {
+    @apply w-full text-left border-collapse;
+}
+
+.registrations-page__head-row {
+    @apply bg-black/[0.02];
+}
+
+.registrations-page__head-cell {
+    @apply px-8 py-4 text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.registrations-page__body {
+    @apply divide-y divide-black/5;
+}
+
+.registrations-page__row {
+    @apply hover:bg-black/[0.01] transition-colors;
+}
+
+.registrations-page__cell {
+    @apply px-8 py-6;
+}
+
+.registrations-page__name {
+    @apply font-semibold text-sm;
+}
+
+.registrations-page__email {
+    @apply text-sm font-bold text-black/60;
+}
+
+.registrations-page__property-type {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/50;
+}
+
+.registrations-page__property-count {
+    @apply text-sm font-semibold;
+}
+
+.registrations-page__location {
+    @apply text-sm font-bold text-black/60;
+}
+
+.registrations-page__status-badge {
+    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.registrations-page__status-badge--active {
+    @apply bg-green-100 text-green-700;
+}
+
+.registrations-page__status-badge--inactive {
+    @apply bg-orange-100 text-orange-700;
+}
+
+.registrations-page__status-badge--converted {
+    @apply bg-blue-100 text-blue-700;
+}
+
+.registrations-page__status-badge--default {
+    @apply bg-gray-100 text-gray-700;
+}
+
+.registrations-page__actions {
+    @apply flex items-center gap-1 opacity-0 transition-opacity;
+}
+
+.registrations-page__row:hover .registrations-page__actions {
+    @apply opacity-100;
+}
+
+.registrations-page__action-btn {
+    @apply p-2 rounded-lg transition-colors;
+}
+
+.registrations-page__action-btn--convert {
+    @apply text-black/40 hover:bg-green-50 hover:text-green-600;
+}
+
+.registrations-page__action-btn--deactivate {
+    @apply text-black/40 hover:bg-orange-50 hover:text-orange-600;
+}
+
+.registrations-page__action-btn--delete {
+    @apply text-black/40 hover:bg-red-50 hover:text-red-500;
+}
+
+.registrations-page__empty {
+    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+}
+
+.registrations-page__pagination {
+    @apply px-8 py-6 border-t border-black/5 flex justify-center items-center gap-2;
+}
+
+.registrations-page__page-link {
+    @apply px-4 py-2 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-colors;
+}
+
+.registrations-page__page-link--active {
+    @apply bg-black text-[#FFD300];
+}
+
+.registrations-page__page-link--inactive {
+    @apply bg-black/5 text-black hover:bg-black/10;
+}
+
+.registrations-page__page-link--disabled {
+    @apply text-black/30 bg-black/5 cursor-not-allowed;
+}

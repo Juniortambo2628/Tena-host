@@ -1,0 +1,249 @@
+@reference "tailwindcss";
+
+/* Section Card (replaces accordion header) */
+.cms-section-card {
+    @apply flex items-center justify-between px-6 py-4 bg-white rounded-2xl border border-black/5
+           cursor-pointer hover:shadow-md hover:border-[#FFD300]/30 transition-all w-full;
+}
+
+.cms-section-card__left {
+    @apply flex-1 min-w-0;
+}
+
+.cms-section-card__title {
+    @apply font-semibold text-sm truncate;
+}
+
+.cms-section-card__meta {
+    @apply text-[10px] font-bold text-black/30 uppercase tracking-widest;
+}
+
+.cms-section-card__right {
+    @apply flex items-center gap-3 flex-shrink-0 ml-4;
+}
+
+.cms-section-card__toggle {
+    @apply relative inline-flex items-center cursor-pointer;
+}
+
+.cms-section-card__toggle input {
+    @apply sr-only;
+}
+
+.cms-section-card__toggle-slider {
+    @apply w-10 h-5 bg-black/10 rounded-full transition-colors relative;
+}
+
+.cms-section-card__toggle-slider::after {
+    content: '';
+    @apply absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform shadow;
+}
+
+.cms-section-card__toggle input:checked + .cms-section-card__toggle-slider {
+    @apply bg-[#FFD300];
+}
+
+.cms-section-card__toggle input:checked + .cms-section-card__toggle-slider::after {
+    @apply translate-x-5;
+}
+
+.cms-section-card__edit-btn {
+    @apply px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-black/50
+           border border-black/10 rounded-lg hover:bg-black/5 hover:text-black transition-all;
+}
+
+/* Editor Modal - WaitlistModal Style */
+.editor-modal__backdrop {
+    @apply fixed inset-0 bg-black/40 backdrop-blur-sm z-50;
+}
+
+.editor-modal__container {
+    @apply fixed inset-0 flex items-center justify-center p-4 z-50;
+}
+
+.editor-modal__panel {
+    @apply bg-white/95 backdrop-blur-2xl shadow-2xl shadow-black/10
+           w-full max-w-4xl relative z-10 border border-black/5 flex flex-col;
+    height: min(85vh, 700px);
+    max-height: 85vh;
+    border-radius: 3rem;
+}
+
+.editor-modal__close {
+    @apply absolute top-8 right-8 text-black/20 hover:text-black z-30
+           w-10 h-10 flex items-center justify-center rounded-2xl bg-black/5
+           hover:bg-black/10 transition-all active:scale-90;
+}
+
+/* Layout: Sidebar + Content */
+.editor-modal__layout {
+    @apply flex flex-col md:flex-row flex-1 min-h-0;
+}
+
+/* Left Sidebar */
+.editor-modal__sidebar {
+    @apply w-full md:w-1/3 bg-gray-50 p-8 border-r border-gray-100 flex flex-col justify-between flex-shrink-0 h-full;
+    border-radius: 3rem 0 0 3rem;
+}
+
+.editor-modal__sidebar-logo {
+    @apply flex items-center gap-3 mb-10;
+}
+
+.editor-modal__sidebar-logo-icon {
+    @apply w-10 h-10 rounded-xl bg-[#FFD300] flex items-center justify-center text-[#1b1b1b];
+}
+
+.editor-modal__sidebar-logo-text {
+    @apply font-bold text-xl tracking-tight;
+}
+
+.editor-modal__sidebar-tabs {
+    @apply pl-2 flex-1 overflow-y-auto;
+    gap: 1.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-modal__sidebar-tab {
+    @apply flex items-center gap-4 w-full text-left transition-colors duration-300;
+}
+
+.editor-modal__sidebar-tab-number {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+           transition-all duration-300 z-10 flex-shrink-0;
+    @apply bg-gray-100 text-gray-400;
+}
+
+.editor-modal__sidebar-tab-number--active {
+    @apply bg-black text-[#FFD300] shadow-lg scale-110;
+}
+
+.editor-modal__sidebar-tab-number--completed {
+    @apply bg-green-500 text-white;
+}
+
+.editor-modal__sidebar-tab-label {
+    @apply text-sm font-medium transition-colors duration-300 truncate;
+    @apply text-gray-500;
+}
+
+.editor-modal__sidebar-tab-label--active {
+    @apply text-black font-bold;
+}
+
+.editor-modal__sidebar-footer {
+    @apply text-xs text-gray-400 mt-8;
+}
+
+/* Right Content Area */
+.editor-modal__content {
+    @apply w-full md:w-2/3 flex flex-col min-h-0 flex-1;
+}
+
+.editor-modal__content-inner {
+    @apply flex-1 overflow-y-auto p-8 md:p-12 min-h-0;
+}
+
+/* Tab panels */
+.editor-modal__tab-panel--hidden {
+    @apply hidden;
+}
+
+/* Content within tabs */
+.editor-tab__content {
+    @apply space-y-6;
+}
+
+.editor-tab__heading {
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    @apply text-2xl font-bold mb-2;
+}
+
+.editor-tab__fields {
+    @apply space-y-5;
+}
+
+.editor-tab__items {
+    @apply space-y-5;
+}
+
+.editor-tab__item {
+    @apply bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-4;
+}
+
+.editor-tab__item-header {
+    @apply flex items-center gap-3;
+}
+
+.editor-tab__item-number {
+    @apply w-7 h-7 rounded-full bg-black text-[#FFD300] flex items-center justify-center
+           text-xs font-bold flex-shrink-0;
+}
+
+.editor-tab__item-title {
+    @apply font-semibold text-sm;
+}
+
+.editor-tab__item-fields {
+    @apply space-y-3;
+}
+
+/* Media grid */
+.editor-tab__media-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.editor-tab__empty {
+    @apply text-center text-sm text-black/30 py-12;
+}
+
+/* Add Media Slot */
+.editor-tab__add-media {
+    @apply flex items-center gap-3 mt-4 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200;
+}
+
+.editor-tab__add-media-input {
+    @apply flex-1 px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl
+           focus:outline-none focus:border-[#FFD300] focus:ring-1 focus:ring-[#FFD300]/20
+           placeholder:text-gray-300 transition-all;
+}
+
+.editor-tab__add-media-btn {
+    @apply px-5 py-2.5 text-sm font-semibold bg-black text-[#FFD300] rounded-xl
+           hover:bg-gray-800 active:scale-95 transition-all whitespace-nowrap;
+}
+
+/* Footer */
+.editor-modal__footer {
+    @apply pt-6 pb-8 px-8 md:px-12 border-t border-gray-100 flex justify-between items-center flex-shrink-0;
+}
+
+.editor-modal__cancel {
+    @apply text-gray-500 hover:text-black font-medium transition-colors px-4 py-2;
+}
+
+.editor-modal__save {
+    @apply bg-[#FFD300] text-black px-8 py-3 rounded-xl font-bold hover:bg-[#ffc107]
+           transition-all hover:shadow-lg hover:-translate-y-1;
+}
+
+.editor-modal__save--disabled {
+    @apply bg-black/5 text-black/30 cursor-not-allowed hover:bg-black/5 hover:shadow-none hover:translate-y-0;
+}
+
+/* Animation classes for Transition */
+.editor-modal__backdrop-enter { @apply transition-opacity duration-200; }
+.editor-modal__backdrop-enter-from { @apply opacity-0; }
+.editor-modal__backdrop-enter-to { @apply opacity-100; }
+.editor-modal__backdrop-leave { @apply transition-opacity duration-200; }
+.editor-modal__backdrop-leave-from { @apply opacity-100; }
+.editor-modal__backdrop-leave-to { @apply opacity-0; }
+
+.editor-modal__panel-enter { @apply transition-all duration-200; }
+.editor-modal__panel-enter-from { @apply opacity-0 scale-95; }
+.editor-modal__panel-enter-to { @apply opacity-100 scale-100; }
+.editor-modal__panel-leave { @apply transition-all duration-150; }
+.editor-modal__panel-leave-from { @apply opacity-100 scale-100; }
+.editor-modal__panel-leave-to { @apply opacity-0 scale-95; }

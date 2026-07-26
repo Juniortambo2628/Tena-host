@@ -1,0 +1,135 @@
+@reference "tailwindcss";
+
+.authenticated-layout {
+    @apply min-h-screen bg-gray-950 text-gray-100 font-sans selection:bg-red-500;
+}
+
+.authenticated-layout .ambient-bg {
+    @apply fixed inset-0 overflow-hidden pointer-events-none;
+}
+
+.authenticated-layout .ambient-red {
+    @apply absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-red-900/10 rounded-full blur-[120px];
+}
+
+.authenticated-layout .ambient-yellow {
+    @apply absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#FFD300]/5 rounded-full blur-[120px];
+}
+
+.authenticated-layout .main-nav {
+    @apply sticky top-0 z-40 bg-gray-950/50 backdrop-blur-xl border-b border-white/5;
+}
+
+.authenticated-layout .nav-container {
+    @apply mx-auto max-w-7xl px-6 lg:px-8;
+}
+
+.authenticated-layout .nav-inner {
+    @apply flex h-20 justify-between items-center;
+}
+
+.authenticated-layout .nav-left {
+    @apply flex items-center gap-12;
+}
+
+.authenticated-layout .nav-logo {
+    @apply text-2xl font-bold tracking-tighter;
+}
+
+.authenticated-layout .nav-logo-dot {
+    @apply text-red-500;
+}
+
+.authenticated-layout .nav-links-desktop {
+    @apply hidden sm:flex gap-8;
+}
+
+.authenticated-layout .nav-link {
+    @apply text-sm font-semibold transition-colors;
+}
+
+.authenticated-layout .nav-link-active {
+    @apply text-red-500;
+}
+
+.authenticated-layout .nav-link-inactive {
+    @apply text-gray-400 hover:text-white;
+}
+
+.authenticated-layout .nav-right-desktop {
+    @apply hidden sm:flex items-center gap-6;
+}
+
+.authenticated-layout .user-pill {
+    @apply px-4 py-2 bg-white/5 border border-white/10 rounded-2xl flex items-center gap-3;
+}
+
+.authenticated-layout .user-avatar {
+    @apply w-8 h-8 rounded-full bg-gradient-to-tr from-red-500 to-orange-500 flex items-center justify-center text-xs font-bold text-white uppercase;
+}
+
+.authenticated-layout .user-name {
+    @apply text-xs font-bold tracking-widest uppercase text-gray-300;
+}
+
+.authenticated-layout .logout-btn {
+    @apply p-1 hover:bg-white/10 rounded-lg text-gray-500 hover:text-red-500 transition-all;
+}
+
+.authenticated-layout .logout-icon {
+    @apply w-4 h-4;
+}
+
+.authenticated-layout .mobile-menu-toggle {
+    @apply flex items-center sm:hidden;
+}
+
+.authenticated-layout .mobile-menu-btn {
+    @apply p-2 text-gray-400 hover:text-white transition-colors;
+}
+
+.authenticated-layout .mobile-menu-icon {
+    @apply h-6 w-6;
+}
+
+.authenticated-layout .mobile-nav-container {
+    @apply sm:hidden bg-gray-950 border-t border-white/5 overflow-hidden;
+}
+
+.authenticated-layout .mobile-nav-links {
+    @apply p-6 space-y-4;
+}
+
+.authenticated-layout .mobile-nav-link {
+    @apply block text-sm font-semibold;
+}
+
+.authenticated-layout .mobile-link-dashboard {
+    @apply text-white;
+}
+
+.authenticated-layout .mobile-link-profile {
+    @apply text-gray-400;
+}
+
+.authenticated-layout .mobile-link-logout {
+    @apply text-red-500;
+}
+
+.authenticated-layout .page-header {
+    @apply relative z-10 pt-12 pb-6;
+}
+
+.authenticated-layout .page-header-container {
+    @apply mx-auto max-w-7xl px-6 lg:px-8;
+}
+
+.authenticated-layout .page-content {
+    @apply relative z-10;
+}
+
+/* Custom scrollbar */
+.authenticated-layout .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.authenticated-layout .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.authenticated-layout .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.authenticated-layout .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }

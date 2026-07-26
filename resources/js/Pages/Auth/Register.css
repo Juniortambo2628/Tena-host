@@ -1,0 +1,173 @@
+@reference "tailwindcss";
+
+.register-root {
+    @apply min-h-screen bg-white flex flex-col md:flex-row selection:bg-[#FFD300] selection:text-black;
+}
+
+.register-back-link {
+    @apply fixed top-8 left-8 z-50 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
+}
+
+.register-left {
+    @apply w-full md:w-1/2 flex items-center justify-center p-8 lg:p-24 bg-white relative;
+}
+
+.register-left-inner {
+    @apply w-full max-w-sm space-y-10;
+}
+
+.register-logo-section {
+    @apply space-y-6;
+}
+
+.register-logo-img {
+    @apply w-12 h-12 rounded-2xl shadow-xl shadow-black/5;
+}
+
+.register-title-area {
+    @apply space-y-2;
+}
+
+.register-title {
+    @apply text-3xl font-bold text-black tracking-tight leading-none;
+}
+
+.register-subtitle {
+    @apply text-sm font-medium text-black/40;
+}
+
+.register-form {
+    @apply space-y-5;
+}
+
+.register-name-grid {
+    @apply grid grid-cols-2 gap-4;
+}
+
+.register-field-group {
+    @apply space-y-1.5;
+}
+
+.register-label {
+    @apply text-[10px] font-semibold text-black/30 px-1;
+}
+
+.register-input-group {
+    @apply relative;
+}
+
+.register-input-icon {
+    @apply absolute left-6 top-1/2 -translate-y-1/2 text-black/20 transition-colors;
+}
+
+.group:focus-within .register-input-icon {
+    color: black;
+}
+
+.register-input-group:focus-within .register-input-icon {
+    @apply text-black;
+}
+
+.register-input {
+    @apply w-full bg-black/[0.03] border-none rounded-[1.25rem] pl-14 pr-6 py-3 text-sm font-bold placeholder:text-black/10 focus:ring-2 focus:ring-black/5 transition-all text-black;
+}
+
+.register-input-no-icon {
+    @apply w-full bg-black/[0.03] border-none rounded-[1.25rem] px-6 py-3 text-sm font-bold placeholder:text-black/10 focus:ring-2 focus:ring-black/5 transition-all text-black;
+}
+
+.register-input-password {
+    @apply w-full bg-black/[0.03] border-none rounded-[1.25rem] pl-14 pr-14 py-3 text-sm font-bold placeholder:text-black/10 focus:ring-2 focus:ring-black/5 transition-all text-black;
+}
+
+.register-input-confirm {
+    @apply w-full bg-black/[0.03] border-none rounded-[1.25rem] px-6 py-3 text-sm font-bold placeholder:text-black/10 focus:ring-2 focus:ring-black/5 transition-all text-black;
+}
+
+.register-password-toggle {
+    @apply absolute right-6 top-1/2 -translate-y-1/2 text-black/20 hover:text-black transition-colors;
+}
+
+.register-error {
+    @apply text-[10px] font-semibold text-red-500 px-1;
+}
+
+.register-submit {
+    @apply w-full py-4 bg-black text-white rounded-[1.25rem] text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 shadow-2xl shadow-black/10;
+}
+
+.register-submit-inner {
+    @apply flex items-center justify-center gap-2;
+}
+
+.register-bottom {
+    @apply flex flex-col items-center gap-4 py-4;
+}
+
+.register-bottom-text {
+    @apply text-center text-[10px] font-semibold text-black/30;
+}
+
+.register-bottom-link {
+    @apply text-black hover:text-[#FFD300] transition-colors ml-1;
+}
+
+.register-terms-btn {
+    @apply flex items-center gap-2 text-[8px] font-semibold uppercase tracking-[0.2em] text-black/20 hover:text-black transition-colors;
+}
+
+.register-right {
+    @apply hidden md:block w-1/2 p-8 lg:p-12 h-screen sticky top-0 overflow-hidden;
+}
+
+.register-right-inner {
+    @apply w-full h-full rounded-[3rem] bg-black relative overflow-hidden shadow-2xl shadow-black/20;
+}
+
+.register-right-img {
+    @apply absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-1000;
+}
+
+.register-right-inner:hover .register-right-img {
+    @apply scale-110;
+}
+
+.register-right-gradient {
+    @apply absolute inset-0 bg-gradient-to-tr from-black/80 via-black/20 to-transparent;
+}
+
+.register-right-bottom {
+    @apply absolute bottom-20 left-20 right-20 space-y-6 text-white;
+}
+
+.register-right-logo {
+    @apply w-16 h-16 rounded-2xl opacity-80;
+}
+
+.register-right-content {
+    @apply space-y-2 text-white;
+}
+
+.register-right-title {
+    @apply text-4xl font-bold tracking-tighter leading-none;
+}
+
+.register-right-desc {
+    @apply text-lg font-medium text-white/50 leading-relaxed max-w-sm;
+}
+
+.register-right-avatars {
+    @apply pt-4 flex items-center gap-4;
+}
+
+.register-avatar-group {
+    @apply flex -space-x-4;
+}
+
+.register-avatar {
+    @apply w-10 h-10 rounded-full border-4 border-black;
+}
+
+.register-avatar-text {
+    @apply text-xs font-bold opacity-60;
+}
