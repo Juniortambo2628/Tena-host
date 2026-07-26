@@ -11,6 +11,9 @@ jobs:
     name: Run Tests and Code Formatting
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     services:
       mysql:
         image: mysql:8.0

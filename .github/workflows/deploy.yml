@@ -49,6 +49,18 @@ jobs:
 
       - name: Sync Backend Core Files (/home/zhpebukm/tena-core)
         run: |
+          rsync -avz --delete -e "ssh -p 1624 -o StrictHostKeyChecking=no" --rsync-path="/usr/bin/rsync" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='.env*' \
+            --exclude='storage/*.key' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/data/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            ./ zhpebukm@51.89.113.223:/home/zhpebukm/tena-core/ || \
           rsync -avz --delete -e "ssh -p 1624 -o StrictHostKeyChecking=no" \
             --exclude='.git' \
             --exclude='.github' \
@@ -64,6 +76,10 @@ jobs:
 
       - name: Sync Frontend Public Files (/home/zhpebukm/tena.host)
         run: |
+          rsync -avz --delete -e "ssh -p 1624 -o StrictHostKeyChecking=no" --rsync-path="/usr/bin/rsync" \
+            --exclude='storage' \
+            --exclude='uploads' \
+            ./public/ zhpebukm@51.89.113.223:/home/zhpebukm/tena.host/ || \
           rsync -avz --delete -e "ssh -p 1624 -o StrictHostKeyChecking=no" \
             --exclude='storage' \
             --exclude='uploads' \
