@@ -24,8 +24,6 @@ export default function MediaUploader({
     const [librarySearch, setLibrarySearch] = useState('');
     const fileInputRef = useRef(null);
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
     const handleFileSelect = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -38,10 +36,19 @@ export default function MediaUploader({
         setIsUploading(true);
         setUploadError('');
 
+        const getCsrfToken = () => {
+            const cookieValue = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('XSRF-TOKEN='))
+                ?.split('=')[1];
+            return cookieValue ? decodeURIComponent(cookieValue) : (document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
+        };
+
+        const currentCsrfToken = getCsrfToken();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('media_key', mediaKey);
-        formData.append('_token', csrfToken);
+        formData.append('_token', currentCsrfToken);
 
         try {
             const res = await fetch(route('admin.landing.media.upload', { section: sectionId }), {
@@ -49,7 +56,7 @@ export default function MediaUploader({
                 credentials: 'same-origin',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken,
+                    'X-CSRF-TOKEN': currentCsrfToken,
                 },
                 body: formData,
             });
