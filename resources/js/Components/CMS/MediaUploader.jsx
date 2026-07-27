@@ -37,29 +37,44 @@ export default function MediaUploader({
         setUploadError('');
 
         const getCsrfToken = () => {
-            const cookieValue = document.cookie
-                .split('; ')
-                .find(row => row.startsWith('XSRF-TOKEN='))
-                ?.split('=')[1];
-            return cookieValue ? decodeURIComponent(cookieValue) : (document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '');
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('XSRF-TOKEN=')) {
+                    return decodeURIComponent(cookie.substring('XSRF-TOKEN='.length));
+                }
+            }
+            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         };
 
         const currentCsrfToken = getCsrfToken();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('media_key', mediaKey);
-        formData.append('_token', currentCsrfToken);
+        if (currentCsrfToken) {
+            formData.append('_token', currentCsrfToken);
+        }
 
         try {
+            const headers = {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            };
+            if (currentCsrfToken) {
+                headers['X-CSRF-TOKEN'] = currentCsrfToken;
+                headers['X-XSRF-TOKEN'] = currentCsrfToken;
+            }
+
             const res = await fetch(route('admin.landing.media.upload', { section: sectionId }), {
                 method: 'POST',
                 credentials: 'same-origin',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': currentCsrfToken,
-                },
+                headers,
                 body: formData,
             });
+
+            if (res.status === 419) {
+                throw new Error('CSRF token mismatch. Please try uploading again.');
+            }
 
             if (!res.ok) {
                 const data = await res.json().catch(() => null);
