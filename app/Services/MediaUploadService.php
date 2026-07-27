@@ -102,7 +102,7 @@ class MediaUploadService
                 $ffprobePath,
                 Storage::disk('public')->path($originalPath)
             );
-            $output = @shell_exec($cmd);
+            $output = @\shell_exec($cmd);
             if ($output) {
                 $parts = array_map('trim', explode(',', trim($output)));
                 if (count($parts) >= 2) {
@@ -127,7 +127,7 @@ class MediaUploadService
                     self::VIDEO_MAX_HEIGHT,
                     Storage::disk('public')->path($compressedPath)
                 );
-                @shell_exec($cmd);
+                @\shell_exec($cmd);
 
                 if (Storage::disk('public')->exists($compressedPath)) {
                     $originalPath = $compressedPath;
@@ -181,7 +181,7 @@ class MediaUploadService
             }
         }
 
-        $output = @shell_exec("where {$binary} 2>nul") ?: @shell_exec("which {$binary} 2>/dev/null");
+        $output = @\shell_exec("where {$binary} 2>nul") ?: @\shell_exec("which {$binary} 2>/dev/null");
         if ($output) {
             return trim(explode("\n", $output)[0]);
         }
