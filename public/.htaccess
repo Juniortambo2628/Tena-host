@@ -1,5 +1,5 @@
 <IfModule mod_rewrite.c>
-    Options +FollowSymLinks
+    Options +FollowSymLinks +SymLinksIfOwnerMatch
 
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
