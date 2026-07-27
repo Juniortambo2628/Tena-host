@@ -11,10 +11,10 @@ class LandingContentSeeder extends Seeder
 {
     public function run(): void
     {
-        // Clear existing data (idempotent re-seed)
-        LandingMedia::truncate();
-        LandingContent::truncate();
-        LandingSection::truncate();
+        // Only seed if no landing data exists yet (preserves CMS edits on re-deploy)
+        if (LandingSection::count() > 0) {
+            return;
+        }
 
         // Hero Section
         $hero = LandingSection::create([
