@@ -169,7 +169,7 @@ class MediaUploadService
 
     private function findFfmpegBinary(string $binary): ?string
     {
-        if (!function_exists('shell_exec')) {
+        if (! function_exists('shell_exec')) {
             return null;
         }
 
