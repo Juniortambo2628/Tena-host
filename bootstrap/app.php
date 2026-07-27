@@ -24,7 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'host' => \App\Http\Middleware\HostOnly::class,
         ]);
 
-        //
+        $middleware->validateCsrfTokens(except: [
+            'admin/landing/sections/*/media',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->reportable(function (\Throwable $e) {
