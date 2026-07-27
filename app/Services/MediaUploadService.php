@@ -169,6 +169,10 @@ class MediaUploadService
 
     private function findFfmpegBinary(string $binary): ?string
     {
+        if (!function_exists('shell_exec')) {
+            return null;
+        }
+
         $paths = [
             "/usr/bin/{$binary}",
             "/usr/local/bin/{$binary}",
