@@ -203,6 +203,12 @@ class LandingController extends Controller
             'sort_order' => 'sometimes|integer|min:0',
         ]);
 
+        // Delete existing media with the same section_id and media_key to avoid unique constraint violation
+        LandingMedia::where('section_id', $section->id)
+            ->where('media_key', $request->input('media_key'))
+            ->get()
+            ->each(fn ($m) => $this->mediaService->delete($m));
+
         try {
             $media = $this->mediaService->upload($request->file('file'), 'landing', $section->id, $request->input('media_key'));
         } catch (\Throwable $e) {
@@ -213,16 +219,11 @@ class LandingController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
 
-        // Delete existing media with same key
-        LandingMedia::where('section_id', $section->id)
-            ->where('media_key', $request->input('media_key'))
-            ->each(fn ($m) => $this->mediaService->delete($m));
-
-        $media->update([
-            'section_id' => $section->id,
-            'media_key' => $request->input('media_key'),
-            'sort_order' => $request->input('sort_order', 0),
-        ]);
+        if ($request->has('sort_order')) {
+            $media->update([
+                'sort_order' => $request->input('sort_order', 0),
+            ]);
+        }
 
         LandingSection::clearCache();
 
