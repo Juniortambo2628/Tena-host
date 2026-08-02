@@ -85,19 +85,19 @@ export default function ROICalculator({ section }) {
                     <div className="roi-form">
                         <div>
                             <label className="roi-label">Number of Listings</label>
-                            <input type="range" min="1" max="3000" value={values.listings} onChange={(e) => handleChange('listings', e.target.value)} className="roi-range" />
+                            <input type="range" min="1" max="100" value={values.listings} onChange={(e) => handleChange('listings', e.target.value)} className="roi-range" />
                             <div className="roi-input-row">
-                                <input type="number" min="1" max="3000" value={values.listings} onChange={(e) => handleChange('listings', e.target.value)} className="roi-number-input" />
-                                <span className="roi-range-label">1 - 3,000</span>
+                                <input type="number" min="1" max="100" value={values.listings} onChange={(e) => handleChange('listings', e.target.value)} className="roi-number-input" />
+                                <span className="roi-range-label">1 - 100</span>
                             </div>
                         </div>
 
                         <div>
                             <label className="roi-label">Average Daily Rate ($)</label>
-                            <input type="range" min="0" max="5000" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-range" />
+                            <input type="range" min="0" max="2500" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-range" />
                             <div className="roi-input-row">
-                                <input type="number" min="0" max="5000" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-number-input" />
-                                <span className="roi-range-label">$0 - $5,000</span>
+                                <input type="number" min="0" max="2500" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-number-input" />
+                                <span className="roi-range-label">$0 - $2,500</span>
                             </div>
                         </div>
 

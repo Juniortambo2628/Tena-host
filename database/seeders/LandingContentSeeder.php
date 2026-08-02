@@ -153,7 +153,7 @@ class LandingContentSeeder extends Seeder
         ]);
 
         $plans = [
-            ['label' => 'Monthly Subscription', 'price' => '$19', 'unit' => '/ listing / month', 'description' => 'Includes guest data collection, analytics dashboard, and marketing tools (SMS & Email).', 'cta' => 'Join Waitlist', 'variant' => 'dark'],
+            ['label' => 'Monthly Subscription', 'price' => '$10', 'unit' => '/ listing / month', 'description' => 'Includes guest data collection, analytics dashboard, and marketing tools (SMS & Email).', 'cta' => 'Join Waitlist', 'variant' => 'dark'],
             ['label' => 'Device Cost', 'price' => '$150', 'unit' => 'one-time', 'description' => 'One-time WiFi hardware cost to run the splash pages and capture guests on-site.', 'cta' => 'Get Early Access', 'variant' => 'outline'],
             ['label' => 'Founding Host Bundle', 'price' => '$45', 'unit' => '/ month', 'description' => 'Pay monthly ($79/month for first 6 months) — drops to $49/month after the device is paid off. Founding hosts get 1 month free.', 'cta' => 'Claim Founding Offer', 'variant' => 'dark'],
         ];
@@ -167,8 +167,8 @@ class LandingContentSeeder extends Seeder
         }
 
         LandingContent::insert([
-            ['section_id' => $pricing->id, 'content_key' => 'cta_label', 'value' => 'Founding Host Offer', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
-            ['section_id' => $pricing->id, 'content_key' => 'cta_text', 'value' => 'Join our waitlist and be among the first <strong>100 hosts</strong> to sign up. Founding hosts receive <strong>1 month free</strong> (save $49) and can be featured as Founding Host Partners on our site and investor materials.', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $pricing->id, 'content_key' => 'cta_label', 'value' => 'Become a Founding Host', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $pricing->id, 'content_key' => 'cta_text', 'value' => 'Join the Tena waitlist for priority access before public launch.<br/><br/>We\'re inviting only our first 100 hosts to join the Founding Host Program.<br/><br/>As a Founding Host, you\'ll receive:<br/><br/><strong>*</strong> 3 months free on the Tena platform<br/><strong>*</strong> Priority onboarding and dedicated support<br/><strong>*</strong> Early access to new features<br/><strong>*</strong> The opportunity to receive a complimentary Tena device<br/><br/>Built by Superhosts, for Superhosts, Tena helps you capture every guest—not just the booker—build lasting guest relationships, and drive more direct bookings beyond the OTAs.<br/><br/>Applications are now open. Once all 100 Founding Host spots are filled, the program will close.', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
             ['section_id' => $pricing->id, 'content_key' => 'cta_button', 'value' => 'Join the Waitlist Now', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
             ['section_id' => $pricing->id, 'content_key' => 'footer_text', 'value' => 'Questions? Email', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
             ['section_id' => $pricing->id, 'content_key' => 'footer_email', 'value' => 'info@tena.host', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],

@@ -41,7 +41,7 @@ export default function TwoColumn({
                 <div className="two-column-text-card">
                     {label && <span className="two-column-label">{label}</span>}
                     {heading && <h2 className="two-column-heading">{heading}</h2>}
-                    {description && <p className="two-column-desc">{description}</p>}
+                    {description && <p className="two-column-desc" dangerouslySetInnerHTML={{ __html: description }} />}
                     {features && (
                         <div className="two-column-features-list">
                             {features.map((feature, index) => (
