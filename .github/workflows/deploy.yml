@@ -16,7 +16,7 @@ jobs:
 
     env:
       MIN_PHP_VERSION: "8.2"
-      REQUIRED_EXTENSIONS: mbstring intl pdo_mysql mysql zip bcmath ctype fileinfo json tokenizer pcntl dom curl openssl
+      REQUIRED_EXTENSIONS: mbstring intl pdo_mysql mysqli zip bcmath ctype fileinfo json tokenizer pcntl dom curl openssl
 
     steps:
       - name: Checkout Code
