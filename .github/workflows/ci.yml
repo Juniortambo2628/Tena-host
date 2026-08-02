@@ -1,16 +1,15 @@
-name: Test & Autofix Suite
+name: Test & Auto-Fix Suite
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [master, main, develop]
 
 jobs:
   test-and-lint:
-    name: Run Tests and Code Formatting
+    name: Lint, Auto-Fix & Test
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
 
@@ -33,9 +32,21 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath, ctype, fileinfo, json, tokenizer
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath, ctype, fileinfo, json, tokenizer, pcntl, dom, curl, openssl
           coverage: none
+          tools: composer:v2
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -43,21 +54,24 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Composer dependencies
+      - name: Validate Composer JSON
+        run: composer validate --no-check-publish
+
+      - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Install NPM dependencies
+      - name: Install NPM Dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Build frontend assets for Inertia views
+      - name: Build Frontend Assets
         run: npm run build
 
-      - name: Setup test environment
+      - name: Setup Test Environment
         run: |
           cp .env.example .env
           php artisan key:generate
 
-      - name: Run database migrations
+      - name: Run Database Migrations
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -67,7 +81,27 @@ jobs:
           DB_PASSWORD: root
         run: php artisan migrate --force
 
-      - name: Run Pest test suite
+      - name: Run Laravel Pint (Auto-Fix Code Style)
+        run: vendor/bin/pint
+
+      - name: Check for Pint Changes
+        id: pint-changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit Pint Auto-Fixes
+        if: steps.pint-changes.outputs.has_changes == 'true' && github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "style: auto-fix PHP code style with Laravel Pint"
+          branch: ${{ github.ref_name }}
+          file_pattern: 'app/ config/ database/ routes/ resources/'
+
+      - name: Run Pest Test Suite
         env:
           DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
@@ -77,12 +111,43 @@ jobs:
           DB_PASSWORD: root
         run: php artisan test
 
-      - name: Run Pint Code Auto-Fixer
+      - name: Verify Artisan Functions
         run: |
-          vendor/bin/pint || true
+          php artisan route:list --compact
+          php artisan config:cache
+          php artisan config:clear
+          php artisan about
 
-      - name: Commit Pint Auto-Fixes if needed
-        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Verify Required Files Exist
+        run: |
+          echo "=== Checking critical files ==="
+          for file in \
+            "app/Http/Kernel.php" \
+            "config/app.php" \
+            "config/database.php" \
+            "config/services.php" \
+            "database/migrations" \
+            "routes/web.php" \
+            "routes/api.php" \
+            "public/index.php" \
+            "artisan" \
+            "composer.json" \
+            "composer.lock" \
+            "package.json"; do
+            if [ ! -e "$file" ]; then
+              echo "MISSING: $file"
+              exit 1
+            fi
+            echo "OK: $file"
+          done
+          echo "=== All critical files present ==="
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          commit_message: "style: auto-fix PHP code style with Laravel Pint"
-          branch: ${{ github.head_ref || github.ref_name }}
+          name: build-output
+          path: |
+            vendor/
+            public/build/
+            node_modules/.package-lock.json
+          retention-days: 1

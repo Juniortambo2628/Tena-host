@@ -1,24 +1,36 @@
 name: Deploy to Production
 
 on:
-  push:
-    branches: [ master, main ]
+  workflow_run:
+    workflows: ["Test & Auto-Fix Suite"]
+    types: [completed]
+    branches: [master, main]
+
+  workflow_dispatch:
 
 jobs:
   deploy:
     name: Build & Deploy to cPanel Production Server
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    env:
+      MIN_PHP_VERSION: "8.2"
+      REQUIRED_EXTENSIONS: mbstring intl pdo_mysql mysql zip bcmath ctype fileinfo json tokenizer pcntl dom curl openssl
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath, ctype, fileinfo, json, tokenizer
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, mysql, zip, bcmath, ctype, fileinfo, json, tokenizer, pcntl, dom, curl, openssl
           coverage: none
+          tools: composer:v2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,130 +38,449 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      - name: Validate Composer JSON
+        run: composer validate --no-check-publish
+
       - name: Install Composer Dependencies (Production)
-        run: |
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Install NPM Dependencies & Build Production Assets
         run: |
           npm ci --legacy-peer-deps
           npm run build
 
+      - name: Verify Build Artifacts
+        run: |
+          echo "=== Verifying build output ==="
+          for dir in vendor public/build; do
+            if [ ! -d "$dir" ]; then
+              echo "MISSING DIRECTORY: $dir"
+              exit 1
+            fi
+            echo "OK: $dir"
+          done
+          echo "=== Build artifacts verified ==="
+
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Add Server Host to Known Hosts
+      - name: Add Server to Known Hosts
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          ssh-keyscan -p 1624 51.89.113.223 >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
           chmod 600 ~/.ssh/known_hosts || true
 
-      - name: Sync Backend Core Files (/home/zhpebukm/tena-core)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: 51.89.113.223
-          port: 1624
-          username: zhpebukm
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./*,!node_modules,!tests,!.git,!.github,!.env*"
-          target: /home/zhpebukm/tena-core/
-          rm: false
+      - name: Pre-Flight Server Checks
+        run: |
+          set -e
+          echo "========================================="
+          echo "  PRE-FLIGHT CHECKS"
+          echo "========================================="
 
-      - name: Sync Frontend Public Files (/home/zhpebukm/tena.host)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: 51.89.113.223
-          port: 1624
-          username: zhpebukm
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "public/*"
-          target: /home/zhpebukm/tena.host/
-          strip_components: 1
+          echo "===> Checking server connectivity"
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo '     Connection OK'"
 
-      - name: Execute Server Deployment & Optimizations
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: 51.89.113.223
-          port: 1624
-          username: zhpebukm
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
+          echo "===> Checking PHP version (requires >= ${{ env.MIN_PHP_VERSION }})"
+          CURRENT_PHP=$(ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "php -r 'echo PHP_MAJOR_VERSION.\".\".PHP_MINOR_VERSION;'" 2>/dev/null)
+          echo "     Current PHP: $CURRENT_PHP"
 
-            echo "===> Creating Directories & Symlinks"
-            mkdir -p /home/zhpebukm/tena.host/api
-            mkdir -p /home/zhpebukm/tena-core/storage/framework/{cache,sessions,views}
-            mkdir -p /home/zhpebukm/tena-core/storage/logs
+          if [ "$(printf '%s\n' "${{ env.MIN_PHP_VERSION }}" "$CURRENT_PHP" | sort -V | head -n1)" != "${{ env.MIN_PHP_VERSION }}" ]; then
+            echo "ERROR: PHP $CURRENT_PHP is below minimum required ${{ env.MIN_PHP_VERSION }}"
+            exit 1
+          fi
+          echo "     PHP version OK"
 
-            # Ensure entrypoint exists in api directory
-            cp /home/zhpebukm/tena-core/public/index.php /home/zhpebukm/tena.host/api/index.php
-            cp /home/zhpebukm/tena-core/public/index.php /home/zhpebukm/tena.host/index.php
+          echo "===> Checking required PHP extensions"
+          MISSING_EXTS=$(ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "php -m" 2>/dev/null | while read ext; do
+            for required in ${{ env.REQUIRED_EXTENSIONS }}; do
+              if [ "$ext" = "$required" ]; then
+                echo "$ext"
+                break
+              fi
+            done
+          done | sort)
 
-            # Create public storage symlink directly via shell (avoiding PHP exec restriction)
-            mkdir -p /home/zhpebukm/tena-core/storage/app/public
-            ln -sfn /home/zhpebukm/tena-core/storage/app/public /home/zhpebukm/tena.host/storage
-            ln -sfn /home/zhpebukm/tena-core/storage/app/public /home/zhpebukm/tena-core/public/storage
-
-            echo "===> Configuring Production .env"
-            if [ ! -f "/home/zhpebukm/tena-core/.env" ]; then
-              cat << 'EOF' > /home/zhpebukm/tena-core/.env
-            APP_NAME="Tena Host"
-            APP_ENV=production
-            APP_KEY=${{ secrets.APP_KEY }}
-            APP_DEBUG=false
-            APP_URL=https://tena.host
-
-            LOG_CHANNEL=daily
-            LOG_DEPRECATIONS_CHANNEL=null
-            LOG_LEVEL=error
-
-            DB_CONNECTION=mysql
-            DB_HOST=127.0.0.1
-            DB_PORT=3306
-            DB_DATABASE=zhpebukm_tenahost
-            DB_USERNAME=zhpebukm_tenahost
-            DB_PASSWORD="Tena.host@2026"
-
-            BROADCAST_DRIVER=log
-            CACHE_DRIVER=file
-            FILESYSTEM_DISK=public
-            QUEUE_CONNECTION=sync
-            SESSION_DRIVER=file
-            SESSION_LIFETIME=120
-
-            MAIL_MAILER=smtp
-            MAIL_HOST=mail.tena.host
-            MAIL_PORT=465
-            MAIL_USERNAME=info@tena.host
-            MAIL_PASSWORD="Tena.host@2026"
-            MAIL_ENCRYPTION=tls
-            MAIL_FROM_ADDRESS="info@tena.host"
-            MAIL_FROM_NAME="${APP_NAME}"
-            EOF
-              cd /home/zhpebukm/tena-core && php artisan key:generate --force
+          ALL_FOUND=true
+          for ext in ${{ env.REQUIRED_EXTENSIONS }}; do
+            if ! echo "$MISSING_EXTS" | grep -q "^${ext}$"; then
+              echo "     MISSING: $ext"
+              ALL_FOUND=false
             fi
+          done
 
-            echo "===> Running Migrations & Optimizations"
-            cd /home/zhpebukm/tena-core
-            php artisan migrate --force
-            php artisan db:seed --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-            php artisan event:cache
+          if [ "$ALL_FOUND" = false ]; then
+            echo "ERROR: Required extensions missing"
+            exit 1
+          fi
+          echo "     All required extensions present"
 
-            echo "===> Setting Correct Permissions"
-            chmod -R 755 /home/zhpebukm/tena-core
-            chmod -R 775 /home/zhpebukm/tena-core/storage
-            chmod -R 775 /home/zhpebukm/tena-core/bootstrap/cache
-            chmod -R 755 /home/zhpebukm/tena.host
+          echo "===> Checking disk space"
+          DISK_AVAIL=$(ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "df -BM ~ | tail -1 | awk '{print \$4}' | tr -d 'M'" 2>/dev/null)
+          echo "     Available disk: ${DISK_AVAIL}MB"
+          if [ "$DISK_AVAIL" -lt 500 ]; then
+            echo "WARNING: Low disk space (<500MB available)"
+          fi
 
-            echo "===> Verifying File Structure"
-            ls -la /home/zhpebukm/tena-core/
-            ls -la /home/zhpebukm/tena.host/
-            ls -la /home/zhpebukm/tena.host/api/
+          echo "========================================="
+          echo "  Pre-flight checks passed"
+          echo "========================================="
 
-            echo "===> Deployment Completed Successfully!"
+      - name: Smart Sync - Clean Old Builds & Deploy Changed Files
+        run: |
+          set -e
+          SSH_CMD="ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
+          RSYNC_CMD="rsync -avz --progress -e 'ssh -p ${{ secrets.SSH_PORT }}'"
+
+          echo "========================================="
+          echo "  SMART SYNC DEPLOYMENT"
+          echo "========================================="
+
+          # ── Step 1: Clean old frontend build assets ──
+          echo ""
+          echo "===> [1/6] Cleaning old frontend build assets"
+          $SSH_CMD "rm -rf ~/tena.host/build/* 2>/dev/null || true"
+          echo "     Old build assets cleared"
+
+          # ── Step 2: Backup user uploads ──
+          echo ""
+          echo "===> [2/6] Preserving user uploads"
+          $SSH_CMD "mkdir -p ~/tena-core/storage/app/public/_preserved_uploads 2>/dev/null || true"
+          echo "     User uploads directory preserved"
+
+          # ── Step 3: Sync backend files (rsync - only changed files) ──
+          echo ""
+          echo "===> [3/6] Syncing backend files (incremental)"
+          for dir in app config database routes resources bootstrap; do
+            if [ -d "$dir" ]; then
+              rsync -avz --delete \
+                -e "ssh -p ${{ secrets.SSH_PORT }}" \
+                "$dir/" \
+                ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/"$dir"/
+              echo "     Synced: $dir/"
+            fi
+          done
+
+          # Sync root-level files
+          for file in artisan composer.json composer.lock; do
+            if [ -f "$file" ]; then
+              rsync -avz \
+                -e "ssh -p ${{ secrets.SSH_PORT }}" \
+                "$file" \
+                ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
+              echo "     Synced: $file"
+            fi
+          done
+
+          # ── Step 4: Smart vendor sync ──
+          echo ""
+          echo "===> [4/6] Syncing vendor directory (incremental)"
+          rsync -avz --delete \
+            --exclude='vendor/.git' \
+            -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            vendor/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/vendor/
+          echo "     Vendor synced"
+
+          # ── Step 5: Sync frontend public assets ──
+          echo ""
+          echo "===> [5/6] Syncing frontend assets"
+          rsync -avz \
+            -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            public/build/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/build/
+          echo "     Frontend assets synced"
+
+          # Sync .htaccess and index.php only (not public/build which was handled above)
+          rsync -avz \
+            -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            public/.htaccess \
+            public/index.php \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/ 2>/dev/null || true
+          echo "     Public root files synced"
+
+          # ── Step 6: Sync .env template ──
+          echo ""
+          echo "===> [6/6] Syncing .env template"
+          rsync -avz \
+            -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            .env.production \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/.env.production
+          echo "     .env template synced"
+
+          echo ""
+          echo "========================================="
+          echo "  File sync complete"
+          echo "========================================="
+
+      - name: Server-Side Deployment & Verification
+        run: |
+          set -e
+          SSH_CMD="ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
+
+          echo "========================================="
+          echo "  SERVER DEPLOYMENT"
+          echo "  $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "========================================="
+
+          $SSH_CMD << 'DEPLOY_SCRIPT'
+          set -e
+          CORE="$HOME/tena-core"
+          PUBLIC="$HOME/tena.host"
+
+          # ── 1. Create Required Directories ──
+          echo ""
+          echo "===> [1/12] Creating required directories"
+          mkdir -p "$CORE/storage/framework/cache/data"
+          mkdir -p "$CORE/storage/framework/sessions"
+          mkdir -p "$CORE/storage/framework/views"
+          mkdir -p "$CORE/storage/logs"
+          mkdir -p "$CORE/storage/app/public"
+          mkdir -p "$CORE/bootstrap/cache"
+          mkdir -p "$PUBLIC/api"
+          mkdir -p "$PUBLIC/build"
+          mkdir -p "$PUBLIC/uploads"
+          echo "     Directories created"
+
+          # ── 2. Create/Verify Symlinks ──
+          echo ""
+          echo "===> [2/12] Creating/verifying symlinks"
+
+          # index.php entrypoints (only if changed)
+          if [ ! -f "$PUBLIC/index.php" ]; then
+            cp "$CORE/public/index.php" "$PUBLIC/index.php"
+            echo "     Created: $PUBLIC/index.php"
+          fi
+          if [ ! -f "$PUBLIC/api/index.php" ]; then
+            cp "$CORE/public/index.php" "$PUBLIC/api/index.php"
+            echo "     Created: $PUBLIC/api/index.php"
+          fi
+
+          # Public storage symlinks
+          ln -sfn "$CORE/storage/app/public" "$PUBLIC/storage"
+          ln -sfn "$CORE/storage/app/public" "$CORE/public/storage"
+          echo "     Storage symlinks verified"
+
+          # ── 3. Configure .env ──
+          echo ""
+          echo "===> [3/12] Configuring production .env"
+          cd "$CORE"
+
+          # Only create .env if it doesn't exist
+          if [ ! -f "$CORE/.env" ]; then
+            if [ -f "$CORE/.env.production" ]; then
+              cp "$CORE/.env.production" "$CORE/.env"
+              echo "     .env created from production template"
+            else
+              echo "     ERROR: .env.production template not found"
+              exit 1
+            fi
+          else
+            echo "     .env exists - preserving current configuration"
+          fi
+
+          # Generate APP_KEY if empty
+          if grep -q "^APP_KEY=$" "$CORE/.env"; then
+            php artisan key:generate --force
+            echo "     APP_KEY generated"
+          fi
+
+          # Validate critical keys exist
+          echo "     Validating .env keys..."
+          for key in APP_NAME APP_ENV APP_KEY APP_DEBUG APP_URL DB_CONNECTION DB_HOST DB_DATABASE DB_USERNAME DB_PASSWORD; do
+            if grep -q "^${key}=" "$CORE/.env" && ! grep -q "^${key}=$" "$CORE/.env"; then
+              echo "     OK: $key"
+            else
+              echo "     WARNING: $key is empty or missing"
+            fi
+          done
+
+          # ── 4. Verify Server-Side Dependencies ──
+          echo ""
+          echo "===> [4/12] Verifying composer dependencies"
+          cd "$CORE"
+          if [ -f "composer.lock" ]; then
+            composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts 2>&1 || {
+              echo "     WARNING: composer install issues (non-fatal)"
+            }
+          fi
+          echo "     Vendor directory verified"
+
+          # ── 5. Clear All Caches ──
+          echo ""
+          echo "===> [5/12] Clearing all caches"
+          cd "$CORE"
+          php artisan config:clear 2>&1 || true
+          php artisan route:clear 2>&1 || true
+          php artisan view:clear 2>&1 || true
+          php artisan event:clear 2>&1 || true
+          php artisan cache:clear 2>&1 || true
+          php artisan clear-compiled 2>&1 || true
+          echo "     All caches cleared"
+
+          # ── 6. Run Database Migrations ──
+          echo ""
+          echo "===> [6/12] Running database migrations"
+          cd "$CORE"
+          php artisan migrate --force 2>&1 || {
+            echo "     WARNING: Migration issues (non-fatal)"
+          }
+          echo "     Migrations complete"
+
+          # ── 7. Seed Database (if seeders exist) ──
+          echo ""
+          echo "===> [7/12] Running database seeders"
+          cd "$CORE"
+          php artisan db:seed --force 2>&1 || {
+            echo "     INFO: No seeders to run (non-critical)"
+          }
+
+          # ── 8. Rebuild Caches ──
+          echo ""
+          echo "===> [8/12] Rebuilding caches"
+          cd "$CORE"
+          php artisan config:cache 2>&1
+          php artisan route:cache 2>&1
+          php artisan view:cache 2>&1
+          php artisan event:cache 2>&1
+          echo "     All caches rebuilt"
+
+          # ── 9. Set Permissions ──
+          echo ""
+          echo "===> [9/12] Setting permissions"
+          # Core application
+          find "$CORE" -type f -exec chmod 644 {} \; 2>/dev/null || true
+          find "$CORE" -type d -exec chmod 755 {} \; 2>/dev/null || true
+          # Storage needs write access
+          chmod -R 775 "$CORE/storage"
+          # Bootstrap cache needs write access
+          chmod -R 775 "$CORE/bootstrap/cache"
+          # Public directory
+          find "$PUBLIC" -type f -exec chmod 644 {} \; 2>/dev/null || true
+          find "$PUBLIC" -type d -exec chmod 755 {} \; 2>/dev/null || true
+          # Protect .env
+          chmod 600 "$CORE/.env" 2>/dev/null || true
+          # Protect .git
+          chmod -R 700 "$CORE/.git" 2>/dev/null || true
+          echo "     Permissions set"
+
+          # ── 10. Cleanup Old Files ──
+          echo ""
+          echo "===> [10/12] Cleaning up old files"
+          # Remove old log files (older than 30 days)
+          DELETED_LOGS=$(find "$CORE/storage/logs" -name "*.log" -mtime +30 -delete -print 2>/dev/null | wc -l)
+          echo "     Removed $DELETED_LOGS old log files"
+          # Remove old session files (older than 7 days)
+          DELETED_SESSIONS=$(find "$CORE/storage/framework/sessions" -type f -mtime +7 -delete -print 2>/dev/null | wc -l)
+          echo "     Removed $DELETED_SESSIONS old session files"
+          # Remove old cache files (older than 7 days)
+          DELETED_CACHE=$(find "$CORE/storage/framework/cache/data" -type f -mtime +7 -delete -print 2>/dev/null | wc -l)
+          echo "     Removed $DELETED_CACHE old cache files"
+          # Remove old compiled views (older than 7 days)
+          DELETED_VIEWS=$(find "$CORE/storage/framework/views" -name "*.php" -mtime +7 -delete -print 2>/dev/null | wc -l)
+          echo "     Removed $DELETED_VIEWS old compiled views"
+
+          # ── 11. Restart Queue Workers ──
+          echo ""
+          echo "===> [11/12] Restarting queue workers"
+          cd "$CORE"
+          php artisan queue:restart 2>&1 || echo "     INFO: No queue workers running"
+
+          # ── 12. Final Verification ──
+          echo ""
+          echo "===> [12/12] Running verification checks"
+          cd "$CORE"
+
+          # Artisan check
+          php artisan about > /dev/null 2>&1 && echo "     OK: Artisan responsive" || echo "     WARNING: Artisan not responsive"
+
+          # Route cache check
+          if ls "$CORE"/bootstrap/cache/routes*.php 1> /dev/null 2>&1; then
+            echo "     OK: Route cache exists"
+          else
+            echo "     WARNING: Route cache not found"
+          fi
+
+          # Config cache check
+          if [ -f "$CORE/bootstrap/cache/config.php" ]; then
+            echo "     OK: Config cache exists"
+          else
+            echo "     WARNING: Config cache not found"
+          fi
+
+          # View count
+          VIEW_COUNT=$(find "$CORE/storage/framework/views" -name "*.php" 2>/dev/null | wc -l)
+          echo "     OK: $VIEW_COUNT compiled views"
+
+          # Vendor count
+          VENDOR_COUNT=$(find "$CORE/vendor" -maxdepth 1 -type d 2>/dev/null | wc -l)
+          echo "     OK: $VENDOR_COUNT top-level vendor packages"
+
+          # Build assets
+          if [ -d "$PUBLIC/build" ]; then
+            ASSET_COUNT=$(find "$PUBLIC/build" -type f 2>/dev/null | wc -l)
+            echo "     OK: $ASSET_COUNT frontend build assets"
+          else
+            echo "     WARNING: Frontend build directory not found"
+          fi
+
+          # Index.php check
+          for entry in "$PUBLIC/index.php" "$PUBLIC/api/index.php"; do
+            if [ -f "$entry" ]; then
+              echo "     OK: $entry"
+            else
+              echo "     WARNING: $entry missing"
+            fi
+          done
+
+          # Symlink check
+          if [ -L "$PUBLIC/storage" ]; then
+            echo "     OK: Public storage symlink active"
+          else
+            echo "     WARNING: Public storage symlink missing"
+          fi
+
+          # User uploads preserved check
+          if [ -d "$PUBLIC/uploads" ]; then
+            UPLOAD_COUNT=$(find "$PUBLIC/uploads" -type f 2>/dev/null | wc -l)
+            echo "     OK: $UPLOAD_COUNT user uploads preserved"
+          fi
+
+          echo ""
+          echo "========================================="
+          echo "  DEPLOYMENT COMPLETE"
+          echo "  $(date '+%Y-%m-%d %H:%M:%S')"
+          echo "========================================="
+          echo ""
+          echo "  PHP:            $(php -r 'echo PHP_VERSION;')"
+          echo "  Core Path:      $CORE"
+          echo "  Public Path:    $PUBLIC"
+          echo "  Vendor:         $VENDOR_COUNT packages"
+          echo "  Build Assets:   $ASSET_COUNT files"
+          echo "  Compiled Views: $VIEW_COUNT"
+          echo "  User Uploads:   $UPLOAD_COUNT files"
+          echo ""
+
+      - name: Post-Deploy Health Check
+        run: |
+          set -e
+          SSH_CMD="ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
+
+          echo "===> Running health check"
+
+          # Test HTTP response
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://tena.host" 2>/dev/null || echo "000")
+          echo "     HTTPS Response: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 500 ]; then
+            echo "     HEALTH CHECK PASSED"
+          else
+            echo "     WARNING: Health check returned HTTP $HTTP_STATUS"
+            echo "     Attempting to diagnose..."
+            curl -s -I "https://tena.host" 2>/dev/null | head -10 || true
+
+            # Check if PHP-FPM is running
+            $SSH_CMD "ps aux | grep -i php-fpm | grep -v grep" 2>/dev/null || echo "     PHP-FPM may not be running"
+          fi

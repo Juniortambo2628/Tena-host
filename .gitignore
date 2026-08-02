@@ -2,7 +2,8 @@
 .DS_Store
 .env
 .env.backup
-.env.production
+# .env.production is a template without secrets - safe to track
+# .env.production
 .env.testing
 .phpactor.json
 .phpunit.result.cache
