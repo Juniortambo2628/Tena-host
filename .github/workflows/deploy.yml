@@ -244,30 +244,18 @@ jobs:
         run: |
           set -e
           echo "=== Creating frontend build archive ==="
-          tar czf frontend-build.tar.gz -C public build/
-          echo "Archive size: $(du -h frontend-build.tar.gz | cut -f1)"
+          tar czf /tmp/frontend-build.tar.gz -C public build/
+          echo "Archive size: $(du -h /tmp/frontend-build.tar.gz | cut -f1)"
 
-          echo "=== Uploading to server ==="
-          scp -P ${{ secrets.SSH_PORT }} frontend-build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/
-
-          echo "=== Extracting on server ==="
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EXTRACT'
-          set -e
-          cd ~/tena.host
-          tar xzf frontend-build.tar.gz
-          rm -f frontend-build.tar.gz
-          echo "Build assets:"
-          ls -la build/ 2>/dev/null | head -5 || echo "Build directory missing!"
-          echo "Assets subdirectory:"
-          ls -la build/assets/ 2>/dev/null | head -10 || echo "Assets directory missing!"
-          EXTRACT
+          echo "=== Uploading and extracting on server ==="
+          cat /tmp/frontend-build.tar.gz | ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/tena.host && tar xzf - && rm -f frontend-build.tar.gz && echo 'Build assets:' && ls -la build/ | head -5 && echo 'Assets subdirectory:' && ls -la build/assets/ | head -10"
 
           echo "=== Cleaning up local archive ==="
-          rm -f frontend-build.tar.gz
+          rm -f /tmp/frontend-build.tar.gz
 
       - name: Sync .htaccess to Public Root
         run: |
-          scp -P ${{ secrets.SSH_PORT }} public/.htaccess ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/.htaccess
+          cat public/.htaccess | ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cat > ~/tena.host/.htaccess"
           echo ".htaccess synced to ~/tena.host/"
 
       - name: Sync .env Template
