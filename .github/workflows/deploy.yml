@@ -240,16 +240,49 @@ jobs:
           strip_components: 0
           rm: false
 
-      - name: Sync Frontend Public Assets
+      - name: Create Frontend Build Archive
+        run: tar czf frontend-build.tar.gz -C public build/
+        shell: bash
+
+      - name: Upload Build Archive to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "public/build/,public/.htaccess,public/index.php"
+          source: "frontend-build.tar.gz"
           target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/
-          strip_components: 1
+
+      - name: Extract Build Assets on Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "=== Extracting frontend build assets ==="
+            cd ~/tena.host
+            tar xzf frontend-build.tar.gz
+            rm -f frontend-build.tar.gz
+            echo "Build assets uploaded to ~/tena.host/build/"
+            ls -la ~/tena.host/build/ 2>/dev/null | head -5 || echo "Build directory is empty!"
+            # Verify assets subdirectory
+            echo "Assets subdirectory:"
+            ls -la ~/tena.host/build/assets/ 2>/dev/null | head -5 || echo "Assets directory missing!"
+
+      - name: Sync .htaccess to Public Root
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "public/.htaccess"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/.htaccess
+          strip_components: 0
           rm: false
 
       - name: Sync .env Template
