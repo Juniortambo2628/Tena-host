@@ -21,7 +21,7 @@
 }
 
 .two-column-text-col {
-    @apply w-full lg:w-1/2;
+    @apply w-full lg:w-1/2 min-w-0 overflow-hidden;
 }
 
 .two-column-text-card {

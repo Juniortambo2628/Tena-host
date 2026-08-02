@@ -14,7 +14,7 @@ export default function MediaShowcase({ section }) {
         || getMedia(section, 'FEATURE_VIDEO')
         || getMedia(section, 'video')
         || getMedia(section, 'video_slot')
-        || (section.media && typeof section.media === 'object' ? Object.values(section.media)[0] : '')
+        || (section.media && typeof section.media === 'object' ? (Object.values(section.media)[0]?.original_path || Object.values(section.media)[0] || '') : '')
         || '';
 
     if (!mediaSrc) return null;

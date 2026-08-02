@@ -18,7 +18,11 @@ export function getContent(section, key, defaultValue = '') {
  */
 export function getMedia(section, key, defaultValue = '') {
     if (!section || !section.media) return defaultValue;
-    return section.media[key] ?? defaultValue;
+    const value = section.media[key] ?? defaultValue;
+    if (!value) return defaultValue;
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object') return value.optimized_path || value.original_path || defaultValue;
+    return defaultValue;
 }
 
 /**
