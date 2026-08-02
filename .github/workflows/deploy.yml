@@ -151,8 +151,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "app/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/app/
+          source: "app/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -163,8 +163,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "config/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/config/
+          source: "config/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -175,8 +175,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "database/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/database/
+          source: "database/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -187,8 +187,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "routes/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/routes/
+          source: "routes/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -199,8 +199,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "resources/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/resources/
+          source: "resources/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -211,8 +211,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "bootstrap/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/bootstrap/
+          source: "bootstrap/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -223,8 +223,8 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "vendor/*"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/vendor/
+          source: "vendor/"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
           strip_components: 0
           rm: true
 
@@ -247,7 +247,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "public/build/*,public/.htaccess,public/index.php"
+          source: "public/build/,public/.htaccess,public/index.php"
           target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/
           strip_components: 1
           rm: false
