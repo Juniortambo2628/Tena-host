@@ -1,5 +1,7 @@
 <?php
 
+use Tena\NotificationManager;
+
 /**
  * AJAX Handler for Real-time Updates
  * Handles all AJAX requests for the Tena system
@@ -37,7 +39,7 @@ $action = $_POST['action'] ?? $_GET['action'] ?? '';
 try {
     $database = new Database;
     $db = $database->getConnection();
-    $notificationManager = new \Tena\NotificationManager($db);
+    $notificationManager = new NotificationManager($db);
 
     switch ($action) {
         case 'get_notifications':

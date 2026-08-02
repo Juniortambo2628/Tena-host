@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Mail\CampaignEmail;
 use App\Models\Campaign;
 use App\Models\Guest;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -83,7 +84,7 @@ class CampaignDispatcher
     /**
      * Resolve the audience for a campaign.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, Guest>
+     * @return Collection<int, Guest>
      */
     public function audience(Campaign $campaign)
     {

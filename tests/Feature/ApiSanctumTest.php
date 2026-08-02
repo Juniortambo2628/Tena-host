@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Amenity;
 use App\Models\Guest;
 use App\Models\Order;
 use App\Models\Property;
@@ -66,7 +67,7 @@ it('lists guests scoped to host properties via api', function () {
 
 it('lists orders scoped to host properties via api', function () {
     $guest = Guest::factory()->create(['property_id' => $this->property->id]);
-    $amenity = \App\Models\Amenity::factory()->create(['property_id' => $this->property->id]);
+    $amenity = Amenity::factory()->create(['property_id' => $this->property->id]);
     Order::factory()->count(2)->create([
         'property_id' => $this->property->id,
         'guest_id' => $guest->id,
@@ -82,7 +83,7 @@ it('lists orders scoped to host properties via api', function () {
 
 it('allows guests to view portal and place orders via api', function () {
     $property = Property::factory()->create();
-    $amenity = \App\Models\Amenity::factory()->create([
+    $amenity = Amenity::factory()->create([
         'property_id' => $property->id,
         'price' => 250,
     ]);

@@ -7,6 +7,7 @@ use App\Http\Resources\AmenityResource;
 use App\Http\Resources\PropertyResource;
 use App\Models\Amenity;
 use App\Models\Order;
+use App\Models\Property;
 use Illuminate\Http\Request;
 
 class GuestOrderController extends Controller
@@ -26,7 +27,7 @@ class GuestOrderController extends Controller
             abort(403, 'You do not have access to this property.');
         }
 
-        $property = \App\Models\Property::with(['accessPoints', 'host'])->findOrFail($propertyId);
+        $property = Property::with(['accessPoints', 'host'])->findOrFail($propertyId);
 
         return response()->json([
             'property' => new PropertyResource($property),

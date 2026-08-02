@@ -1,5 +1,7 @@
 <?php
 
+use Tena\NotificationManager;
+
 /**
  * Simple Integration Test for Tena Waitlist System
  * Tests core functionality without including authentication-dependent files
@@ -191,7 +193,7 @@ class SimpleIntegrationTest
         echo "🔔 Testing Notification System...\n";
 
         try {
-            $notificationManager = new \Tena\NotificationManager($this->db);
+            $notificationManager = new NotificationManager($this->db);
             $this->assert($notificationManager !== null, 'NotificationManager instantiated');
 
             // Test creating notification

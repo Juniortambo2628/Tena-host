@@ -1,5 +1,7 @@
 <?php
 
+use Dompdf\Dompdf;
+
 /**
  * Worker for generating PDF exports asynchronously
  */
@@ -59,7 +61,7 @@ function pdf_export_worker($outputPath, $paramsJson)
     }
     $html .= '</tbody></table></body></html>';
 
-    $dompdf = new \Dompdf\Dompdf;
+    $dompdf = new Dompdf;
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'landscape');
     $dompdf->render();

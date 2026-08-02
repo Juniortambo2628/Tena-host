@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Guest;
 use App\Models\Property;
 use App\Models\User;
 
@@ -45,8 +46,8 @@ it('shows recent guests and pending orders scoped to assigned properties', funct
     $staff = User::factory()->staff()->create();
     $staff->staffProperties()->attach($assignedProperty);
 
-    $assignedGuest = \App\Models\Guest::factory()->create(['property_id' => $assignedProperty->id]);
-    $otherGuest = \App\Models\Guest::factory()->create(['property_id' => $otherProperty->id]);
+    $assignedGuest = Guest::factory()->create(['property_id' => $assignedProperty->id]);
+    $otherGuest = Guest::factory()->create(['property_id' => $otherProperty->id]);
 
     $response = $this->actingAs($staff)->get(route('staff.dashboard'));
 

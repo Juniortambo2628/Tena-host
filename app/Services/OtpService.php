@@ -64,7 +64,7 @@ class OtpService
         }
 
         // For phone numbers, use configured SMS driver.
-        $driverClass = config('services.sms.driver', \App\Services\NullSmsDriver::class);
+        $driverClass = config('services.sms.driver', NullSmsDriver::class);
         $driver = app($driverClass);
         $driver->send($otp->identifier, "Your TENA verification code is: {$otp->code}");
     }

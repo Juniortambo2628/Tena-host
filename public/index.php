@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+
 /**
  * Tena.host Production Entry Point
  *
@@ -29,4 +31,4 @@ if (file_exists('/home/zhpebukm/tena-core/bootstrap/app.php')) {
     $app = require_once __DIR__.'/../../tena-core/bootstrap/app.php';
 }
 
-$app->handleRequest(\Illuminate\Http\Request::capture());
+$app->handleRequest(Request::capture());

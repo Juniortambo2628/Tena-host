@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MpesaTransaction;
+use App\Models\Setting;
 use App\Services\MpesaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -71,7 +72,7 @@ class SubscriptionController extends Controller
 
     public function simulateMpesa(Request $request)
     {
-        $billingEnabled = \App\Models\Setting::getValue('billing_enabled', 'auto');
+        $billingEnabled = Setting::getValue('billing_enabled', 'auto');
 
         if ($billingEnabled === 'enabled') {
             return back()->with('error', 'Simulation is disabled when billing is explicitly enabled.');

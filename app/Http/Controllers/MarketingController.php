@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendCampaignJob;
 use App\Models\Campaign;
 use App\Models\MarketingEvent;
+use App\Services\CampaignDispatcher;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -150,11 +153,11 @@ class MarketingController extends Controller
 
         $campaign->update(['status' => 'active']);
 
-        $dispatcher = new \App\Services\CampaignDispatcher;
+        $dispatcher = new CampaignDispatcher;
         $guests = $dispatcher->audience($campaign);
 
         foreach ($guests as $guest) {
-            \App\Jobs\SendCampaignJob::dispatch($campaign, $guest);
+            SendCampaignJob::dispatch($campaign, $guest);
         }
 
         return redirect()->back()->with('success', "Campaign activated. {$guests->count()} guests queued for delivery.");
@@ -213,7 +216,7 @@ class MarketingController extends Controller
                 $day = $dayEvents->first()->date;
 
                 return [
-                    'name' => \Carbon\Carbon::parse($day)->format('D'),
+                    'name' => Carbon::parse($day)->format('D'),
                     'delivered' => $dayEvents->where('event_type', 'sent')->sum('count'),
                     'opened' => $dayEvents->where('event_type', 'opened')->sum('count'),
                     'clicks' => $dayEvents->where('event_type', 'clicked')->sum('count'),

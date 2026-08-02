@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,7 @@ class TwoFactorController extends Controller
             return redirect()->route('login')->withErrors(['email' => 'Session expired. Please log in again.']);
         }
 
-        $user = \App\Models\User::find($userId);
+        $user = User::find($userId);
 
         if (! $user) {
             return redirect()->route('login')->withErrors(['email' => 'User not found.']);

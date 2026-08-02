@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Amenity;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,7 @@ class OrderController extends Controller
                 'amenity_id' => 'required|exists:amenities,id',
             ]);
 
-            $amenity = \App\Models\Amenity::findOrFail($validated['amenity_id']);
+            $amenity = Amenity::findOrFail($validated['amenity_id']);
 
             // Security: ensure amenity belongs to a property the guest can access.
             $propertyIds = $user->guestRecords()->pluck('property_id');

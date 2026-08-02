@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Amenity;
 use App\Models\Guest;
+use App\Models\Order;
+use App\Models\Otp;
 use App\Models\Property;
 use App\Models\User;
 use App\Services\OtpService;
@@ -24,7 +27,7 @@ it('allows a guest to request an OTP via email', function () {
     $response->assertRedirect(route('guest.otp.verify.form', ['email' => $guest->email]));
     $response->assertSessionHas('success');
 
-    expect(\App\Models\Otp::where('identifier', $guest->email)->exists())->toBeTrue();
+    expect(Otp::where('identifier', $guest->email)->exists())->toBeTrue();
 });
 
 it('verifies a guest OTP and logs them in', function () {
@@ -86,7 +89,7 @@ it('prevents a guest from viewing an unassigned property portal', function () {
 
 it('allows a guest to place an order for an amenity', function () {
     $property = Property::factory()->create();
-    $amenity = \App\Models\Amenity::factory()->create([
+    $amenity = Amenity::factory()->create([
         'property_id' => $property->id,
         'price' => 500,
     ]);
@@ -106,5 +109,5 @@ it('allows a guest to place an order for an amenity', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success');
 
-    expect(\App\Models\Order::where('guest_id', $guest->id)->where('amenity_id', $amenity->id)->exists())->toBeTrue();
+    expect(Order::where('guest_id', $guest->id)->where('amenity_id', $amenity->id)->exists())->toBeTrue();
 });

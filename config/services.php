@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\NullSmsDriver;
+
 return [
 
     /*
@@ -51,7 +53,7 @@ return [
     ],
 
     'sms' => [
-        'driver' => env('SMS_DRIVER', \App\Services\NullSmsDriver::class),
+        'driver' => env('SMS_DRIVER', NullSmsDriver::class),
     ],
 
     'pms' => [

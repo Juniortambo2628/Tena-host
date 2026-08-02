@@ -3,7 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -11,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, \Laravel\Cashier\Billable, Notifiable;
 
     /**
@@ -52,7 +55,7 @@ class User extends Authenticatable
     /**
      * Get the properties owned by the user (Superhost).
      */
-    public function properties(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function properties(): HasMany
     {
         return $this->hasMany(Property::class);
     }
@@ -60,7 +63,7 @@ class User extends Authenticatable
     /**
      * Get the guest records linked to this user account.
      */
-    public function guestRecords(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function guestRecords(): HasMany
     {
         return $this->hasMany(Guest::class);
     }
@@ -68,7 +71,7 @@ class User extends Authenticatable
     /**
      * Get the properties assigned to a staff user.
      */
-    public function staffProperties(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function staffProperties(): BelongsToMany
     {
         return $this->belongsToMany(Property::class, 'staff_property');
     }
@@ -116,7 +119,7 @@ class User extends Authenticatable
     /**
      * Get the M-Pesa transactions for the user.
      */
-    public function mpesaTransactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function mpesaTransactions(): HasMany
     {
         return $this->hasMany(MpesaTransaction::class);
     }
@@ -127,7 +130,7 @@ class User extends Authenticatable
     public function propertyIds(): array
     {
         if ($this->isAdmin()) {
-            return Cache::remember('admin_property_ids', 300, fn () => \App\Models\Property::pluck('id')->toArray());
+            return Cache::remember('admin_property_ids', 300, fn () => Property::pluck('id')->toArray());
         }
 
         return Cache::remember("user_property_ids_{$this->id}", 300, fn () => $this->properties()->pluck('id')->toArray());

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -19,7 +20,7 @@ class SystemController extends Controller
 
         return Inertia::render('Admin/System/Index', [
             'phpVersion' => PHP_VERSION,
-            'laravelVersion' => \Illuminate\Foundation\Application::VERSION,
+            'laravelVersion' => Application::VERSION,
             'dbSize' => $dbSize[0]->size_mb.' MB',
             'serverTime' => now()->toDateTimeString(),
         ]);

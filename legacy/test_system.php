@@ -1,5 +1,7 @@
 <?php
 
+use Tena\NotificationManager;
+
 /**
  * System Test Script
  * Tests all components of the Tena Waitlist System
@@ -84,7 +86,7 @@ try {
         echo "   ✅ NotificationManager class available\n";
 
         if (isset($db)) {
-            $notificationManager = new \Tena\NotificationManager($db);
+            $notificationManager = new NotificationManager($db);
             echo "   ✅ NotificationManager instantiated successfully\n";
         } else {
             echo "   ⚠️  Cannot test NotificationManager - no database connection\n";

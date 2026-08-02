@@ -1,5 +1,7 @@
 <?php
 
+use Tena\NotificationManager;
+
 /**
  * Comprehensive Unit Test Suite for Tena Waitlist System
  * Tests all major components and functionality
@@ -94,7 +96,7 @@ class UnitTestSuite
         echo "🔔 Testing Notification Manager...\n";
 
         try {
-            $notificationManager = new \Tena\NotificationManager($this->db);
+            $notificationManager = new NotificationManager($this->db);
             $this->assert($notificationManager !== null, 'NotificationManager instantiated');
 
             // Test creating notification

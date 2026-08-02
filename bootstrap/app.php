@@ -1,8 +1,15 @@
 <?php
 
+use App\Http\Middleware\AdminOnly;
+use App\Http\Middleware\EnsureUserIsSubscribed;
+use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\HostOnly;
+use App\Http\Middleware\StaffOnly;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,15 +20,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
-            \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            HandleInertiaRequests::class,
+            AddLinkHeadersForPreloadedAssets::class,
         ]);
 
         $middleware->alias([
-            'subscribed' => \App\Http\Middleware\EnsureUserIsSubscribed::class,
-            'admin' => \App\Http\Middleware\AdminOnly::class,
-            'staff' => \App\Http\Middleware\StaffOnly::class,
-            'host' => \App\Http\Middleware\HostOnly::class,
+            'subscribed' => EnsureUserIsSubscribed::class,
+            'admin' => AdminOnly::class,
+            'staff' => StaffOnly::class,
+            'host' => HostOnly::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [
@@ -29,16 +36,16 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->reportable(function (\Throwable $e) {
-            \Log::error('Unhandled exception: '.$e->getMessage(), [
+        $exceptions->reportable(function (Throwable $e) {
+            Log::error('Unhandled exception: '.$e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
             ]);
         });
-        $exceptions->renderable(function (\Throwable $e) {
+        $exceptions->renderable(function (Throwable $e) {
             if (request()->expectsJson() || request()->header('X-Inertia') || request()->header('X-Requested-With')) {
-                if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+                if ($e instanceof AuthenticationException) {
                     return response()->json(['message' => 'Unauthenticated.'], 401);
                 }
                 $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
