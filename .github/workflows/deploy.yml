@@ -73,9 +73,6 @@ jobs:
           ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
           chmod 600 ~/.ssh/known_hosts || true
 
-      - name: Install rsync
-        run: sudo apt-get update && sudo apt-get install -y rsync
-
       - name: Pre-Flight Server Checks
         run: |
           set -e
@@ -131,92 +128,141 @@ jobs:
           echo "  Pre-flight checks passed"
           echo "========================================="
 
-      - name: Smart Sync - Clean Old Builds & Deploy Changed Files
-        run: |
-          set -e
-          SSH_CMD="ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}"
-          RSYNC_CMD="rsync -avz --progress -e 'ssh -p ${{ secrets.SSH_PORT }}'"
+      - name: Clean Old Build Assets
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "=== Cleaning old frontend build assets ==="
+            rm -rf ~/tena.host/build/* 2>/dev/null || true
+            echo "     Old build assets cleared"
+            echo "=== Preserving user uploads ==="
+            mkdir -p ~/tena-core/storage/app/public 2>/dev/null || true
+            echo "     User uploads directory preserved"
 
-          echo "========================================="
-          echo "  SMART SYNC DEPLOYMENT"
-          echo "========================================="
+      - name: Sync Backend - app/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "app/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/app/
+          strip_components: 0
+          rm: true
 
-          # ── Step 1: Clean old frontend build assets ──
-          echo ""
-          echo "===> [1/6] Cleaning old frontend build assets"
-          $SSH_CMD "rm -rf ~/tena.host/build/* 2>/dev/null || true"
-          echo "     Old build assets cleared"
+      - name: Sync Backend - config/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "config/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/config/
+          strip_components: 0
+          rm: true
 
-          # ── Step 2: Backup user uploads ──
-          echo ""
-          echo "===> [2/6] Preserving user uploads"
-          $SSH_CMD "mkdir -p ~/tena-core/storage/app/public/_preserved_uploads 2>/dev/null || true"
-          echo "     User uploads directory preserved"
+      - name: Sync Backend - database/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "database/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/database/
+          strip_components: 0
+          rm: true
 
-          # ── Step 3: Sync backend files (rsync - only changed files) ──
-          echo ""
-          echo "===> [3/6] Syncing backend files (incremental)"
-          for dir in app config database routes resources bootstrap; do
-            if [ -d "$dir" ]; then
-              rsync -avz --delete \
-                -e "ssh -p ${{ secrets.SSH_PORT }}" \
-                "$dir/" \
-                ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/"$dir"/
-              echo "     Synced: $dir/"
-            fi
-          done
+      - name: Sync Backend - routes/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "routes/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/routes/
+          strip_components: 0
+          rm: true
 
-          # Sync root-level files
-          for file in artisan composer.json composer.lock; do
-            if [ -f "$file" ]; then
-              rsync -avz \
-                -e "ssh -p ${{ secrets.SSH_PORT }}" \
-                "$file" \
-                ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-              echo "     Synced: $file"
-            fi
-          done
+      - name: Sync Backend - resources/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "resources/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/resources/
+          strip_components: 0
+          rm: true
 
-          # ── Step 4: Smart vendor sync ──
-          echo ""
-          echo "===> [4/6] Syncing vendor directory (incremental)"
-          rsync -avz --delete \
-            --exclude='vendor/.git' \
-            -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            vendor/ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/vendor/
-          echo "     Vendor synced"
+      - name: Sync Backend - bootstrap/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "bootstrap/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/bootstrap/
+          strip_components: 0
+          rm: true
 
-          # ── Step 5: Sync frontend public assets ──
-          echo ""
-          echo "===> [5/6] Syncing frontend assets"
-          rsync -avz \
-            -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            public/build/ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/build/
-          echo "     Frontend assets synced"
+      - name: Sync Backend - vendor/
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "vendor/*"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/vendor/
+          strip_components: 0
+          rm: true
 
-          # Sync .htaccess and index.php only (not public/build which was handled above)
-          rsync -avz \
-            -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            public/.htaccess \
-            public/index.php \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/ 2>/dev/null || true
-          echo "     Public root files synced"
+      - name: Sync Root Files
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "artisan,composer.json,composer.lock"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
+          strip_components: 0
+          rm: false
 
-          # ── Step 6: Sync .env template ──
-          echo ""
-          echo "===> [6/6] Syncing .env template"
-          rsync -avz \
-            -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            .env.production \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/.env.production
-          echo "     .env template synced"
+      - name: Sync Frontend Public Assets
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "public/build/*,public/.htaccess,public/index.php"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena.host/
+          strip_components: 1
+          rm: false
 
-          echo ""
-          echo "========================================="
-          echo "  File sync complete"
-          echo "========================================="
+      - name: Sync .env Template
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ".env.production"
+          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/.env.production
+          strip_components: 0
+          rm: false
 
       - name: Server-Side Deployment & Verification
         run: |
