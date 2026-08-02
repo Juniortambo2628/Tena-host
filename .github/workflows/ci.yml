@@ -113,7 +113,7 @@ jobs:
 
       - name: Verify Artisan Functions
         run: |
-          php artisan route:list --compact
+          php artisan route:list
           php artisan config:cache
           php artisan config:clear
           php artisan about
