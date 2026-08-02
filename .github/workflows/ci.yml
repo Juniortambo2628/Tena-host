@@ -122,7 +122,7 @@ jobs:
         run: |
           echo "=== Checking critical files ==="
           for file in \
-            "app/Http/Kernel.php" \
+            "bootstrap/app.php" \
             "config/app.php" \
             "config/database.php" \
             "config/services.php" \
