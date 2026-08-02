@@ -139,7 +139,8 @@ jobs:
             set -e
             echo "=== Cleaning old frontend build assets ==="
             rm -rf ~/tena.host/build/* 2>/dev/null || true
-            echo "     Old build assets cleared"
+            rm -rf ~/tena-core/public/build/* 2>/dev/null || true
+            echo "     Old build assets cleared (tena.host + tena-core/public)"
             echo "=== Preserving user uploads ==="
             mkdir -p ~/tena-core/storage/app/public 2>/dev/null || true
             echo "     User uploads directory preserved"
@@ -247,10 +248,17 @@ jobs:
           tar czf /tmp/frontend-build.tar.gz -C public build/
           echo "Archive size: $(du -h /tmp/frontend-build.tar.gz | cut -f1)"
 
-          echo "=== Uploading and extracting on server ==="
-          cat /tmp/frontend-build.tar.gz | ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/tena.host && tar xzf - && rm -f frontend-build.tar.gz && echo 'Build assets:' && ls -la build/ | head -5 && echo 'Assets subdirectory:' && ls -la build/assets/ | head -10"
+          echo "=== Uploading archive to server ==="
+          scp -P ${{ secrets.SSH_PORT }} /tmp/frontend-build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/frontend-build.tar.gz
 
-          echo "=== Cleaning up local archive ==="
+          echo "=== Extracting to ~/tena.host (webroot) ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/tena.host && tar xzf ~/frontend-build.tar.gz && echo 'Build assets:' && ls -la build/ | head -5 && echo 'Assets:' && ls -la build/assets/ | head -10"
+
+          echo "=== Extracting to ~/tena-core/public/build (for @vite Blade directive) ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/tena-core/public/build && cd ~/tena-core/public && tar xzf ~/frontend-build.tar.gz && echo 'Manifest:' && ls -la ~/tena-core/public/build/manifest.json"
+
+          echo "=== Cleaning up ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -f ~/frontend-build.tar.gz"
           rm -f /tmp/frontend-build.tar.gz
 
       - name: Sync .htaccess to Public Root
@@ -316,6 +324,8 @@ jobs:
           # Public storage symlinks
           ln -sfn "$CORE/storage/app/public" "$PUBLIC/storage"
           ln -sfn "$CORE/storage/app/public" "$CORE/public/storage"
+          # Build assets symlink - ensure @vite() reads from same build directory served by Apache
+          ln -sfn "$PUBLIC/build" "$CORE/public/build"
           echo "     Storage symlinks verified"
 
           # ── 3. Configure .env ──
