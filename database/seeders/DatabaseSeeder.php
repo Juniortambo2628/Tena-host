@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             LandingContentSeeder::class,
             SettingsSeeder::class,
             NotificationPreferencesSeeder::class,
+            PolicyDocumentSeeder::class,
         ]);
         $registrations = [
             ['first_name' => 'Alice', 'last_name' => 'Johnson', 'email' => 'alice@example.com', 'property_type' => 'vacation_rental', 'property_count' => 2, 'location' => 'Malindi', 'status' => 'active'],
@@ -25,7 +26,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($registrations as $reg) {
-            Registration::create($reg);
+            Registration::firstOrCreate(
+                ['email' => $reg['email']],
+                $reg
+            );
         }
     }
 }

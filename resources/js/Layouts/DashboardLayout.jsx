@@ -20,7 +20,8 @@ import {
     Building2,
     Activity,
     CreditCard,
-    Globe
+    Globe,
+    FileText
 } from 'lucide-react';
 import { Menu, Transition, Dialog } from '@headlessui/react';
 import { router } from '@inertiajs/react';
@@ -46,7 +47,9 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
         { name: 'Hosts', icon: Building2, route: 'admin.hosts.index' },
         { name: 'Users', icon: Users, route: 'admin.users.index' },
         { name: 'Registrations', icon: AlignLeft, route: 'admin.registrations.index' },
+        { name: 'Payments', icon: CreditCard, route: 'admin.payments.index' },
         { name: 'Landing Page', icon: Globe, route: 'admin.landing.index' },
+        { name: 'Policies', icon: FileText, route: 'admin.policies.index' },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
         { name: 'Settings', icon: Settings, route: 'admin.settings.index' },
     ];

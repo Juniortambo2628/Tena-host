@@ -1,0 +1,69 @@
+@reference "tailwindcss";
+
+.payment-show {
+    @apply space-y-6;
+}
+
+.payment-show__header {
+    @apply mb-6;
+}
+
+.payment-show__grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+}
+
+.payment-show__info-card {
+    @apply space-y-6;
+}
+
+.payment-show__info-header {
+    @apply flex items-center gap-3 text-black/60;
+}
+
+.payment-show__info-header h3 {
+    @apply font-semibold text-lg;
+}
+
+.payment-show__info-items {
+    @apply space-y-4;
+}
+
+.payment-show__info-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.payment-show__info-item {
+    @apply space-y-1;
+}
+
+.payment-show__info-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.payment-show__info-value {
+    @apply text-sm font-semibold;
+}
+
+.payment-show__info-value--large {
+    @apply text-lg;
+}
+
+.payment-show__info-value--mono {
+    @apply font-mono text-xs;
+}
+
+.payment-show__status-badge {
+    @apply inline-block px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.payment-show__status--completed {
+    @apply bg-green-100 text-green-700;
+}
+
+.payment-show__status--pending {
+    @apply bg-yellow-100 text-yellow-700;
+}
+
+.payment-show__status--failed {
+    @apply bg-red-100 text-red-600;
+}

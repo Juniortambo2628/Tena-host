@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PaymentReceiptMail;
 use App\Models\MpesaTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class MpesaCallbackController extends Controller
 {
@@ -67,6 +69,16 @@ class MpesaCallbackController extends Controller
                     'quantity' => 1,
                     'ends_at' => now()->addMonth(),
                 ]);
+            }
+
+            // Send payment receipt email
+            if ($user && $user->email) {
+                try {
+                    Mail::to($user->email)->send(new PaymentReceiptMail($transaction));
+                    Log::info('Payment receipt email sent', ['user' => $user->email]);
+                } catch (\Exception $e) {
+                    Log::error('Failed to send payment receipt email', ['error' => $e->getMessage()]);
+                }
             }
 
             Log::info('M-Pesa Payment Completed', [

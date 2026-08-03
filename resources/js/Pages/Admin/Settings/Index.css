@@ -87,3 +87,15 @@
 .settings-page__preview-wrapper {
     @apply sticky top-28 h-[800px];
 }
+
+.settings-page__preview-toggle {
+    @apply flex items-center gap-4;
+}
+
+.settings-page__preview-hint {
+    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+}
+
+.settings-page__preview-modal {
+    @apply min-h-[600px];
+}

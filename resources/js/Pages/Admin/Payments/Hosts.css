@@ -1,0 +1,45 @@
+@reference "tailwindcss";
+
+.payment-hosts {
+    @apply space-y-6;
+}
+
+.payment-hosts__header {
+    @apply mb-6;
+}
+
+.payment-hosts__host {
+    @apply flex flex-col gap-0.5;
+}
+
+.payment-hosts__host-name {
+    @apply font-semibold text-sm;
+}
+
+.payment-hosts__host-email {
+    @apply text-xs text-black/40;
+}
+
+.payment-hosts__sub-badge {
+    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.payment-hosts__sub-badge--active {
+    @apply bg-green-100 text-green-700;
+}
+
+.payment-hosts__sub-badge--inactive {
+    @apply bg-gray-100 text-gray-600;
+}
+
+.payment-hosts__amount {
+    @apply font-semibold text-sm;
+}
+
+.payment-hosts__count {
+    @apply text-sm font-semibold text-black/60;
+}
+
+.payment-hosts__date {
+    @apply text-xs font-semibold text-black/40;
+}

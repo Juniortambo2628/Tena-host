@@ -1,0 +1,33 @@
+@reference "tailwindcss";
+
+.policy-create-edit {
+    @apply space-y-6;
+}
+
+.policy-create-edit__header {
+    @apply mb-6;
+}
+
+.policy-create-edit__card-inner {
+    @apply space-y-6 max-w-4xl;
+}
+
+.policy-create-edit__card-header {
+    @apply flex items-center gap-4 mb-6;
+}
+
+.policy-create-edit__card-icon {
+    @apply p-3 bg-black/5 rounded-2xl;
+}
+
+.policy-create-edit__card-title {
+    @apply font-semibold text-lg;
+}
+
+.policy-create-edit__card-subtitle {
+    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+}
+
+.policy-create-edit__content-editor {
+    @apply font-mono text-sm min-h-[400px];
+}

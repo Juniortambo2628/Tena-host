@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PaymentReceiptMail;
 use App\Models\MpesaTransaction;
 use App\Models\Setting;
 use App\Services\MpesaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class SubscriptionController extends Controller
@@ -32,6 +34,25 @@ class SubscriptionController extends Controller
         try {
             $user->newSubscription('default', $request->plan_id)
                 ->create($request->payment_method);
+
+            // Create a transaction record for the payment
+            $transaction = MpesaTransaction::create([
+                'user_id' => $user->id,
+                'MerchantRequestID' => 'stripe_'.time(),
+                'CheckoutRequestID' => 'stripe_'.time(),
+                'Amount' => 6500, // Default amount
+                'PhoneNumber' => $user->phone_number ?? 'N/A',
+                'Status' => 'completed',
+                'ResultDesc' => 'Stripe subscription created',
+            ]);
+
+            // Send payment receipt email
+            try {
+                Mail::to($user->email)->send(new PaymentReceiptMail($transaction));
+                Log::info('Stripe payment receipt email sent', ['user' => $user->email]);
+            } catch (\Exception $e) {
+                Log::error('Failed to send Stripe payment receipt email', ['error' => $e->getMessage()]);
+            }
 
             return back()->with('success', 'Subscription activated successfully!');
         } catch (\Exception $e) {
@@ -98,7 +119,7 @@ class SubscriptionController extends Controller
         }
 
         // Record transaction
-        MpesaTransaction::create([
+        $transaction = MpesaTransaction::create([
             'MerchantRequestID' => 'SIM_'.time(),
             'CheckoutRequestID' => 'SIM_'.time(),
             'ResultCode' => 0,
@@ -110,6 +131,14 @@ class SubscriptionController extends Controller
             'user_id' => $user->id,
             'Status' => 'completed',
         ]);
+
+        // Send payment receipt email
+        try {
+            Mail::to($user->email)->send(new PaymentReceiptMail($transaction));
+            Log::info('Simulated payment receipt email sent', ['user' => $user->email]);
+        } catch (\Exception $e) {
+            Log::error('Failed to send simulated payment receipt email', ['error' => $e->getMessage()]);
+        }
 
         return redirect()->route('host.dashboard')->with('success', 'Subscription activated (Simulated)!');
     }

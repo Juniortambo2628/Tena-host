@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\AccessPointController;
+use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\HostController;
 use App\Http\Controllers\Admin\LandingController;
 use App\Http\Controllers\Admin\NotificationTestController;
+use App\Http\Controllers\Admin\PolicyDocumentController;
 use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SystemController;
@@ -57,11 +59,27 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/system', [SystemController::class, 'index'])->name('system.index');
+
+    // Payments
+    Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/hosts', [AdminPaymentController::class, 'hosts'])->name('payments.hosts');
+    Route::get('/payments/{transaction}', [AdminPaymentController::class, 'show'])->name('payments.show');
+
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
 
     // Notification Test
     Route::post('/notifications/test', [NotificationTestController::class, 'send'])->name('notifications.test');
+
+    // Policy Documents
+    Route::get('/policies', [PolicyDocumentController::class, 'index'])->name('policies.index');
+    Route::get('/policies/create', [PolicyDocumentController::class, 'create'])->name('policies.create');
+    Route::post('/policies', [PolicyDocumentController::class, 'store'])->name('policies.store');
+    Route::get('/policies/{policy}', [PolicyDocumentController::class, 'show'])->name('policies.show');
+    Route::get('/policies/{policy}/edit', [PolicyDocumentController::class, 'edit'])->name('policies.edit');
+    Route::put('/policies/{policy}', [PolicyDocumentController::class, 'update'])->name('policies.update');
+    Route::delete('/policies/{policy}', [PolicyDocumentController::class, 'destroy'])->name('policies.destroy');
+    Route::post('/policies/{policy}/toggle', [PolicyDocumentController::class, 'togglePublish'])->name('policies.toggle');
 
     // Registrations
     Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');

@@ -2,6 +2,7 @@ import React from 'react';
 import PageShell from '@/Layouts/PageShell';
 import { Link, router } from '@inertiajs/react';
 import GlassCard from '@/Components/Dashboard/GlassCard';
+import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
 import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
 import './Index.css';
 
@@ -25,6 +26,77 @@ export default function RegistrationIndex({ registrations }) {
         }
     };
 
+    const columns = [
+        {
+            key: 'name',
+            label: 'Name',
+            render: (item) => (
+                <span className="registrations-page__name">{item.first_name} {item.last_name}</span>
+            ),
+        },
+        {
+            key: 'email',
+            label: 'Email',
+            render: (item) => (
+                <span className="registrations-page__email">{item.email}</span>
+            ),
+        },
+        {
+            key: 'property_type',
+            label: 'Property Type',
+            render: (item) => (
+                <span className="registrations-page__property-type">{item.property_type}</span>
+            ),
+        },
+        {
+            key: 'property_count',
+            label: 'Properties',
+            render: (item) => (
+                <span className="registrations-page__property-count">{item.property_count}</span>
+            ),
+        },
+        {
+            key: 'location',
+            label: 'Location',
+            render: (item) => (
+                <span className="registrations-page__location">{item.location || '-'}</span>
+            ),
+        },
+        {
+            key: 'status',
+            label: 'Status',
+            render: (item) => (
+                <span className={`registrations-page__status-badge ${statusClass(item.status)}`}>
+                    {item.status}
+                </span>
+            ),
+        },
+    ];
+
+    const tableActions = [
+        {
+            key: 'convert',
+            label: 'Convert',
+            icon: <CheckCircle2 size={14} />,
+            variant: 'convert',
+            onClick: (item) => handleStatusChange(item.id, 'converted'),
+        },
+        {
+            key: 'deactivate',
+            label: 'Deactivate',
+            icon: <XCircle size={14} />,
+            variant: 'deactivate',
+            onClick: (item) => handleStatusChange(item.id, 'inactive'),
+        },
+        {
+            key: 'delete',
+            label: 'Delete',
+            icon: <Trash2 size={14} />,
+            variant: 'delete',
+            onClick: (item) => handleDelete(item.id),
+        },
+    ];
+
     return (
         <PageShell
             title="Waitlist Registrations"
@@ -38,81 +110,15 @@ export default function RegistrationIndex({ registrations }) {
         >
             <GlassCard padding="p-0 overflow-hidden">
                 <div className="registrations-page__table-wrapper">
-                    <table className="registrations-page__table">
-                        <thead>
-                            <tr className="registrations-page__head-row">
-                                <th className="registrations-page__head-cell">Name</th>
-                                <th className="registrations-page__head-cell">Email</th>
-                                <th className="registrations-page__head-cell">Property Type</th>
-                                <th className="registrations-page__head-cell">Properties</th>
-                                <th className="registrations-page__head-cell">Location</th>
-                                <th className="registrations-page__head-cell">Status</th>
-                                <th className="registrations-page__head-cell">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="registrations-page__body">
-                            {registrations.data.map((reg) => (
-                                <tr key={reg.id} className="registrations-page__row group">
-                                    <td className="registrations-page__cell">
-                                        <span className="registrations-page__name">{reg.first_name} {reg.last_name}</span>
-                                    </td>
-                                    <td className="registrations-page__cell">
-                                        <span className="registrations-page__email">{reg.email}</span>
-                                    </td>
-                                    <td className="registrations-page__cell">
-                                        <span className="registrations-page__property-type">{reg.property_type}</span>
-                                    </td>
-                                    <td className="registrations-page__cell">
-                                        <span className="registrations-page__property-count">{reg.property_count}</span>
-                                    </td>
-                                    <td className="registrations-page__cell">
-                                        <span className="registrations-page__location">{reg.location || '-'}</span>
-                                    </td>
-                                    <td className="registrations-page__cell">
-                                        <span className={`registrations-page__status-badge ${statusClass(reg.status)}`}>
-                                            {reg.status}
-                                        </span>
-                                    </td>
-                                    <td className="registrations-page__cell">
-                                        <div className="registrations-page__actions">
-                                            {reg.status !== 'converted' && (
-                                                <button
-                                                    onClick={() => handleStatusChange(reg.id, 'converted')}
-                                                    className="registrations-page__action-btn registrations-page__action-btn--convert"
-                                                    title="Convert"
-                                                >
-                                                    <CheckCircle2 size={14} />
-                                                </button>
-                                            )}
-                                            {reg.status !== 'inactive' && (
-                                                <button
-                                                    onClick={() => handleStatusChange(reg.id, 'inactive')}
-                                                    className="registrations-page__action-btn registrations-page__action-btn--deactivate"
-                                                    title="Deactivate"
-                                                >
-                                                    <XCircle size={14} />
-                                                </button>
-                                            )}
-                                            <button
-                                                onClick={() => handleDelete(reg.id)}
-                                                className="registrations-page__action-btn registrations-page__action-btn--delete"
-                                                title="Delete"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {registrations.data.length === 0 && (
-                                <tr>
-                                    <td colSpan="7" className="registrations-page__empty">
-                                        No registrations found
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                    <ResponsiveTable
+                        data={registrations.data}
+                        columns={columns}
+                        actions={tableActions}
+                        primaryField={(item) => `${item.first_name} ${item.last_name}`}
+                        subtitleField="email"
+                        detailTitle="Registration Details"
+                        emptyMessage="No registrations found"
+                    />
                 </div>
 
                 {/* Pagination */}

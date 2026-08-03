@@ -1,0 +1,169 @@
+@reference "tailwindcss";
+
+.responsive-table__desktop {
+    @apply hidden lg:block;
+}
+
+.responsive-table__mobile {
+    @apply lg:hidden space-y-3;
+}
+
+.responsive-table__table {
+    @apply w-full text-left border-collapse;
+}
+
+.responsive-table__head-row {
+    @apply bg-black/[0.02];
+}
+
+.responsive-table__head-cell {
+    @apply px-6 py-4 text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.responsive-table__body {
+    @apply divide-y divide-black/5;
+}
+
+.responsive-table__row {
+    @apply hover:bg-black/[0.01] transition-colors;
+}
+
+.responsive-table__cell {
+    @apply px-6 py-5;
+}
+
+.responsive-table__actions {
+    @apply flex items-center gap-1;
+}
+
+.responsive-table__action-btn {
+    @apply p-2 rounded-lg transition-colors text-black/40 hover:bg-black/5;
+}
+
+.responsive-table__action-btn--convert {
+    @apply hover:bg-green-50 hover:text-green-600;
+}
+
+.responsive-table__action-btn--deactivate {
+    @apply hover:bg-orange-50 hover:text-orange-600;
+}
+
+.responsive-table__action-btn--delete {
+    @apply hover:bg-red-50 hover:text-red-500;
+}
+
+.responsive-table__empty {
+    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+}
+
+.responsive-table__card {
+    @apply bg-white rounded-2xl border border-black/5 p-4;
+}
+
+.responsive-table__card-header {
+    @apply flex items-center justify-between;
+}
+
+.responsive-table__card-primary {
+    @apply flex flex-col gap-1;
+}
+
+.responsive-table__card-id {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.responsive-table__card-name {
+    @apply font-semibold text-sm;
+}
+
+.responsive-table__card-subtitle {
+    @apply text-xs font-bold text-black/50;
+}
+
+.responsive-table__card-menu-wrapper {
+    @apply relative;
+}
+
+.responsive-table__card-menu-btn {
+    @apply p-2 rounded-xl bg-black/5 text-black/40 hover:bg-black/10 transition-colors;
+}
+
+.responsive-table__card-menu-overlay {
+    @apply fixed inset-0 z-10;
+}
+
+.responsive-table__card-menu {
+    @apply absolute right-0 top-full mt-2 bg-white rounded-xl border border-black/10 shadow-xl z-20 min-w-[160px] py-2;
+}
+
+.responsive-table__card-menu-item {
+    @apply w-full flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-black/60 hover:bg-black/5 transition-colors text-left;
+}
+
+.responsive-table__card-menu-item--convert {
+    @apply hover:text-green-600;
+}
+
+.responsive-table__card-menu-item--deactivate {
+    @apply hover:text-orange-600;
+}
+
+.responsive-table__card-menu-item--delete {
+    @apply hover:text-red-500;
+}
+
+.responsive-table__card-field {
+    @apply flex items-center justify-between py-2 border-t border-black/5 mt-2;
+}
+
+.responsive-table__card-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.responsive-table__card-value {
+    @apply text-sm font-semibold;
+}
+
+.responsive-table__empty-mobile {
+    @apply py-12 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+}
+
+.responsive-table__detail {
+    @apply space-y-4;
+}
+
+.responsive-table__detail-row {
+    @apply flex items-center justify-between py-3 border-b border-black/5;
+}
+
+.responsive-table__detail-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+}
+
+.responsive-table__detail-value {
+    @apply text-sm font-semibold text-right;
+}
+
+.responsive-table__detail-actions {
+    @apply flex items-center gap-2 pt-4 mt-4 border-t border-black/5;
+}
+
+.responsive-table__detail-action-btn {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors;
+}
+
+.responsive-table__detail-action-btn--convert {
+    @apply bg-green-50 text-green-600 hover:bg-green-100;
+}
+
+.responsive-table__detail-action-btn--deactivate {
+    @apply bg-orange-50 text-orange-600 hover:bg-orange-100;
+}
+
+.responsive-table__detail-action-btn--delete {
+    @apply bg-red-50 text-red-500 hover:bg-red-100;
+}
+
+.responsive-table__detail-action-btn--default {
+    @apply bg-black/5 text-black/60 hover:bg-black/10;
+}

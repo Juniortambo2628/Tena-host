@@ -1,0 +1,89 @@
+@reference "tailwindcss";
+
+.policy-show {
+    @apply space-y-6;
+}
+
+.policy-show__header {
+    @apply mb-6;
+}
+
+.policy-show__meta-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4;
+}
+
+.policy-show__meta-item {
+    @apply space-y-2;
+}
+
+.policy-show__meta-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+}
+
+.policy-show__meta-value {
+    @apply font-semibold text-sm;
+}
+
+.policy-show__meta-value-row {
+    @apply flex items-center gap-2;
+}
+
+.policy-show__meta-icon {
+    @apply p-1.5 bg-black/5 rounded-lg text-black/40;
+}
+
+.policy-show__status-badge {
+    @apply inline-block px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+}
+
+.policy-show__status-badge--published {
+    @apply bg-green-100 text-green-700;
+}
+
+.policy-show__status-badge--draft {
+    @apply bg-gray-100 text-gray-600;
+}
+
+.policy-show__section-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30 block mb-3;
+}
+
+.policy-show__description {
+    @apply space-y-2;
+}
+
+.policy-show__description-text {
+    @apply text-sm text-black/60 leading-relaxed;
+}
+
+.policy-show__content {
+    @apply space-y-4;
+}
+
+.policy-show__content-body {
+    @apply text-sm text-black/70 leading-relaxed;
+}
+
+.policy-show__content-body h1,
+.policy-show__content-body h2,
+.policy-show__content-body h3,
+.policy-show__content-body h4 {
+    @apply font-semibold text-black mt-6 mb-3;
+}
+
+.policy-show__content-body p {
+    @apply mb-4;
+}
+
+.policy-show__content-body ul,
+.policy-show__content-body ol {
+    @apply ml-6 mb-4;
+}
+
+.policy-show__content-body li {
+    @apply mb-2;
+}
+
+.policy-show__content-body a {
+    @apply text-[#FFD300] underline;
+}

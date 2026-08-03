@@ -5,8 +5,9 @@ import { TwoColumnLayout, MainColumn, SidebarColumn, PageGrid } from '@/Layouts/
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import EmailPreview from '@/Components/Admin/EmailPreview';
+import GlassModal from '@/Components/GlassModal';
 import { FormField, TextInput, TextArea, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
-import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send } from 'lucide-react';
+import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import './Index.css';
 
@@ -23,6 +24,7 @@ export default function Index({ settings }) {
     const [autoSaveStatus, setAutoSaveStatus] = useState('idle');
     const [testEmail, setTestEmail] = useState('');
     const [testTemplate, setTestTemplate] = useState('welcome');
+    const [showPreview, setShowPreview] = useState(false);
 
     const flattened = Object.values(settings).flat().reduce((acc, curr) => {
         acc[curr.key] = curr.value;
@@ -74,6 +76,7 @@ export default function Index({ settings }) {
         { id: 'general', name: 'General', icon: <Settings size={16} /> },
         { id: 'branding', name: 'Email Branding', icon: <Mail size={16} /> },
         { id: 'billing', name: 'Billing', icon: <Shield size={16} /> },
+        { id: 'policies', name: 'Policies & Terms', icon: <Globe size={16} /> },
     ];
 
     const renderStatus = () => {
@@ -219,8 +222,22 @@ export default function Index({ settings }) {
                         )}
 
                         {activeTab === 'branding' && (
-                            <TwoColumnLayout gap="gap-8" className="items-start">
-                                <MainColumn span={5} className="space-y-8">
+                            <div className="space-y-8">
+                                {/* Preview Toggle Button */}
+                                <div className="settings-page__preview-toggle">
+                                    <PillButton
+                                        variant="secondary"
+                                        onClick={() => setShowPreview(true)}
+                                        icon={<Eye size={16} />}
+                                    >
+                                        Preview Emails
+                                    </PillButton>
+                                    <span className="settings-page__preview-hint">
+                                        See how your emails will look to recipients
+                                    </span>
+                                </div>
+
+                                <div className="space-y-8">
                                     <GlassCard padding="p-8">
                                         <div className="space-y-6">
                                             <div className="settings-page__card-header">
@@ -370,14 +387,33 @@ export default function Index({ settings }) {
                                             </div>
                                         </div>
                                     </GlassCard>
-                                </MainColumn>
+                                </div>
+                            </div>
+                        )}
 
-                                <SidebarColumn span={7}>
-                                    <div className="settings-page__preview-wrapper">
-                                        <EmailPreview settings={data.settings} />
+                        {activeTab === 'policies' && (
+                            <GlassCard padding="p-8">
+                                <div className="settings-page__card-inner">
+                                    <div className="settings-page__card-header">
+                                        <div className="settings-page__card-icon"><Globe size={24} /></div>
+                                        <div>
+                                            <h3 className="settings-page__card-title">Policies & Terms</h3>
+                                            <p className="settings-page__card-subtitle">Manage legal documents and policies</p>
+                                        </div>
                                     </div>
-                                </SidebarColumn>
-                            </TwoColumnLayout>
+                                    <div className="space-y-4">
+                                        <p className="settings-page__hint">
+                                            Manage your platform's legal documents including Privacy Policy, Terms of Service, Cookie Policy, and more.
+                                        </p>
+                                        <PillButton
+                                            variant="black"
+                                            onClick={() => router.visit(route('admin.policies.index'))}
+                                        >
+                                            Manage Policies
+                                        </PillButton>
+                                    </div>
+                                </div>
+                            </GlassCard>
                         )}
 
                         {activeTab !== 'branding' && (
@@ -390,6 +426,18 @@ export default function Index({ settings }) {
                     </form>
                 </MainColumn>
             </TwoColumnLayout>
+
+            {/* Email Preview Modal */}
+            <GlassModal
+                isOpen={showPreview}
+                onClose={() => setShowPreview(false)}
+                title="Email Preview"
+                maxWidth="6xl"
+            >
+                <div className="settings-page__preview-modal">
+                    <EmailPreview settings={data.settings} />
+                </div>
+            </GlassModal>
         </PageShell>
     );
 }
