@@ -172,7 +172,7 @@ class SubscriptionController extends Controller
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
                 "Authorization: Bearer {$secret}",
-                "Cache-Control: no-cache",
+                'Cache-Control: no-cache',
             ],
         ]);
 
@@ -182,6 +182,7 @@ class SubscriptionController extends Controller
 
         if ($err) {
             Log::error('Paystack verification error', ['error' => $err]);
+
             return false;
         }
 
