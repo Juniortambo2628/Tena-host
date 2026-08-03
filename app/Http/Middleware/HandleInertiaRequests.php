@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
                     )
                     : [],
             ],
-            'ziggy' => function () {
+            'ziggy' => function () use ($request) {
                 Ziggy::clearRoutes();
 
                 return [
