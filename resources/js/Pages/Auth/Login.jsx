@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { Passkeys } from '@laravel/passkeys';
 import {
     Mail,
     Lock,
@@ -10,7 +11,8 @@ import {
     ChevronLeft,
     Chrome,
     Twitter,
-    Shield
+    Shield,
+    Fingerprint,
 } from 'lucide-react';
 import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
@@ -143,6 +145,28 @@ export default function Login({ status, canResetPassword }) {
                             </div>
                         </button>
                     </form>
+
+                    {/* Passkey Login */}
+                    <div className="login-passkey-section">
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                try {
+                                    await Passkeys.login({
+                                        onSuccess: () => {
+                                            window.location.href = route('dashboard');
+                                        },
+                                    });
+                                } catch (e) {
+                                    console.error('Passkey login failed', e);
+                                }
+                            }}
+                            className="login-passkey-btn"
+                        >
+                            <Fingerprint size={16} />
+                            Sign in with Passkey
+                        </button>
+                    </div>
 
                     {/* Social Login */}
                     <div className="login-social-section">

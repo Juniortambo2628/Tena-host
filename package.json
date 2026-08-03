@@ -29,6 +29,7 @@
     },
     "dependencies": {
         "@inertiajs/react": "^2.3.13",
+        "@laravel/passkeys": "^0.2.0",
         "@react-email/components": "^1.0.7",
         "@tanstack/react-table": "^8.21.3",
         "@vitejs/plugin-react": "^5.1.3",

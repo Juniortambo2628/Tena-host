@@ -3,6 +3,7 @@ import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 import TwoFactorAuthenticationForm from './Partials/TwoFactorAuthenticationForm';
+import PasskeyManagementForm from './Partials/PasskeyManagementForm';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import './Edit.css';
 
@@ -46,6 +47,10 @@ export default function Edit({
                         recoveryCodes={twoFactorRecoveryCodes}
                         userEmail={userEmail}
                     />
+                </GlassCard>
+
+                <GlassCard>
+                    <PasskeyManagementForm className="max-w-xl" />
                 </GlassCard>
 
                 <GlassCard>

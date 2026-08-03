@@ -1,0 +1,77 @@
+@reference "tailwindcss";
+
+.passkey-header {
+    @apply mb-8;
+}
+
+.passkey-header-title {
+    @apply flex items-center gap-3 mb-2 text-black;
+}
+
+.passkey-header-title h2 {
+    @apply text-xl font-bold tracking-tight;
+}
+
+.passkey-header-desc {
+    @apply text-sm font-medium text-black/40 leading-relaxed;
+}
+
+.passkey-content {
+    @apply space-y-6;
+}
+
+.passkey-register-row {
+    @apply flex justify-start;
+}
+
+.passkey-register-btn {
+    @apply flex items-center gap-2 px-5 py-3 bg-black text-white rounded-2xl text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all;
+}
+
+.passkey-loading {
+    @apply py-8 text-center text-sm font-medium text-black/40;
+}
+
+.passkey-empty {
+    @apply py-10 text-center space-y-3 bg-black/[0.03] rounded-3xl border border-black/5;
+}
+
+.passkey-empty-icon {
+    @apply text-black/15 mx-auto;
+}
+
+.passkey-empty-text {
+    @apply text-sm font-bold text-black/50;
+}
+
+.passkey-empty-desc {
+    @apply text-xs font-medium text-black/30;
+}
+
+.passkey-list {
+    @apply space-y-3;
+}
+
+.passkey-item {
+    @apply flex items-center justify-between p-4 bg-black/[0.03] rounded-3xl border border-black/5 hover:border-black/10 transition-colors;
+}
+
+.passkey-item-info {
+    @apply flex items-center gap-4;
+}
+
+.passkey-item-icon {
+    @apply p-3 rounded-2xl bg-black/[0.04] text-black/20;
+}
+
+.passkey-item-name {
+    @apply text-sm font-bold text-black;
+}
+
+.passkey-item-date {
+    @apply text-xs font-medium text-black/40;
+}
+
+.passkey-delete-btn {
+    @apply p-2 rounded-xl text-black/20 hover:text-red-500 hover:bg-red-50 transition-all;
+}
