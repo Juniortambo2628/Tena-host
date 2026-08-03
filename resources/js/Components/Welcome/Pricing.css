@@ -5,11 +5,12 @@
 }
 
 .pricing-card {
-    @apply h-full bg-white/90;
+    @apply h-full bg-white/90 overflow-hidden;
 }
 
 .pricing-card-inner {
-    @apply text-center h-full flex flex-col items-center;
+    @apply text-center h-full flex flex-col items-center overflow-hidden;
+    min-width: 0;
 }
 
 .pricing-card-label {
@@ -25,7 +26,10 @@
 }
 
 .pricing-card-desc {
-    @apply text-gray-600 mb-8 flex-grow;
+    @apply text-gray-600 mb-8 flex-grow text-center px-4 break-words overflow-hidden;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 .pricing-card-cta-dark {
