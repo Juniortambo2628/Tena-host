@@ -9,6 +9,7 @@ use App\Services\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class GuestOtpController extends Controller
@@ -90,7 +91,7 @@ class GuestOtpController extends Controller
                 'username' => $request->input('email'),
                 'first_name' => $guest->first_name,
                 'last_name' => $guest->last_name,
-                'password' => Hash::make(random_bytes(32)),
+                'password' => Hash::make(Str::random(64)),
                 'role' => 'guest',
                 'email_verified_at' => now(),
             ]
