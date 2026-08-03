@@ -5,11 +5,14 @@
 }
 
 .pricing-card {
-    @apply h-full bg-white/90 overflow-hidden;
+    @apply bg-white/90 rounded-2xl;
+    width: 100%;
+    min-width: 0;
 }
 
 .pricing-card-inner {
-    @apply text-center h-full flex flex-col items-center overflow-hidden;
+    @apply text-center flex flex-col items-center p-8;
+    width: 100%;
     min-width: 0;
 }
 
@@ -26,18 +29,20 @@
 }
 
 .pricing-card-desc {
-    @apply text-gray-600 mb-8 flex-grow text-center px-4 break-words overflow-hidden;
+    @apply text-gray-600 text-center leading-relaxed mb-8;
+    width: 100%;
+    min-width: 0;
+    padding: 0 0.5rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    hyphens: auto;
 }
 
 .pricing-card-cta-dark {
-    @apply w-full bg-black text-white hover:bg-gray-800;
+    @apply w-full py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition-colors;
 }
 
 .pricing-card-cta-outline {
-    @apply w-full py-3 rounded-xl border-2 border-black text-black font-medium hover:bg-gray-50 transition-colors;
+    @apply w-full py-3 rounded-xl border-2 border-black text-black font-semibold hover:bg-gray-50 transition-colors;
 }
 
 .pricing-cta-section {
@@ -45,7 +50,7 @@
 }
 
 .pricing-cta-card {
-    @apply bg-white relative overflow-hidden;
+    @apply bg-white relative overflow-hidden rounded-2xl;
 }
 
 .pricing-cta-decoration {
