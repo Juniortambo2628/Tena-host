@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
         config([
             'cache.default' => 'array',
             'session.driver' => 'array',
-            'services.stripe.key' => '',
+            'services.paystack.public_key' => '',
         ]);
 
         Setting::setValue('billing_enabled', 'disabled', 'billing', 'string');

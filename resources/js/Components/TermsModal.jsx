@@ -38,7 +38,7 @@ export default function TermsModal({ isOpen, onClose }) {
                     <PolicySection
                         icon={<Info size={18} />}
                         title="Subscription Terms"
-                        content="Billing is processed via M-Pesa or Stripe. Subscriptions can be canceled at any time from the billing portal. Refunds are subject to our 14-day policy."
+                        content="Billing is processed via M-Pesa or Paystack. Subscriptions can be canceled at any time from the billing portal. Refunds are subject to our 14-day policy."
                     />
                 </div>
 

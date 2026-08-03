@@ -208,7 +208,7 @@ export default function Index({ settings }) {
                                             value={data.settings.billing_enabled}
                                             onChange={(e) => updateSetting('billing_enabled', e.target.value)}
                                         >
-                                            <option value="auto">Auto (enabled when Stripe keys are present)</option>
+                                            <option value="auto">Auto (enabled when Paystack keys are present)</option>
                                             <option value="enabled">Enabled (force subscription checks)</option>
                                             <option value="disabled">Disabled (allow simulation / dev mode)</option>
                                         </Select>

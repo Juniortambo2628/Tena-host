@@ -105,7 +105,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->group(function () {
     // Billing & Payments (Accessible to all authenticated hosts)
     Route::get('/billing', [SubscriptionController::class, 'index'])->name('billing.index');
-    Route::post('/billing/stripe', [SubscriptionController::class, 'storeStripe'])->name('billing.stripe');
+    Route::post('/billing/paystack', [SubscriptionController::class, 'storePaystack'])->name('billing.paystack');
     Route::post('/billing/mpesa', [SubscriptionController::class, 'storeMpesa'])->name('billing.mpesa');
     Route::post('/billing/simulate', [SubscriptionController::class, 'simulateMpesa'])->name('billing.simulate');
 

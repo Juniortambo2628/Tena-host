@@ -27,8 +27,8 @@ class EnsureUserIsSubscribed
             return $next($request);
         }
 
-        // In 'auto' mode, skip if no Stripe key is configured.
-        if ($billingEnabled === 'auto' && ! config('services.stripe.key')) {
+        // In 'auto' mode, skip if no Paystack key is configured.
+        if ($billingEnabled === 'auto' && ! config('services.paystack.public_key')) {
             return $next($request);
         }
 

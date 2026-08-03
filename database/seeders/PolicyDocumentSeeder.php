@@ -94,7 +94,7 @@ class PolicyDocumentSeeder extends Seeder
 <ul>
 <li><strong>Account Information:</strong> Name, email address, phone number, and password when you create an account.</li>
 <li><strong>Property Information:</strong> Details about properties you list on our platform.</li>
-<li><strong>Payment Information:</strong> Billing details processed securely through our payment providers (Stripe and M-Pesa).</li>
+<li><strong>Payment Information:</strong> Billing details processed securely through our payment providers (Paystack and M-Pesa).</li>
 <li><strong>Communications:</strong> Messages you send to us or other users through the platform.</li>
 </ul>
 
@@ -112,7 +112,7 @@ class PolicyDocumentSeeder extends Seeder
 <p>We do not sell your personal information. We may share your information with:</p>
 <ul>
 <li>Service providers who assist in operating our platform</li>
-<li>Payment processors (Stripe, M-Pesa) for transaction processing</li>
+<li>Payment processors (Paystack, M-Pesa) for transaction processing</li>
 <li>Law enforcement when required by law</li>
 </ul>
 
@@ -159,7 +159,7 @@ HTML;
 </ul>
 
 <h2>4. Subscriptions and Payments</h2>
-<p>Host subscriptions are billed monthly. Payment methods accepted include credit/debit cards (via Stripe) and M-Pesa. All fees are non-refundable except as outlined in our Refund Policy.</p>
+<p>Host subscriptions are billed monthly. Payment methods accepted include credit/debit cards (via Paystack) and M-Pesa. All fees are non-refundable except as outlined in our Refund Policy.</p>
 
 <h2>5. Intellectual Property</h2>
 <p>All content on the Tena Host platform, including text, graphics, logos, and software, is the property of Tena Host and is protected by copyright laws.</p>
@@ -198,7 +198,7 @@ HTML;
 <p>We may use third-party services that place cookies on your device, including:</p>
 <ul>
 <li>Google Analytics (analytics)</li>
-<li>Stripe (payment processing)</li>
+<li>Paystack (payment processing)</li>
 </ul>
 
 <h2>5. Updates to This Policy</h2>
@@ -307,7 +307,7 @@ HTML;
 <h2>4. Sub-processors</h2>
 <p>We use the following sub-processors:</p>
 <ul>
-<li>Stripe (payment processing)</li>
+<li>Paystack (payment processing)</li>
 <li>M-Pesa (mobile payments)</li>
 <li>Cloud hosting providers (data storage)</li>
 </ul>

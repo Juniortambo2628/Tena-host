@@ -4,95 +4,65 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import { CreditCard, Smartphone, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import './Billing.css';
 
-export default function Billing({ stripeKey, subscription, mpesaTransactions }) {
+export default function Billing({ paystackPublicKey, subscription, mpesaTransactions }) {
     const { auth } = usePage().props;
     const [activeTab, setActiveTab] = useState('card');
-    const [stripe, setStripe] = useState(null);
-    const [elements, setElements] = useState(null);
-    const [cardError, setCardError] = useState(null);
     const [processing, setProcessing] = useState(false);
-
-    // Initialize Stripe
-    useEffect(() => {
-        if (window.Stripe && stripeKey) {
-            const stripeInstance = window.Stripe(stripeKey);
-            setStripe(stripeInstance);
-
-            const elementsInstance = stripeInstance.elements();
-            setElements(elementsInstance);
-
-            const card = elementsInstance.create('card', {
-                style: {
-                    base: {
-                        fontSize: '16px',
-                        color: '#000000',
-                        '::placeholder': {
-                            color: '#aab7c4',
-                        },
-                    },
-                    invalid: {
-                        color: '#ef4444',
-                    },
-                },
-            });
-
-            // Mount only if container exists (React render timing)
-            // Using a timeout to ensure DOM is ready or checking refs would be better
-            // But for now we'll check inside the tab render or re-init when tab changes
-        }
-    }, [stripeKey]);
+    const [paystackReady, setPaystackReady] = useState(false);
 
     useEffect(() => {
-        if (activeTab === 'card' && elements) {
-            const card = elements.create('card');
-            try {
-                card.mount('#card-element');
-            } catch (e) { /* already mounted or container missing */ }
-            return () => {
-                try { card.destroy(); } catch (e) { }
-            };
+        if (window.PaystackPop && paystackPublicKey) {
+            setPaystackReady(true);
         }
-    }, [activeTab, elements]);
-
+    }, [paystackPublicKey]);
 
     const { data: mpesaData, setData: setMpesaData, post: postMpesa, processing: mpesaProcessing, errors: mpesaErrors } = useForm({
         phone_number: auth.user.phone_number || '',
         amount: 6500, // KES equivalent approx
     });
 
-    const handleCardPayment = async (e) => {
-        e.preventDefault();
-        setProcessing(true);
-        setCardError(null);
-
-        if (!stripe || !elements) {
-            setProcessing(false);
+    const handlePaystackPayment = () => {
+        if (!paystackReady || !paystackPublicKey) {
             return;
         }
 
-        const cardElement = elements.getElement('card');
+        setProcessing(true);
 
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-            billing_details: {
-                name: `${auth.user.first_name} ${auth.user.last_name}`,
-                email: auth.user.email,
+        const handler = window.PaystackPop.setup({
+            key: paystackPublicKey,
+            email: auth.user.email,
+            amount: 650000, // Amount in kobo (NGN 6500)
+            currency: 'NGN',
+            ref: 'TENA_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+            metadata: {
+                custom_fields: [
+                    {
+                        display_name: "User ID",
+                        variable_name: "user_id",
+                        value: auth.user.id,
+                    },
+                    {
+                        display_name: "Plan",
+                        variable_name: "plan",
+                        value: "Pro Host Monthly",
+                    }
+                ]
+            },
+            callback: function(response) {
+                // Send reference to backend
+                router.post(route('host.billing.paystack'), {
+                    reference: response.reference,
+                    amount: 6500,
+                }, {
+                    onFinish: () => setProcessing(false),
+                });
+            },
+            onClose: function() {
+                setProcessing(false);
             },
         });
 
-        if (error) {
-            setCardError(error.message);
-            setProcessing(false);
-        } else {
-            // Send paymentMethod.id to backend
-            router.post(route('host.billing.stripe'), {
-                payment_method: paymentMethod.id,
-                plan_id: 'pro-host-monthly',
-            }, {
-                onFinish: () => setProcessing(false),
-            });
-        }
+        handler.openIframe();
     };
 
     const submitMpesa = (e) => {
@@ -139,7 +109,7 @@ export default function Billing({ stripeKey, subscription, mpesaTransactions }) 
                                 onClick={() => setActiveTab('card')}
                                 className={`host-billing-tab ${activeTab === 'card' ? 'host-billing-tab-active-card' : 'host-billing-tab-inactive'}`}
                             >
-                                Credit Card
+                                Card (Paystack)
                             </button>
                             <button
                                 onClick={() => setActiveTab('mpesa')}
@@ -150,22 +120,25 @@ export default function Billing({ stripeKey, subscription, mpesaTransactions }) 
                         </div>
 
                         {activeTab === 'card' ? (
-                            <form onSubmit={handleCardPayment} className="host-billing-form">
-                                <div className="host-billing-card-element">
-                                    <div id="card-element" className="host-billing-card-element-inner" />
+                            <div className="host-billing-form">
+                                <div className="host-billing-paystack-info">
+                                    <CreditCard size={32} className="host-billing-paystack-icon" />
+                                    <p className="host-billing-paystack-text">
+                                        Pay securely with your debit/credit card via Paystack
+                                    </p>
                                 </div>
-                                {cardError && <p className="host-billing-error">{cardError}</p>}
 
                                 <button
-                                    type="submit"
-                                    disabled={!stripe || processing}
+                                    type="button"
+                                    disabled={!paystackReady || processing}
+                                    onClick={handlePaystackPayment}
                                     className="host-billing-submit-btn"
                                 >
                                     {processing ? <Loader2 className="animate-spin" size={20} /> : <CreditCard size={20} />}
-                                    Subscribe ($49.99/mo)
+                                    Pay NGN 6,500/mo
                                 </button>
-                                <p className="host-billing-secured-text">Secured by Stripe</p>
-                            </form>
+                                <p className="host-billing-secured-text">Secured by Paystack</p>
+                            </div>
                         ) : (
                             <form onSubmit={submitMpesa} className="host-billing-form">
                                 <div>

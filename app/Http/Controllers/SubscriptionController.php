@@ -16,47 +16,63 @@ class SubscriptionController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Host/Billing', [
-            'stripeKey' => config('cashier.key'),
+            'paystackPublicKey' => config('services.paystack.public_key'),
             'subscription' => $request->user()->subscription('default'),
             'mpesaTransactions' => $request->user()->mpesaTransactions()->latest()->take(5)->get(),
         ]);
     }
 
-    public function storeStripe(Request $request)
+    public function storePaystack(Request $request)
     {
         $request->validate([
-            'payment_method' => 'required',
-            'plan_id' => 'required', // price_xxxx
+            'reference' => 'required|string',
+            'amount' => 'required|numeric|min:1',
         ]);
 
         $user = $request->user();
 
         try {
-            $user->newSubscription('default', $request->plan_id)
-                ->create($request->payment_method);
+            // Verify the Paystack transaction
+            $verified = $this->verifyPaystackTransaction($request->reference);
 
-            // Create a transaction record for the payment
+            if (! $verified) {
+                return back()->with('error', 'Payment verification failed. Please try again.');
+            }
+
+            // Create or activate subscription
+            if (! $user->subscribed('default')) {
+                $user->subscriptions()->create([
+                    'type' => 'default',
+                    'stripe_id' => 'paystack_'.$request->reference,
+                    'stripe_status' => 'active',
+                    'stripe_price' => 'price_paystack',
+                    'quantity' => 1,
+                    'ends_at' => now()->addMonth(),
+                ]);
+            }
+
+            // Record transaction
             $transaction = MpesaTransaction::create([
                 'user_id' => $user->id,
-                'MerchantRequestID' => 'stripe_'.time(),
-                'CheckoutRequestID' => 'stripe_'.time(),
-                'Amount' => 6500, // Default amount
+                'MerchantRequestID' => 'paystack_'.time(),
+                'CheckoutRequestID' => $request->reference,
+                'Amount' => $request->amount,
                 'PhoneNumber' => $user->phone_number ?? 'N/A',
                 'Status' => 'completed',
-                'ResultDesc' => 'Stripe subscription created',
+                'ResultDesc' => 'Paystack payment completed',
             ]);
 
             // Send payment receipt email
             try {
                 Mail::to($user->email)->send(new PaymentReceiptMail($transaction));
-                Log::info('Stripe payment receipt email sent', ['user' => $user->email]);
+                Log::info('Paystack payment receipt email sent', ['user' => $user->email]);
             } catch (\Exception $e) {
-                Log::error('Failed to send Stripe payment receipt email', ['error' => $e->getMessage()]);
+                Log::error('Failed to send Paystack payment receipt email', ['error' => $e->getMessage()]);
             }
 
             return back()->with('success', 'Subscription activated successfully!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Stripe Payment Failed: '.$e->getMessage());
+            return back()->with('error', 'Payment Failed: '.$e->getMessage());
         }
     }
 
@@ -99,8 +115,8 @@ class SubscriptionController extends Controller
             return back()->with('error', 'Simulation is disabled when billing is explicitly enabled.');
         }
 
-        if ($billingEnabled === 'auto' && config('services.stripe.key')) {
-            return back()->with('error', 'Simulation is disabled while Stripe keys are configured.');
+        if ($billingEnabled === 'auto' && config('services.paystack.public_key')) {
+            return back()->with('error', 'Simulation is disabled while Paystack keys are configured.');
         }
 
         $user = $request->user();
@@ -141,5 +157,36 @@ class SubscriptionController extends Controller
         }
 
         return redirect()->route('host.dashboard')->with('success', 'Subscription activated (Simulated)!');
+    }
+
+    protected function verifyPaystackTransaction(string $reference): bool
+    {
+        $secret = config('services.paystack.secret');
+
+        if (! $secret) {
+            return false;
+        }
+
+        $ch = curl_init("https://api.paystack.co/transaction/verify/{$reference}");
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer {$secret}",
+                "Cache-Control: no-cache",
+            ],
+        ]);
+
+        $response = curl_exec($ch);
+        $err = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) {
+            Log::error('Paystack verification error', ['error' => $err]);
+            return false;
+        }
+
+        $data = json_decode($response, true);
+
+        return $data['status'] === true && $data['data']['status'] === 'success';
     }
 }

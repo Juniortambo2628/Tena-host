@@ -3,8 +3,8 @@
 use App\Models\Setting;
 use App\Models\User;
 
-it('redirects unpaid hosts to billing when billing is enabled and stripe key is present', function () {
-    config(['services.stripe.key' => 'pk_test_xxx']);
+it('redirects unpaid hosts to billing when billing is enabled and paystack key is present', function () {
+    config(['services.paystack.public_key' => 'pk_test_xxx']);
     Setting::setValue('billing_enabled', 'enabled', 'billing', 'string');
 
     $host = User::factory()->host()->create();
@@ -15,7 +15,7 @@ it('redirects unpaid hosts to billing when billing is enabled and stripe key is 
 });
 
 it('allows unpaid hosts to access dashboard when billing is disabled', function () {
-    config(['services.stripe.key' => null]);
+    config(['services.paystack.public_key' => null]);
     Setting::setValue('billing_enabled', 'disabled', 'billing', 'string');
 
     $host = User::factory()->host()->create();
@@ -26,7 +26,7 @@ it('allows unpaid hosts to access dashboard when billing is disabled', function 
 });
 
 it('allows subscribed hosts to access dashboard when billing is enabled', function () {
-    config(['services.stripe.key' => 'pk_test_xxx']);
+    config(['services.paystack.public_key' => 'pk_test_xxx']);
     Setting::setValue('billing_enabled', 'enabled', 'billing', 'string');
 
     $host = User::factory()->host()->create();
@@ -43,7 +43,7 @@ it('allows subscribed hosts to access dashboard when billing is enabled', functi
 });
 
 it('allows hosts to simulate mpesa when billing is disabled', function () {
-    config(['services.stripe.key' => null]);
+    config(['services.paystack.public_key' => null]);
     Setting::setValue('billing_enabled', 'disabled', 'billing', 'string');
 
     $host = User::factory()->host()->create();
@@ -55,7 +55,7 @@ it('allows hosts to simulate mpesa when billing is disabled', function () {
 });
 
 it('prevents mpesa simulation when billing is explicitly enabled', function () {
-    config(['services.stripe.key' => 'pk_test_xxx']);
+    config(['services.paystack.public_key' => 'pk_test_xxx']);
     Setting::setValue('billing_enabled', 'enabled', 'billing', 'string');
 
     $host = User::factory()->host()->create();
