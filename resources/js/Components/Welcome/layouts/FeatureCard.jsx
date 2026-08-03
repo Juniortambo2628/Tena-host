@@ -1,4 +1,5 @@
 import React from 'react';
+import { sanitizeHtml } from '@/lib/cms';
 import './FeatureCard.css';
 
 export default function FeatureCard({
@@ -36,7 +37,7 @@ export default function FeatureCard({
                     </div>
                 )}
                 <h4 className="feature-card-title">{title}</h4>
-                <p className="feature-card-desc">{description}</p>
+                <p className="feature-card-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }} />
             </div>
         </div>
     );

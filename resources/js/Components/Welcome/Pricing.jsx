@@ -44,7 +44,7 @@ export default function Pricing({ onOpenWaitlist, section }) {
                             <div className="pricing-card-price">
                                 {plan.price} <span className="pricing-card-price-unit">{plan.unit}</span>
                             </div>
-                            <p className="pricing-card-desc">{plan.description}</p>
+                            <p className="pricing-card-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }} />
                             <button
                                 onClick={onOpenWaitlist}
                                 className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}

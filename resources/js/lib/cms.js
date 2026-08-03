@@ -69,11 +69,25 @@ export function extractItems(section, prefix, fields) {
 
 /**
  * Sanitize HTML content from the CMS editor.
- * Replaces &nbsp; with regular spaces so words wrap naturally.
+ * Decodes common HTML entities and replaces &nbsp; with regular spaces.
  */
 export function sanitizeHtml(html) {
     if (!html || typeof html !== 'string') return '';
-    return html.replace(/&nbsp;/g, ' ');
+    const textarea = typeof document !== 'undefined' ? document.createElement('textarea') : null;
+    let decoded = html;
+    if (textarea) {
+        textarea.innerHTML = html;
+        decoded = textarea.value;
+    } else {
+        decoded = decoded
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#039;/g, "'")
+            .replace(/&nbsp;/g, ' ');
+    }
+    return decoded.replace(/&nbsp;/g, ' ');
 }
 
 /**

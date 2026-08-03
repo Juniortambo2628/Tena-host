@@ -69,7 +69,7 @@ export default function Hero({ onOpenWaitlist, section }) {
                                 </div>
                                 <div className="hero-feature-content">
                                     <h5 className="hero-feature-title">{feature.title}</h5>
-                                    <p className="hero-feature-desc">{feature.description}</p>
+                                    <p className="hero-feature-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(feature.description) }} />
                                 </div>
                             </div>
                         </div>

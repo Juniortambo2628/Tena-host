@@ -10,7 +10,7 @@ export function TwoColumnFeatureRow({ icon, title, desc }) {
             </div>
             <div>
                 <h6 className="two-column-feature-title">{title}</h6>
-                <p className="two-column-feature-desc">{desc}</p>
+                <p className="two-column-feature-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(desc) }} />
             </div>
         </div>
     );
