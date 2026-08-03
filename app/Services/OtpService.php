@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Mail\OtpMail;
 use App\Models\Otp;
 use Illuminate\Support\Facades\Mail;
 
@@ -55,7 +56,7 @@ class OtpService
     protected function deliver(Otp $otp): void
     {
         if (filter_var($otp->identifier, FILTER_VALIDATE_EMAIL)) {
-            Mail::to($otp->identifier)->send(new \App\Mail\OtpMail(code: $otp->code));
+            Mail::to($otp->identifier)->send(new OtpMail(code: $otp->code));
 
             return;
         }
