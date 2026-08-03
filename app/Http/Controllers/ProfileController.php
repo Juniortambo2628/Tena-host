@@ -45,6 +45,8 @@ class ProfileController extends Controller
             'twoFactorQrCodeUrl' => $twoFactorQrCodeUrl,
             'twoFactorRecoveryCodes' => $twoFactorRecoveryCodes,
             'userEmail' => $user->email,
+            'avatarUrl' => $user->avatar_path ? \Storage::disk('public')->url($user->avatar_path) : null,
+            'phoneNumber' => $user->phone_number,
         ]);
     }
 
@@ -95,7 +97,21 @@ class ProfileController extends Controller
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validated();
+
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar_path'] = $path;
+
+            $oldPath = $request->user()->avatar_path;
+            if ($oldPath && \Storage::disk('public')->exists($oldPath)) {
+                \Storage::disk('public')->delete($oldPath);
+            }
+        }
+
+        $request->user()->fill(collect($validated)->only([
+            'first_name', 'last_name', 'email', 'phone_number', 'avatar_path',
+        ])->toArray());
 
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;

@@ -55,10 +55,7 @@ class OtpService
     protected function deliver(Otp $otp): void
     {
         if (filter_var($otp->identifier, FILTER_VALIDATE_EMAIL)) {
-            Mail::raw("Your TENA verification code is: {$otp->code}", function ($message) use ($otp) {
-                $message->to($otp->identifier)
-                    ->subject('Your TENA Verification Code');
-            });
+            Mail::to($otp->identifier)->send(new \App\Mail\OtpMail(code: $otp->code));
 
             return;
         }

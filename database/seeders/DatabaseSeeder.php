@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             TenaDatabaseSeeder::class,
             LandingContentSeeder::class,
             SettingsSeeder::class,
+            NotificationPreferencesSeeder::class,
         ]);
         $registrations = [
             ['first_name' => 'Alice', 'last_name' => 'Johnson', 'email' => 'alice@example.com', 'property_type' => 'vacation_rental', 'property_count' => 2, 'location' => 'Malindi', 'status' => 'active'],

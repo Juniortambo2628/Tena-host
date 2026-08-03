@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeMail;
 use App\Models\Guest;
 use App\Models\User;
 use App\Services\OtpService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -96,6 +98,13 @@ class GuestOtpController extends Controller
                 'email_verified_at' => now(),
             ]
         );
+
+        if ($user->wasRecentlyCreated) {
+            Mail::to($user->email)->send(new WelcomeMail(
+                name: $user->first_name,
+                actionUrl: route('guest.login'),
+            ));
+        }
 
         if (! $user->isGuest()) {
             $user->update(['role' => 'guest']);

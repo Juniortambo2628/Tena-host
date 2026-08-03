@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import PageShell from '@/Layouts/PageShell';
 import { TwoColumnLayout, MainColumn, SidebarColumn, PageGrid } from '@/Layouts/LayoutPrimitives';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import EmailPreview from '@/Components/Admin/EmailPreview';
 import { FormField, TextInput, TextArea, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
-import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send } from 'lucide-react';
+import { notify } from '@/Components/Toast';
 import './Index.css';
 
 function debounce(func, wait) {
@@ -20,6 +21,8 @@ function debounce(func, wait) {
 export default function Index({ settings }) {
     const [activeTab, setActiveTab] = useState('general');
     const [autoSaveStatus, setAutoSaveStatus] = useState('idle');
+    const [testEmail, setTestEmail] = useState('');
+    const [testTemplate, setTestTemplate] = useState('welcome');
 
     const flattened = Object.values(settings).flat().reduce((acc, curr) => {
         acc[curr.key] = curr.value;
@@ -91,6 +94,20 @@ export default function Index({ settings }) {
                 {labels[autoSaveStatus]}
             </div>
         );
+    };
+
+    const sendTestEmail = () => {
+        if (!testEmail) {
+            notify.error('Enter an email address to test.');
+            return;
+        }
+        router.post(route('admin.notifications.test'), {
+            email: testEmail,
+            template: testTemplate,
+        }, {
+            onSuccess: () => notify.success('Test email sent successfully.'),
+            onError: () => notify.error('Failed to send test email.'),
+        });
     };
 
     const handleSave = () => {
@@ -322,6 +339,34 @@ export default function Index({ settings }) {
                                                         rows={4}
                                                     />
                                                 </FormField>
+                                            </div>
+
+                                            <div className="settings-page__template-section">
+                                                <h4 className="settings-page__template-title">Send Test Email</h4>
+                                                <div className="flex gap-3 items-end">
+                                                    <FormField label="Recipient Email" className="flex-1">
+                                                        <TextInput
+                                                            value={testEmail}
+                                                            onChange={(e) => setTestEmail(e.target.value)}
+                                                            placeholder="test@example.com"
+                                                            type="email"
+                                                        />
+                                                    </FormField>
+                                                    <FormField label="Template">
+                                                        <select
+                                                            value={testTemplate}
+                                                            onChange={(e) => setTestTemplate(e.target.value)}
+                                                            className="form-select"
+                                                        >
+                                                            <option value="welcome">Welcome</option>
+                                                            <option value="password_changed">Password Changed</option>
+                                                            <option value="otp">OTP</option>
+                                                        </select>
+                                                    </FormField>
+                                                    <PillButton variant="black" onClick={sendTestEmail}>
+                                                        <Send size={14} className="mr-1.5" /> Send Test
+                                                    </PillButton>
+                                                </div>
                                             </div>
                                         </div>
                                     </GlassCard>

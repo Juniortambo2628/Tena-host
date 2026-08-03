@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\NotificationTestController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\Auth\GuestOtpController;
 use App\Http\Controllers\DashboardController;
@@ -58,6 +59,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/system', [SystemController::class, 'index'])->name('system.index');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
+    // Notification Test
+    Route::post('/notifications/test', [NotificationTestController::class, 'send'])->name('notifications.test');
 
     // Registrations
     Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');

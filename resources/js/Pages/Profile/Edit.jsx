@@ -10,7 +10,12 @@ export default function Edit({
     mustVerifyEmail,
     status,
     twoFactorEnabled,
+    twoFactorSecret,
+    twoFactorQrCodeUrl,
+    twoFactorRecoveryCodes,
     userEmail,
+    avatarUrl,
+    phoneNumber,
 }) {
     return (
         <PageShell
@@ -26,6 +31,8 @@ export default function Edit({
                     <UpdateProfileInformationForm
                         mustVerifyEmail={mustVerifyEmail}
                         status={status}
+                        avatarUrl={avatarUrl}
+                        phoneNumber={phoneNumber}
                         className="max-w-xl"
                     />
                 </GlassCard>
@@ -34,6 +41,9 @@ export default function Edit({
                     <TwoFactorAuthenticationForm
                         className="max-w-xl"
                         enabled={twoFactorEnabled}
+                        secret={twoFactorSecret}
+                        qrCodeUrl={twoFactorQrCodeUrl}
+                        recoveryCodes={twoFactorRecoveryCodes}
                         userEmail={userEmail}
                     />
                 </GlassCard>
