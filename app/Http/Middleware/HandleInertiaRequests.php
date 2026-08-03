@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'ziggy' => function () {
                 Ziggy::clearRoutes();
+
                 return [
                     ...(new Ziggy)->toArray(),
                     'location' => $request->url(),
