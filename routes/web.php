@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AccessPointController;
-use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\HostController;
 use App\Http\Controllers\Admin\LandingController;
 use App\Http\Controllers\Admin\NotificationTestController;

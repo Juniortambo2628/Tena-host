@@ -93,7 +93,7 @@ class PolicyDocumentController extends Controller
     public function togglePublish(PolicyDocument $policy)
     {
         $policy->update([
-            'is_published' => !$policy->is_published,
+            'is_published' => ! $policy->is_published,
             'last_reviewed_at' => now(),
             'last_reviewed_by' => auth()->user()->name ?? 'Admin',
         ]);

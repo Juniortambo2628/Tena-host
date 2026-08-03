@@ -22,11 +22,11 @@ class AdminPaymentController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('MpesaReceiptNumber', 'like', "%{$search}%")
-                  ->orWhere('PhoneNumber', 'like', "%{$search}%")
-                  ->orWhereHas('user', function ($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%")
-                         ->orWhere('email', 'like', "%{$search}%");
-                  });
+                    ->orWhere('PhoneNumber', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -64,6 +64,7 @@ class AdminPaymentController extends Controller
             ->get()
             ->map(function ($host) {
                 $latestTransaction = $host->mpesaTransactions()->latest()->first();
+
                 return [
                     'id' => $host->id,
                     'name' => $host->name,

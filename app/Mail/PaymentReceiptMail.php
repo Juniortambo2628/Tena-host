@@ -21,7 +21,7 @@ class PaymentReceiptMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Payment Receipt - ' . Setting::getValue('site_name', 'Tena Host'),
+            subject: 'Payment Receipt - '.Setting::getValue('site_name', 'Tena Host'),
         );
     }
 
