@@ -75,7 +75,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
             {/* Background Image/Gradient Layer */}
             <div
                 className="dashboard-layout__bg"
-                style={{ backgroundImage: `url('${bgImage}')` }}
+                style={{ '--bg-image': `url('${bgImage}')` }}
             />
 
             {/* Sidebar */}

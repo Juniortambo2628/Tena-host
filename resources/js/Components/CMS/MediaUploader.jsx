@@ -157,7 +157,7 @@ export default function MediaUploader({
                 type="file"
                 accept={accept?.join(',') || 'image/*,video/*'}
                 onChange={handleFileSelect}
-                style={{ display: 'none' }}
+                className="cms-uploader__input-hidden"
             />
             <div className="cms-uploader__dropzone-content">
                 <svg className="cms-uploader__dropzone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">

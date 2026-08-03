@@ -21,7 +21,7 @@ export default function GlassCard({
             {bgImage && (
                 <div
                     className="glass-card__bg-image"
-                    style={{ backgroundImage: `url('${bgImage}')` }}
+                    style={{ '--bg-image': `url('${bgImage}')` }}
                 />
             )}
 

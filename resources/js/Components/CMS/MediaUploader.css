@@ -1,5 +1,9 @@
 @reference "tailwindcss";
 
+.cms-uploader__input-hidden {
+    @apply hidden;
+}
+
 .cms-uploader {
     @apply relative;
 }

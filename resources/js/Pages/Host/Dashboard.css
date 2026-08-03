@@ -110,6 +110,7 @@
 
 .host-dashboard-occupancy-bar {
     @apply h-full rounded-full transition-all duration-1000;
+    width: var(--bar-width);
 }
 
 .host-dashboard-occupancy-label {

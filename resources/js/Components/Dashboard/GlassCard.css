@@ -10,6 +10,7 @@
 
 .glass-card__bg-image {
     @apply absolute inset-0 z-0 opacity-10 bg-cover bg-center transition-transform duration-700 group-hover:scale-110;
+    background-image: var(--bg-image);
 }
 
 .glass-card__gradient {

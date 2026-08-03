@@ -184,7 +184,7 @@ export default function MarketingBuilder({ campaign, properties }) {
 
                         {/* Canvas Area */}
                         <div className="host-builder-canvas">
-                            <div className="host-builder-canvas-bg" style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+                            <div className="host-builder-canvas-bg" />
 
                             {activeTab === 'design' && (
                                 <div className="host-builder-canvas-inner">

@@ -133,7 +133,7 @@ export default function Dashboard({ properties, stats, guestChartData, notificat
                                                     <div className="host-dashboard-occupancy-bar-bg">
                                                         <div
                                                             className={`host-dashboard-occupancy-bar ${property.occupancy_rate > 90 ? 'bg-red-500' : 'bg-[#FFD300]'}`}
-                                                            style={{ width: `${property.occupancy_rate}%` }}
+                                                            style={{ '--bar-width': `${property.occupancy_rate}%` }}
                                                         />
                                                     </div>
                                                     <span className="host-dashboard-occupancy-label">{property.occupancy_rate}% Load</span>

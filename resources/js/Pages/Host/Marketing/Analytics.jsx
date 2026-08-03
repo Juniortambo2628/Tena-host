@@ -224,13 +224,13 @@ function DeviceStat({ label, value, trend }) {
 
 function DomainStat({ name, percent }) {
     return (
-        <div className="flex items-center justify-between">
-            <span className="text-xs font-black text-black/40">{name}</span>
-            <div className="flex items-center gap-4 flex-1 ml-6">
-                <div className="h-1 bg-black/5 flex-1 rounded-full overflow-hidden">
-                    <div className="h-full bg-black rounded-full" style={{ width: percent }} />
+        <div className="host-analytics-domain-item">
+            <span className="host-analytics-domain-name">{name}</span>
+            <div className="host-analytics-domain-bar-wrap">
+                <div className="host-analytics-domain-bar-bg">
+                    <div className="host-analytics-domain-bar" style={{ '--bar-width': percent }} />
                 </div>
-                <span className="text-[10px] font-black text-black w-8">{percent}</span>
+                <span className="host-analytics-domain-percent">{percent}</span>
             </div>
         </div>
     );

@@ -6,6 +6,7 @@
 
 .dashboard-layout__bg {
     @apply absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-fixed;
+    background-image: var(--bg-image);
     background-size: cover;
 }
 

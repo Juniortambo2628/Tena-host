@@ -41,8 +41,39 @@
     @apply absolute bg-black/50 pointer-events-none;
 }
 
+.crop-dim-top {
+    height: var(--crop-y);
+    left: 0;
+    right: 0;
+}
+
+.crop-dim-bottom {
+    top: var(--crop-bottom);
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.crop-dim-left {
+    top: var(--crop-y);
+    height: var(--crop-height);
+    left: 0;
+    width: var(--crop-x);
+}
+
+.crop-dim-right {
+    top: var(--crop-y);
+    height: var(--crop-height);
+    left: var(--crop-right);
+    right: 0;
+}
+
 .crop-box {
     @apply absolute border-2 border-white cursor-move z-10;
+    left: var(--crop-x);
+    top: var(--crop-y);
+    width: var(--crop-width);
+    height: var(--crop-height);
     box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
 }
 

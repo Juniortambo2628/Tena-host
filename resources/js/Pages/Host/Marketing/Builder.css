@@ -94,6 +94,8 @@
 
 .host-builder-canvas-bg {
     @apply absolute inset-0 opacity-[0.03] pointer-events-none;
+    background-image: radial-gradient(circle, #000 1px, transparent 1px);
+    background-size: 30px 30px;
 }
 
 .host-builder-canvas-inner {

@@ -130,6 +130,7 @@
 
 .host-analytics-domain-bar {
     @apply h-full bg-black rounded-full;
+    width: var(--bar-width);
 }
 
 .host-analytics-domain-percent {

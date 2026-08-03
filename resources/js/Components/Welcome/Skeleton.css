@@ -2,6 +2,8 @@
 
 .skeleton {
     @apply bg-gray-200 animate-pulse;
+    width: var(--skeleton-width, 100%);
+    height: var(--skeleton-height, auto);
 }
 
 .skeleton-hero {
@@ -22,4 +24,12 @@
 
 .skeleton-hero__image {
     @apply w-full lg:w-1/2 h-80;
+}
+
+.skeleton--60 {
+    width: 60%;
+}
+
+.skeleton--full {
+    width: 100%;
 }

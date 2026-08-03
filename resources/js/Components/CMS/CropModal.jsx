@@ -139,13 +139,25 @@ export default function CropModal({ media, isOpen, onClose, onCropped }) {
                         />
                         {imgRef.current && containerRef.current && (
                             <>
-                                <div className="crop-dim-overlay crop-dim-top" style={{ height: crop.y, left: 0, right: 0 }} />
-                                <div className="crop-dim-overlay crop-dim-bottom" style={{ top: crop.y + crop.height, left: 0, right: 0, bottom: 0 }} />
-                                <div className="crop-dim-overlay crop-dim-left" style={{ top: crop.y, height: crop.height, left: 0, width: crop.x }} />
-                                <div className="crop-dim-overlay crop-dim-right" style={{ top: crop.y, height: crop.height, left: crop.x + crop.width, right: 0 }} />
+                                <div
+                                    className="crop-dim-overlay crop-dim-top"
+                                    style={{ '--crop-y': `${crop.y}px` }}
+                                />
+                                <div
+                                    className="crop-dim-overlay crop-dim-bottom"
+                                    style={{ '--crop-bottom': `${crop.y + crop.height}px` }}
+                                />
+                                <div
+                                    className="crop-dim-overlay crop-dim-left"
+                                    style={{ '--crop-y': `${crop.y}px`, '--crop-height': `${crop.height}px`, '--crop-x': `${crop.x}px` }}
+                                />
+                                <div
+                                    className="crop-dim-overlay crop-dim-right"
+                                    style={{ '--crop-y': `${crop.y}px`, '--crop-height': `${crop.height}px`, '--crop-right': `${crop.x + crop.width}px` }}
+                                />
                                 <div
                                     className="crop-box"
-                                    style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }}
+                                    style={{ '--crop-x': `${crop.x}px`, '--crop-y': `${crop.y}px`, '--crop-width': `${crop.width}px`, '--crop-height': `${crop.height}px` }}
                                     onMouseDown={handleMouseDown}
                                 >
                                     <div className="crop-box__corner crop-box__corner--tl" />

@@ -32,7 +32,7 @@ export default function ErrorPage({ status }) {
                     <div className="w-20 h-20 bg-[#FFD300]/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
                         <span className="text-4xl font-bold text-[#FFD300]">{status}</span>
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-3" style={{ letterSpacing: '-0.5px' }}>{title}</h1>
+                    <h1 className="text-3xl font-bold tracking-tighter mb-3">{title}</h1>
                     <p className="text-gray-500 text-lg leading-relaxed">{description}</p>
                 </div>
 

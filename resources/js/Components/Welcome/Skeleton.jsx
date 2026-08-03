@@ -5,7 +5,7 @@ export function SkeletonBlock({ className = '', width, height, rounded = 'rounde
     return (
         <div
             className={`skeleton ${rounded} ${className}`}
-            style={{ width, height }}
+            style={{ '--skeleton-width': width, '--skeleton-height': height }}
         />
     );
 }
@@ -16,8 +16,7 @@ export function SkeletonText({ lines = 3, className = '' }) {
             {Array.from({ length: lines }).map((_, i) => (
                 <div
                     key={i}
-                    className="skeleton rounded-md"
-                    style={{ width: i === lines - 1 ? '60%' : '100%', height: '1rem' }}
+                    className={`skeleton rounded-md ${i === lines - 1 ? 'skeleton--60' : 'skeleton--full'}`}
                 />
             ))}
         </div>
