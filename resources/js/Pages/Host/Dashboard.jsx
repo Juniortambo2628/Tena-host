@@ -1,5 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -208,7 +209,7 @@ export default function Dashboard({ properties, stats, guestChartData, notificat
                             <div className="host-dashboard-support-dot"></div>
                         </div>
                         <p className="host-dashboard-support-desc">Need help with your configuration? Our team is online.</p>
-                        <PillButton variant="white" className="w-full py-2.5" onClick={() => alert('Support Chat is currently in development. Please contact support@tena.io for immediate assistance.')}>Chat with us</PillButton>
+                        <PillButton variant="white" className="w-full py-2.5" onClick={() => notify.info('Support Chat is currently in development. Please contact support@tena.host for immediate assistance.')}>Chat with us</PillButton>
                     </GlassCard>
                 </div>
             </div>

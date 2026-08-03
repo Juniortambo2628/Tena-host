@@ -177,6 +177,10 @@
     @apply py-2;
 }
 
+.dashboard-layout__menu-empty {
+    @apply flex flex-col items-center justify-center py-8 px-6;
+}
+
 .dashboard-layout__menu-item {
     @apply flex items-start gap-4 px-6 py-4 w-full text-left transition-colors;
 }

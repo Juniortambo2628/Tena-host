@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import {
     Wifi,
     Smartphone,
@@ -59,7 +60,7 @@ export default function GuestPortal({ property, amenities, guidebook_link }) {
                         <button
                             onClick={() => {
                                 navigator.clipboard.writeText(property.access_points?.[0]?.ssid || property.wifi_ssid || 'Tena-Secure-WiFi');
-                                alert('WiFi network name copied to clipboard!');
+                                notify.success('WiFi network name copied to clipboard!');
                             }}
                             className="guest-portal-wifi-connect"
                         >

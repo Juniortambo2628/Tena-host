@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { notify } from '@/Components/Toast';
 import './WaitlistModal.css';
 
 export default function WaitlistModal({ show, onClose }) {
@@ -32,7 +33,7 @@ export default function WaitlistModal({ show, onClose }) {
         e.preventDefault();
         // Submit logic here
         setTimeout(() => {
-            alert("Thanks! You're on the list.");
+            notify.success("Thanks! You're on the list.");
             onClose();
         }, 1000);
     };

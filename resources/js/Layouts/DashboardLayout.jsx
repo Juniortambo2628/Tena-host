@@ -152,9 +152,9 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                     {/* Notifications Dropdown */}
                                     <Menu as="div" className="dashboard-layout__menu">
                                         <Menu.Button className="dashboard-layout__menu-button">
-                                            <div className="dashboard-layout__menu-icon-wrapper">
+                                                <div className="dashboard-layout__menu-icon-wrapper">
                                                 <Bell size={14} />
-                                                <div className="dashboard-layout__menu-badge"></div>
+                                                {notifications.some(n => !n.read_at) && <div className="dashboard-layout__menu-badge"></div>}
                                             </div>
                                             Notifications
                                         </Menu.Button>
@@ -172,7 +172,12 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                                     <h3 className="dashboard-layout__menu-title">Recent Activity</h3>
                                                 </div>
                                                 <div className="dashboard-layout__menu-list">
-                                                    {notifications.map((n) => (
+                                                    {notifications.length === 0 ? (
+                                                        <div className="dashboard-layout__menu-empty">
+                                                            <Bell size={20} className="text-gray-300 mb-2" />
+                                                            <p className="text-xs text-gray-400">No notifications yet</p>
+                                                        </div>
+                                                    ) : notifications.map((n) => (
                                                         <Menu.Item key={n.id}>
                                                             {({ active }) => (
                                                                 <button className={`dashboard-layout__menu-item ${active ? 'dashboard-layout__menu-item--active' : ''}`}>

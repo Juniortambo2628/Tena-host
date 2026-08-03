@@ -68,6 +68,15 @@ export function extractItems(section, prefix, fields) {
 }
 
 /**
+ * Sanitize HTML content from the CMS editor.
+ * Replaces &nbsp; with regular spaces so words wrap naturally.
+ */
+export function sanitizeHtml(html) {
+    if (!html || typeof html !== 'string') return '';
+    return html.replace(/&nbsp;/g, ' ');
+}
+
+/**
  * Extract items from a JSON-encoded content field.
  */
 export function extractJsonItems(section, key) {

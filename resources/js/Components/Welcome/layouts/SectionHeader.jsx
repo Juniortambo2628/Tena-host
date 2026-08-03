@@ -1,4 +1,5 @@
 import React from 'react';
+import { sanitizeHtml } from '@/lib/cms';
 import './SectionHeader.css';
 
 export default function SectionHeader({
@@ -42,7 +43,7 @@ export default function SectionHeader({
             {(title || titleHighlight) && (
                 <h2 className={titleClasses}>{renderTitle()}</h2>
             )}
-            {subtitle && <p className={subtitleClasses} dangerouslySetInnerHTML={{ __html: subtitle }} />}
+            {subtitle && <p className={subtitleClasses} dangerouslySetInnerHTML={{ __html: sanitizeHtml(subtitle) }} />}
         </div>
     );
 }

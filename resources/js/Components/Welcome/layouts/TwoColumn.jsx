@@ -1,4 +1,5 @@
 import React from 'react';
+import { sanitizeHtml } from '@/lib/cms';
 import './TwoColumn.css';
 
 export function TwoColumnFeatureRow({ icon, title, desc }) {
@@ -41,7 +42,7 @@ export default function TwoColumn({
                 <div className="two-column-text-card">
                     {label && <span className="two-column-label">{label}</span>}
                     {heading && <h2 className="two-column-heading">{heading}</h2>}
-                    {description && <p className="two-column-desc" dangerouslySetInnerHTML={{ __html: description }} />}
+                    {description && <p className="two-column-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }} />}
                     {features && (
                         <div className="two-column-features-list">
                             {features.map((feature, index) => (

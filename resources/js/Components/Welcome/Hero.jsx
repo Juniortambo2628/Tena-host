@@ -1,5 +1,5 @@
 import React from 'react';
-import { getContent, getMedia, extractItems } from '@/lib/cms';
+import { getContent, getMedia, extractItems, sanitizeHtml } from '@/lib/cms';
 import { SkeletonHero } from './Skeleton';
 import './Hero.css';
 
@@ -38,8 +38,8 @@ export default function Hero({ onOpenWaitlist, section }) {
                             <div className="hero-badge-wrap">
                                 <span className="hero-badge">{badge}</span>
                             </div>
-                            <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: title }} />
-                            <p className="hero-subtitle" dangerouslySetInnerHTML={{ __html: subtitle }} />
+                            <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: sanitizeHtml(title) }} />
+                            <p className="hero-subtitle" dangerouslySetInnerHTML={{ __html: sanitizeHtml(subtitle) }} />
                             <div className="hero-cta-group">
                                 <button onClick={onOpenWaitlist} className="hero-btn-primary">
                                     {ctaPrimary}

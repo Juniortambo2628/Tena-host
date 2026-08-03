@@ -1,6 +1,6 @@
 import React from 'react';
 import { SectionWrapper, SectionHeader } from './layouts';
-import { getContent, extractItems } from '@/lib/cms';
+import { getContent, extractItems, sanitizeHtml } from '@/lib/cms';
 import { SkeletonSectionHeader, SkeletonPricingGrid } from './Skeleton';
 import './Pricing.css';
 
@@ -61,7 +61,7 @@ export default function Pricing({ onOpenWaitlist, section }) {
                     <div className="pricing-cta-decoration"></div>
                     <div className="pricing-cta-content">
                         <span className="pricing-cta-label">{ctaLabel}</span>
-                        <p className="pricing-cta-text" dangerouslySetInnerHTML={{ __html: ctaText }} />
+                        <p className="pricing-cta-text" dangerouslySetInnerHTML={{ __html: sanitizeHtml(ctaText) }} />
                         <button onClick={onOpenWaitlist} className="pricing-cta-button">
                             {ctaButton} <i className="fas fa-arrow-right ml-2"></i>
                         </button>

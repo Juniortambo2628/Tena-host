@@ -1,5 +1,6 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -177,7 +178,7 @@ export default function MarketingIndex({ campaigns, stats }) {
                             <PillButton
                                 variant="primary"
                                 className="w-full py-4 text-xs"
-                                onClick={() => alert('Applying all campaign optimizations...')}
+                                onClick={() => notify.info('Applying all campaign optimizations...')}
                             >
                                 <div className="flex items-center justify-center gap-2">
                                     Apply All Optimizations

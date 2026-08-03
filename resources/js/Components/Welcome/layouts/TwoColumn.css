@@ -40,8 +40,6 @@
 
 .two-column-desc {
     @apply text-gray-600 mb-8;
-    overflow-wrap: break-word;
-    word-break: break-word;
 }
 
 .two-column-features-list {
