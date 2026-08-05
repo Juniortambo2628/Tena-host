@@ -49,17 +49,10 @@ export default function RegistrationIndex({ registrations }) {
             ),
         },
         {
-            key: 'property_count',
-            label: 'Properties',
+            key: 'units',
+            label: 'Units',
             render: (item) => (
-                <span className="registrations-page__property-count">{item.property_count}</span>
-            ),
-        },
-        {
-            key: 'location',
-            label: 'Location',
-            render: (item) => (
-                <span className="registrations-page__location">{item.location || '-'}</span>
+                <span className="registrations-page__units">{item.units}</span>
             ),
         },
         {

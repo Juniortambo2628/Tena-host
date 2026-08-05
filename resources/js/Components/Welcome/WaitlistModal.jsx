@@ -61,19 +61,21 @@ export default function WaitlistModal({ show, onClose }) {
                 }),
             });
 
-            if (response.ok || response.redirected) {
-                notify.success("Thanks! You're on the list.");
+            const data = await response.json().catch(() => ({}));
+
+            if (response.ok) {
+                notify.success(data.message || "Thanks! You're on the list.");
                 onClose();
             } else if (response.status === 404) {
                 notify.error('The registration endpoint is not available yet. Please try again later or contact support.');
             } else if (response.status === 422) {
-                const data = await response.json();
                 const firstError = Object.values(data.errors || data)[0];
                 notify.error(Array.isArray(firstError) ? firstError[0] : (firstError || 'Validation failed.'));
+            } else if (response.status === 429) {
+                notify.error(data.message || 'Too many attempts. Please try again later.');
             } else if (response.status === 419) {
                 notify.error('Session expired. Please refresh the page and try again.');
             } else {
-                const data = await response.json().catch(() => ({}));
                 notify.error(data.message || data.error || 'Submission failed. Please try again.');
             }
         } catch (err) {

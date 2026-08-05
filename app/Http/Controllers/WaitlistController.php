@@ -16,9 +16,9 @@ class WaitlistController extends Controller
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
 
-            return back()->withErrors([
-                'email' => "Too many attempts. Please try again in {$seconds} seconds.",
-            ]);
+            return response()->json([
+                'message' => "Too many attempts. Please try again in {$seconds} seconds.",
+            ], 429);
         }
 
         $validated = $request->validate([
@@ -39,13 +39,6 @@ class WaitlistController extends Controller
             'agree_updates' => ['boolean'],
         ]);
 
-        $propertyTypeMap = [
-            'Entire Place' => 'vacation_rental',
-            'Private Room' => 'vacation_rental',
-            'Shared Room' => 'vacation_rental',
-            'Hotel / Boutique' => 'hotel',
-        ];
-
         $unitsMap = [
             '1-5' => 1,
             '6-20' => 6,
@@ -58,7 +51,7 @@ class WaitlistController extends Controller
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'phone' => $validated['phone'] ?? null,
-                'property_type' => $propertyTypeMap[$validated['property_type']],
+                'property_type' => $validated['property_type'],
                 'property_count' => $unitsMap[$validated['units']],
                 'units' => $validated['units'],
                 'primary_platform' => $validated['primary_platform'],
@@ -70,6 +63,6 @@ class WaitlistController extends Controller
 
         RateLimiter::hit($key, 300);
 
-        return back()->with('success', "Thanks! You're on the list.");
+        return response()->json(['message' => "Thanks! You're on the list."], 201);
     }
 }
