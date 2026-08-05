@@ -160,6 +160,8 @@ jobs:
           echo "=== Extracting to ~/tena-core/ ==="
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd ~/tena-core && \
+            echo 'Cleaning old backend dirs before extract...' && \
+            rm -rf app config database routes resources bootstrap && \
             tar xzf ~/backend-code.tar.gz && \
             echo 'Extraction complete' && \
             echo 'Routes files:' && ls -la routes/ && \
