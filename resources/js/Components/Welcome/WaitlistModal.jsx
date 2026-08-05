@@ -125,15 +125,16 @@ export default function WaitlistModal({ show, onClose }) {
                 {/* Right Content Area */}
                 <div className="waitlist-content">
                     <form onSubmit={handleSubmit} className="waitlist-form">
-                        <AnimatePresence mode="wait">
-                            {step === 1 && (
-                                <motion.div
-                                    key="step1"
-                                    initial={{ x: 20, opacity: 0 }}
-                                    animate={{ x: 0, opacity: 1 }}
-                                    exit={{ x: -20, opacity: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                >
+                        <div className="waitlist-form-scroll">
+                            <AnimatePresence mode="wait">
+                                {step === 1 && (
+                                    <motion.div
+                                        key="step1"
+                                        initial={{ x: 20, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        exit={{ x: -20, opacity: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                    >
                                     <h2 className="waitlist-form-heading">Let's get started</h2>
                                     <p className="waitlist-form-subheading">Join the waiting list to get early access.</p>
 
@@ -327,6 +328,7 @@ export default function WaitlistModal({ show, onClose }) {
                                 </motion.div>
                             )}
                         </AnimatePresence>
+                        </div>
 
                         {/* Footer / Buttons */}
                         <div className="waitlist-footer">
