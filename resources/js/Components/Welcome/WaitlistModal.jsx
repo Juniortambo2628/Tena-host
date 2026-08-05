@@ -64,6 +64,8 @@ export default function WaitlistModal({ show, onClose }) {
             if (response.ok || response.redirected) {
                 notify.success("Thanks! You're on the list.");
                 onClose();
+            } else if (response.status === 404) {
+                notify.error('The registration endpoint is not available yet. Please try again later or contact support.');
             } else if (response.status === 422) {
                 const data = await response.json();
                 const firstError = Object.values(data.errors || data)[0];

@@ -424,7 +424,7 @@ jobs:
           cd "$CORE"
           php artisan config:cache 2>&1 || echo "     WARNING: config:cache failed"
           php artisan route:cache 2>&1 || {
-            echo "     WARNING: route:cache failed - clearing route cache instead"
+            echo "     WARNING: route:cache failed - clearing route cache"
             php artisan route:clear 2>&1 || true
           }
           php artisan view:cache 2>&1 || true
@@ -435,18 +435,35 @@ jobs:
           echo ""
           echo "===> [8b] Verifying critical routes"
           cd "$CORE"
-          if php artisan route:list --columns=uri 2>/dev/null | grep -q "waitlist"; then
-            echo "     OK: /waitlist route found"
+
+          # Check that routes/web.php contains the waitlist route
+          if grep -q "waitlist" "$CORE/routes/web.php" 2>/dev/null; then
+            echo "     OK: waitlist route defined in routes/web.php"
           else
-            echo "     WARNING: /waitlist route NOT found in route list"
-            echo "     Attempting route:clear and rebuild..."
+            echo "     ERROR: waitlist route NOT found in routes/web.php"
+          fi
+
+          # Verify route is loadable (uses pipe to avoid --columns which may not exist)
+          if php artisan route:list 2>/dev/null | grep -q "waitlist"; then
+            echo "     OK: /waitlist route found in route list"
+          else
+            echo "     WARNING: /waitlist route not found in route list - rebuilding..."
             php artisan route:clear 2>&1 || true
             php artisan route:cache 2>&1 || true
-            if php artisan route:list --columns=uri 2>/dev/null | grep -q "waitlist"; then
+            if php artisan route:list 2>/dev/null | grep -q "waitlist"; then
               echo "     OK: /waitlist route found after rebuild"
             else
-              echo "     ERROR: /waitlist route still missing - check routes/web.php"
+              echo "     ERROR: /waitlist route still missing after rebuild"
+              echo "     Falling back to no route cache (uncached routes)"
+              php artisan route:clear 2>&1 || true
             fi
+          fi
+
+          # Verify the POST method exists for /waitlist
+          if php artisan route:list --methods 2>/dev/null | grep -q "POST.*waitlist"; then
+            echo "     OK: POST /waitlist method confirmed"
+          else
+            echo "     INFO: Could not verify POST method (route:list --methods may not be supported)"
           fi
 
           # ── 9. Set Permissions ──
