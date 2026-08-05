@@ -34,7 +34,7 @@ export default function WaitlistModal({ show, onClose }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        router.post(route('waitlist.store'), {
+        router.post('/waitlist', {
             first_name: formData.first_name,
             last_name: formData.last_name,
             email: formData.email,
