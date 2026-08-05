@@ -251,11 +251,21 @@ jobs:
           echo "=== Uploading archive to server ==="
           scp -P ${{ secrets.SSH_PORT }} /tmp/frontend-build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/frontend-build.tar.gz
 
-          echo "=== Extracting to ~/tena.host (webroot) ==="
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/tena.host && tar xzf ~/frontend-build.tar.gz && echo 'Build assets:' && ls -la build/ | head -5 && echo 'Assets:' && ls -la build/assets/ | head -10"
+          echo "=== Extracting to ~/tena.host/build (webroot, served by Apache) ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ~/tena.host && tar xzf ~/frontend-build.tar.gz && echo 'Manifest:' && ls -la build/manifest.json && echo 'Assets count:' && ls build/assets/ | wc -l"
 
-          echo "=== Extracting to ~/tena-core/public/build (for @vite Blade directive) ==="
-          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir -p ~/tena-core/public/build && cd ~/tena-core/public && tar xzf ~/frontend-build.tar.gz && echo 'Manifest:' && ls -la ~/tena-core/public/build/manifest.json"
+          echo "=== Verifying build integrity ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            if [ ! -f ~/tena.host/build/manifest.json ]; then
+              echo 'ERROR: manifest.json not found after extraction'
+              exit 1
+            fi
+            if [ ! -d ~/tena.host/build/assets ]; then
+              echo 'ERROR: assets directory not found after extraction'
+              exit 1
+            fi
+            echo 'Build extraction verified'
+          "
 
           echo "=== Cleaning up ==="
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -f ~/frontend-build.tar.gz"
@@ -324,9 +334,17 @@ jobs:
           # Public storage symlinks
           ln -sfn "$CORE/storage/app/public" "$PUBLIC/storage"
           ln -sfn "$CORE/storage/app/public" "$CORE/public/storage"
-          # Build assets symlink - ensure @vite() reads from same build directory served by Apache
+
+          # Build assets symlink - remove any existing directory/symlink first, then create fresh
+          rm -rf "$CORE/public/build" 2>/dev/null || true
           ln -sfn "$PUBLIC/build" "$CORE/public/build"
-          echo "     Storage symlinks verified"
+
+          # Verify the symlink works
+          if [ ! -f "$CORE/public/build/manifest.json" ]; then
+            echo "     ERROR: manifest.json not accessible via build symlink"
+            exit 1
+          fi
+          echo "     Storage and build symlinks verified"
 
           # ── 3. Configure .env ──
           echo ""
@@ -489,6 +507,22 @@ jobs:
             echo "     OK: $ASSET_COUNT frontend build assets"
           else
             echo "     WARNING: Frontend build directory not found"
+          fi
+
+          # Vite manifest check (critical for @vite directive)
+          if [ -f "$PUBLIC/build/manifest.json" ]; then
+            echo "     OK: Vite manifest.json present"
+          else
+            echo "     ERROR: Vite manifest.json MISSING"
+            exit 1
+          fi
+
+          # Vite manifest accessible via symlink
+          if [ -f "$CORE/public/build/manifest.json" ]; then
+            echo "     OK: Vite manifest accessible via symlink"
+          else
+            echo "     ERROR: Vite manifest NOT accessible via symlink"
+            exit 1
           fi
 
           # Index.php check
