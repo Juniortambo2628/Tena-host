@@ -9,6 +9,7 @@ import GlassModal from '@/Components/GlassModal';
 import { FormField, TextInput, TextArea, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
 import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye } from 'lucide-react';
 import { notify } from '@/Components/Toast';
+import { safeRoute, hasRoute } from '@/lib/route';
 import './Index.css';
 
 function debounce(func, wait) {
@@ -104,7 +105,7 @@ export default function Index({ settings }) {
             notify.error('Enter an email address to test.');
             return;
         }
-        router.post(route('admin.notifications.test'), {
+        router.post(safeRoute('admin.notifications.test'), {
             email: testEmail,
             template: testTemplate,
         }, {
@@ -407,7 +408,7 @@ export default function Index({ settings }) {
                                         </p>
                                         <PillButton
                                             variant="black"
-                                            onClick={() => router.visit(route('admin.policies.index'))}
+                                            onClick={() => router.visit(safeRoute('admin.policies.index'))}
                                         >
                                             Manage Policies
                                         </PillButton>

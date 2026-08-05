@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { Menu, Transition, Dialog } from '@headlessui/react';
 import { router } from '@inertiajs/react';
+import { safeRoute, hasRoute } from '@/lib/route';
 import './DashboardLayout.css';
 
 export default function DashboardLayout({ children, title, bgImage = "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=2000&q=80" }) {
@@ -93,12 +94,12 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
 
                 <nav className="dashboard-layout__nav custom-scrollbar">
                     {navItems.map((item) => {
-                        if (item.route && typeof route().has === 'function' && !route().has(item.route)) return null;
+                        if (item.route && !hasRoute(item.route)) return null;
                         const isActive = item.route && route().current(item.route);
                         return (
                             <Link
                                 key={item.name}
-                                href={item.route ? route(item.route) : '#'}
+                                href={item.route ? safeRoute(item.route) : '#'}
                                 className={`dashboard-layout__nav-link group ${isActive
                                     ? 'dashboard-layout__nav-link--active'
                                     : 'dashboard-layout__nav-link--inactive'

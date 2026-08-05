@@ -5,6 +5,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import { FormField, TextInput, TextArea, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
 import { FileText, ArrowLeft } from 'lucide-react';
+import { safeRoute } from '@/lib/route';
 import './CreateEdit.css';
 
 export default function PolicyEdit({ policy }) {
@@ -27,7 +28,7 @@ export default function PolicyEdit({ policy }) {
         <PageShell
             title={`Edit: ${policy.title}`}
             breadcrumbs={[
-                { label: 'Policies', href: route('admin.policies.index') },
+                { label: 'Policies', href: safeRoute('admin.policies.index') },
                 { label: policy.title },
             ]}
             rootRoute="admin.dashboard"
@@ -37,7 +38,7 @@ export default function PolicyEdit({ policy }) {
                 <div className="policy-create-edit__header">
                     <PillButton
                         variant="ghost"
-                        onClick={() => router.visit(route('admin.policies.index'))}
+                        onClick={() => router.visit(safeRoute('admin.policies.index'))}
                         icon={<ArrowLeft size={16} />}
                     >
                         Back to Policies
@@ -135,7 +136,7 @@ export default function PolicyEdit({ policy }) {
                     <FormActions>
                         <PillButton
                             variant="ghost"
-                            onClick={() => router.visit(route('admin.policies.index'))}
+                            onClick={() => router.visit(safeRoute('admin.policies.index'))}
                         >
                             Cancel
                         </PillButton>

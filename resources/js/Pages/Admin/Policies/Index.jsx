@@ -6,6 +6,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
 import { FileText, Plus, Eye, Edit3, Trash2, ToggleLeft, ToggleRight, Shield, Cookie, AlertCircle, HandshakeIcon } from 'lucide-react';
 import { notify } from '@/Components/Toast';
+import { safeRoute } from '@/lib/route';
 import './Index.css';
 
 const typeLabels = {
@@ -122,7 +123,7 @@ export default function PolicyIndex({ policies }) {
     return (
         <PageShell
             title="Policies & Terms"
-            breadcrumbs={[{ label: 'Policies', href: route('admin.policies.index') }]}
+            breadcrumbs={[{ label: 'Policies', href: safeRoute('admin.policies.index') }]}
             rootRoute="admin.dashboard"
             actions={[
                 { label: 'New Policy', onClick: () => router.visit(route('admin.policies.create')), variant: 'black', icon: <Plus size={16} /> },

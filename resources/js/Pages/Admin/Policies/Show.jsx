@@ -4,6 +4,7 @@ import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import { FileText, ArrowLeft, Edit3, ToggleRight, Shield, Cookie, AlertCircle, HandshakeIcon } from 'lucide-react';
+import { safeRoute } from '@/lib/route';
 import './Show.css';
 
 const typeLabels = {
@@ -31,7 +32,7 @@ export default function PolicyShow({ policy }) {
         <PageShell
             title={policy.title}
             breadcrumbs={[
-                { label: 'Policies', href: route('admin.policies.index') },
+                { label: 'Policies', href: safeRoute('admin.policies.index') },
                 { label: policy.title },
             ]}
             rootRoute="admin.dashboard"
@@ -44,7 +45,7 @@ export default function PolicyShow({ policy }) {
                 <div className="policy-show__header">
                     <PillButton
                         variant="ghost"
-                        onClick={() => router.visit(route('admin.policies.index'))}
+                        onClick={() => router.visit(safeRoute('admin.policies.index'))}
                         icon={<ArrowLeft size={16} />}
                     >
                         Back to Policies

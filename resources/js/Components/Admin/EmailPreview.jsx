@@ -49,10 +49,15 @@ export default function EmailPreview({ settings }) {
         if (!iframeRef.current) return;
         const doc = iframeRef.current.contentDocument;
         const SelectedTemplate = templates.find(t => t.id === activeTemplate).component;
-        const html = render(React.createElement(SelectedTemplate, emailProps));
-        doc.open();
-        doc.write(html);
-        doc.close();
+
+        const renderEmail = async () => {
+            const html = await render(React.createElement(SelectedTemplate, emailProps));
+            doc.open();
+            doc.write(html);
+            doc.close();
+        };
+
+        renderEmail();
     }, [activeTemplate, settings]);
 
     return (
