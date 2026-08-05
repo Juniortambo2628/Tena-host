@@ -6,10 +6,11 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import EmailPreview from '@/Components/Admin/EmailPreview';
 import GlassModal from '@/Components/GlassModal';
-import { FormField, TextInput, TextArea, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
+import { FormField, TextInput, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
 import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import { safeRoute, hasRoute } from '@/lib/route';
+import ContentField from '@/Components/CMS/ContentField';
 import './Index.css';
 
 function debounce(func, wait) {
@@ -318,11 +319,11 @@ export default function Index({ settings }) {
                                                     />
                                                 </FormField>
                                                 <FormField label="Body Text">
-                                                    <TextArea
+                                                    <ContentField
+                                                        type="richtext"
                                                         value={data.settings.welcome_email_body}
-                                                        onChange={(e) => updateSetting('welcome_email_body', e.target.value)}
+                                                        onChange={(val) => updateSetting('welcome_email_body', val)}
                                                         placeholder="Customize the welcome message..."
-                                                        rows={4}
                                                     />
                                                 </FormField>
                                             </div>
@@ -337,11 +338,11 @@ export default function Index({ settings }) {
                                                     />
                                                 </FormField>
                                                 <FormField label="Body Text">
-                                                    <TextArea
+                                                    <ContentField
+                                                        type="richtext"
                                                         value={data.settings.receipt_email_body}
-                                                        onChange={(e) => updateSetting('receipt_email_body', e.target.value)}
+                                                        onChange={(val) => updateSetting('receipt_email_body', val)}
                                                         placeholder="Customize the receipt message..."
-                                                        rows={4}
                                                     />
                                                 </FormField>
                                             </div>
@@ -356,11 +357,11 @@ export default function Index({ settings }) {
                                                     />
                                                 </FormField>
                                                 <FormField label="Body Text">
-                                                    <TextArea
+                                                    <ContentField
+                                                        type="richtext"
                                                         value={data.settings.forgot_password_email_body}
-                                                        onChange={(e) => updateSetting('forgot_password_email_body', e.target.value)}
+                                                        onChange={(val) => updateSetting('forgot_password_email_body', val)}
                                                         placeholder="Customize the reset instructions..."
-                                                        rows={4}
                                                     />
                                                 </FormField>
                                             </div>
@@ -382,11 +383,11 @@ export default function Index({ settings }) {
                                                     />
                                                 </FormField>
                                                 <FormField label="Body Text">
-                                                    <TextArea
+                                                    <ContentField
+                                                        type="richtext"
                                                         value={data.settings.waitlist_confirmation_body || ''}
-                                                        onChange={(e) => updateSetting('waitlist_confirmation_body', e.target.value)}
+                                                        onChange={(val) => updateSetting('waitlist_confirmation_body', val)}
                                                         placeholder="Customize the confirmation message..."
-                                                        rows={4}
                                                     />
                                                 </FormField>
                                             </div>
@@ -408,11 +409,11 @@ export default function Index({ settings }) {
                                                     />
                                                 </FormField>
                                                 <FormField label="Body Text">
-                                                    <TextArea
+                                                    <ContentField
+                                                        type="richtext"
                                                         value={data.settings.waitlist_welcome_body || ''}
-                                                        onChange={(e) => updateSetting('waitlist_welcome_body', e.target.value)}
+                                                        onChange={(val) => updateSetting('waitlist_welcome_body', val)}
                                                         placeholder="Customize the welcome message..."
-                                                        rows={4}
                                                     />
                                                 </FormField>
                                             </div>

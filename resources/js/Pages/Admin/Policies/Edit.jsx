@@ -6,6 +6,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import { FormField, TextInput, TextArea, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
 import { FileText, ArrowLeft } from 'lucide-react';
 import { safeRoute } from '@/lib/route';
+import ContentField from '@/Components/CMS/ContentField';
 import './CreateEdit.css';
 
 export default function PolicyEdit({ policy }) {
@@ -121,12 +122,11 @@ export default function PolicyEdit({ policy }) {
                                 </div>
 
                                 <FormField label="Content" error={errors.content}>
-                                    <TextArea
+                                    <ContentField
+                                        type="richtext"
                                         value={data.content}
-                                        onChange={(e) => setData('content', e.target.value)}
-                                        placeholder="Write your policy content here. HTML is supported..."
-                                        rows={20}
-                                        className="policy-create-edit__content-editor"
+                                        onChange={(val) => setData('content', val)}
+                                        placeholder="Write your policy content here..."
                                     />
                                 </FormField>
                             </div>
