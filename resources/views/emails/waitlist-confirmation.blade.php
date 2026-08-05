@@ -1,0 +1,64 @@
+@php
+    $primaryColor = \App\Models\Setting::getValue('email_primary_color', '#000000');
+    $accentColor = \App\Models\Setting::getValue('email_accent_color', '#FFD300');
+    $businessName = \App\Models\Setting::getValue('site_name', 'Tena');
+    $businessAddress = \App\Models\Setting::getValue('business_address', 'Nairobi, Kenya');
+    $logoUrl = \App\Models\Setting::getValue('logo_url', '');
+    $customHeading = \App\Models\Setting::getValue('waitlist_confirmation_heading', '');
+    $customBody = \App\Models\Setting::getValue('waitlist_confirmation_body', '');
+@endphp
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $customHeading ?: "You're on the list!" }}</title>
+</head>
+<body style="margin:0;padding:0;background-color:{{ $primaryColor }};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:{{ $primaryColor }};padding:40px 20px;">
+        <tr><td align="center">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#fff;border-radius:16px;overflow:hidden;">
+                @if($logoUrl)
+                <tr><td align="center" style="padding:32px 40px 0"><img src="{{ $logoUrl }}" alt="{{ $businessName }}" height="48" /></td></tr>
+                @endif
+                <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $customHeading ?: "You're on the list!" }}</h1></td></tr>
+                <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333">
+                    <p style="margin:0 0 16px">Hi {{ $firstName }},</p>
+
+                    @if($customBody)
+                        <p style="margin:0 0 16px">{{ $customBody }}</p>
+                    @else
+                        <p style="margin:0 0 16px">Thanks for joining the <strong>{{ $businessName }}</strong> waitlist! We're thrilled to have you on board.</p>
+                        <p style="margin:0 0 16px">Here's a summary of what you told us:</p>
+                    @endif
+
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f8f8;border-radius:12px;margin-bottom:24px">
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Property Type</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $propertyType }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Units</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $units }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Primary Platform</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $primaryPlatform }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888">Biggest Challenge</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333">{{ $biggestChallenge }}</td>
+                        </tr>
+                    </table>
+
+                    <p style="margin:0 0 16px">We're building something special for hosts like you, and your input matters. We'll keep you updated on our progress and let you know as soon as your spot is ready.</p>
+
+                    <p style="margin:0;font-size:14px;color:#888">In the meantime, feel free to reach out if you have any questions.</p>
+                </td></tr>
+                <tr><td style="padding:0 40px 16px"><p style="margin:0;font-size:13px;color:#888">If you have any questions, reply to this email or contact our support team.</p></td></tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px"><tr><td align="center" style="padding:24px 20px 0"><p style="margin:0;font-size:11px;color:#aaa">{{ $businessName }} &middot; {{ $businessAddress }}</p></td></tr></table>
+        </td></tr>
+    </table>
+</body>
+</html>

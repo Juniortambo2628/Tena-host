@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WaitlistConfirmationMail;
 use App\Models\Registration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
 
@@ -45,7 +47,7 @@ class WaitlistController extends Controller
             '21+' => 21,
         ];
 
-        Registration::firstOrCreate(
+        $registration = Registration::firstOrCreate(
             ['email' => $validated['email']],
             [
                 'first_name' => $validated['first_name'],
@@ -62,6 +64,25 @@ class WaitlistController extends Controller
         );
 
         RateLimiter::hit($key, 300);
+
+        // Send confirmation email (fire-and-forget, don't block the response)
+        if ($registration->wasRecentlyCreated) {
+            try {
+                Mail::to($validated['email'])->send(
+                    new WaitlistConfirmationMail(
+                        firstName: $validated['first_name'],
+                        lastName: $validated['last_name'],
+                        email: $validated['email'],
+                        propertyType: $validated['property_type'],
+                        units: $validated['units'],
+                        primaryPlatform: $validated['primary_platform'],
+                        biggestChallenge: $validated['biggest_challenge'],
+                    )
+                );
+            } catch (\Throwable $e) {
+                \Log::warning('Failed to send waitlist confirmation email: '.$e->getMessage());
+            }
+        }
 
         return response()->json(['message' => "Thanks! You're on the list."], 201);
     }

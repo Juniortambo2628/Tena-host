@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             TenaDatabaseSeeder::class,
             LandingContentSeeder::class,
             SettingsSeeder::class,
+            EmailTemplateSeeder::class,
             NotificationPreferencesSeeder::class,
             PolicyDocumentSeeder::class,
         ]);
