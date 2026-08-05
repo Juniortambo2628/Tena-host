@@ -412,13 +412,11 @@ jobs:
           }
           echo "     Migrations complete"
 
-          # ── 7. Seed Database (if seeders exist) ──
+          # ── 7. Seed Database (DISABLED - seeders are dev/staging only) ──
           echo ""
-          echo "===> [7/12] Running database seeders"
-          cd "$CORE"
-          php artisan db:seed --force 2>&1 || {
-            echo "     INFO: No seeders to run (non-critical)"
-          }
+          echo "===> [7/12] Skipping database seeders (production-safe)"
+          echo "     Seeders should only be run manually via 'php artisan db:seed' in dev/staging"
+          echo "     To seed production data, run manually after deploy with care"
 
           # ── 8. Rebuild Caches ──
           echo ""
