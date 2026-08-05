@@ -93,6 +93,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
 
                 <nav className="dashboard-layout__nav custom-scrollbar">
                     {navItems.map((item) => {
+                        if (item.route && typeof route().has === 'function' && !route().has(item.route)) return null;
                         const isActive = item.route && route().current(item.route);
                         return (
                             <Link
