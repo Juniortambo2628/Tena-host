@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './WaitlistModal.css';
 
@@ -12,6 +13,8 @@ export default function WaitlistModal({ show, onClose }) {
         phone: '',
         property_type: 'Entire Place',
         units: '1-5',
+        primary_platform: 'Airbnb',
+        biggest_challenge: 'Getting more direct bookings',
         years_hosting: '0-1',
         agree_updates: false
     });
@@ -31,11 +34,27 @@ export default function WaitlistModal({ show, onClose }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Submit logic here
-        setTimeout(() => {
-            notify.success("Thanks! You're on the list.");
-            onClose();
-        }, 1000);
+        router.post(route('waitlist.store'), {
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            email: formData.email,
+            phone: formData.phone,
+            property_type: formData.property_type,
+            units: formData.units,
+            primary_platform: formData.primary_platform,
+            biggest_challenge: formData.biggest_challenge,
+            agree_updates: formData.agree_updates,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                notify.success("Thanks! You're on the list.");
+                onClose();
+            },
+            onError: (errors) => {
+                const firstError = Object.values(errors)[0];
+                notify.error(firstError || 'Submission failed. Please try again.');
+            },
+        });
     };
 
     // Sidebar Step Icon Component
@@ -193,8 +212,8 @@ export default function WaitlistModal({ show, onClose }) {
                                                 <option>Private Room</option>
                                                 <option>Shared Room</option>
                                                 <option>Hotel / Boutique</option>
-                                            </select>
-                                        </div>
+                                           </select>
+                                       </div>
                                         <div>
                                             <label className="waitlist-field-label">Number of Units</label>
                                             <div className="waitlist-units-grid">
@@ -206,10 +225,49 @@ export default function WaitlistModal({ show, onClose }) {
                                                         className={`waitlist-unit-btn ${formData.units === opt ? 'waitlist-unit-btn-active' : 'waitlist-unit-btn-inactive'}`}
                                                     >
                                                         {opt}
-                                                    </button>
+                                                   </button>
                                                 ))}
-                                            </div>
-                                        </div>
+                                           </div>
+                                       </div>
+                                        <div>
+                                            <label className="waitlist-field-label">Primary Booking Platform</label>
+                                            <div className="waitlist-platform-grid">
+                                                {['Airbnb', 'Booking.com', 'Vrbo', 'Multiple', 'Direct Bookings'].map((opt) => (
+                                                    <button
+                                                        key={opt}
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, primary_platform: opt })}
+                                                        className={`waitlist-platform-btn ${formData.primary_platform === opt ? 'waitlist-platform-btn-active' : 'waitlist-platform-btn-inactive'}`}
+                                                    >
+                                                        {opt}
+                                                   </button>
+                                                ))}
+                                           </div>
+                                       </div>
+                                        <div>
+                                            <label className="waitlist-field-label">What's your biggest challenge today</label>
+                                            <div className="waitlist-challenge-list">
+                                                {[
+                                                    'Getting more direct bookings',
+                                                    'Getting repeat bookings',
+                                                    'OTA (Airbnb, Booking.com etc commissions)',
+                                                    'Guest communication',
+                                                    'Other'
+                                                ].map((opt) => (
+                                                    <button
+                                                        key={opt}
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, biggest_challenge: opt })}
+                                                        className={`waitlist-challenge-btn ${formData.biggest_challenge === opt ? 'waitlist-challenge-btn-active' : 'waitlist-challenge-btn-inactive'}`}
+                                                    >
+                                                        <span className={`waitlist-challenge-radio ${formData.biggest_challenge === opt ? 'waitlist-challenge-radio-active' : 'waitlist-challenge-radio-inactive'}`}>
+                                                            {formData.biggest_challenge === opt && <span className="waitlist-challenge-radio-dot" />}
+                                                       </span>
+                                                        <span>{opt}</span>
+                                                   </button>
+                                                ))}
+                                           </div>
+                                       </div>
                                         <div>
                                             <label className="waitlist-field-label">GDPR Consent</label>
                                             <label className="waitlist-consent-label">
@@ -222,10 +280,10 @@ export default function WaitlistModal({ show, onClose }) {
                                                 />
                                                 <span className="waitlist-consent-text">
                                                     I agree to receive updates about Tena.
-                                                </span>
-                                            </label>
-                                        </div>
-                                    </div>
+                                               </span>
+                                           </label>
+                                       </div>
+                                   </div>
                                 </motion.div>
                             )}
 
@@ -256,7 +314,15 @@ export default function WaitlistModal({ show, onClose }) {
                                         <div className="waitlist-confirmation-row">
                                             <span className="waitlist-confirmation-row-label">Units</span>
                                             <span className="waitlist-confirmation-row-value">{formData.units}</span>
-                                        </div>
+                                       </div>
+                                        <div className="waitlist-confirmation-row">
+                                            <span className="waitlist-confirmation-row-label">Platform</span>
+                                            <span className="waitlist-confirmation-row-value">{formData.primary_platform}</span>
+                                       </div>
+                                        <div className="waitlist-confirmation-row">
+                                            <span className="waitlist-confirmation-row-label">Challenge</span>
+                                            <span className="waitlist-confirmation-row-value">{formData.biggest_challenge}</span>
+                                       </div>
                                     </div>
                                 </motion.div>
                             )}

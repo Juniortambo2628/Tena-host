@@ -19,6 +19,7 @@ use App\Http\Controllers\GuestPortalController;
 use App\Http\Controllers\HostDashboardController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MpesaCallbackController;
+use App\Http\Controllers\WaitlistController;
 use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
@@ -43,6 +44,8 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
 
 // Admin Routes
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {

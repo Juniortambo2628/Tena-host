@@ -1,7 +1,7 @@
 @reference "tailwindcss";
 
 .waitlist-overlay {
-    @apply fixed inset-0 z-50 flex items-start md:items-center justify-center p-0 md:p-4 overflow-y-auto;
+    @apply fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 overflow-hidden;
 }
 
 .waitlist-backdrop {
@@ -9,7 +9,7 @@
 }
 
 .waitlist-modal {
-    @apply bg-white/95 backdrop-blur-2xl rounded-none md:rounded-[3rem] shadow-2xl shadow-black/10 w-full max-w-4xl overflow-hidden flex flex-col md:flex-row relative z-10 min-h-screen md:min-h-[600px] border border-black/5;
+    @apply bg-white/95 backdrop-blur-2xl rounded-t-3xl md:rounded-[3rem] shadow-2xl shadow-black/10 w-full max-w-4xl overflow-hidden flex flex-col md:flex-row relative z-10 h-screen md:h-auto md:min-h-[600px] border border-black/5;
 }
 
 .waitlist-close-btn {
@@ -17,7 +17,7 @@
 }
 
 .waitlist-sidebar {
-    @apply w-full md:w-1/3 bg-gray-50 p-6 md:p-8 border-b md:border-b-0 md:border-r border-gray-100 flex flex-col justify-between;
+    @apply w-full md:w-1/3 bg-gray-50 p-4 md:p-8 border-b md:border-b-0 md:border-r border-gray-100 flex-none md:flex flex-col md:justify-between;
 }
 
 .waitlist-sidebar-logo {
@@ -69,15 +69,15 @@
 }
 
 .waitlist-sidebar-footer {
-    @apply text-xs text-gray-400 mt-8;
+    @apply text-xs text-gray-400 mt-4 md:mt-8 hidden md:block;
 }
 
 .waitlist-content {
-    @apply w-full md:w-2/3 p-6 md:p-12 relative flex-1 overflow-y-auto;
+    @apply w-full md:w-2/3 px-5 md:p-12 relative flex-1 overflow-y-auto;
 }
 
 .waitlist-form {
-    @apply min-h-full flex flex-col justify-between;
+    @apply min-h-full flex flex-col;
 }
 
 .waitlist-form-heading {
@@ -115,7 +115,7 @@
 }
 
 .waitlist-units-grid {
-    @apply grid grid-cols-3 gap-3;
+    @apply grid grid-cols-3 gap-2 md:gap-3;
 }
 
 .waitlist-unit-btn {
@@ -128,6 +128,54 @@
 
 .waitlist-unit-btn-inactive {
     @apply border-gray-200 text-gray-600 hover:border-gray-300;
+}
+
+.waitlist-platform-grid {
+    @apply grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3;
+}
+
+.waitlist-platform-btn {
+    @apply py-2.5 md:py-3 px-3 rounded-xl border text-xs md:text-sm font-medium transition-all;
+}
+
+.waitlist-platform-btn-active {
+    @apply border-black bg-black text-white shadow-md;
+}
+
+.waitlist-platform-btn-inactive {
+    @apply border-gray-200 text-gray-600 hover:border-gray-300;
+}
+
+.waitlist-challenge-list {
+    @apply space-y-2;
+}
+
+.waitlist-challenge-btn {
+    @apply w-full flex items-center gap-3 p-3 md:p-3.5 rounded-xl border text-left text-xs md:text-sm transition-all;
+}
+
+.waitlist-challenge-btn-active {
+    @apply border-black bg-black text-white shadow-md;
+}
+
+.waitlist-challenge-btn-inactive {
+    @apply border-gray-200 text-gray-600 hover:border-gray-300;
+}
+
+.waitlist-challenge-radio {
+    @apply w-4 h-4 rounded-full border-2 flex items-center justify-center flex-none;
+}
+
+.waitlist-challenge-radio-active {
+    @apply border-white;
+}
+
+.waitlist-challenge-radio-inactive {
+    @apply border-gray-400;
+}
+
+.waitlist-challenge-radio-dot {
+    @apply w-1.5 h-1.5 rounded-full bg-white;
 }
 
 .waitlist-consent-label {
@@ -181,7 +229,7 @@
 }
 
 .waitlist-footer {
-    @apply mt-8 pt-6 border-t border-black/5 flex justify-between items-center bg-white sticky bottom-0;
+    @apply mt-auto pt-4 md:pt-6 px-5 md:px-0 border-t border-black/5 flex justify-between items-center bg-white sticky bottom-0;
 }
 
 .waitlist-back-btn {
