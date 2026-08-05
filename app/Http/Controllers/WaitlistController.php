@@ -11,10 +11,11 @@ class WaitlistController extends Controller
 {
     public function store(Request $request)
     {
-        $key = 'waitlist:' . $request->ip();
+        $key = 'waitlist:'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
+
             return back()->withErrors([
                 'email' => "Too many attempts. Please try again in {$seconds} seconds.",
             ]);
