@@ -145,101 +145,53 @@ jobs:
             mkdir -p ~/tena-core/storage/app/public 2>/dev/null || true
             echo "     User uploads directory preserved"
 
-      - name: Sync Backend - app/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "app/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
+      - name: Upload & Extract Backend Code
+        run: |
+          set -e
+          echo "=== Creating backend code archive ==="
+          tar czf /tmp/backend-code.tar.gz \
+            app/ config/ database/ routes/ resources/ bootstrap/ vendor/ \
+            artisan composer.json composer.lock
+          echo "Archive size: $(du -h /tmp/backend-code.tar.gz | cut -f1)"
 
-      - name: Sync Backend - config/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "config/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
+          echo "=== Uploading archive to server ==="
+          scp -P ${{ secrets.SSH_PORT }} /tmp/backend-code.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/backend-code.tar.gz
 
-      - name: Sync Backend - database/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "database/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
+          echo "=== Extracting to ~/tena-core/ ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            cd ~/tena-core && \
+            tar xzf ~/backend-code.tar.gz && \
+            echo 'Extraction complete' && \
+            echo 'Routes files:' && ls -la routes/ && \
+            echo 'App dir exists:' && test -d app && echo 'yes' || echo 'no' && \
+            echo 'Config dir exists:' && test -d config && echo 'yes' || echo 'no'
+          "
 
-      - name: Sync Backend - routes/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "routes/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
+          echo "=== Verifying critical files ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            set -e
+            CORE=~/tena-core
+            MISSING=0
 
-      - name: Sync Backend - resources/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "resources/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
+            for f in artisan composer.json routes/web.php routes/api.php routes/console.php app/Models/User.php config/app.php; do
+              if [ -e \"\$CORE/\$f\" ]; then
+                echo \"  OK: \$f\"
+              else
+                echo \"  MISSING: \$f\"
+                MISSING=1
+              fi
+            done
 
-      - name: Sync Backend - bootstrap/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "bootstrap/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
+            if [ \"\$MISSING\" -eq 1 ]; then
+              echo 'ERROR: Critical files missing after extraction'
+              exit 1
+            fi
+            echo 'All critical files verified'
+          "
 
-      - name: Sync Backend - vendor/
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "vendor/"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: true
-
-      - name: Sync Root Files
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "artisan,composer.json,composer.lock"
-          target: ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/tena-core/
-          strip_components: 0
-          rm: false
+          echo "=== Cleaning up ==="
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "rm -f ~/backend-code.tar.gz"
+          rm -f /tmp/backend-code.tar.gz
 
       - name: Upload & Extract Frontend Build Assets
         run: |
