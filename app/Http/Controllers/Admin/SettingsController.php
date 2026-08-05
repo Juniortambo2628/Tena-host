@@ -37,6 +37,12 @@ class SettingsController extends Controller
             'receipt_email_body' => 'sometimes|string|max:5000',
             'forgot_password_email_heading' => 'sometimes|string|max:255',
             'forgot_password_email_body' => 'sometimes|string|max:5000',
+            'waitlist_confirmation_subject' => 'sometimes|string|max:255',
+            'waitlist_confirmation_heading' => 'sometimes|string|max:255',
+            'waitlist_confirmation_body' => 'sometimes|string|max:5000',
+            'waitlist_welcome_subject' => 'sometimes|string|max:255',
+            'waitlist_welcome_heading' => 'sometimes|string|max:255',
+            'waitlist_welcome_body' => 'sometimes|string|max:5000',
             'billing_enabled' => 'sometimes|in:auto,enabled,disabled',
         ];
 
@@ -45,22 +51,30 @@ class SettingsController extends Controller
             'billing_enabled' => 'string',
         ];
 
+        $emailKeys = [
+            'welcome_email_heading', 'welcome_email_body',
+            'receipt_email_heading', 'receipt_email_body',
+            'forgot_password_email_heading', 'forgot_password_email_body',
+            'waitlist_confirmation_subject', 'waitlist_confirmation_heading', 'waitlist_confirmation_body',
+            'waitlist_welcome_subject', 'waitlist_welcome_heading', 'waitlist_welcome_body',
+        ];
+
         foreach ($data['settings'] as $key => $value) {
             if (isset($rules[$key])) {
                 $request->validate([$key => $rules[$key]], [], ['key' => $key]);
             }
+
+            $group = $request->input('settings_groups.'.$key)
+                ?? (in_array($key, $emailKeys) ? 'email_templates' : 'general');
 
             $setting = Setting::updateOrCreate(
                 ['key' => $key],
                 [
                     'value' => is_array($value) ? json_encode($value) : (string) $value,
                     'type' => $types[$key] ?? 'string',
+                    'group' => $group,
                 ]
             );
-
-            if ($request->has('settings_groups.'.$key)) {
-                $setting->update(['group' => $request->input('settings_groups.'.$key)]);
-            }
         }
 
         Cache::forget('app_settings');

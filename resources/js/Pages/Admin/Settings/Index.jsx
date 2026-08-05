@@ -47,6 +47,12 @@ export default function Index({ settings }) {
             receipt_email_body: flattened.receipt_email_body || '',
             forgot_password_email_heading: flattened.forgot_password_email_heading || '',
             forgot_password_email_body: flattened.forgot_password_email_body || '',
+            waitlist_confirmation_subject: flattened.waitlist_confirmation_subject || '',
+            waitlist_confirmation_heading: flattened.waitlist_confirmation_heading || '',
+            waitlist_confirmation_body: flattened.waitlist_confirmation_body || '',
+            waitlist_welcome_subject: flattened.waitlist_welcome_subject || '',
+            waitlist_welcome_heading: flattened.waitlist_welcome_heading || '',
+            waitlist_welcome_body: flattened.waitlist_welcome_body || '',
             billing_enabled: flattened.billing_enabled || 'auto',
         }
     });
@@ -354,6 +360,58 @@ export default function Index({ settings }) {
                                                         value={data.settings.forgot_password_email_body}
                                                         onChange={(e) => updateSetting('forgot_password_email_body', e.target.value)}
                                                         placeholder="Customize the reset instructions..."
+                                                        rows={4}
+                                                    />
+                                                </FormField>
+                                            </div>
+
+                                            <div className="settings-page__template-section">
+                                                <h4 className="settings-page__template-title">Waitlist Confirmation Template</h4>
+                                                <FormField label="Subject">
+                                                    <TextInput
+                                                        value={data.settings.waitlist_confirmation_subject || ''}
+                                                        onChange={(e) => updateSetting('waitlist_confirmation_subject', e.target.value)}
+                                                        placeholder="You're on the Tena waitlist!"
+                                                    />
+                                                </FormField>
+                                                <FormField label="Heading">
+                                                    <TextInput
+                                                        value={data.settings.waitlist_confirmation_heading || ''}
+                                                        onChange={(e) => updateSetting('waitlist_confirmation_heading', e.target.value)}
+                                                        placeholder="You're on the list!"
+                                                    />
+                                                </FormField>
+                                                <FormField label="Body Text">
+                                                    <TextArea
+                                                        value={data.settings.waitlist_confirmation_body || ''}
+                                                        onChange={(e) => updateSetting('waitlist_confirmation_body', e.target.value)}
+                                                        placeholder="Customize the confirmation message..."
+                                                        rows={4}
+                                                    />
+                                                </FormField>
+                                            </div>
+
+                                            <div className="settings-page__template-section">
+                                                <h4 className="settings-page__template-title">Waitlist Welcome Template</h4>
+                                                <FormField label="Subject">
+                                                    <TextInput
+                                                        value={data.settings.waitlist_welcome_subject || ''}
+                                                        onChange={(e) => updateSetting('waitlist_welcome_subject', e.target.value)}
+                                                        placeholder="Welcome to the Tena Family!"
+                                                    />
+                                                </FormField>
+                                                <FormField label="Heading">
+                                                    <TextInput
+                                                        value={data.settings.waitlist_welcome_heading || ''}
+                                                        onChange={(e) => updateSetting('waitlist_welcome_heading', e.target.value)}
+                                                        placeholder="Welcome to the Tena Family!"
+                                                    />
+                                                </FormField>
+                                                <FormField label="Body Text">
+                                                    <TextArea
+                                                        value={data.settings.waitlist_welcome_body || ''}
+                                                        onChange={(e) => updateSetting('waitlist_welcome_body', e.target.value)}
+                                                        placeholder="Customize the welcome message..."
                                                         rows={4}
                                                     />
                                                 </FormField>
