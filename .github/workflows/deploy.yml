@@ -422,11 +422,32 @@ jobs:
           echo ""
           echo "===> [8/12] Rebuilding caches"
           cd "$CORE"
-          php artisan config:cache 2>&1
-          php artisan route:cache 2>&1
-          php artisan view:cache 2>&1
-          php artisan event:cache 2>&1
-          echo "     All caches rebuilt"
+          php artisan config:cache 2>&1 || echo "     WARNING: config:cache failed"
+          php artisan route:cache 2>&1 || {
+            echo "     WARNING: route:cache failed - clearing route cache instead"
+            php artisan route:clear 2>&1 || true
+          }
+          php artisan view:cache 2>&1 || true
+          php artisan event:cache 2>&1 || true
+          echo "     Caches rebuilt"
+
+          # ── 8b. Verify Routes ──
+          echo ""
+          echo "===> [8b] Verifying critical routes"
+          cd "$CORE"
+          if php artisan route:list --columns=uri 2>/dev/null | grep -q "waitlist"; then
+            echo "     OK: /waitlist route found"
+          else
+            echo "     WARNING: /waitlist route NOT found in route list"
+            echo "     Attempting route:clear and rebuild..."
+            php artisan route:clear 2>&1 || true
+            php artisan route:cache 2>&1 || true
+            if php artisan route:list --columns=uri 2>/dev/null | grep -q "waitlist"; then
+              echo "     OK: /waitlist route found after rebuild"
+            else
+              echo "     ERROR: /waitlist route still missing - check routes/web.php"
+            fi
+          fi
 
           # ── 9. Set Permissions ──
           echo ""

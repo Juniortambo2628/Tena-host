@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './WaitlistModal.css';
 
 export default function WaitlistModal({ show, onClose }) {
     const [step, setStep] = useState(1);
+    const [submitting, setSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -32,29 +32,53 @@ export default function WaitlistModal({ show, onClose }) {
     const nextStep = () => setStep(prev => prev + 1);
     const prevStep = () => setStep(prev => prev - 1);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        router.post('/waitlist', {
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            email: formData.email,
-            phone: formData.phone,
-            property_type: formData.property_type,
-            units: formData.units,
-            primary_platform: formData.primary_platform,
-            biggest_challenge: formData.biggest_challenge,
-            agree_updates: formData.agree_updates,
-        }, {
-            preserveScroll: true,
-            onSuccess: () => {
+        if (submitting) return;
+        setSubmitting(true);
+
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+            const response = await fetch('/waitlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'text/html, application/xhtml+xml',
+                },
+                body: JSON.stringify({
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    property_type: formData.property_type,
+                    units: formData.units,
+                    primary_platform: formData.primary_platform,
+                    biggest_challenge: formData.biggest_challenge,
+                    agree_updates: formData.agree_updates,
+                }),
+            });
+
+            if (response.ok || response.redirected) {
                 notify.success("Thanks! You're on the list.");
                 onClose();
-            },
-            onError: (errors) => {
-                const firstError = Object.values(errors)[0];
-                notify.error(firstError || 'Submission failed. Please try again.');
-            },
-        });
+            } else if (response.status === 422) {
+                const data = await response.json();
+                const firstError = Object.values(data.errors || data)[0];
+                notify.error(Array.isArray(firstError) ? firstError[0] : (firstError || 'Validation failed.'));
+            } else if (response.status === 419) {
+                notify.error('Session expired. Please refresh the page and try again.');
+            } else {
+                const data = await response.json().catch(() => ({}));
+                notify.error(data.message || data.error || 'Submission failed. Please try again.');
+            }
+        } catch (err) {
+            notify.error('Network error. Please check your connection and try again.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     // Sidebar Step Icon Component
@@ -345,8 +369,8 @@ export default function WaitlistModal({ show, onClose }) {
                                     Next Step <i className="fas fa-arrow-right text-xs"></i>
                                 </button>
                             ) : (
-                                <button type="submit" className="waitlist-submit-btn">
-                                    Submit
+                                <button type="button" onClick={handleSubmit} className="waitlist-submit-btn" disabled={submitting}>
+                                    {submitting ? 'Submitting...' : 'Submit'}
                                 </button>
                             )}
                         </div>
