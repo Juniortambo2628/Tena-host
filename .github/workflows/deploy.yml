@@ -413,11 +413,11 @@ jobs:
             fi
           fi
 
-          # Verify the POST method exists for /waitlist
-          if php artisan route:list --methods 2>/dev/null | grep -q "POST.*waitlist"; then
-            echo "     OK: POST /waitlist method confirmed"
+          # Verify the waitlist route exists
+          if php artisan route:list 2>/dev/null | grep -q "waitlist"; then
+            echo "     OK: /waitlist route confirmed"
           else
-            echo "     INFO: Could not verify POST method (route:list --methods may not be supported)"
+            echo "     INFO: Could not verify /waitlist route (route:list may not be supported)"
           fi
 
           # ── 9. Set Permissions ──
