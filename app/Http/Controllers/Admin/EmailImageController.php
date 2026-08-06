@@ -16,7 +16,7 @@ class EmailImageController extends Controller
         ]);
 
         $file = $request->file('image');
-        $filename = 'email-' . Str::random(20) . '.' . $file->getClientOriginalExtension();
+        $filename = 'email-'.Str::random(20).'.'.$file->getClientOriginalExtension();
 
         $path = $file->storeAs('public/email-images', $filename);
 
