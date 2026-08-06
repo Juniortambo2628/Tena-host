@@ -1,5 +1,6 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -9,7 +10,8 @@ import { Wifi, ShieldCheck } from 'lucide-react';
 import './Dashboard.css';
 
 export default function Dashboard({ properties, stats, guestChartData, notifications }) {
-    // Use dynamic chart data from backend, or fallback to empty array
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
     const chartData = guestChartData || [];
 
     const heroStats = [
@@ -55,6 +57,7 @@ export default function Dashboard({ properties, stats, guestChartData, notificat
                         </div>
 
                         <div className="host-dashboard-chart-container">
+                            {mounted && (
                             <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
                                 <AreaChart data={chartData}>
                                     <defs>
@@ -94,6 +97,7 @@ export default function Dashboard({ properties, stats, guestChartData, notificat
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>
+                            )}
                         </div>
                     </GlassCard>
 

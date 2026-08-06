@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 
 export default function MarketingAnalytics({ campaign, performance, summary }) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => { setMounted(true); }, []);
     const breadcrumbs = [
         { label: 'Marketing', href: route('host.marketing.index') },
         { label: 'Analytics' }
@@ -105,6 +107,7 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                         </div>
 
                         <div className="h-[400px] w-full">
+                            {mounted && (
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={performance}>
                                     <defs>
@@ -154,6 +157,7 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                                     />
                                 </AreaChart>
                             </ResponsiveContainer>
+                            )}
                         </div>
                     </GlassCard>
                 </div>

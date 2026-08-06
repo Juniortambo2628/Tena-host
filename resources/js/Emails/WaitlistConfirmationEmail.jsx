@@ -1,5 +1,5 @@
 import {
-    Body, Container, Head, Heading, Html, Img, Section, Text,
+    Body, Container, Head, Heading, Html, Img, Preview, Section, Text,
 } from '@react-email/components';
 import * as React from 'react';
 
