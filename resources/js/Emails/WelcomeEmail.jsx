@@ -46,9 +46,16 @@ export const WelcomeEmail = ({
                     </Section>
                     <Section style={content}>
                         <Heading style={h1}>{heading || `Welcome home, ${name}.`}</Heading>
-                        <Text style={text}>
-                            {body || `${businessName} helps hosts build organized and well-coded dashboards full of beautiful and rich modules. We're excited to have you join our community of elite hosts.`}
-                        </Text>
+                        {body ? (
+                            <Section
+                                style={text}
+                                dangerouslySetInnerHTML={{ __html: body }}
+                            />
+                        ) : (
+                            <Text style={text}>
+                                {`${businessName} helps hosts build organized and well-coded dashboards full of beautiful and rich modules. We're excited to have you join our community of elite hosts.`}
+                            </Text>
+                        )}
                         <Section style={buttonContainer}>
                             <Link style={buttonStyle} href="https://tena.app/dashboard">
                                 Get Started

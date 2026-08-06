@@ -54,9 +54,16 @@ export const PaymentReceipt = ({
                     </Section>
                     <Section style={content}>
                         <Heading style={h1}>{heading || "Payment Received."}</Heading>
-                        <Text style={text}>
-                            {body || `Hello ${customerName}, we've successfully processed your payment for the ${planName}.`}
-                        </Text>
+                        {body ? (
+                            <Section
+                                style={text}
+                                dangerouslySetInnerHTML={{ __html: body }}
+                            />
+                        ) : (
+                            <Text style={text}>
+                                {`Hello ${customerName}, we've successfully processed your payment for the ${planName}.`}
+                            </Text>
+                        )}
                         <Section style={receiptBox}>
                             <Section style={receiptLine}>
                                 <Text style={receiptLabel}>Amount Paid</Text>

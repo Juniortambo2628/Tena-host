@@ -438,6 +438,9 @@ export default function Index({ settings }) {
                                                             <option value="welcome">Welcome</option>
                                                             <option value="password_changed">Password Changed</option>
                                                             <option value="otp">OTP</option>
+                                                            <option value="receipt">Payment Receipt</option>
+                                                            <option value="waitlist_confirmation">Waitlist Confirmation</option>
+                                                            <option value="waitlist_welcome">Waitlist Welcome</option>
                                                         </select>
                                                     </FormField>
                                                     <PillButton variant="black" onClick={sendTestEmail}>

@@ -41,7 +41,7 @@
             </p>
 
             @if($custom_body)
-                <p class="message">{{ $custom_body }}</p>
+                {!! $custom_body !!}
             @endif
 
             <div class="receipt-box">

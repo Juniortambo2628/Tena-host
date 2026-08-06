@@ -47,9 +47,16 @@ export const ForgotPasswordEmail = ({
                     </Section>
                     <Section style={content}>
                         <Heading style={h1}>{heading || "Reset Request."}</Heading>
-                        <Text style={text}>
-                            {body || `Hello ${userName}, we received a request to reset your password for your ${businessName} account. If this was you, please click the button below to set a new password.`}
-                        </Text>
+                        {body ? (
+                            <Section
+                                style={text}
+                                dangerouslySetInnerHTML={{ __html: body }}
+                            />
+                        ) : (
+                            <Text style={text}>
+                                {`Hello ${userName}, we received a request to reset your password for your ${businessName} account. If this was you, please click the button below to set a new password.`}
+                            </Text>
+                        )}
                         <Section style={buttonContainer}>
                             <Link style={buttonStyle} href={resetLink}>
                                 Reset Password

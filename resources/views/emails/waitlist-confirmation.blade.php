@@ -26,7 +26,7 @@
                     <p style="margin:0 0 16px">Hi {{ $firstName }},</p>
 
                     @if($customBody)
-                        <p style="margin:0 0 16px">{{ $customBody }}</p>
+                        {!! $customBody !!}
                     @else
                         <p style="margin:0 0 16px">Thanks for joining the <strong>{{ $businessName }}</strong> waitlist! We're thrilled to have you on board.</p>
                         <p style="margin:0 0 16px">Here's a summary of what you told us:</p>
