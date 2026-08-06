@@ -10,7 +10,7 @@ import { FormField, TextInput, Select, CheckboxField, FormActions } from '@/Comp
 import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import { safeRoute, hasRoute } from '@/lib/route';
-import ContentField from '@/Components/CMS/ContentField';
+import EmailTemplateEditor from '@/Components/Admin/EmailTemplateEditor';
 import './Index.css';
 
 function debounce(func, wait) {
@@ -326,14 +326,19 @@ export default function Index({ settings }) {
                                                         placeholder="Welcome home, {name}."
                                                     />
                                                 </FormField>
-                                                <FormField label="Body Text">
-                                                    <ContentField
-                                                        type="richtext"
-                                                        value={data.settings.welcome_email_body}
-                                                        onChange={(val) => updateSetting('welcome_email_body', val)}
-                                                        placeholder="Customize the welcome message..."
-                                                    />
-                                                </FormField>
+                                                <EmailTemplateEditor
+                                                    label="Body Text"
+                                                    value={data.settings.welcome_email_body}
+                                                    onChange={(val) => updateSetting('welcome_email_body', val)}
+                                                    placeholder="Customize the welcome message..."
+                                                    variables={[
+                                                        { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
+                                                        { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
+                                                        { key: 'Email', label: 'Email', description: 'Recipient email' },
+                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+                                                        { key: 'Login URL', label: 'Login URL', description: 'Link to login page' },
+                                                    ]}
+                                                />
                                             </div>
 
                                             <div className="settings-page__template-section">
@@ -345,14 +350,20 @@ export default function Index({ settings }) {
                                                         placeholder="Payment Received."
                                                     />
                                                 </FormField>
-                                                <FormField label="Body Text">
-                                                    <ContentField
-                                                        type="richtext"
-                                                        value={data.settings.receipt_email_body}
-                                                        onChange={(val) => updateSetting('receipt_email_body', val)}
-                                                        placeholder="Customize the receipt message..."
-                                                    />
-                                                </FormField>
+                                                <EmailTemplateEditor
+                                                    label="Body Text"
+                                                    value={data.settings.receipt_email_body}
+                                                    onChange={(val) => updateSetting('receipt_email_body', val)}
+                                                    placeholder="Customize the receipt message..."
+                                                    variables={[
+                                                        { key: 'Name', label: 'Name', description: 'Recipient name' },
+                                                        { key: 'Amount', label: 'Amount', description: 'Payment amount' },
+                                                        { key: 'Transaction ID', label: 'Transaction ID', description: 'Transaction reference' },
+                                                        { key: 'Date', label: 'Date', description: 'Payment date' },
+                                                        { key: 'Plan Name', label: 'Plan Name', description: 'Subscription plan' },
+                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+                                                    ]}
+                                                />
                                             </div>
 
                                             <div className="settings-page__template-section">
@@ -364,14 +375,17 @@ export default function Index({ settings }) {
                                                         placeholder="Reset Request."
                                                     />
                                                 </FormField>
-                                                <FormField label="Body Text">
-                                                    <ContentField
-                                                        type="richtext"
-                                                        value={data.settings.forgot_password_email_body}
-                                                        onChange={(val) => updateSetting('forgot_password_email_body', val)}
-                                                        placeholder="Customize the reset instructions..."
-                                                    />
-                                                </FormField>
+                                                <EmailTemplateEditor
+                                                    label="Body Text"
+                                                    value={data.settings.forgot_password_email_body}
+                                                    onChange={(val) => updateSetting('forgot_password_email_body', val)}
+                                                    placeholder="Customize the reset instructions..."
+                                                    variables={[
+                                                        { key: 'Name', label: 'Name', description: 'Recipient name' },
+                                                        { key: 'Reset URL', label: 'Reset URL', description: 'Password reset link' },
+                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+                                                    ]}
+                                                />
                                             </div>
 
                                             <div className="settings-page__template-section">
@@ -390,14 +404,22 @@ export default function Index({ settings }) {
                                                         placeholder="You're on the list!"
                                                     />
                                                 </FormField>
-                                                <FormField label="Body Text">
-                                                    <ContentField
-                                                        type="richtext"
-                                                        value={data.settings.waitlist_confirmation_body || ''}
-                                                        onChange={(val) => updateSetting('waitlist_confirmation_body', val)}
-                                                        placeholder="Customize the confirmation message..."
-                                                    />
-                                                </FormField>
+                                                <EmailTemplateEditor
+                                                    label="Body Text"
+                                                    value={data.settings.waitlist_confirmation_body || ''}
+                                                    onChange={(val) => updateSetting('waitlist_confirmation_body', val)}
+                                                    placeholder="Customize the confirmation message..."
+                                                    variables={[
+                                                        { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
+                                                        { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
+                                                        { key: 'Email', label: 'Email', description: 'Recipient email' },
+                                                        { key: 'Property Type', label: 'Property Type', description: 'Their property type' },
+                                                        { key: 'Units', label: 'Units', description: 'Number of units' },
+                                                        { key: 'Primary Platform', label: 'Primary Platform', description: 'Their booking platform' },
+                                                        { key: 'Biggest Challenge', label: 'Biggest Challenge', description: 'Their biggest challenge' },
+                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+                                                    ]}
+                                                />
                                             </div>
 
                                             <div className="settings-page__template-section">
@@ -416,14 +438,19 @@ export default function Index({ settings }) {
                                                         placeholder="Welcome to the Tena Family!"
                                                     />
                                                 </FormField>
-                                                <FormField label="Body Text">
-                                                    <ContentField
-                                                        type="richtext"
-                                                        value={data.settings.waitlist_welcome_body || ''}
-                                                        onChange={(val) => updateSetting('waitlist_welcome_body', val)}
-                                                        placeholder="Customize the welcome message..."
-                                                    />
-                                                </FormField>
+                                                <EmailTemplateEditor
+                                                    label="Body Text"
+                                                    value={data.settings.waitlist_welcome_body || ''}
+                                                    onChange={(val) => updateSetting('waitlist_welcome_body', val)}
+                                                    placeholder="Customize the welcome message..."
+                                                    variables={[
+                                                        { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
+                                                        { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
+                                                        { key: 'Email', label: 'Email', description: 'Recipient email' },
+                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+                                                        { key: 'Business Address', label: 'Business Address', description: 'Your business address' },
+                                                    ]}
+                                                />
                                             </div>
 
                                             <div className="settings-page__template-section">

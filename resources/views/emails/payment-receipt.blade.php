@@ -34,14 +34,28 @@
         </div>
 
         <div class="content">
+            @php
+                $businessName = $site_name ?? 'Tena Host';
+                $replacements = [
+                    '{{Name}}' => $user_name ?? 'Valued Customer',
+                    '{{First Name}}' => $user_name ?? 'Valued Customer',
+                    '{{Amount}}' => number_format($amount, 2),
+                    '{{Transaction ID}}' => $transaction_id ?? '',
+                    '{{Date}}' => $date ?? now()->format('M d, Y H:i'),
+                    '{{Plan Name}}' => 'Host Plan',
+                    '{{Business Name}}' => $businessName,
+                ];
+                $custom_body_resolved = str_replace(array_keys($replacements), array_values($replacements), $custom_body ?? '');
+                $custom_heading_resolved = str_replace(array_keys($replacements), array_values($replacements), $custom_heading ?? 'Payment Received!');
+            @endphp
             <p class="greeting">Hello {{ $user_name ?? 'Valued Customer' }},</p>
 
             <p class="message">
-                {{ $custom_heading ?? 'Payment Received!' }}
+                {{ $custom_heading_resolved }}
             </p>
 
-            @if($custom_body)
-                {!! $custom_body !!}
+            @if($custom_body_resolved)
+                {!! $custom_body_resolved !!}
             @endif
 
             <div class="receipt-box">

@@ -1,0 +1,59 @@
+@reference "tailwindcss";
+
+.email-template-editor {
+    @apply w-full;
+}
+
+.email-template-editor__label {
+    @apply block text-sm font-bold text-gray-700 mb-2;
+}
+
+.email-template-editor__pills {
+    @apply flex flex-wrap items-center gap-2 mb-3 p-3 bg-gray-50 rounded-xl border border-gray-100;
+}
+
+.email-template-editor__pills-label {
+    @apply text-xs font-semibold text-gray-500 uppercase tracking-wide mr-1;
+}
+
+.email-template-editor__pill {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer select-none;
+    background: #1b1b1b;
+    color: #FFD300;
+    border: 1px solid #1b1b1b;
+}
+
+.email-template-editor__pill:hover {
+    @apply shadow-md scale-105;
+    background: #333;
+}
+
+.email-template-editor__pill:active {
+    @apply scale-95;
+}
+
+.email-template-editor__quill-wrap {
+    @apply rounded-xl overflow-hidden border border-gray-200;
+}
+
+.email-template-editor__quill-wrap .ql-toolbar {
+    @apply border-0 border-b border-gray-200 bg-gray-50;
+}
+
+.email-template-editor__quill-wrap .ql-container {
+    @apply border-0 min-h-[200px];
+    font-family: inherit;
+}
+
+.email-template-editor__quill-wrap .ql-editor {
+    @apply p-4 text-sm leading-relaxed;
+    min-height: 200px;
+}
+
+.email-template-editor__quill-wrap .ql-editor.ql-blank::before {
+    @apply text-gray-400 not-italic;
+}
+
+.email-template-editor__hint {
+    @apply text-xs text-gray-400 mt-2;
+}

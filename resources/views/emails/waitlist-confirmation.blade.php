@@ -6,6 +6,20 @@
     $logoUrl = \App\Models\Setting::getValue('logo_url', '');
     $customHeading = \App\Models\Setting::getValue('waitlist_confirmation_heading', '');
     $customBody = \App\Models\Setting::getValue('waitlist_confirmation_body', '');
+
+    $replacements = [
+        '{{First Name}}' => $firstName,
+        '{{Last Name}}' => $lastName,
+        '{{Email}}' => $email,
+        '{{Property Type}}' => $propertyType,
+        '{{Units}}' => $units,
+        '{{Primary Platform}}' => $primaryPlatform,
+        '{{Biggest Challenge}}' => $biggestChallenge,
+        '{{Business Name}}' => $businessName,
+        '{{Business Address}}' => $businessAddress,
+    ];
+    $customBody = str_replace(array_keys($replacements), array_values($replacements), $customBody);
+    $customHeading = str_replace(array_keys($replacements), array_values($replacements), $customHeading);
 @endphp
 <!DOCTYPE html>
 <html lang="en">

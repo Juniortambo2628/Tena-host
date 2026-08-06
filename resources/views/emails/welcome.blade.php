@@ -6,6 +6,18 @@
     $logoUrl = \App\Models\Setting::getValue('logo_url', '');
     $customHeading = \App\Models\Setting::getValue('welcome_email_heading', '');
     $customBody = \App\Models\Setting::getValue('welcome_email_body', '');
+
+    $replacements = [
+        '{{First Name}}' => $name ?? 'there',
+        '{{Last Name}}' => '',
+        '{{Email}}' => '',
+        '{{Name}}' => $name ?? 'there',
+        '{{Login URL}}' => $actionUrl ?? '#',
+        '{{Business Name}}' => $businessName,
+        '{{Business Address}}' => $businessAddress,
+    ];
+    $customBody = str_replace(array_keys($replacements), array_values($replacements), $customBody);
+    $customHeading = str_replace(array_keys($replacements), array_values($replacements), $customHeading);
 @endphp
 <!DOCTYPE html>
 <html lang="en">
