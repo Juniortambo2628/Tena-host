@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\OtpMail;
 use App\Mail\PasswordChangedMail;
-use App\Mail\WelcomeMail;
 use App\Mail\TestPaymentReceiptMail;
 use App\Mail\WaitlistConfirmationMail;
 use App\Mail\WaitlistWelcomeMail;
+use App\Mail\WelcomeMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
