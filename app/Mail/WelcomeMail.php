@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Setting;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -20,7 +21,7 @@ class WelcomeMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: \App\Models\Setting::getValue('welcome_email_subject', 'Welcome to TENA'),
+            subject: Setting::getValue('welcome_email_subject', 'Welcome to TENA'),
         );
     }
 
