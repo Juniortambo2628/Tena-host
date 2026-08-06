@@ -6,6 +6,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
+import { Plus, Download, Trash2, Info, Home } from 'lucide-react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 
@@ -79,8 +80,8 @@ export default function PropertyIndex({ properties }) {
     const breadcrumbs = [{ label: 'WiFi Access' }];
 
     const actions = [
-        { label: 'Export Data', icon: <i className="fas fa-download" /> },
-        { label: 'Add Property', variant: 'primary', icon: <i className="fas fa-plus" />, onClick: openCreateModal },
+        { label: 'Export Data', icon: <Download size={16} /> },
+        { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: openCreateModal },
     ];
 
     const stats = [
@@ -148,7 +149,7 @@ export default function PropertyIndex({ properties }) {
                     </div>
                     <div className="p-6 bg-black/[0.02] rounded-[2rem] border border-black/5">
                         <p className="text-[10px] font-bold text-black/50 leading-relaxed">
-                            <i className="fas fa-info-circle mr-2"></i>
+                            <Info size={16} className="mr-2 inline"></Info>
                             Guests will be notified if the network occupancy exceeds this threshold for stability.
                         </p>
                     </div>
@@ -224,7 +225,7 @@ export default function PropertyIndex({ properties }) {
                                     href={route('host.properties.index')}
                                     className="w-14 h-14 rounded-2xl bg-[#FFD300]/10 flex items-center justify-center text-[#FFD300] shadow-sm hover:scale-110 transition-transform active:scale-95"
                                 >
-                                    <i className="fas fa-home text-2xl"></i>
+                                     <Home size={24}></Home>
                                 </Link>
                                 <span className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-sm`}>
                                     {property.pms_connection_status}
@@ -262,7 +263,7 @@ export default function PropertyIndex({ properties }) {
                                 }}
                                 className="w-14 h-14 bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl flex items-center justify-center text-black/20 hover:text-red-500 hover:bg-white transition-all active:scale-90"
                             >
-                                <i className="fas fa-trash-alt"></i>
+                                 <Trash2 size={16}></Trash2>
                             </button>
                         </div>
                     </GlassCard>
@@ -274,7 +275,7 @@ export default function PropertyIndex({ properties }) {
                     className="host-properties-index-add-card"
                 >
                     <div className="host-properties-index-add-icon">
-                        <i className="fas fa-plus text-3xl"></i>
+                         <Plus size={32}></Plus>
                     </div>
                     <div className="text-center">
                         <span className="host-properties-index-add-title">Add New Property</span>

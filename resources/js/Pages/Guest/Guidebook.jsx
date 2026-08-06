@@ -1,6 +1,14 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
+import { Check, BookOpen, Calendar, Globe, ShoppingCart } from 'lucide-react';
 import './Guidebook.css';
+
+const MODULE_ICONS = {
+    'fa-book-open': BookOpen,
+    'fa-calendar-alt': Calendar,
+    'fa-globe': Globe,
+    'fa-shopping-cart': ShoppingCart,
+};
 
 export default function Guidebook({ property, amenities = [] }) {
     const modules = [
@@ -45,7 +53,7 @@ export default function Guidebook({ property, amenities = [] }) {
                         {amenities.map((amenity) => (
                             <div key={amenity.id} className="guidebook-amenity-item">
                                 <div className="guidebook-amenity-icon">
-                                    <i className="fas fa-check text-sm"></i>
+                                    <Check size={14} />
                                 </div>
                                 <span className="guidebook-amenity-name">{amenity.name}</span>
                             </div>
@@ -58,7 +66,7 @@ export default function Guidebook({ property, amenities = [] }) {
                 {modules.map((module) => (
                     <button key={module.name} className="guidebook-module-btn">
                         <div className="guidebook-module-icon">
-                            <i className={`fas ${module.icon} text-lg`}></i>
+                            {React.createElement(MODULE_ICONS[module.icon] || Check, { size: 18 })}
                         </div>
                         <div>
                             <h3 className="guidebook-module-name">{module.name}</h3>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Mail, ArrowRight, ChevronLeft } from 'lucide-react';
+import AuthHero from '@/Components/Auth/AuthHero';
 import './ForgotPassword.css';
 
 export default function ForgotPassword({ status }) {
@@ -88,24 +89,7 @@ export default function ForgotPassword({ status }) {
             </div>
 
             {/* Right Column: Hero Image (Same as Login for consistency) */}
-            <div className="forgot-right">
-                <div className="forgot-right-inner">
-                    <img
-                        src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2000"
-                        alt="Join the future"
-                        className="forgot-right-img"
-                    />
-                    <div className="forgot-right-gradient" />
-
-                    <div className="forgot-right-bottom">
-                        <img src="/legacy/assets/Tena-logo-square.jpg" className="forgot-right-logo" />
-                        <h2 className="forgot-right-title">Security first.</h2>
-                        <p className="forgot-right-desc">
-                            We take your data security seriously. Follow the instructions to safely recover your account.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <AuthHero />
         </div>
     );
 }

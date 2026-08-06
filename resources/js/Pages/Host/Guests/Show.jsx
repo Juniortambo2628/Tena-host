@@ -5,6 +5,7 @@ import './Show.css';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
+import { Pencil, Send, Sparkles } from 'lucide-react';
 
 export default function GuestShow({ guest }) {
     const breadcrumbs = [
@@ -13,8 +14,8 @@ export default function GuestShow({ guest }) {
     ];
 
     const actions = [
-        { label: 'Edit Guest', icon: <i className="fas fa-edit" />, onClick: () => console.log('Edit guest') },
-        { label: 'Send Email', variant: 'primary', icon: <i className="fas fa-paper-plane" />, onClick: () => console.log('Send email') },
+        { label: 'Edit Guest', icon: <Pencil size={16} />, onClick: () => console.log('Edit guest') },
+        { label: 'Send Email', variant: 'primary', icon: <Send size={16} />, onClick: () => console.log('Send email') },
     ];
 
     const stats = [
@@ -60,7 +61,7 @@ export default function GuestShow({ guest }) {
 
                     <GlassCard padding="p-8" className="host-guests-marketing-card">
                         <div className="flex items-center gap-4 mb-6">
-                            <i className="fas fa-magic text-[#FFD300] text-xl"></i>
+                            <Sparkles size={20} className="text-[#FFD300]"></Sparkles>
                             <h3 className="host-guests-marketing-title">Marketing Insights</h3>
                         </div>
                         <p className="host-guests-marketing-desc">

@@ -2,6 +2,7 @@ import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Lock, ArrowRight, Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import AuthHero from '@/Components/Auth/AuthHero';
 import './ResetPassword.css';
 
 export default function ResetPassword({ token, email }) {
@@ -123,24 +124,7 @@ export default function ResetPassword({ token, email }) {
             </div>
 
             {/* Right Column: Hero Image */}
-            <div className="reset-right">
-                <div className="reset-right-inner">
-                    <img
-                        src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2000"
-                        alt="Security and Control"
-                        className="reset-right-img"
-                    />
-                    <div className="reset-right-gradient" />
-
-                    <div className="reset-right-bottom">
-                        <img src="/legacy/assets/Tena-logo-square.jpg" className="reset-right-logo" />
-                        <h2 className="reset-right-title">Complete Control.</h2>
-                        <p className="reset-right-desc">
-                            Your account is now secure. Use your new credentials to sign in and continue growing your brand.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <AuthHero />
         </div>
     );
 }

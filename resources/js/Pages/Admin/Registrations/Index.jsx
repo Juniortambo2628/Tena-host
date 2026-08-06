@@ -3,6 +3,7 @@ import PageShell from '@/Layouts/PageShell';
 import { Link, router } from '@inertiajs/react';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
 import './Index.css';
 
@@ -115,26 +116,7 @@ export default function RegistrationIndex({ registrations }) {
                 </div>
 
                 {/* Pagination */}
-                {registrations.links && registrations.links.length > 3 && (
-                    <div className="registrations-page__pagination">
-                        {registrations.links.map((link, i) => (
-                            link.url ? (
-                                <Link
-                                    key={i}
-                                    href={link.url}
-                                    className={`registrations-page__page-link ${link.active ? 'registrations-page__page-link--active' : 'registrations-page__page-link--inactive'}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                />
-                            ) : (
-                                <span
-                                    key={i}
-                                    className="registrations-page__page-link registrations-page__page-link--disabled"
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                />
-                            )
-                        ))}
-                    </div>
-                )}
+                <ServerPagination links={registrations.links} className="justify-center mt-6" />
             </GlassCard>
         </PageShell>
     );

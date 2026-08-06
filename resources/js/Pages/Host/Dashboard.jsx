@@ -1,17 +1,15 @@
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import AreaChartCard from '@/Components/Dashboard/AreaChartCard';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Wifi, ShieldCheck } from 'lucide-react';
+
+import { Wifi, ShieldCheck, Plus } from 'lucide-react';
 import './Dashboard.css';
 
 export default function Dashboard({ properties, stats, guestChartData, notifications }) {
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true); }, []);
     const chartData = guestChartData || [];
 
     const heroStats = [
@@ -22,7 +20,7 @@ export default function Dashboard({ properties, stats, guestChartData, notificat
     ];
 
     const actions = [
-        { label: 'Add Property', variant: 'primary', icon: <i className="fas fa-plus" />, onClick: () => router.get(route('host.properties.index')) },
+        { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('host.properties.index')) },
     ];
 
     const breadcrumbs = [{ label: 'Overview' }];
@@ -57,47 +55,7 @@ export default function Dashboard({ properties, stats, guestChartData, notificat
                         </div>
 
                         <div className="host-dashboard-chart-container">
-                            {mounted && (
-                            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
-                                <AreaChart data={chartData}>
-                                    <defs>
-                                        <linearGradient id="colorGuests" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#FFD300" stopOpacity={0.1} />
-                                            <stop offset="95%" stopColor="#FFD300" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                    <XAxis
-                                        dataKey="name"
-                                        axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fontWeight: 900, fill: 'rgba(0,0,0,0.3)', textAnchor: 'middle' }}
-                                        dy={10}
-                                    />
-                                    <YAxis hide domain={['dataMin - 2', 'dataMax + 2']} />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'rgba(255,255,255,0.9)',
-                                            borderRadius: '12px',
-                                            border: 'none',
-                                            boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
-                                            fontWeight: 900,
-                                            fontSize: '10px',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.05em'
-                                        }}
-                                    />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="guests"
-                                        stroke="#FFD300"
-                                        strokeWidth={4}
-                                        fillOpacity={1}
-                                        fill="url(#colorGuests)"
-                                    />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                            )}
+                            <AreaChartCard data={chartData} dataKey="guests" color="#FFD300" gradientId="colorGuests" />
                         </div>
                     </GlassCard>
 

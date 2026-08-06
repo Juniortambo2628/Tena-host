@@ -6,6 +6,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
+import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { Plus, Edit2, Trash2, Loader2 } from 'lucide-react';
 
 export default function GuestIndex({ guests, filters, properties }) {
@@ -229,26 +230,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                     </table>
                 </div>
 
-                {guests.links && guests.links.length > 3 && (
-                    <div className="host-guests-pagination">
-                        {guests.links.map((link, i) => (
-                            link.url ? (
-                                <Link
-                                    key={i}
-                                    href={link.url}
-                                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors ${link.active ? 'bg-black text-[#FFD300]' : 'bg-black/5 text-black hover:bg-black/10'}`}
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                />
-                            ) : (
-                                <span
-                                    key={i}
-                                    className="px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest text-black/30 bg-black/5 cursor-not-allowed"
-                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                />
-                            )
-                        ))}
-                    </div>
-                )}
+                <ServerPagination links={guests.links} className="justify-center mt-6" />
             </GlassCard>
 
             <TabbedModal

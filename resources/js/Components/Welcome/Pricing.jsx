@@ -2,6 +2,7 @@ import React from 'react';
 import { SectionWrapper, SectionHeader } from './layouts';
 import { getContent, extractItems, sanitizeHtml } from '@/lib/cms';
 import { SkeletonSectionHeader, SkeletonPricingGrid } from './Skeleton';
+import { ArrowRight } from 'lucide-react';
 import './Pricing.css';
 
 const defaultPlans = [
@@ -63,7 +64,7 @@ export default function Pricing({ onOpenWaitlist, section }) {
                         <span className="pricing-cta-label">{ctaLabel}</span>
                         <p className="pricing-cta-text" dangerouslySetInnerHTML={{ __html: sanitizeHtml(ctaText) }} />
                         <button onClick={onOpenWaitlist} className="pricing-cta-button">
-                            {ctaButton} <i className="fas fa-arrow-right ml-2"></i>
+                            {ctaButton} <ArrowRight size={14} className="ml-2 inline"></ArrowRight>
                         </button>
                     </div>
                 </div>

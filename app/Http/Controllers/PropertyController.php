@@ -3,16 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Traits\HasImageUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class PropertyController extends Controller
 {
-    /**
-     * Display a listing of the properties.
-     */
+    use HasImageUpload;
+
     public function index()
     {
         $properties = Auth::user()->properties()->withCount(['guests', 'accessPoints'])->get();
@@ -22,9 +21,6 @@ class PropertyController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified property.
-     */
     public function show(Property $property)
     {
         $this->authorize('view', $property);
@@ -34,9 +30,6 @@ class PropertyController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified property.
-     */
     public function edit(Property $property)
     {
         $this->authorize('update', $property);
@@ -46,9 +39,6 @@ class PropertyController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created property.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -61,18 +51,14 @@ class PropertyController extends Controller
         ]);
 
         if ($request->hasFile('splash_image')) {
-            $path = $request->file('splash_image')->store('properties', 'public');
-            $validated['splash_image_path'] = '/storage/'.$path;
+            $validated['splash_image_path'] = $this->storeImage($request->file('splash_image'), 'properties');
         }
 
-        $property = Auth::user()->properties()->create($validated);
+        Auth::user()->properties()->create($validated);
 
         return redirect()->back()->with('success', 'Property created successfully.');
     }
 
-    /**
-     * Update the specified property.
-     */
     public function update(Request $request, Property $property)
     {
         $this->authorize('update', $property);
@@ -87,14 +73,11 @@ class PropertyController extends Controller
         ]);
 
         if ($request->hasFile('splash_image')) {
-            // Delete old image if exists
-            if ($property->splash_image_path) {
-                $oldPath = str_replace('/storage/', '', $property->splash_image_path);
-                Storage::disk('public')->delete($oldPath);
-            }
-
-            $path = $request->file('splash_image')->store('properties', 'public');
-            $validated['splash_image_path'] = '/storage/'.$path;
+            $validated['splash_image_path'] = $this->updateImage(
+                $request->file('splash_image'),
+                $property->splash_image_path,
+                'properties'
+            );
         }
 
         $property->update($validated);
@@ -102,12 +85,11 @@ class PropertyController extends Controller
         return redirect()->back()->with('success', 'Property updated successfully.');
     }
 
-    /**
-     * Remove the specified property.
-     */
     public function destroy(Property $property)
     {
         $this->authorize('delete', $property);
+
+        $this->deleteImage($property->splash_image_path);
         $property->delete();
 
         return redirect()->back()->with('success', 'Property deleted successfully.');

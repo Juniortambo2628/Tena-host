@@ -14,6 +14,7 @@ import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
 import PrivacyPolicyModal from '@/Components/PrivacyPolicyModal';
 import CookieDetailsModal from '@/Components/CookieDetailsModal';
+import { ChevronRight, Mail, MapPin } from 'lucide-react';
 import './Welcome.css';
 
 const SECTION_COMPONENTS = {
@@ -99,12 +100,12 @@ export default function Welcome({ auth, laravelVersion, phpVersion, landingConte
                         <div>
                             <h5 className="welcome-footer-heading-gold">Quick Links</h5>
                             <ul className="welcome-footer-links">
-                                <li><a href="/" className="welcome-footer-link"><i className="fas fa-chevron-right text-xs mr-2 text-[#FFD300]"></i>Home</a></li>
-                                <li><a href="#pricing" className="welcome-footer-link"><i className="fas fa-chevron-right text-xs mr-2 text-[#FFD300]"></i>Pricing</a></li>
-                                <li><Link href={route('register')} className="welcome-footer-link"><i className="fas fa-chevron-right text-xs mr-2 text-[#FFD300]"></i>Register</Link></li>
-                                <li><button onClick={toggleWaitlist} className="welcome-footer-link"><i className="fas fa-chevron-right text-xs mr-2 text-[#FFD300]"></i>Join Waitlist</button></li>
-                                <li><button onClick={togglePrivacy} className="welcome-footer-link"><i className="fas fa-chevron-right text-xs mr-2 text-[#FFD300]"></i>Privacy Policy</button></li>
-                                <li><button onClick={toggleTerms} className="welcome-footer-link"><i className="fas fa-chevron-right text-xs mr-2 text-[#FFD300]"></i>Terms & Conditions</button></li>
+                                <li><a href="/" className="welcome-footer-link"><ChevronRight size={12} className="mr-2 inline text-[#FFD300]"></ChevronRight>Home</a></li>
+                                <li><a href="#pricing" className="welcome-footer-link"><ChevronRight size={12} className="mr-2 inline text-[#FFD300]"></ChevronRight>Pricing</a></li>
+                                <li><Link href={route('register')} className="welcome-footer-link"><ChevronRight size={12} className="mr-2 inline text-[#FFD300]"></ChevronRight>Register</Link></li>
+                                <li><button onClick={toggleWaitlist} className="welcome-footer-link"><ChevronRight size={12} className="mr-2 inline text-[#FFD300]"></ChevronRight>Join Waitlist</button></li>
+                                <li><button onClick={togglePrivacy} className="welcome-footer-link"><ChevronRight size={12} className="mr-2 inline text-[#FFD300]"></ChevronRight>Privacy Policy</button></li>
+                                <li><button onClick={toggleTerms} className="welcome-footer-link"><ChevronRight size={12} className="mr-2 inline text-[#FFD300]"></ChevronRight>Terms & Conditions</button></li>
                             </ul>
                         </div>
                         <div>
@@ -118,8 +119,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion, landingConte
                         <div>
                             <h5 className="welcome-footer-heading">Contact</h5>
                             <ul className="welcome-footer-links">
-                                <li className="welcome-footer-contact"><i className="fas fa-envelope"></i> info@tena.host</li>
-                                <li className="welcome-footer-contact"><i className="fas fa-map-marker-alt"></i> Nairobi, Kenya</li>
+                                <li className="welcome-footer-contact"><Mail size={16} className="inline"></Mail> info@tena.host</li>
+                                <li className="welcome-footer-contact"><MapPin size={16} className="inline"></MapPin> Nairobi, Kenya</li>
                             </ul>
                         </div>
                     </div>

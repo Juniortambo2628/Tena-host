@@ -4,6 +4,7 @@ import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { CreditCard, DollarSign, Clock, CheckCircle2, AlertCircle, Search, Users } from 'lucide-react';
 import './Index.css';
 
@@ -146,26 +147,7 @@ export default function PaymentIndex({ transactions, stats, filters }) {
             </GlassCard>
 
             {/* Pagination */}
-            {transactions.links && transactions.links.length > 3 && (
-                <div className="payments-page__pagination">
-                    {transactions.links.map((link, i) => (
-                        link.url ? (
-                            <Link
-                                key={i}
-                                href={link.url}
-                                className={`payments-page__page-link ${link.active ? 'payments-page__page-link--active' : 'payments-page__page-link--inactive'}`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ) : (
-                            <span
-                                key={i}
-                                className="payments-page__page-link payments-page__page-link--disabled"
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        )
-                    ))}
-                </div>
-            )}
+            <ServerPagination links={transactions.links} className="justify-center mt-6" />
         </PageShell>
     );
 }

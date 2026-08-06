@@ -25,4 +25,39 @@ class MpesaTransaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getMerchantRequestIdAttribute(): ?string
+    {
+        return $this->attributes['MerchantRequestID'] ?? null;
+    }
+
+    public function getCheckoutRequestIdAttribute(): ?string
+    {
+        return $this->attributes['CheckoutRequestID'] ?? null;
+    }
+
+    public function getAmountAttribute(): float
+    {
+        return (float) ($this->attributes['Amount'] ?? 0);
+    }
+
+    public function getMpesaReceiptNumberAttribute(): ?string
+    {
+        return $this->attributes['MpesaReceiptNumber'] ?? null;
+    }
+
+    public function getPhoneNumberAttribute(): ?string
+    {
+        return $this->attributes['PhoneNumber'] ?? null;
+    }
+
+    public function getStatusAttribute(): ?string
+    {
+        return $this->attributes['Status'] ?? null;
+    }
+
+    public function getResultDescAttribute(): ?string
+    {
+        return $this->attributes['ResultDesc'] ?? null;
+    }
 }

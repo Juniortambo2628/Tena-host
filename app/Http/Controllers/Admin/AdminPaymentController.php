@@ -67,7 +67,7 @@ class AdminPaymentController extends Controller
 
                 return [
                     'id' => $host->id,
-                    'name' => $host->name,
+                    'name' => $host->first_name.' '.$host->last_name,
                     'email' => $host->email,
                     'phone_number' => $host->phone_number,
                     'subscribed' => $host->subscribed('default'),

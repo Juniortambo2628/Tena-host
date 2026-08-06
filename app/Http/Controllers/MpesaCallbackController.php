@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\PaymentReceiptMail;
 use App\Models\MpesaTransaction;
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class MpesaCallbackController extends Controller
 {
-    public function handle(Request $request)
+    public function handle(Request $request, SubscriptionService $subscriptionService)
     {
         $data = $request->all();
 
@@ -18,7 +17,6 @@ class MpesaCallbackController extends Controller
 
         $resultCode = $data['Body']['stkCallback']['ResultCode'] ?? null;
         $merchantRequestID = $data['Body']['stkCallback']['MerchantRequestID'] ?? null;
-        $checkoutRequestID = $data['Body']['stkCallback']['CheckoutRequestID'] ?? null;
         $resultDesc = $data['Body']['stkCallback']['ResultDesc'] ?? null;
 
         if (! $merchantRequestID) {
@@ -38,15 +36,11 @@ class MpesaCallbackController extends Controller
         if ($resultCode === 0) {
             $callbackMetadata = $data['Body']['stkCallback']['CallbackMetadata']['Item'] ?? [];
             $mpesaReceiptNumber = null;
-            $transactionDate = null;
             $amount = null;
 
             foreach ($callbackMetadata as $item) {
                 if ($item['Name'] === 'MpesaReceiptNumber') {
                     $mpesaReceiptNumber = $item['Value'];
-                }
-                if ($item['Name'] === 'TransactionDate') {
-                    $transactionDate = $item['Value'];
                 }
                 if ($item['Name'] === 'Amount') {
                     $amount = $item['Value'];
@@ -61,24 +55,9 @@ class MpesaCallbackController extends Controller
 
             $user = $transaction->user;
             if ($user && ! $user->subscribed('default')) {
-                $user->subscriptions()->create([
-                    'type' => 'default',
-                    'stripe_id' => 'mpesa_'.$mpesaReceiptNumber,
-                    'stripe_status' => 'active',
-                    'stripe_price' => 'price_mpesa',
-                    'quantity' => 1,
-                    'ends_at' => now()->addMonth(),
-                ]);
-            }
-
-            // Send payment receipt email
-            if ($user && $user->email) {
-                try {
-                    Mail::to($user->email)->send(new PaymentReceiptMail($transaction));
-                    Log::info('Payment receipt email sent', ['user' => $user->email]);
-                } catch (\Exception $e) {
-                    Log::error('Failed to send payment receipt email', ['error' => $e->getMessage()]);
-                }
+                $subscriptionService->activateForUser($user, 'mpesa', $mpesaReceiptNumber, $amount ?? 0);
+            } else {
+                $subscriptionService->sendReceipt($user, $transaction);
             }
 
             Log::info('M-Pesa Payment Completed', [

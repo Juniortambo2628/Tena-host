@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { notify } from '@/Components/Toast';
+import { Check, X, Send, ArrowRight } from 'lucide-react';
 import './WaitlistModal.css';
 
 export default function WaitlistModal({ show, onClose }) {
@@ -96,7 +97,7 @@ export default function WaitlistModal({ show, onClose }) {
                     className={`waitlist-step-number ${isActive ? 'waitlist-step-number-active' :
                             isCompleted ? 'waitlist-step-number-completed' : 'waitlist-step-number-inactive'}`}
                 >
-                    {isCompleted ? <i className="fas fa-check"></i> : number}
+                    {isCompleted ? <Check size={16}></Check> : number}
                 </div>
                 <div className={`waitlist-step-title ${isActive ? 'waitlist-step-title-active' : 'waitlist-step-title-inactive'}`}>
                     {title}
@@ -127,7 +128,7 @@ export default function WaitlistModal({ show, onClose }) {
                     onClick={onClose}
                     className="waitlist-close-btn"
                 >
-                    <i className="fas fa-times text-lg"></i>
+                    <X size={18}></X>
                 </button>
 
                 {/* Left Sidebar */}
@@ -326,7 +327,7 @@ export default function WaitlistModal({ show, onClose }) {
                                     className="waitlist-confirmation"
                                 >
                                     <div className="waitlist-confirmation-icon">
-                                        <i className="fas fa-paper-plane text-3xl"></i>
+                                        <Send size={24}></Send>
                                     </div>
                                     <h2 className="waitlist-confirmation-title">Almost There!</h2>
                                     <p className="waitlist-confirmation-text">Click submit to confirm your spot on the waitlist. We'll be in touch soon.</p>
@@ -370,7 +371,7 @@ export default function WaitlistModal({ show, onClose }) {
 
                             {step < 3 ? (
                                 <button type="button" onClick={nextStep} className="waitlist-next-btn">
-                                    Next Step <i className="fas fa-arrow-right text-xs"></i>
+                                    Next Step <ArrowRight size={12}></ArrowRight>
                                 </button>
                             ) : (
                                 <button type="button" onClick={handleSubmit} className="waitlist-submit-btn" disabled={submitting}>

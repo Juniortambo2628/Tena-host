@@ -5,6 +5,8 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Building2, Search, Eye, Trash2 } from 'lucide-react';
 import DataTable from '@/Components/Dashboard/DataTable';
+import ServerPagination from '@/Components/Dashboard/ServerPagination';
+import StatusBadge from '@/Components/Dashboard/StatusBadge';
 import './Index.css';
 
 export default function Index({ hosts }) {
@@ -41,9 +43,7 @@ export default function Index({ hosts }) {
             cell: info => {
                 const verified = info.getValue();
                 return (
-                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${verified ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                        {verified ? 'Active' : 'Pending'}
-                    </span>
+                    <StatusBadge status="active" />
                 );
             }
         },
@@ -100,31 +100,7 @@ export default function Index({ hosts }) {
                     <DataTable data={data} columns={columns} searchPlaceholder="Search hosts..." />
                 </div>
                 {/* Keep Server Side Pagination Links if needed, or hide if using client side on small batch */}
-                {hosts.links && (
-                     <div className="hosts-pagination-bar">
-                        <span className="hosts-pagination-info">
-                            Server Pagination (Total: {hosts.total})
-                        </span>
-                        <div className="hosts-pagination-links">
-                             {hosts.links.map((link, i) => (
-                                link.url ? (
-                                    <Link
-                                        key={i}
-                                        href={link.url}
-                                        className={`hosts-pagination-link ${link.active ? 'hosts-pagination-link-active' : 'hosts-pagination-link-inactive'}`}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                ) : (
-                                    <span
-                                        key={i}
-                                        className="hosts-pagination-disabled"
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                    />
-                                )
-                            ))}
-                        </div>
-                     </div>
-                )}
+                <ServerPagination links={hosts.links} className="justify-center mt-6" />
             </GlassCard>
         </DashboardLayout>
     );

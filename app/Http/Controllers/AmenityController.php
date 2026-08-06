@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Amenity;
 use App\Models\Property;
+use App\Traits\HasImageUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class AmenityController extends Controller
 {
-    /**
-     * Display a listing of amenities for the host's properties.
-     */
+    use HasImageUpload;
+
     public function index(Request $request)
     {
         $amenities = Amenity::forHost(Auth::user())
@@ -34,9 +33,6 @@ class AmenityController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created amenity.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -52,8 +48,7 @@ class AmenityController extends Controller
         $this->authorize('update', $property);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('amenities', 'public');
-            $validated['image_path'] = '/storage/'.$path;
+            $validated['image_path'] = $this->storeImage($request->file('image'), 'amenities');
         }
 
         Amenity::create($validated);
@@ -61,9 +56,6 @@ class AmenityController extends Controller
         return redirect()->back()->with('success', 'Amenity added successfully.');
     }
 
-    /**
-     * Display the specified amenity.
-     */
     public function show(Amenity $amenity)
     {
         $this->authorize('view', $amenity);
@@ -73,9 +65,6 @@ class AmenityController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified amenity.
-     */
     public function update(Request $request, Amenity $amenity)
     {
         $this->authorize('update', $amenity);
@@ -89,13 +78,11 @@ class AmenityController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($amenity->image_path) {
-                $oldPath = str_replace('/storage/', '', $amenity->image_path);
-                Storage::disk('public')->delete($oldPath);
-            }
-
-            $path = $request->file('image')->store('amenities', 'public');
-            $validated['image_path'] = '/storage/'.$path;
+            $validated['image_path'] = $this->updateImage(
+                $request->file('image'),
+                $amenity->image_path,
+                'amenities'
+            );
         }
 
         $amenity->update($validated);
@@ -103,18 +90,11 @@ class AmenityController extends Controller
         return redirect()->back()->with('success', 'Amenity updated successfully.');
     }
 
-    /**
-     * Remove the specified amenity.
-     */
     public function destroy(Amenity $amenity)
     {
         $this->authorize('delete', $amenity);
 
-        if ($amenity->image_path) {
-            $oldPath = str_replace('/storage/', '', $amenity->image_path);
-            Storage::disk('public')->delete($oldPath);
-        }
-
+        $this->deleteImage($amenity->image_path);
         $amenity->delete();
 
         return redirect()->back()->with('success', 'Amenity deleted successfully.');

@@ -142,10 +142,7 @@ class MarketingController extends Controller
     public function activate($id)
     {
         $campaign = Campaign::findOrFail($id);
-
-        if ($campaign->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manage', $campaign);
 
         if ($campaign->status === 'active') {
             return redirect()->back()->with('info', 'Campaign is already active.');
@@ -169,10 +166,7 @@ class MarketingController extends Controller
     public function pause($id)
     {
         $campaign = Campaign::findOrFail($id);
-
-        if ($campaign->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manage', $campaign);
 
         $campaign->update(['status' => 'paused']);
 
@@ -185,10 +179,7 @@ class MarketingController extends Controller
     public function destroy($id)
     {
         $campaign = Campaign::findOrFail($id);
-
-        if ($campaign->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manage', $campaign);
 
         $campaign->delete();
 
@@ -201,10 +192,7 @@ class MarketingController extends Controller
     public function analytics($id)
     {
         $campaign = Campaign::findOrFail($id);
-
-        if ($campaign->user_id !== Auth::id()) {
-            abort(403);
-        }
+        $this->authorize('manage', $campaign);
 
         $eventsByDay = MarketingEvent::where('campaign_id', $campaign->id)
             ->selectRaw('DATE(created_at) as date, event_type, COUNT(*) as count')

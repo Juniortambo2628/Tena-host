@@ -121,7 +121,7 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('/dashboard', [HostDashboardController::class, 'index'])->name('dashboard');
 
         // Properties
-        Route::resource('properties', PropertyController::class);
+        Route::resource('properties', PropertyController::class)->except(['create']);
 
         // Access Points
         Route::get('/access-points', [AccessPointController::class, 'index'])->name('access-points.index');

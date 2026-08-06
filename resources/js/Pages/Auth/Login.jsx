@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
+import AuthHero from '@/Components/Auth/AuthHero';
 import './Login.css';
 
 export default function Login({ status, canResetPassword }) {
@@ -192,26 +193,7 @@ export default function Login({ status, canResetPassword }) {
             </div>
 
             {/* Right Column: Hero Image */}
-            <div className="login-right">
-                <div className="login-right-inner">
-                    <img
-                        src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2000"
-                        alt="Join the future"
-                        className="login-right-img"
-                    />
-                    <div className="login-right-gradient" />
-
-                    <div className="login-right-bottom">
-                        <img src="/legacy/assets/Tena-logo-square.jpg" className="login-right-logo" />
-                        <div className="login-right-content">
-                            <h2 className="login-right-title">Welcome home.</h2>
-                            <div className="text-lg font-medium">
-                                <TypingEffect />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AuthHero />
 
             <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
             <CookiesConsent />

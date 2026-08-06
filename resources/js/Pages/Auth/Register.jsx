@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
+import AuthHero from '@/Components/Auth/AuthHero';
 import './Register.css';
 
 export default function Register() {
@@ -181,39 +182,7 @@ export default function Register() {
             </div>
 
             {/* Right Column: Hero Image (Same as Login for consistency) */}
-            <div className="register-right">
-                <div className="register-right-inner">
-                    <img
-                        src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=2000"
-                        alt="Join the future"
-                        className="register-right-img"
-                    />
-                    <div className="register-right-gradient" />
-
-                    <div className="register-right-bottom">
-                        <img src="/legacy/assets/Tena-logo-square.jpg" className="register-right-logo" />
-                        <div className="register-right-content">
-                            <h2 className="register-right-title">The standard.</h2>
-                            <p className="register-right-desc">
-                                Join the most advanced data collection and marketing platform built specifically for short-term rental hosts.
-                            </p>
-                        </div>
-
-                        <div className="register-right-avatars">
-                            <div className="register-avatar-group">
-                                {[6, 7, 8, 9].map(i => (
-                                    <img
-                                        key={i}
-                                        src={`https://i.pravatar.cc/100?u=${i}`}
-                                        className="register-avatar"
-                                    />
-                                ))}
-                            </div>
-                            <p className="register-avatar-text">17k+ hosts ready</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AuthHero />
 
             <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
             <CookiesConsent />
