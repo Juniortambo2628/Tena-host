@@ -40,7 +40,7 @@
 }
 
 .glass-modal__body::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 .glass-modal__body::-webkit-scrollbar-track {
@@ -48,5 +48,9 @@
 }
 
 .glass-modal__body::-webkit-scrollbar-thumb {
-    @apply bg-red-500/20 rounded-full hover:bg-red-500/40 transition-colors;
+    @apply bg-black/10 rounded-full;
+}
+
+.glass-modal__body::-webkit-scrollbar-thumb:hover {
+    @apply bg-black/20;
 }

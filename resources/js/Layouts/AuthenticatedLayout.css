@@ -129,7 +129,7 @@
 }
 
 /* Custom scrollbar */
-.authenticated-layout .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.authenticated-layout .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .authenticated-layout .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .authenticated-layout .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 .authenticated-layout .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }

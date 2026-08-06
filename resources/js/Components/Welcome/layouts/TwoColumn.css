@@ -22,6 +22,8 @@
 
 .two-column-text-col {
     @apply w-full lg:w-1/2 min-w-0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .two-column-text-card {
@@ -41,6 +43,8 @@
 .two-column-desc {
     @apply text-gray-600 mb-8;
     text-wrap: balance;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .two-column-features-list {
@@ -61,6 +65,8 @@
 
 .two-column-feature-desc {
     @apply text-gray-500 text-sm leading-relaxed;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .two-column-cta {

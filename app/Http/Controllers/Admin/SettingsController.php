@@ -33,6 +33,7 @@ class SettingsController extends Controller
             'logo_url' => 'sometimes|string|max:500',
             'welcome_email_heading' => 'sometimes|string|max:255',
             'welcome_email_body' => 'sometimes|string|max:5000',
+            'welcome_email_subject' => 'sometimes|string|max:255',
             'receipt_email_heading' => 'sometimes|string|max:255',
             'receipt_email_body' => 'sometimes|string|max:5000',
             'forgot_password_email_heading' => 'sometimes|string|max:255',

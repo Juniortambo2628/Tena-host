@@ -5,13 +5,9 @@ import { render } from '@react-email/render';
 import WelcomeEmail from '@/Emails/WelcomeEmail';
 import PaymentReceipt from '@/Emails/PaymentReceipt';
 import ForgotPasswordEmail from '@/Emails/ForgotPasswordEmail';
+import WaitlistConfirmationEmail from '@/Emails/WaitlistConfirmationEmail';
+import WaitlistWelcomeEmail from '@/Emails/WaitlistWelcomeEmail';
 import './EmailPreview.css';
-
-const templates = [
-    { id: 'welcome', name: 'Welcome Email', component: WelcomeEmail },
-    { id: 'receipt', name: 'Payment Receipt', component: PaymentReceipt },
-    { id: 'reset', name: 'Password Reset', component: ForgotPasswordEmail },
-];
 
 export default function EmailPreview({ settings }) {
     const [viewMode, setViewMode] = useState('desktop');
@@ -19,9 +15,11 @@ export default function EmailPreview({ settings }) {
     const iframeRef = useRef(null);
 
     const templates = [
-        { id: 'welcome', name: 'Welcome Email', component: WelcomeEmail },
-        { id: 'receipt', name: 'Payment Receipt', component: PaymentReceipt },
+        { id: 'welcome', name: 'Welcome', component: WelcomeEmail },
+        { id: 'receipt', name: 'Receipt', component: PaymentReceipt },
         { id: 'reset', name: 'Password Reset', component: ForgotPasswordEmail },
+        { id: 'waitlist_confirmation', name: 'Waitlist Confirmation', component: WaitlistConfirmationEmail },
+        { id: 'waitlist_welcome', name: 'Waitlist Welcome', component: WaitlistWelcomeEmail },
     ];
 
     const emailProps = {
@@ -32,11 +30,22 @@ export default function EmailPreview({ settings }) {
         logoUrl: settings.logo_url || '/legacy/assets/Tena-logo-square.jpg',
         heading: activeTemplate === 'welcome' ? settings.welcome_email_heading :
             activeTemplate === 'receipt' ? settings.receipt_email_heading :
+            activeTemplate === 'waitlist_confirmation' ? settings.waitlist_confirmation_heading :
+            activeTemplate === 'waitlist_welcome' ? settings.waitlist_welcome_heading :
                 settings.forgot_password_email_heading,
         body: activeTemplate === 'welcome' ? settings.welcome_email_body :
             activeTemplate === 'receipt' ? settings.receipt_email_body :
+            activeTemplate === 'waitlist_confirmation' ? settings.waitlist_confirmation_body :
+            activeTemplate === 'waitlist_welcome' ? settings.waitlist_welcome_body :
                 settings.forgot_password_email_body,
         name: "Empire Builder",
+        firstName: "Test",
+        lastName: "User",
+        email: "test@example.com",
+        propertyType: "Vacation Rental",
+        units: "5",
+        primaryPlatform: "Airbnb",
+        biggestChallenge: "Managing multiple platforms",
         customerName: "Valued Host",
         amount: "6,500",
         planName: "Pro Host Plan",

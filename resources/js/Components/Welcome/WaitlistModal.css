@@ -15,7 +15,7 @@
 }
 
 .waitlist-close-btn {
-    @apply absolute top-8 right-8 text-black/20 hover:text-black z-20 w-10 h-10 flex items-center justify-center rounded-2xl bg-black/5 hover:bg-black/10 transition-all active:scale-90;
+    @apply absolute top-4 right-4 md:top-8 md:right-8 text-black/30 hover:text-black z-30 w-9 h-9 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 transition-all active:scale-90;
 }
 
 .waitlist-sidebar {
@@ -85,14 +85,16 @@
 .waitlist-content {
     @apply w-full md:w-2/3 relative flex-1 min-h-0 flex flex-col;
     overflow: hidden;
+    overflow-x: hidden;
     padding-left: 1.25rem;
     padding-right: 1.25rem;
-    padding-top: 1.5rem;
+    padding-top: 3.5rem;
 }
 
 @media (min-width: 768px) {
     .waitlist-content {
         padding: 3rem;
+        padding-top: 3rem;
         padding-bottom: 0;
     }
 }
@@ -104,6 +106,7 @@
 .waitlist-form-scroll {
     @apply flex-1 min-h-0;
     overflow-y: auto;
+    overflow-x: hidden;
     padding-bottom: 1.5rem;
 }
 
@@ -135,10 +138,14 @@
 
 .waitlist-input {
     @apply w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:ring-0 transition-colors bg-gray-50 focus:bg-white;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .waitlist-select {
     @apply w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-black focus:ring-0 transition-colors bg-gray-50 focus:bg-white appearance-none;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .waitlist-units-grid {
@@ -190,7 +197,7 @@
 }
 
 .waitlist-challenge-radio {
-    @apply w-4 h-4 rounded-full border-2 flex items-center justify-center flex-none;
+    @apply w-4 h-4 rounded-full border-2 flex items-center justify-center flex-none relative;
 }
 
 .waitlist-challenge-radio-active {
@@ -202,7 +209,10 @@
 }
 
 .waitlist-challenge-radio-dot {
-    @apply w-1.5 h-1.5 rounded-full bg-white;
+    @apply w-2 h-2 rounded-full bg-white absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .waitlist-consent-label {
@@ -253,10 +263,14 @@
 
 .waitlist-confirmation-row-value {
     @apply font-medium text-sm;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    text-align: right;
+    max-width: 60%;
 }
 
 .waitlist-footer {
-    @apply pt-4 md:pt-6 border-t border-black/5 flex justify-between items-center bg-white flex-shrink-0;
+    @apply pt-4 pb-6 md:pt-6 md:pb-8 border-t border-black/5 flex justify-between items-center bg-white flex-shrink-0;
     padding-left: 1.25rem;
     padding-right: 1.25rem;
 }

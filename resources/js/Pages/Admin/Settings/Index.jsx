@@ -44,6 +44,7 @@ export default function Index({ settings }) {
             logo_url: flattened.logo_url || '/legacy/assets/Tena-logo-square.jpg',
             welcome_email_heading: flattened.welcome_email_heading || '',
             welcome_email_body: flattened.welcome_email_body || '',
+            welcome_email_subject: flattened.welcome_email_subject || '',
             receipt_email_heading: flattened.receipt_email_heading || '',
             receipt_email_body: flattened.receipt_email_body || '',
             forgot_password_email_heading: flattened.forgot_password_email_heading || '',
@@ -311,6 +312,13 @@ export default function Index({ settings }) {
 
                                             <div className="settings-page__template-section">
                                                 <h4 className="settings-page__template-title">Welcome Template</h4>
+                                                <FormField label="Subject">
+                                                    <TextInput
+                                                        value={data.settings.welcome_email_subject}
+                                                        onChange={(e) => updateSetting('welcome_email_subject', e.target.value)}
+                                                        placeholder="Welcome to TENA"
+                                                    />
+                                                </FormField>
                                                 <FormField label="Heading">
                                                     <TextInput
                                                         value={data.settings.welcome_email_heading}

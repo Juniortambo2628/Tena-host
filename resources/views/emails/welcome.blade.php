@@ -25,7 +25,7 @@
                 <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333">
                     <p style="margin:0 0 16px">Hello {{ $name ?? 'there' }},</p>
                     @if($customBody)
-                        <p style="margin:0 0 16px">{{ $customBody }}</p>
+                        {!! $customBody !!}
                     @else
                         <p style="margin:0 0 16px">Your account has been created and is ready to use. We're excited to have you on board.</p>
                         <ul style="margin:0 0 16px;padding-left:20px;line-height:1.8">
