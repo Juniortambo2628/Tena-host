@@ -57,3 +57,16 @@
 .email-template-editor__hint {
     @apply text-xs text-gray-400 mt-2;
 }
+
+.email-template-editor__file-input {
+    @apply hidden;
+}
+
+.email-template-editor__uploading {
+    @apply text-xs text-gray-500 mt-2 flex items-center gap-2;
+}
+
+.email-template-editor__uploading::before {
+    content: '';
+    @apply w-3 h-3 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin;
+}

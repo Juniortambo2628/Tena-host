@@ -1,3 +1,11 @@
+@php
+    $baseUrl = config('app.url', 'https://tena.host');
+    $logoUrl = $logo_url ?? '';
+    if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
+        $logoUrl = $baseUrl . '/' . ltrim($logoUrl, '/');
+    }
+    $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,6 +27,8 @@
         .receipt-value { color: #333; font-size: 14px; font-weight: 600; }
         .amount-highlight { font-size: 28px; color: {{ $primary_color ?? '#000000' }}; font-weight: 700; text-align: center; margin: 24px 0; }
         .message { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+        .footer-banner { padding: 0 30px 16px; text-align: center; }
+        .footer-banner img { width: 100%; max-width: 540px; height: auto; border-radius: 12px; }
         .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef; }
         .footer-text { color: #999; font-size: 12px; margin: 0; }
         .footer-link { color: {{ $primary_color ?? '#000000' }}; text-decoration: none; }
@@ -27,8 +37,8 @@
 <body>
     <div class="container">
         <div class="header">
-            @if($logo_url)
-                <img src="{{ $logo_url }}" alt="{{ $site_name }}" class="logo">
+            @if($logoUrl)
+                <img src="{{ $logoUrl }}" alt="{{ $site_name }}" class="logo" style="display:block;margin:0 auto 20px;">
             @endif
             <h1>{{ $site_name ?? 'Tena Host' }}</h1>
         </div>
@@ -92,6 +102,10 @@
             <p class="message">
                 If you have any questions about this transaction, please contact our support team at <a href="mailto:billing@tena.host" class="footer-link">billing@tena.host</a>.
             </p>
+        </div>
+
+        <div class="footer-banner">
+            <img src="{{ $footerImageUrl }}" alt="" />
         </div>
 
         <div class="footer">
