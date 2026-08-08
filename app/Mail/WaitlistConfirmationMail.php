@@ -32,6 +32,21 @@ class WaitlistConfirmationMail extends Mailable
 
     public function content(): Content
     {
+        $businessName = Setting::getValue('site_name', 'Tena');
+        $businessAddress = Setting::getValue('business_address', 'Nairobi, Kenya');
+
+        $replacements = [
+            '{{First Name}}' => $this->firstName,
+            '{{Last Name}}' => $this->lastName,
+            '{{Email}}' => $this->email,
+            '{{Property Type}}' => $this->propertyType,
+            '{{Units}}' => $this->units,
+            '{{Primary Platform}}' => $this->primaryPlatform,
+            '{{Biggest Challenge}}' => $this->biggestChallenge,
+            '{{Business Name}}' => $businessName,
+            '{{Business Address}}' => $businessAddress,
+        ];
+
         return new Content(
             htmlString: view('emails.waitlist-confirmation', [
                 'firstName' => $this->firstName,
@@ -41,7 +56,25 @@ class WaitlistConfirmationMail extends Mailable
                 'units' => $this->units,
                 'primaryPlatform' => $this->primaryPlatform,
                 'biggestChallenge' => $this->biggestChallenge,
+                'resolvedHeading' => $this->resolveVariables(
+                    Setting::getValue('waitlist_confirmation_heading', ''),
+                    $replacements
+                ),
+                'resolvedBody' => $this->resolveVariables(
+                    Setting::getValue('waitlist_confirmation_body', ''),
+                    $replacements
+                ),
             ])->render(),
         );
+    }
+
+    private function resolveVariables(string $content, array $replacements): string
+    {
+        $content = html_entity_decode($content);
+        $content = str_replace(array_keys($replacements), array_values($replacements), $content);
+        return preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
+            $key = '{{' . trim(strip_tags($matches[1])) . '}}';
+            return $replacements[$key] ?? $matches[0];
+        }, $content);
     }
 }

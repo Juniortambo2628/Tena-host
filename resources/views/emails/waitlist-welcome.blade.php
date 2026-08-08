@@ -4,8 +4,6 @@
     $businessName = \App\Models\Setting::getValue('site_name', 'Tena');
     $businessAddress = \App\Models\Setting::getValue('business_address', 'Nairobi, Kenya');
     $logoUrl = \App\Models\Setting::getValue('logo_url', '');
-    $customHeading = \App\Models\Setting::getValue('waitlist_welcome_heading', '');
-    $customBody = \App\Models\Setting::getValue('waitlist_welcome_body', '');
 
     $baseUrl = config('app.url', 'https://tena.host');
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
@@ -13,35 +11,17 @@
     }
     $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
 
-    $replacements = [
-        '{{First Name}}' => $firstName,
-        '{{Last Name}}' => $lastName,
-        '{{Email}}' => $email,
-        '{{Business Name}}' => $businessName,
-        '{{Business Address}}' => $businessAddress,
-    ];
-    $customBody = html_entity_decode($customBody ?? '');
-    $customHeading = html_entity_decode($customHeading ?? '');
-    $customBody = str_replace(array_keys($replacements), array_values($replacements), $customBody);
-    $customHeading = str_replace(array_keys($replacements), array_values($replacements), $customHeading);
+    $resolvedBody = $resolvedBody ?? '';
+    $resolvedHeading = $resolvedHeading ?? '';
 
-    $customBody = preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
-        $key = '{{' . trim(strip_tags($matches[1])) . '}}';
-        return $replacements[$key] ?? $matches[0];
-    }, $customBody);
-    $customHeading = preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
-        $key = '{{' . trim(strip_tags($matches[1])) . '}}';
-        return $replacements[$key] ?? $matches[0];
-    }, $customHeading);
-
-    $hasCustomBody = filled(trim(strip_tags($customBody)));
+    $hasCustomBody = filled(trim(strip_tags($resolvedBody)));
 @endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $customHeading ?: 'Welcome to the Tena Family!' }}</title>
+    <title>{{ $resolvedHeading ?: 'Welcome to the Tena Family!' }}</title>
 </head>
 <body style="margin:0;padding:0;background-color:{{ $primaryColor }};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color:{{ $primaryColor }};padding:40px 20px;">
@@ -50,12 +30,12 @@
                 @if($logoUrl)
                 <tr><td align="center" style="padding:32px 40px 0"><img src="{{ $logoUrl }}" alt="{{ $businessName }}" height="48" style="display:block;" /></td></tr>
                 @endif
-                <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $customHeading ?: 'Welcome to the Tena Family!' }}</h1></td></tr>
+                <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $resolvedHeading ?: 'Welcome to the Tena Family!' }}</h1></td></tr>
                 <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333">
                     <p style="margin:0 0 16px">Hey {{ $firstName }},</p>
 
-                    @if($customBody)
-                        {!! $customBody !!}
+                    @if($hasCustomBody)
+                        {!! $resolvedBody !!}
                     @else
                         <p style="margin:0 0 16px">We're excited to share that <strong>{{ $businessName }}</strong> is getting closer to launch!</p>
                         <p style="margin:0 0 16px">As a waitlist member, you'll be among the first to:</p>

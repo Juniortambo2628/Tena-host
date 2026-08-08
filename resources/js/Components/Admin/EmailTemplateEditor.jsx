@@ -44,6 +44,32 @@ export default function EmailTemplateEditor({
         quill.focus();
     }, []);
 
+    const resizeImage = useCallback((file, maxWidth = 600) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    if (img.width <= maxWidth) {
+                        resolve(file);
+                        return;
+                    }
+                    const canvas = document.createElement('canvas');
+                    const ratio = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * ratio;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob((blob) => {
+                        resolve(new File([blob], file.name, { type: file.type }));
+                    }, file.type, 0.85);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }, []);
+
     const handleImageUpload = useCallback(async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -53,16 +79,12 @@ export default function EmailTemplateEditor({
             return;
         }
 
-        if (file.size > 5 * 1024 * 1024) {
-            notify.error('Image must be less than 5MB.');
-            return;
-        }
-
         setUploading(true);
 
         try {
+            const resized = await resizeImage(file);
             const formData = new FormData();
-            formData.append('image', file);
+            formData.append('image', resized);
 
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
@@ -97,7 +119,7 @@ export default function EmailTemplateEditor({
                 fileInputRef.current.value = '';
             }
         }
-    }, []);
+    }, [resizeImage]);
 
     const handleQuillImageHandler = useCallback(() => {
         fileInputRef.current?.click();
