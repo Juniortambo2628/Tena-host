@@ -15,6 +15,20 @@
     $resolvedBody = $resolvedBody ?? '';
     $resolvedHeading = $resolvedHeading ?? '';
 
+    $varReplacements = [
+        '{{First Name}}' => $firstName ?? '',
+        '{{Last Name}}' => $lastName ?? '',
+        '{{Email}}' => $email ?? '',
+        '{{Property Type}}' => $propertyType ?? '',
+        '{{Units}}' => $units ?? '',
+        '{{Primary Platform}}' => $primaryPlatform ?? '',
+        '{{Biggest Challenge}}' => $biggestChallenge ?? '',
+        '{{Business Name}}' => $businessName ?? 'Tena',
+        '{{Business Address}}' => $businessAddress ?? '',
+    ];
+    $resolvedHeading = str_replace(array_keys($varReplacements), array_values($varReplacements), html_entity_decode($resolvedHeading));
+    $resolvedBody = str_replace(array_keys($varReplacements), array_values($varReplacements), html_entity_decode($resolvedBody));
+
     $hasCustomBody = filled(trim(strip_tags($resolvedBody)));
 @endphp
 <!DOCTYPE html>
