@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import PageShell from '@/Layouts/PageShell';
 import { TwoColumnLayout, MainColumn, SidebarColumn, PageGrid } from '@/Layouts/LayoutPrimitives';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
-import EmailPreview from '@/Components/Admin/EmailPreview';
+const EmailPreview = lazy(() => import('@/Components/Admin/EmailPreview'));
 import GlassModal from '@/Components/GlassModal';
 import { FormField, TextInput, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
 import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye } from 'lucide-react';
@@ -533,7 +533,9 @@ export default function Index({ settings }) {
                 maxWidth="6xl"
             >
                 <div className="settings-page__preview-modal">
-                    <EmailPreview settings={data.settings} />
+                    <Suspense fallback={<div className="p-8 text-center text-black/40">Loading preview...</div>}>
+                        <EmailPreview settings={data.settings} />
+                    </Suspense>
                 </div>
             </GlassModal>
         </PageShell>

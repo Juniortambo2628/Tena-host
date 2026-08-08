@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Laptop, Smartphone, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
-import { render } from '@react-email/render';
-import WelcomeEmail from '@/Emails/WelcomeEmail';
-import PaymentReceipt from '@/Emails/PaymentReceipt';
-import ForgotPasswordEmail from '@/Emails/ForgotPasswordEmail';
-import WaitlistConfirmationEmail from '@/Emails/WaitlistConfirmationEmail';
-import WaitlistWelcomeEmail from '@/Emails/WaitlistWelcomeEmail';
 import './EmailPreview.css';
+
+const emailComponents = {
+    welcome: () => import('@/Emails/WelcomeEmail'),
+    receipt: () => import('@/Emails/PaymentReceipt'),
+    reset: () => import('@/Emails/ForgotPasswordEmail'),
+    waitlist_confirmation: () => import('@/Emails/WaitlistConfirmationEmail'),
+    waitlist_welcome: () => import('@/Emails/WaitlistWelcomeEmail'),
+};
 
 export default function EmailPreview({ settings }) {
     const [viewMode, setViewMode] = useState('desktop');
@@ -15,11 +17,11 @@ export default function EmailPreview({ settings }) {
     const iframeRef = useRef(null);
 
     const templates = [
-        { id: 'welcome', name: 'Welcome', component: WelcomeEmail },
-        { id: 'receipt', name: 'Receipt', component: PaymentReceipt },
-        { id: 'reset', name: 'Password Reset', component: ForgotPasswordEmail },
-        { id: 'waitlist_confirmation', name: 'Waitlist Confirmation', component: WaitlistConfirmationEmail },
-        { id: 'waitlist_welcome', name: 'Waitlist Welcome', component: WaitlistWelcomeEmail },
+        { id: 'welcome', name: 'Welcome' },
+        { id: 'receipt', name: 'Receipt' },
+        { id: 'reset', name: 'Password Reset' },
+        { id: 'waitlist_confirmation', name: 'Waitlist Confirmation' },
+        { id: 'waitlist_welcome', name: 'Waitlist Welcome' },
     ];
 
     const emailProps = {
@@ -57,13 +59,23 @@ export default function EmailPreview({ settings }) {
     useEffect(() => {
         if (!iframeRef.current) return;
         const doc = iframeRef.current.contentDocument;
-        const SelectedTemplate = templates.find(t => t.id === activeTemplate).component;
 
         const renderEmail = async () => {
-            const html = await render(React.createElement(SelectedTemplate, emailProps));
-            doc.open();
-            doc.write(html);
-            doc.close();
+            try {
+                const [{ render }, { default: SelectedTemplate }] = await Promise.all([
+                    import('@react-email/render'),
+                    emailComponents[activeTemplate]()
+                ]);
+                const html = await render(React.createElement(SelectedTemplate, emailProps));
+                doc.open();
+                doc.write(html);
+                doc.close();
+            } catch (err) {
+                console.error('Email render failed:', err);
+                doc.open();
+                doc.write('<div style="padding:20px;color:#999;">Preview unavailable</div>');
+                doc.close();
+            }
         };
 
         renderEmail();
