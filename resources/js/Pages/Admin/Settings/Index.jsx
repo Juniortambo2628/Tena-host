@@ -7,7 +7,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 const EmailPreview = lazy(() => import('@/Components/Admin/EmailPreview'));
 import GlassModal from '@/Components/GlassModal';
 import { FormField, TextInput, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
-import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye } from 'lucide-react';
+import { Settings, Mail, Shield, Globe, Palette, Type, CheckCircle2, AlertCircle, Send, Eye, ChevronDown } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import { safeRoute, hasRoute } from '@/lib/route';
 import EmailTemplateEditor from '@/Components/Admin/EmailTemplateEditor';
@@ -21,12 +21,99 @@ function debounce(func, wait) {
     };
 }
 
+const EMAIL_TEMPLATES = [
+    {
+        id: 'welcome',
+        name: 'Welcome',
+        subjectKey: 'welcome_email_subject',
+        headingKey: 'welcome_email_heading',
+        bodyKey: 'welcome_email_body',
+        subjectPlaceholder: 'Welcome to TENA',
+        headingPlaceholder: 'Welcome home, {name}.',
+        bodyPlaceholder: 'Customize the welcome message...',
+        variables: [
+            { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
+            { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
+            { key: 'Email', label: 'Email', description: 'Recipient email' },
+            { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+            { key: 'Login URL', label: 'Login URL', description: 'Link to login page' },
+        ],
+    },
+    {
+        id: 'receipt',
+        name: 'Payment Receipt',
+        headingKey: 'receipt_email_heading',
+        bodyKey: 'receipt_email_body',
+        headingPlaceholder: 'Payment Received.',
+        bodyPlaceholder: 'Customize the receipt message...',
+        variables: [
+            { key: 'Name', label: 'Name', description: 'Recipient name' },
+            { key: 'Amount', label: 'Amount', description: 'Payment amount' },
+            { key: 'Transaction ID', label: 'Transaction ID', description: 'Transaction reference' },
+            { key: 'Date', label: 'Date', description: 'Payment date' },
+            { key: 'Plan Name', label: 'Plan Name', description: 'Subscription plan' },
+            { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+        ],
+    },
+    {
+        id: 'reset',
+        name: 'Password Reset',
+        headingKey: 'forgot_password_email_heading',
+        bodyKey: 'forgot_password_email_body',
+        headingPlaceholder: 'Reset Request.',
+        bodyPlaceholder: 'Customize the reset instructions...',
+        variables: [
+            { key: 'Name', label: 'Name', description: 'Recipient name' },
+            { key: 'Reset URL', label: 'Reset URL', description: 'Password reset link' },
+            { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+        ],
+    },
+    {
+        id: 'waitlist_confirmation',
+        name: 'Waitlist Confirmation',
+        subjectKey: 'waitlist_confirmation_subject',
+        headingKey: 'waitlist_confirmation_heading',
+        bodyKey: 'waitlist_confirmation_body',
+        subjectPlaceholder: "You're on the Tena waitlist!",
+        headingPlaceholder: "You're on the list!",
+        bodyPlaceholder: 'Customize the confirmation message...',
+        variables: [
+            { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
+            { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
+            { key: 'Email', label: 'Email', description: 'Recipient email' },
+            { key: 'Property Type', label: 'Property Type', description: 'Their property type' },
+            { key: 'Units', label: 'Units', description: 'Number of units' },
+            { key: 'Primary Platform', label: 'Primary Platform', description: 'Their booking platform' },
+            { key: 'Biggest Challenge', label: 'Biggest Challenge', description: 'Their biggest challenge' },
+            { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+        ],
+    },
+    {
+        id: 'waitlist_welcome',
+        name: 'Waitlist Welcome',
+        subjectKey: 'waitlist_welcome_subject',
+        headingKey: 'waitlist_welcome_heading',
+        bodyKey: 'waitlist_welcome_body',
+        subjectPlaceholder: 'Welcome to the Tena Family!',
+        headingPlaceholder: 'Welcome to the Tena Family!',
+        bodyPlaceholder: 'Customize the welcome message...',
+        variables: [
+            { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
+            { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
+            { key: 'Email', label: 'Email', description: 'Recipient email' },
+            { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+            { key: 'Business Address', label: 'Business Address', description: 'Your business address' },
+        ],
+    },
+];
+
 export default function Index({ settings }) {
     const [activeTab, setActiveTab] = useState('general');
     const [autoSaveStatus, setAutoSaveStatus] = useState('idle');
     const [testEmail, setTestEmail] = useState('');
     const [testTemplate, setTestTemplate] = useState('welcome');
     const [showPreview, setShowPreview] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState('welcome');
 
     const flattened = Object.values(settings).flat().reduce((acc, curr) => {
         acc[curr.key] = curr.value;
@@ -131,6 +218,8 @@ export default function Index({ settings }) {
         });
     };
 
+    const activeTemplateConfig = EMAIL_TEMPLATES.find(t => t.id === selectedTemplate);
+
     return (
         <PageShell
             title="Global Settings"
@@ -231,261 +320,171 @@ export default function Index({ settings }) {
                         )}
 
                         {activeTab === 'branding' && (
-                            <div className="space-y-8">
-                                {/* Preview Toggle Button */}
-                                <div className="settings-page__preview-toggle">
-                                    <PillButton
-                                        variant="secondary"
-                                        onClick={() => setShowPreview(true)}
-                                        icon={<Eye size={16} />}
-                                    >
-                                        Preview Emails
-                                    </PillButton>
-                                    <span className="settings-page__preview-hint">
-                                        See how your emails will look to recipients
-                                    </span>
-                                </div>
-
-                                <div className="space-y-8">
-                                    <GlassCard padding="p-8">
-                                        <div className="space-y-6">
-                                            <div className="settings-page__card-header">
-                                                <div className="settings-page__card-icon"><Palette size={24} /></div>
-                                                <div>
-                                                    <h3 className="settings-page__card-title">Visual Theme</h3>
-                                                    <p className="settings-page__card-subtitle">Colors and visual assets</p>
-                                                </div>
+                            <div className="space-y-6">
+                                {/* Visual Theme */}
+                                <GlassCard padding="p-6">
+                                    <div className="space-y-4">
+                                        <div className="settings-page__card-header">
+                                            <div className="settings-page__card-icon"><Palette size={20} /></div>
+                                            <div>
+                                                <h3 className="settings-page__card-title">Visual Theme</h3>
+                                                <p className="settings-page__card-subtitle">Colors and logo</p>
                                             </div>
+                                        </div>
 
-                                            <PageGrid cols={2} gap="gap-6">
-                                                <FormField label="Primary Color">
-                                                    <div className="settings-page__color-field">
-                                                        <input
-                                                            type="color"
-                                                            value={data.settings.email_primary_color}
-                                                            onChange={(e) => updateSetting('email_primary_color', e.target.value)}
-                                                            className="settings-page__color-picker"
-                                                        />
+                                        <PageGrid cols={2} gap="gap-4">
+                                            <FormField label="Primary Color">
+                                                <div className="settings-page__color-field">
+                                                    <input
+                                                        type="color"
+                                                        value={data.settings.email_primary_color}
+                                                        onChange={(e) => updateSetting('email_primary_color', e.target.value)}
+                                                        className="settings-page__color-picker"
+                                                    />
+                                                    <TextInput
+                                                        value={data.settings.email_primary_color}
+                                                        onChange={(e) => updateSetting('email_primary_color', e.target.value)}
+                                                        className="settings-page__color-input"
+                                                    />
+                                                </div>
+                                            </FormField>
+
+                                            <FormField label="Accent Color">
+                                                <div className="settings-page__color-field">
+                                                    <input
+                                                        type="color"
+                                                        value={data.settings.email_accent_color}
+                                                        onChange={(e) => updateSetting('email_accent_color', e.target.value)}
+                                                        className="settings-page__color-picker"
+                                                    />
+                                                    <TextInput
+                                                        value={data.settings.email_accent_color}
+                                                        onChange={(e) => updateSetting('email_accent_color', e.target.value)}
+                                                        className="settings-page__color-input"
+                                                    />
+                                                </div>
+                                            </FormField>
+                                        </PageGrid>
+
+                                        <FormField label="Logo URL">
+                                            <TextInput
+                                                value={data.settings.logo_url}
+                                                onChange={(e) => updateSetting('logo_url', e.target.value)}
+                                            />
+                                        </FormField>
+                                    </div>
+                                </GlassCard>
+
+                                {/* Template Selector */}
+                                <GlassCard padding="p-6">
+                                    <div className="space-y-4">
+                                        <div className="settings-page__card-header">
+                                            <div className="settings-page__card-icon"><Type size={20} /></div>
+                                            <div>
+                                                <h3 className="settings-page__card-title">Email Templates</h3>
+                                                <p className="settings-page__card-subtitle">Customize each email template</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="settings-page__template-selector">
+                                            <label className="settings-page__template-selector-label">Select Template</label>
+                                            <div className="settings-page__template-selector-wrap">
+                                                <select
+                                                    value={selectedTemplate}
+                                                    onChange={(e) => setSelectedTemplate(e.target.value)}
+                                                    className="settings-page__template-select"
+                                                >
+                                                    {EMAIL_TEMPLATES.map((t) => (
+                                                        <option key={t.id} value={t.id}>{t.name}</option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown size={16} className="settings-page__template-selector-icon" />
+                                            </div>
+                                        </div>
+
+                                        {/* Active Template Fields */}
+                                        {activeTemplateConfig && (
+                                            <div className="settings-page__template-fields" key={activeTemplateConfig.id}>
+                                                {activeTemplateConfig.subjectKey && (
+                                                    <FormField label="Subject">
                                                         <TextInput
-                                                            value={data.settings.email_primary_color}
-                                                            onChange={(e) => updateSetting('email_primary_color', e.target.value)}
-                                                            className="settings-page__color-input"
+                                                            value={data.settings[activeTemplateConfig.subjectKey] || ''}
+                                                            onChange={(e) => updateSetting(activeTemplateConfig.subjectKey, e.target.value)}
+                                                            placeholder={activeTemplateConfig.subjectPlaceholder}
                                                         />
-                                                    </div>
+                                                    </FormField>
+                                                )}
+
+                                                <FormField label="Heading">
+                                                    <TextInput
+                                                        value={data.settings[activeTemplateConfig.headingKey] || ''}
+                                                        onChange={(e) => updateSetting(activeTemplateConfig.headingKey, e.target.value)}
+                                                        placeholder={activeTemplateConfig.headingPlaceholder}
+                                                    />
                                                 </FormField>
 
-                                                <FormField label="Accent Color">
-                                                    <div className="settings-page__color-field">
-                                                        <input
-                                                            type="color"
-                                                            value={data.settings.email_accent_color}
-                                                            onChange={(e) => updateSetting('email_accent_color', e.target.value)}
-                                                            className="settings-page__color-picker"
-                                                        />
-                                                        <TextInput
-                                                            value={data.settings.email_accent_color}
-                                                            onChange={(e) => updateSetting('email_accent_color', e.target.value)}
-                                                            className="settings-page__color-input"
-                                                        />
-                                                    </div>
-                                                </FormField>
-                                            </PageGrid>
+                                                <EmailTemplateEditor
+                                                    label="Body Text"
+                                                    value={data.settings[activeTemplateConfig.bodyKey] || ''}
+                                                    onChange={(val) => updateSetting(activeTemplateConfig.bodyKey, val)}
+                                                    placeholder={activeTemplateConfig.bodyPlaceholder}
+                                                    variables={activeTemplateConfig.variables}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </GlassCard>
 
-                                            <FormField label="Logo URL">
+                                {/* Preview & Test */}
+                                <GlassCard padding="p-6">
+                                    <div className="space-y-4">
+                                        <div className="settings-page__card-header">
+                                            <div className="settings-page__card-icon"><Send size={20} /></div>
+                                            <div>
+                                                <h3 className="settings-page__card-title">Preview & Test</h3>
+                                                <p className="settings-page__card-subtitle">Send test emails and preview templates</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-3 items-end">
+                                            <FormField label="Recipient Email" className="flex-1">
                                                 <TextInput
-                                                    value={data.settings.logo_url}
-                                                    onChange={(e) => updateSetting('logo_url', e.target.value)}
+                                                    value={testEmail}
+                                                    onChange={(e) => setTestEmail(e.target.value)}
+                                                    placeholder="test@example.com"
+                                                    type="email"
                                                 />
                                             </FormField>
+                                            <FormField label="Template">
+                                                <select
+                                                    value={testTemplate}
+                                                    onChange={(e) => setTestTemplate(e.target.value)}
+                                                    className="form-select"
+                                                >
+                                                    {EMAIL_TEMPLATES.map((t) => (
+                                                        <option key={t.id} value={t.id}>{t.name}</option>
+                                                    ))}
+                                                </select>
+                                            </FormField>
+                                            <PillButton variant="black" onClick={sendTestEmail}>
+                                                <Send size={14} className="mr-1.5" /> Send Test
+                                            </PillButton>
                                         </div>
-                                    </GlassCard>
 
-                                    <GlassCard padding="p-8">
-                                        <div className="space-y-8">
-                                            <div className="settings-page__card-header">
-                                                <div className="settings-page__card-icon"><Type size={24} /></div>
-                                                <div>
-                                                    <h3 className="settings-page__card-title">Email Content</h3>
-                                                    <p className="settings-page__card-subtitle">Customize template text</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="settings-page__template-section">
-                                                <h4 className="settings-page__template-title">Welcome Template</h4>
-                                                <FormField label="Subject">
-                                                    <TextInput
-                                                        value={data.settings.welcome_email_subject}
-                                                        onChange={(e) => updateSetting('welcome_email_subject', e.target.value)}
-                                                        placeholder="Welcome to TENA"
-                                                    />
-                                                </FormField>
-                                                <FormField label="Heading">
-                                                    <TextInput
-                                                        value={data.settings.welcome_email_heading}
-                                                        onChange={(e) => updateSetting('welcome_email_heading', e.target.value)}
-                                                        placeholder="Welcome home, {name}."
-                                                    />
-                                                </FormField>
-                                                <EmailTemplateEditor
-                                                    label="Body Text"
-                                                    value={data.settings.welcome_email_body}
-                                                    onChange={(val) => updateSetting('welcome_email_body', val)}
-                                                    placeholder="Customize the welcome message..."
-                                                    variables={[
-                                                        { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
-                                                        { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
-                                                        { key: 'Email', label: 'Email', description: 'Recipient email' },
-                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
-                                                        { key: 'Login URL', label: 'Login URL', description: 'Link to login page' },
-                                                    ]}
-                                                />
-                                            </div>
-
-                                            <div className="settings-page__template-section">
-                                                <h4 className="settings-page__template-title">Receipt Template</h4>
-                                                <FormField label="Heading">
-                                                    <TextInput
-                                                        value={data.settings.receipt_email_heading}
-                                                        onChange={(e) => updateSetting('receipt_email_heading', e.target.value)}
-                                                        placeholder="Payment Received."
-                                                    />
-                                                </FormField>
-                                                <EmailTemplateEditor
-                                                    label="Body Text"
-                                                    value={data.settings.receipt_email_body}
-                                                    onChange={(val) => updateSetting('receipt_email_body', val)}
-                                                    placeholder="Customize the receipt message..."
-                                                    variables={[
-                                                        { key: 'Name', label: 'Name', description: 'Recipient name' },
-                                                        { key: 'Amount', label: 'Amount', description: 'Payment amount' },
-                                                        { key: 'Transaction ID', label: 'Transaction ID', description: 'Transaction reference' },
-                                                        { key: 'Date', label: 'Date', description: 'Payment date' },
-                                                        { key: 'Plan Name', label: 'Plan Name', description: 'Subscription plan' },
-                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
-                                                    ]}
-                                                />
-                                            </div>
-
-                                            <div className="settings-page__template-section">
-                                                <h4 className="settings-page__template-title">Password Reset Template</h4>
-                                                <FormField label="Heading">
-                                                    <TextInput
-                                                        value={data.settings.forgot_password_email_heading}
-                                                        onChange={(e) => updateSetting('forgot_password_email_heading', e.target.value)}
-                                                        placeholder="Reset Request."
-                                                    />
-                                                </FormField>
-                                                <EmailTemplateEditor
-                                                    label="Body Text"
-                                                    value={data.settings.forgot_password_email_body}
-                                                    onChange={(val) => updateSetting('forgot_password_email_body', val)}
-                                                    placeholder="Customize the reset instructions..."
-                                                    variables={[
-                                                        { key: 'Name', label: 'Name', description: 'Recipient name' },
-                                                        { key: 'Reset URL', label: 'Reset URL', description: 'Password reset link' },
-                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
-                                                    ]}
-                                                />
-                                            </div>
-
-                                            <div className="settings-page__template-section">
-                                                <h4 className="settings-page__template-title">Waitlist Confirmation Template</h4>
-                                                <FormField label="Subject">
-                                                    <TextInput
-                                                        value={data.settings.waitlist_confirmation_subject || ''}
-                                                        onChange={(e) => updateSetting('waitlist_confirmation_subject', e.target.value)}
-                                                        placeholder="You're on the Tena waitlist!"
-                                                    />
-                                                </FormField>
-                                                <FormField label="Heading">
-                                                    <TextInput
-                                                        value={data.settings.waitlist_confirmation_heading || ''}
-                                                        onChange={(e) => updateSetting('waitlist_confirmation_heading', e.target.value)}
-                                                        placeholder="You're on the list!"
-                                                    />
-                                                </FormField>
-                                                <EmailTemplateEditor
-                                                    label="Body Text"
-                                                    value={data.settings.waitlist_confirmation_body || ''}
-                                                    onChange={(val) => updateSetting('waitlist_confirmation_body', val)}
-                                                    placeholder="Customize the confirmation message..."
-                                                    variables={[
-                                                        { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
-                                                        { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
-                                                        { key: 'Email', label: 'Email', description: 'Recipient email' },
-                                                        { key: 'Property Type', label: 'Property Type', description: 'Their property type' },
-                                                        { key: 'Units', label: 'Units', description: 'Number of units' },
-                                                        { key: 'Primary Platform', label: 'Primary Platform', description: 'Their booking platform' },
-                                                        { key: 'Biggest Challenge', label: 'Biggest Challenge', description: 'Their biggest challenge' },
-                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
-                                                    ]}
-                                                />
-                                            </div>
-
-                                            <div className="settings-page__template-section">
-                                                <h4 className="settings-page__template-title">Waitlist Welcome Template</h4>
-                                                <FormField label="Subject">
-                                                    <TextInput
-                                                        value={data.settings.waitlist_welcome_subject || ''}
-                                                        onChange={(e) => updateSetting('waitlist_welcome_subject', e.target.value)}
-                                                        placeholder="Welcome to the Tena Family!"
-                                                    />
-                                                </FormField>
-                                                <FormField label="Heading">
-                                                    <TextInput
-                                                        value={data.settings.waitlist_welcome_heading || ''}
-                                                        onChange={(e) => updateSetting('waitlist_welcome_heading', e.target.value)}
-                                                        placeholder="Welcome to the Tena Family!"
-                                                    />
-                                                </FormField>
-                                                <EmailTemplateEditor
-                                                    label="Body Text"
-                                                    value={data.settings.waitlist_welcome_body || ''}
-                                                    onChange={(val) => updateSetting('waitlist_welcome_body', val)}
-                                                    placeholder="Customize the welcome message..."
-                                                    variables={[
-                                                        { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
-                                                        { key: 'Last Name', label: 'Last Name', description: 'Recipient last name' },
-                                                        { key: 'Email', label: 'Email', description: 'Recipient email' },
-                                                        { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
-                                                        { key: 'Business Address', label: 'Business Address', description: 'Your business address' },
-                                                    ]}
-                                                />
-                                            </div>
-
-                                            <div className="settings-page__template-section">
-                                                <h4 className="settings-page__template-title">Send Test Email</h4>
-                                                <div className="flex gap-3 items-end">
-                                                    <FormField label="Recipient Email" className="flex-1">
-                                                        <TextInput
-                                                            value={testEmail}
-                                                            onChange={(e) => setTestEmail(e.target.value)}
-                                                            placeholder="test@example.com"
-                                                            type="email"
-                                                        />
-                                                    </FormField>
-                                                    <FormField label="Template">
-                                                        <select
-                                                            value={testTemplate}
-                                                            onChange={(e) => setTestTemplate(e.target.value)}
-                                                            className="form-select"
-                                                        >
-                                                            <option value="welcome">Welcome</option>
-                                                            <option value="password_changed">Password Changed</option>
-                                                            <option value="otp">OTP</option>
-                                                            <option value="receipt">Payment Receipt</option>
-                                                            <option value="waitlist_confirmation">Waitlist Confirmation</option>
-                                                            <option value="waitlist_welcome">Waitlist Welcome</option>
-                                                        </select>
-                                                    </FormField>
-                                                    <PillButton variant="black" onClick={sendTestEmail}>
-                                                        <Send size={14} className="mr-1.5" /> Send Test
-                                                    </PillButton>
-                                                </div>
-                                            </div>
+                                        <div className="flex gap-3 items-center pt-2">
+                                            <PillButton
+                                                variant="secondary"
+                                                onClick={() => setShowPreview(true)}
+                                                icon={<Eye size={16} />}
+                                            >
+                                                Preview Emails
+                                            </PillButton>
+                                            <span className="settings-page__preview-hint">
+                                                See how your emails will look to recipients
+                                            </span>
                                         </div>
-                                    </GlassCard>
-                                </div>
+                                    </div>
+                                </GlassCard>
                             </div>
                         )}
 

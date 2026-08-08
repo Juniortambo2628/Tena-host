@@ -5,6 +5,7 @@
         $logoUrl = $baseUrl . '/' . ltrim($logoUrl, '/');
     }
     $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
+    $headerBgColor = '#ffdb00';
 @endphp
 <!DOCTYPE html>
 <html>
@@ -36,7 +37,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <div class="header" style="background-color: {{ $headerBgColor }};">
             @if($logoUrl)
                 <img src="{{ $logoUrl }}" alt="{{ $site_name }}" class="logo" style="display:block;margin:0 auto 20px;">
             @endif
