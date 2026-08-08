@@ -72,8 +72,10 @@ class WaitlistConfirmationMail extends Mailable
     {
         $content = html_entity_decode($content);
         $content = str_replace(array_keys($replacements), array_values($replacements), $content);
+
         return preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
-            $key = '{{' . trim(strip_tags($matches[1])) . '}}';
+            $key = '{{'.trim(strip_tags($matches[1])).'}}';
+
             return $replacements[$key] ?? $matches[0];
         }, $content);
     }
