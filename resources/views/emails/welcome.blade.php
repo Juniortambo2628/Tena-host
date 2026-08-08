@@ -22,8 +22,19 @@
         '{{Business Name}}' => $businessName,
         '{{Business Address}}' => $businessAddress,
     ];
+    $customBody = html_entity_decode($customBody ?? '');
+    $customHeading = html_entity_decode($customHeading ?? '');
     $customBody = str_replace(array_keys($replacements), array_values($replacements), $customBody);
     $customHeading = str_replace(array_keys($replacements), array_values($replacements), $customHeading);
+
+    $customBody = preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
+        $key = '{{' . trim(strip_tags($matches[1])) . '}}';
+        return $replacements[$key] ?? $matches[0];
+    }, $customBody);
+    $customHeading = preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
+        $key = '{{' . trim(strip_tags($matches[1])) . '}}';
+        return $replacements[$key] ?? $matches[0];
+    }, $customHeading);
 @endphp
 <!DOCTYPE html>
 <html lang="en">

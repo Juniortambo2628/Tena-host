@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { notify } from '@/Components/Toast';
 import './EmailTemplateEditor.css';
 
 const QUILL_MODULES = {
@@ -48,12 +49,12 @@ export default function EmailTemplateEditor({
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            alert('Please select an image file.');
+            notify.error('Please select an image file.');
             return;
         }
 
         if (file.size > 5 * 1024 * 1024) {
-            alert('Image must be less than 5MB.');
+            notify.error('Image must be less than 5MB.');
             return;
         }
 
@@ -86,10 +87,10 @@ export default function EmailTemplateEditor({
                     quill.setSelection(insertIndex + 1);
                 }
             } else {
-                alert(data.message || 'Upload failed. Please try again.');
+                notify.error(data.message || 'Upload failed. Please try again.');
             }
         } catch (err) {
-            alert('Upload failed. Please check your connection and try again.');
+            notify.error('Upload failed. Please check your connection and try again.');
         } finally {
             setUploading(false);
             if (fileInputRef.current) {
@@ -132,9 +133,8 @@ export default function EmailTemplateEditor({
                     value={value || ''}
                     onChange={onChange}
                     modules={{
-                        ...QUILL_MODULES,
                         toolbar: {
-                            ...QUILL_MODULES.toolbar,
+                            container: QUILL_MODULES.toolbar,
                             handlers: {
                                 image: handleQuillImageHandler,
                             },

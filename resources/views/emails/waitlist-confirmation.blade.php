@@ -13,6 +13,9 @@
     }
     $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
 
+    $customBody = html_entity_decode($customBody ?? '');
+    $customHeading = html_entity_decode($customHeading ?? '');
+
     $replacements = [
         '{{First Name}}' => $firstName,
         '{{Last Name}}' => $lastName,
@@ -26,6 +29,17 @@
     ];
     $customBody = str_replace(array_keys($replacements), array_values($replacements), $customBody);
     $customHeading = str_replace(array_keys($replacements), array_values($replacements), $customHeading);
+
+    $customBody = preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
+        $key = '{{' . trim(strip_tags($matches[1])) . '}}';
+        return $replacements[$key] ?? $matches[0];
+    }, $customBody);
+    $customHeading = preg_replace_callback('/\{\{(.+?)\}\}/s', function ($matches) use ($replacements) {
+        $key = '{{' . trim(strip_tags($matches[1])) . '}}';
+        return $replacements[$key] ?? $matches[0];
+    }, $customHeading);
+
+    $hasCustomBody = filled(trim(strip_tags($customBody)));
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -45,35 +59,35 @@
                 <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333">
                     <p style="margin:0 0 16px">Hi {{ $firstName }},</p>
 
-                    @if($customBody)
+                    @if($hasCustomBody)
                         {!! $customBody !!}
                     @else
                         <p style="margin:0 0 16px">Thanks for joining the <strong>{{ $businessName }}</strong> waitlist! We're thrilled to have you on board.</p>
                         <p style="margin:0 0 16px">Here's a summary of what you told us:</p>
+
+                        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f8f8;border-radius:12px;margin-bottom:24px">
+                            <tr>
+                                <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Property Type</td>
+                                <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $propertyType }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Units</td>
+                                <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $units }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Primary Platform</td>
+                                <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $primaryPlatform }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px 20px;font-size:13px;color:#888">Biggest Challenge</td>
+                                <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333">{{ $biggestChallenge }}</td>
+                            </tr>
+                        </table>
+
+                        <p style="margin:0 0 16px">We're building something special for hosts like you, and your input matters. We'll keep you updated on our progress and let you know as soon as your spot is ready.</p>
+
+                        <p style="margin:0;font-size:14px;color:#888">In the meantime, feel free to reach out if you have any questions.</p>
                     @endif
-
-                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f8f8;border-radius:12px;margin-bottom:24px">
-                        <tr>
-                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Property Type</td>
-                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $propertyType }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Units</td>
-                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $units }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Primary Platform</td>
-                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $primaryPlatform }}</td>
-                        </tr>
-                        <tr>
-                            <td style="padding:12px 20px;font-size:13px;color:#888">Biggest Challenge</td>
-                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333">{{ $biggestChallenge }}</td>
-                        </tr>
-                    </table>
-
-                    <p style="margin:0 0 16px">We're building something special for hosts like you, and your input matters. We'll keep you updated on our progress and let you know as soon as your spot is ready.</p>
-
-                    <p style="margin:0;font-size:14px;color:#888">In the meantime, feel free to reach out if you have any questions.</p>
                 </td></tr>
                 <tr><td style="padding:0 40px 16px"><p style="margin:0;font-size:13px;color:#888">If you have any questions, reply to this email or contact our support team.</p></td></tr>
             </table>
