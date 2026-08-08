@@ -28,10 +28,12 @@ export default function EmailTemplateEditor({
     placeholder = 'Write your email content...',
     variables = [],
     hint,
+    imageMaxWidth: initialMaxWidth = 600,
 }) {
     const quillRef = useRef(null);
     const fileInputRef = useRef(null);
     const [uploading, setUploading] = useState(false);
+    const [imageMaxWidth, setImageMaxWidth] = useState(initialMaxWidth);
 
     const insertVariable = useCallback((variable) => {
         const quill = quillRef.current?.getEditor();
@@ -45,7 +47,8 @@ export default function EmailTemplateEditor({
         quill.focus();
     }, []);
 
-    const resizeImage = useCallback((file, maxWidth = 600) => {
+    const resizeImage = useCallback((file) => {
+        const maxWidth = parseInt(imageMaxWidth, 10) || 600;
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -69,7 +72,7 @@ export default function EmailTemplateEditor({
             };
             reader.readAsDataURL(file);
         });
-    }, []);
+    }, [imageMaxWidth]);
 
     const handleImageUpload = useCallback(async (e) => {
         const file = e.target.files?.[0];
@@ -136,6 +139,20 @@ export default function EmailTemplateEditor({
                     ))}
                 </div>
             )}
+
+            <div className="email-template-editor__resize-row">
+                <span className="email-template-editor__resize-label">Max image width:</span>
+                <input
+                    type="number"
+                    min="100"
+                    max="2000"
+                    step="50"
+                    value={imageMaxWidth}
+                    onChange={(e) => setImageMaxWidth(e.target.value)}
+                    className="email-template-editor__resize-input"
+                />
+                <span className="email-template-editor__resize-unit">px</span>
+            </div>
 
             <div className="email-template-editor__quill-wrap">
                 <ReactQuill
