@@ -1,0 +1,11 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    paths:
+        - app
+    level: 5
+    ignoreErrors:
+        - '#Unsafe call to static method#'
+        - '#Cannot call method#'
+        - '#Access to an undefined property#'

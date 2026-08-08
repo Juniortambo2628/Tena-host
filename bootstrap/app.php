@@ -10,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -47,6 +48,9 @@ return Application::configure(basePath: dirname(__DIR__))
             if (request()->expectsJson() || request()->header('X-Inertia') || request()->header('X-Requested-With')) {
                 if ($e instanceof AuthenticationException) {
                     return response()->json(['message' => 'Unauthenticated.'], 401);
+                }
+                if ($e instanceof ValidationException) {
+                    return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
                 }
                 $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
                 if ($status < 400) {
