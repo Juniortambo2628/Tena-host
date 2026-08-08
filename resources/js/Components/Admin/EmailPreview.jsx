@@ -83,15 +83,15 @@ export default function EmailPreview({ settings }) {
 
         const renderEmail = async () => {
             try {
-                const [{ render }, { default: SelectedTemplate }] = await Promise.all([
-                    import('@react-email/render'),
-                    emailComponents[activeTemplate]()
+                const [{ renderToString }] = await Promise.all([
+                    import('react-dom/server')
                 ]);
+                const { default: SelectedComponent } = await emailComponents[activeTemplate]();
                 if (cancelled) return;
-                const html = await render(React.createElement(SelectedTemplate, emailProps));
+                const html = renderToString(React.createElement(SelectedComponent, emailProps));
                 if (cancelled) return;
                 doc.open();
-                doc.write(html);
+                doc.write(`<!DOCTYPE html><html><head></head><body style="margin:0;padding:0;">${html}</body></html>`);
                 doc.close();
             } catch (err) {
                 if (cancelled) return;

@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import axios from 'axios';
 import { notify } from '@/Components/Toast';
 import './EmailTemplateEditor.css';
 
@@ -86,21 +87,11 @@ export default function EmailTemplateEditor({
             const formData = new FormData();
             formData.append('image', resized);
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-            const response = await fetch('/admin/email-images/upload', {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                },
-                body: formData,
+            const { data } = await axios.post('/admin/email-images/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            const data = await response.json();
-
-            if (response.ok && data.url) {
+            if (data?.url) {
                 const quill = quillRef.current?.getEditor();
                 if (quill) {
                     const range = quill.getSelection();
@@ -108,11 +99,9 @@ export default function EmailTemplateEditor({
                     quill.insertEmbed(insertIndex, 'image', data.url);
                     quill.setSelection(insertIndex + 1);
                 }
-            } else {
-                notify.error(data.message || 'Upload failed. Please try again.');
             }
         } catch (err) {
-            notify.error('Upload failed. Please check your connection and try again.');
+            notify.error(err.response?.data?.message || 'Upload failed. Please try again.');
         } finally {
             setUploading(false);
             if (fileInputRef.current) {
