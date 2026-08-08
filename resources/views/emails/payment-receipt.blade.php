@@ -15,7 +15,7 @@
     <title>Payment Receipt</title>
     <style>
         body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; }
-        .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
+        .container { max-width: 700px; margin: 0 auto; background: #ffffff; }
         .header { background-color: {{ $primary_color ?? '#000000' }}; padding: 40px 30px; text-align: center; }
         .logo { max-width: 120px; height: auto; margin-bottom: 20px; }
         .header h1 { color: {{ $accent_color ?? '#FFD300' }}; font-size: 24px; margin: 0; font-weight: 700; }

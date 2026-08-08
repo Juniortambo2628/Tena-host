@@ -24,8 +24,19 @@
         '{{Business Name}}' => $businessName ?? 'Tena',
         '{{Business Address}}' => $businessAddress ?? '',
     ];
-    $resolvedHeading = str_replace(array_keys($varReplacements), array_values($varReplacements), html_entity_decode($resolvedHeading));
-    $resolvedBody = str_replace(array_keys($varReplacements), array_values($varReplacements), html_entity_decode($resolvedBody));
+
+    $resolveVars = function ($text) use ($varReplacements) {
+        $text = html_entity_decode($text);
+        $text = str_replace(array_keys($varReplacements), array_values($varReplacements), $text);
+        $text = preg_replace_callback('/\{\{\s*(.+?)\s*\}\}/s', function ($m) use ($varReplacements) {
+            $key = '{{' . trim(strip_tags($m[1])) . '}}';
+            return $varReplacements[$key] ?? '';
+        }, $text);
+        return $text;
+    };
+
+    $resolvedHeading = $resolveVars($resolvedHeading);
+    $resolvedBody = $resolveVars($resolvedBody);
 
     $hasCustomBody = filled(trim(strip_tags($resolvedBody)));
 @endphp
@@ -39,12 +50,12 @@
 <body style="margin:0;padding:0;background-color:{{ $primaryColor }};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color:{{ $primaryColor }};padding:40px 20px;">
         <tr><td align="center">
-            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background-color:#fff;border-radius:16px;overflow:hidden;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:700px;background-color:#fff;border-radius:16px;overflow:hidden;">
                 @if($logoUrl)
                 <tr><td align="center" style="padding:32px 40px;background-color:{{ $headerBgColor }}"><img src="{{ $logoUrl }}" alt="{{ $businessName }}" height="48" style="display:block;" /></td></tr>
                 @endif
                 <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $resolvedHeading ?: 'Welcome to Tena' }}</h1></td></tr>
-                <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333">
+                <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333;max-width:600px;word-wrap:break-word">
                     <p style="margin:0 0 16px">Hello {{ $name ?? 'there' }},</p>
                     @if($hasCustomBody)
                         {!! $resolvedBody !!}
@@ -62,8 +73,8 @@
                 </td></tr>
                 <tr><td style="padding:0 40px 16px"><p style="margin:0;font-size:13px;color:#888">If you have any questions, reply to this email or contact our support team.</p></td></tr>
             </table>
-            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin-top:16px;">
-                <tr><td align="center" style="padding:0 0 8px;"><img src="{{ $footerImageUrl }}" alt="" width="560" style="display:block;width:100%;max-width:560px;height:auto;border-radius:12px;" /></td></tr>
+            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:700px;margin-top:16px;">
+                <tr><td align="center" style="padding:0 0 8px;"><img src="{{ $footerImageUrl }}" alt="" width="700" style="display:block;width:100%;max-width:700px;height:auto;border-radius:12px;" /></td></tr>
                 <tr><td align="center" style="padding:8px 20px 0"><p style="margin:0;font-size:11px;color:#aaa">{{ $businessName }} &middot; {{ $businessAddress }}</p></td></tr>
             </table>
         </td></tr>

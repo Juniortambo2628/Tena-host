@@ -21,8 +21,19 @@ class WaitlistWelcomeMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $replacements = [
+            '{{First Name}}' => $this->firstName,
+            '{{Last Name}}' => $this->lastName,
+            '{{Email}}' => $this->email,
+            '{{Business Name}}' => Setting::getValue('site_name', 'Tena'),
+            '{{Business Address}}' => Setting::getValue('business_address', 'Nairobi, Kenya'),
+        ];
+
         return new Envelope(
-            subject: Setting::getValue('waitlist_welcome_subject', 'Welcome to the Tena Family!'),
+            subject: $this->resolveVariables(
+                Setting::getValue('waitlist_welcome_subject', 'Welcome to the Tena Family!'),
+                $replacements
+            ),
         );
     }
 

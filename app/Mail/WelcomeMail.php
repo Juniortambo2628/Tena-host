@@ -20,8 +20,21 @@ class WelcomeMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $replacements = [
+            '{{First Name}}' => $this->name ?? 'there',
+            '{{Last Name}}' => '',
+            '{{Email}}' => '',
+            '{{Name}}' => $this->name ?? 'there',
+            '{{Login URL}}' => $this->actionUrl ?? '#',
+            '{{Business Name}}' => Setting::getValue('site_name', 'Tena'),
+            '{{Business Address}}' => Setting::getValue('business_address', 'Nairobi, Kenya'),
+        ];
+
         return new Envelope(
-            subject: Setting::getValue('welcome_email_subject', 'Welcome to TENA'),
+            subject: $this->resolveVariables(
+                Setting::getValue('welcome_email_subject', 'Welcome to TENA'),
+                $replacements
+            ),
         );
     }
 

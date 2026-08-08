@@ -25,8 +25,23 @@ class WaitlistConfirmationMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $replacements = [
+            '{{First Name}}' => $this->firstName,
+            '{{Last Name}}' => $this->lastName,
+            '{{Email}}' => $this->email,
+            '{{Property Type}}' => $this->propertyType,
+            '{{Units}}' => $this->units,
+            '{{Primary Platform}}' => $this->primaryPlatform,
+            '{{Biggest Challenge}}' => $this->biggestChallenge,
+            '{{Business Name}}' => Setting::getValue('site_name', 'Tena'),
+            '{{Business Address}}' => Setting::getValue('business_address', 'Nairobi, Kenya'),
+        ];
+
         return new Envelope(
-            subject: Setting::getValue('waitlist_confirmation_subject', "You're on the Tena waitlist!"),
+            subject: $this->resolveVariables(
+                Setting::getValue('waitlist_confirmation_subject', "You're on the Tena waitlist!"),
+                $replacements
+            ),
         );
     }
 
