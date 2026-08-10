@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SectionWrapper, TwoColumn } from './layouts';
 import { getContent, getMedia, extractJsonItems } from '@/lib/cms';
 import { SkeletonTwoColumn } from './Skeleton';
@@ -11,6 +11,24 @@ const defaultSections = [
     { id: 'sms-marketing', label: 'Tena SMS Marketing', heading: 'Engage Guests With Text Marketing & Review Screening', description: 'Leverage the power of SMS marketing with high open rates to drive bookings, collect reviews, and increase revenue.', image: '/legacy/assets/Tena-Landing/Tena-Welcome-Divine-1.jpg', bg: 'gray', reverse: true, features: [{ icon: 'fas fa-star', title: 'Rate & Review Campaigns', desc: 'Automate review collection and screen for 5-star reviews' }, { icon: 'fas fa-wifi', title: 'WiFi Welcome Messages', desc: 'Send personalized welcome texts' }, { icon: 'fas fa-comments', title: 'Group Messages', desc: 'Send targeted marketing messages to past guests' }] },
     { id: 'wifi-monitoring', label: 'WiFi Monitoring & Protection', heading: 'Reduce WiFi Issues & Protect Your Property', description: 'Deploy enterprise-grade WiFi 6 mesh networks. Ensure reliable connectivity while protecting your investment.', image: '/legacy/assets/Tena-Landing/Clients-view.jpg', bg: 'white', features: [{ icon: 'fas fa-plug', title: 'Plug & Play Set-Up', desc: 'Arrives ready to plug into your router' }, { icon: 'fas fa-wifi', title: 'Remote Outage Alerts', desc: 'Monitor networks from one screen' }, { icon: 'fas fa-user-shield', title: 'Occupancy Alerting', desc: 'Get alerted if guest count exceeds booking' }] },
 ];
+
+function FeatureImage({ src, alt, defaultSrc }) {
+    const [imgSrc, setImgSrc] = useState(src || defaultSrc);
+    const [tried, setTried] = useState(false);
+
+    return (
+        <img
+            src={imgSrc}
+            alt={alt}
+            onError={() => {
+                if (!tried && defaultSrc && imgSrc !== defaultSrc) {
+                    setTried(true);
+                    setImgSrc(defaultSrc);
+                }
+            }}
+        />
+    );
+}
 
 export default function DetailedFeatures({ onOpenWaitlist, section }) {
     if (!section) {
@@ -47,14 +65,14 @@ export default function DetailedFeatures({ onOpenWaitlist, section }) {
 
     return (
         <div className="detailed-features-wrapper">
-            {displaySections.map((s) => (
+            {displaySections.map((s, i) => (
                 <SectionWrapper key={s.id} id={s.id} bg={s.bg} padding="lg">
                     <TwoColumn
                         reverse={s.reverse}
                         label={s.label}
                         heading={s.heading}
                         description={s.description}
-                        image={<img src={s.image} alt={s.label} />}
+                        image={<FeatureImage src={s.image} alt={s.label} defaultSrc={defaultSections[i]?.image} />}
                         features={s.features}
                         cta={
                             <button onClick={onOpenWaitlist} className="btn-primary">
