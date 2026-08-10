@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Guest;
 use App\Models\Host;
-use App\Models\LandingMedia;
 use App\Models\LandingSection;
 use App\Models\PolicyDocument;
 use App\Models\Property;
 use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
 {
