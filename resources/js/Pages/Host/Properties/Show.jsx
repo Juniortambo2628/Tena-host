@@ -1,6 +1,7 @@
 import React from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -105,7 +106,10 @@ export default function PropertyShow({ property }) {
                         <button
                             onClick={() => {
                                 if (confirm(`Delete "${property.name}"? This will remove all associated guests and data. This cannot be undone.`)) {
-                                    router.delete(route('host.properties.destroy', property.id));
+                                    router.delete(route('host.properties.destroy', property.id), {
+                                        onSuccess: () => notify.success('Property deleted'),
+                                        onError: () => notify.error('Failed to delete property'),
+                                    });
                                 }
                             }}
                             className="w-full py-3 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-2"

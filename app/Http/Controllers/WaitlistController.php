@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\WaitlistConfirmationMail;
+use App\Mail\WaitlistWelcomeMail;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -65,22 +66,39 @@ class WaitlistController extends Controller
 
         RateLimiter::hit($key, 300);
 
-        // Send confirmation email (fire-and-forget, don't block the response)
-        if ($registration->wasRecentlyCreated) {
+        $isNew = $registration->wasRecentlyCreated;
+
+        // Send confirmation email
+        try {
+            Mail::to($validated['email'])->send(
+                new WaitlistConfirmationMail(
+                    firstName: $validated['first_name'],
+                    lastName: $validated['last_name'],
+                    email: $validated['email'],
+                    propertyType: $validated['property_type'],
+                    units: $validated['units'],
+                    primaryPlatform: $validated['primary_platform'],
+                    biggestChallenge: $validated['biggest_challenge'],
+                )
+            );
+            \Log::info("Waitlist confirmation email sent to {$validated['email']}");
+        } catch (\Throwable $e) {
+            \Log::error('Failed to send waitlist confirmation email: '.$e->getMessage());
+        }
+
+        // Send welcome email for new registrations
+        if ($isNew) {
             try {
                 Mail::to($validated['email'])->send(
-                    new WaitlistConfirmationMail(
+                    new WaitlistWelcomeMail(
                         firstName: $validated['first_name'],
                         lastName: $validated['last_name'],
                         email: $validated['email'],
-                        propertyType: $validated['property_type'],
-                        units: $validated['units'],
-                        primaryPlatform: $validated['primary_platform'],
-                        biggestChallenge: $validated['biggest_challenge'],
                     )
                 );
+                \Log::info("Waitlist welcome email sent to {$validated['email']}");
             } catch (\Throwable $e) {
-                \Log::warning('Failed to send waitlist confirmation email: '.$e->getMessage());
+                \Log::error('Failed to send waitlist welcome email: '.$e->getMessage());
             }
         }
 

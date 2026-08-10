@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\LandingController;
 use App\Http\Controllers\Admin\NotificationTestController;
 use App\Http\Controllers\Admin\PolicyDocumentController;
 use App\Http\Controllers\Admin\RegistrationController;
+use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\UserController;
@@ -51,6 +52,9 @@ Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.s
 // Admin Routes
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // Global Search
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
 
     // Admin Features
     Route::get('/hosts', [HostController::class, 'index'])->name('hosts.index');
@@ -110,6 +114,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
 // Host Routes
 Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->group(function () {
+    // Global Search
+    Route::get('/search', [SearchController::class, 'search'])->name('search');
+
     // Billing & Payments (Accessible to all authenticated hosts)
     Route::get('/billing', [SubscriptionController::class, 'index'])->name('billing.index');
     Route::post('/billing/paystack', [SubscriptionController::class, 'storePaystack'])->name('billing.paystack');

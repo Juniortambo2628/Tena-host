@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
+import BulkActions from '@/Components/Dashboard/BulkActions';
 import {
     Mail,
     MessageSquare,
@@ -19,11 +20,24 @@ import {
     Trash2,
     Pause,
     Zap,
-    ArrowUpRight
+    ArrowUpRight,
+    Search
 } from 'lucide-react';
 import './Index.css';
 
 export default function MarketingIndex({ campaigns, stats }) {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedIds, setSelectedIds] = useState([]);
+
+    const filteredCampaigns = useMemo(() => {
+        if (!searchQuery.trim()) return campaigns;
+        const q = searchQuery.toLowerCase();
+        return campaigns.filter(c =>
+            c.name?.toLowerCase().includes(q) ||
+            c.type?.toLowerCase().includes(q) ||
+            c.status?.toLowerCase().includes(q)
+        );
+    }, [campaigns, searchQuery]);
     const breadcrumbs = [{ label: 'Marketing' }];
 
     const actions = [
@@ -54,7 +68,19 @@ export default function MarketingIndex({ campaigns, stats }) {
                     <GlassCard padding="p-0 overflow-hidden">
                         <div className="host-marketing-index-table-header">
                             <h3 className="host-marketing-index-table-title">Active Campaigns</h3>
-                            <button className="host-marketing-index-view-all">View All</button>
+                            <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2 bg-black/5 px-3 py-2 rounded-xl">
+                                    <Search size={14} className="text-black/30" />
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="Search campaigns..."
+                                        className="bg-transparent border-none p-0 text-xs font-bold placeholder:text-black/30 focus:ring-0 w-40"
+                                    />
+                                </div>
+                                <button className="host-marketing-index-view-all">View All</button>
+                            </div>
                         </div>
 
                         <div className="host-marketing-index-table-wrapper">
@@ -69,7 +95,7 @@ export default function MarketingIndex({ campaigns, stats }) {
                                     </tr>
                                 </thead>
                                 <tbody className="host-marketing-index-table-body">
-                                    {campaigns.map((campaign) => (
+                                    {filteredCampaigns.map((campaign) => (
                                         <tr key={campaign.id} className="host-marketing-index-table-row">
                                             <td className="host-marketing-index-table-cell">
                                                 <div className="host-marketing-index-campaign-info">
@@ -110,7 +136,11 @@ export default function MarketingIndex({ campaigns, stats }) {
                                                     </button>
                                                     {campaign.status !== 'Active' && (
                                                         <button
-                                                            onClick={() => router.post(route('host.marketing.activate', campaign.id), {}, { preserveScroll: true })}
+                                                            onClick={() => router.post(route('host.marketing.activate', campaign.id), {}, {
+                                                                preserveScroll: true,
+                                                                onSuccess: () => notify.success('Campaign activated'),
+                                                                onError: () => notify.error('Failed to activate campaign'),
+                                                            })}
                                                             className="host-marketing-index-action-btn-green"
                                                             title="Activate & Send"
                                                         >
@@ -119,7 +149,11 @@ export default function MarketingIndex({ campaigns, stats }) {
                                                     )}
                                                     {campaign.status === 'Active' && (
                                                         <button
-                                                            onClick={() => router.post(route('host.marketing.pause', campaign.id), {}, { preserveScroll: true })}
+                                                            onClick={() => router.post(route('host.marketing.pause', campaign.id), {}, {
+                                                                preserveScroll: true,
+                                                                onSuccess: () => notify.success('Campaign paused'),
+                                                                onError: () => notify.error('Failed to pause campaign'),
+                                                            })}
                                                             className="host-marketing-index-action-btn"
                                                             title="Pause Campaign"
                                                         >
@@ -129,7 +163,11 @@ export default function MarketingIndex({ campaigns, stats }) {
                                                     <button
                                                         onClick={() => {
                                                             if (confirm('Are you sure you want to delete ' + campaign.name + '?')) {
-                                                                router.delete(route('host.marketing.destroy', campaign.id), { preserveScroll: true });
+                                                                router.delete(route('host.marketing.destroy', campaign.id), {
+                                                                    preserveScroll: true,
+                                                                    onSuccess: () => notify.success('Campaign deleted'),
+                                                                    onError: () => notify.error('Failed to delete campaign'),
+                                                                });
                                                             }
                                                         }}
                                                         className="host-marketing-index-action-btn-red"

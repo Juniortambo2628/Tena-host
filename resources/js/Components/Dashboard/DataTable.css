@@ -56,8 +56,21 @@
     @apply hover:bg-black/[0.02] transition-colors;
 }
 
+.data-table__row--selected {
+    @apply bg-[#FFD300]/5 hover:bg-[#FFD300]/10;
+}
+
 .data-table__cell {
     @apply px-4 py-3 text-sm font-medium text-black/80;
+}
+
+.data-table__cell--checkbox,
+.data-table__header-cell--checkbox {
+    @apply w-10 text-center cursor-default;
+}
+
+.data-table__checkbox {
+    @apply w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20 focus:ring-offset-0 cursor-pointer;
 }
 
 .data-table__empty-cell {

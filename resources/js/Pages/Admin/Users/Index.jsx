@@ -1,16 +1,25 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { User, Search, Eye, Trash2 } from 'lucide-react';
 import DataTable from '@/Components/Dashboard/DataTable';
-import ServerPagination from '@/Components/Dashboard/ServerPagination';
+import BulkActions from '@/Components/Dashboard/BulkActions';
+import { User, Eye, Trash2, Download } from 'lucide-react';
 import StatusBadge from '@/Components/Dashboard/StatusBadge';
 import './Index.css';
 
-export default function Index({ users }) {
+export default function Index({ users, stats }) {
     const data = useMemo(() => users.data || users, [users]);
+    const [selectedRows, setSelectedRows] = useState([]);
+
+    const summaryStats = useMemo(() => [
+        { label: 'Total Users', value: stats?.total ?? data.length },
+        { label: 'Active', value: stats?.active ?? data.filter(u => u.role === 'host').length },
+        { label: 'Admins', value: stats?.admins ?? data.filter(u => u.role === 'admin').length },
+        { label: 'New This Month', value: stats?.new_month ?? 0 },
+    ], [data, stats]);
 
     const columns = useMemo(() => [
         {
@@ -36,14 +45,9 @@ export default function Index({ users }) {
             )
         },
         {
-            header: 'Status',
-            accessorKey: 'email_verified_at',
-            cell: info => {
-                const verified = info.getValue();
-                return (
-                    <StatusBadge status={info.row.original.role} />
-                );
-            }
+            header: 'Role',
+            accessorKey: 'role',
+            cell: info => <StatusBadge status={info.getValue()} />
         },
         {
             header: 'Joined',
@@ -55,6 +59,7 @@ export default function Index({ users }) {
         {
             header: 'Actions',
             id: 'actions',
+            enableSorting: false,
             cell: info => {
                 const user = info.row.original;
                 return (
@@ -69,7 +74,11 @@ export default function Index({ users }) {
                         <button
                             onClick={() => {
                                 if (confirm(`Delete user "${user.first_name} ${user.last_name}"?`)) {
-                                    router.delete(route('admin.users.destroy', user.id), { preserveScroll: true });
+                                    router.delete(route('admin.users.destroy', user.id), {
+                                        preserveScroll: true,
+                                        onSuccess: () => notify.success('User deleted'),
+                                        onError: () => notify.error('Failed to delete user'),
+                                    });
                                 }
                             }}
                             className="p-2 hover:bg-red-50 rounded-lg text-black/40 hover:text-red-500 transition-colors"
@@ -83,6 +92,23 @@ export default function Index({ users }) {
         }
     ], []);
 
+    const bulkActions = [
+        {
+            label: 'Delete',
+            icon: <Trash2 size={16} />,
+            variant: 'danger',
+            onClick: () => {
+                if (confirm(`Delete ${selectedRows.length} user(s)?`)) {
+                    selectedRows.forEach(id => {
+                        router.delete(route('admin.users.destroy', id), { preserveScroll: true });
+                    });
+                    notify.success(`${selectedRows.length} user(s) deleted`);
+                    setSelectedRows([]);
+                }
+            },
+        },
+    ];
+
     return (
         <DashboardLayout title="User Management">
             <Head title="Users" />
@@ -91,15 +117,26 @@ export default function Index({ users }) {
                 subtitle="Manage registered guests"
                 breadcrumbs={[{ label: 'Users', href: route('admin.users.index') }]}
                 rootRoute="admin.dashboard"
+                stats={summaryStats}
             />
 
             <GlassCard padding="p-0 overflow-hidden">
-                <div className="border-b border-black/5">
-                    <DataTable data={data} columns={columns} searchPlaceholder="Search guests..." />
-                </div>
-                {/* Server Side Pagination Links */}
-                <ServerPagination links={users.links} className="justify-center mt-6" />
+                <DataTable
+                    data={data}
+                    columns={columns}
+                    searchPlaceholder="Search users..."
+                    serverPagination={users}
+                    enableSelection
+                    onSelectionChange={setSelectedRows}
+                />
             </GlassCard>
+
+            <BulkActions
+                selectedCount={selectedRows.length}
+                onSelectionChange={setSelectedRows}
+                onClearSelection={() => setSelectedRows([])}
+                actions={bulkActions}
+            />
         </DashboardLayout>
     );
 }

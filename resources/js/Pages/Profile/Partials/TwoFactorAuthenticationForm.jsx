@@ -27,6 +27,8 @@ export default function TwoFactorAuthenticationForm({
             router.post(route('profile.two-factor.disable'), {}, {
                 preserveScroll: true,
                 onFinish: () => setProcessing(false),
+                onSuccess: () => notify.success('Two-factor authentication disabled'),
+                onError: () => notify.error('Failed to disable two-factor authentication'),
             });
         }
     };
@@ -47,6 +49,8 @@ export default function TwoFactorAuthenticationForm({
                 setShowConfirm(false);
                 setCode('');
             },
+            onSuccess: () => notify.success('Two-factor authentication enabled'),
+            onError: () => notify.error('Invalid verification code. Please try again.'),
         });
     };
 

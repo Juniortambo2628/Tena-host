@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, Link, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -258,7 +259,10 @@ export default function PropertyIndex({ properties }) {
                             <button
                                 onClick={() => {
                                     if (confirm(`Delete "${property.name}"? This cannot be undone.`)) {
-                                        router.delete(route('host.properties.destroy', property.id));
+                                        router.delete(route('host.properties.destroy', property.id), {
+                                            onSuccess: () => notify.success('Property deleted'),
+                                            onError: () => notify.error('Failed to delete property'),
+                                        });
                                     }
                                 }}
                                 className="w-14 h-14 bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl flex items-center justify-center text-black/20 hover:text-red-500 hover:bg-white transition-all active:scale-90"

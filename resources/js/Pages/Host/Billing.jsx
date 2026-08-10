@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, useForm, usePage, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { CreditCard, Smartphone, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import './Billing.css';
@@ -55,6 +56,8 @@ export default function Billing({ paystackPublicKey, subscription, mpesaTransact
                     amount: 6500,
                 }, {
                     onFinish: () => setProcessing(false),
+                    onSuccess: () => notify.success('Payment processed successfully'),
+                    onError: () => notify.error('Payment processing failed. Please try again.'),
                 });
             },
             onClose: function() {

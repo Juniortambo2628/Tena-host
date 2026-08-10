@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link, usePage, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard,
@@ -21,10 +21,12 @@ import {
     Activity,
     CreditCard,
     Globe,
-    FileText
+    FileText,
+    Home,
+    Clipboard,
+    Loader2,
 } from 'lucide-react';
 import { Menu, Transition, Dialog } from '@headlessui/react';
-import { router } from '@inertiajs/react';
 import { safeRoute, hasRoute } from '@/lib/route';
 import './DashboardLayout.css';
 
@@ -63,6 +65,77 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
     const navItems = userRole === 'admin' ? adminNavItems : (userRole === 'staff' ? staffNavItems : hostNavItems);
 
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [recentSearches, setRecentSearches] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('tena_recent_searches') || '[]'); } catch { return []; }
+    });
+    const searchTimeoutRef = useRef(null);
+    const searchInputRef = useRef(null);
+
+    const iconMap = {
+        user: User,
+        building: Building2,
+        home: Home,
+        users: Users,
+        clipboard: Clipboard,
+        file: FileText,
+        globe: Globe,
+    };
+
+    const performSearch = useCallback(async (q) => {
+        if (!q || q.length < 2) {
+            setSearchResults([]);
+            setSearchLoading(false);
+            return;
+        }
+        setSearchLoading(true);
+        try {
+            const res = await fetch(route(userRole === 'admin' ? 'admin.search' : 'host.search') + '?q=' + encodeURIComponent(q), {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setSearchResults(data.results || []);
+            }
+        } catch {
+            setSearchResults([]);
+        } finally {
+            setSearchLoading(false);
+        }
+    }, [userRole]);
+
+    useEffect(() => {
+        if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+        if (searchQuery.length >= 2) {
+            setSearchLoading(true);
+            searchTimeoutRef.current = setTimeout(() => performSearch(searchQuery), 300);
+        } else {
+            setSearchResults([]);
+            setSearchLoading(false);
+        }
+        return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
+    }, [searchQuery, performSearch]);
+
+    useEffect(() => {
+        if (isSearchOpen && searchInputRef.current) {
+            setTimeout(() => searchInputRef.current?.focus(), 100);
+        }
+        if (!isSearchOpen) {
+            setSearchQuery('');
+            setSearchResults([]);
+        }
+    }, [isSearchOpen]);
+
+    const handleSearchSelect = (result) => {
+        const recent = recentSearches.filter(r => !(r.id === result.id && r.type === result.type));
+        recent.unshift(result);
+        setRecentSearches(recent.slice(0, 5));
+        localStorage.setItem('tena_recent_searches', JSON.stringify(recent.slice(0, 5)));
+        setIsSearchOpen(false);
+        router.get(result.url);
+    };
 
     const logout = (e) => {
         e.preventDefault();
@@ -88,7 +161,6 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                             alt="TENA Logo"
                             className="dashboard-layout__logo"
                         />
-                        <span className="dashboard-layout__brand-text">TENA</span>
                     </Link>
                 </div>
 
@@ -334,11 +406,15 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                         <div className="dashboard-layout__search-input-group group">
                                             <Search size={24} className="dashboard-layout__search-icon" />
                                             <input
+                                                ref={searchInputRef}
                                                 autoFocus
                                                 type="text"
-                                                placeholder="Search for guests, properties, or campaigns..."
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                placeholder="Search guests, properties, campaigns..."
                                                 className="dashboard-layout__search-input"
                                             />
+                                            {searchLoading && <Loader2 size={18} className="dashboard-layout__search-spinner animate-spin" />}
                                             <button
                                                 onClick={() => setIsSearchOpen(false)}
                                                 className="dashboard-layout__search-close"
@@ -347,28 +423,93 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                             </button>
                                         </div>
 
-                                        <div className="dashboard-layout__search-sections">
-                                            <div>
-                                                <h3 className="dashboard-layout__search-section-title">Recent Searches</h3>
-                                                <div className="dashboard-layout__quick-search-grid">
-                                                    <QuickSearchItem icon={<Users size={14} />} label="John Doe (Guest)" />
-                                                    <QuickSearchItem icon={<Megaphone size={14} />} label="Welcome Email" />
-                                                </div>
-                                            </div>
+                                        <div className="dashboard-layout__search-sections custom-scrollbar">
+                                            {searchQuery.length >= 2 ? (
+                                                searchResults.length > 0 ? (
+                                                    <div>
+                                                        <h3 className="dashboard-layout__search-section-title">Results</h3>
+                                                        <div className="dashboard-layout__results-list">
+                                                            {searchResults.map((result, idx) => {
+                                                                const Icon = iconMap[result.icon] || User;
+                                                                return (
+                                                                    <button
+                                                                        key={`${result.type}-${result.id}-${idx}`}
+                                                                        onClick={() => handleSearchSelect(result)}
+                                                                        className="dashboard-layout__result-item"
+                                                                    >
+                                                                        <div className="dashboard-layout__result-icon">
+                                                                            <Icon size={16} />
+                                                                        </div>
+                                                                        <div className="dashboard-layout__result-info">
+                                                                            <span className="dashboard-layout__result-title">{result.title}</span>
+                                                                            <span className="dashboard-layout__result-subtitle">{result.subtitle}</span>
+                                                                        </div>
+                                                                        <span className="dashboard-layout__result-type">{result.type}</span>
+                                                                    </button>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="dashboard-layout__search-empty">
+                                                        <Search size={32} className="text-black/10 mb-3" />
+                                                        <p className="text-sm text-black/40">No results for "{searchQuery}"</p>
+                                                    </div>
+                                                )
+                                            ) : (
+                                                <>
+                                                    {recentSearches.length > 0 && (
+                                                        <div>
+                                                            <h3 className="dashboard-layout__search-section-title">Recent Searches</h3>
+                                                            <div className="dashboard-layout__results-list">
+                                                                {recentSearches.map((result, idx) => {
+                                                                    const Icon = iconMap[result.icon] || User;
+                                                                    return (
+                                                                        <button
+                                                                            key={`recent-${idx}`}
+                                                                            onClick={() => handleSearchSelect(result)}
+                                                                            className="dashboard-layout__result-item"
+                                                                        >
+                                                                            <div className="dashboard-layout__result-icon">
+                                                                                <Icon size={16} />
+                                                                            </div>
+                                                                            <div className="dashboard-layout__result-info">
+                                                                                <span className="dashboard-layout__result-title">{result.title}</span>
+                                                                                <span className="dashboard-layout__result-subtitle">{result.subtitle}</span>
+                                                                            </div>
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    )}
 
-                                            <div>
-                                                <h3 className="dashboard-layout__search-section-title">Quick Commands</h3>
-                                                <div className="dashboard-layout__command-list">
-                                                    <CommandItem icon={<Plus size={14} />} label="Add New Property" shortcut="⌘P" />
-                                                    <CommandItem icon={<Plus size={14} />} label="Create Campaign" shortcut="⌘C" />
-                                                    <CommandItem icon={<Wifi size={14} />} label="Check WiFi Status" shortcut="⌘W" />
-                                                </div>
-                                            </div>
+                                                    <div>
+                                                        <h3 className="dashboard-layout__search-section-title">Quick Actions</h3>
+                                                        <div className="dashboard-layout__command-list">
+                                                            {userRole === 'admin' && (
+                                                                <>
+                                                                    <CommandItem icon={<Building2 size={14} />} label="Manage Hosts" onClick={() => { setIsSearchOpen(false); router.get(route('admin.hosts.index')); }} />
+                                                                    <CommandItem icon={<Users size={14} />} label="Manage Users" onClick={() => { setIsSearchOpen(false); router.get(route('admin.users.index')); }} />
+                                                                    <CommandItem icon={<Globe size={14} />} label="Landing Page" onClick={() => { setIsSearchOpen(false); router.get(route('admin.landing.index')); }} />
+                                                                </>
+                                                            )}
+                                                            {userRole === 'host' && (
+                                                                <>
+                                                                    <CommandItem icon={<Users size={14} />} label="Guest List" onClick={() => { setIsSearchOpen(false); router.get(route('host.guests.index')); }} />
+                                                                    <CommandItem icon={<Home size={14} />} label="Properties" onClick={() => { setIsSearchOpen(false); router.get(route('host.properties.index')); }} />
+                                                                    <CommandItem icon={<Megaphone size={14} />} label="Marketing" onClick={() => { setIsSearchOpen(false); router.get(route('host.marketing.index')); }} />
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="dashboard-layout__search-footer">
                                         <div className="dashboard-layout__search-footer-hints">
-                                            <span className="dashboard-layout__search-footer-hint">Enter to select</span>
+                                            <span className="dashboard-layout__search-footer-hint">Type to search</span>
                                             <span className="dashboard-layout__search-footer-hint">Esc to close</span>
                                         </div>
                                         <div className="dashboard-layout__search-footer-powered">
@@ -386,25 +527,13 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
     );
 }
 
-function QuickSearchItem({ icon, label }) {
+function CommandItem({ icon, label, onClick }) {
     return (
-        <button className="dashboard-layout__quick-search-item group">
-            <div className="dashboard-layout__quick-search-icon">
-                {icon}
-            </div>
-            <span className="dashboard-layout__quick-search-label">{label}</span>
-        </button>
-    );
-}
-
-function CommandItem({ icon, label, shortcut }) {
-    return (
-        <button className="dashboard-layout__command-item group">
+        <button onClick={onClick} className="dashboard-layout__command-item group">
             <div className="dashboard-layout__command-item-left">
                 <div className="dashboard-layout__command-item-icon">{icon}</div>
                 <span className="dashboard-layout__command-item-label">{label}</span>
             </div>
-            <span className="dashboard-layout__command-item-shortcut">{shortcut}</span>
         </button>
     );
 }

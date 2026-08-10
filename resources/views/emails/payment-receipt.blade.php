@@ -13,6 +13,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Receipt</title>
+    <!--[if mso]>
+    <style>table,td,p,a,span{font-family:Arial,sans-serif !important;}</style>
+    <![endif]-->
     <style>
         body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8f9fa; }
         .container { max-width: 700px; margin: 0 auto; background: #ffffff; }
@@ -27,12 +30,13 @@
         .receipt-label { color: #666; font-size: 14px; }
         .receipt-value { color: #333; font-size: 14px; font-weight: 600; }
         .amount-highlight { font-size: 28px; color: {{ $primary_color ?? '#000000' }}; font-weight: 700; text-align: center; margin: 24px 0; }
-        .message { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+        .message { color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 24px; word-wrap: break-word; overflow-wrap: break-word; word-break: normal; }
         .footer-banner { padding: 0 30px 16px; text-align: center; }
         .footer-banner img { width: 100%; max-width: 540px; height: auto; border-radius: 12px; }
         .footer { background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e9ecef; }
         .footer-text { color: #999; font-size: 12px; margin: 0; }
         .footer-link { color: {{ $primary_color ?? '#000000' }}; text-decoration: none; }
+        p, td, div, li { word-wrap: break-word; overflow-wrap: break-word; word-break: normal; }
     </style>
 </head>
 <body>

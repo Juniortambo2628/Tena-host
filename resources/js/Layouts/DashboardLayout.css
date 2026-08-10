@@ -23,15 +23,15 @@
 }
 
 .dashboard-layout__brand {
-    @apply p-6;
+    @apply p-6 flex justify-center;
 }
 
 .dashboard-layout__brand-link {
-    @apply flex items-center gap-3;
+    @apply flex items-center justify-center;
 }
 
 .dashboard-layout__logo {
-    @apply w-12 h-12 rounded-xl shadow-md border border-black/5;
+    @apply w-16 h-16 rounded-2xl shadow-lg border border-black/5;
 }
 
 .dashboard-layout__brand-text {
@@ -372,6 +372,42 @@
 
 .dashboard-layout__command-list {
     @apply space-y-2;
+}
+
+.dashboard-layout__results-list {
+    @apply space-y-1;
+}
+
+.dashboard-layout__result-item {
+    @apply flex items-center gap-4 w-full px-4 py-3 hover:bg-black/5 transition-colors rounded-2xl text-left;
+}
+
+.dashboard-layout__result-icon {
+    @apply w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center text-black/30 flex-shrink-0;
+}
+
+.dashboard-layout__result-info {
+    @apply flex-1 min-w-0;
+}
+
+.dashboard-layout__result-title {
+    @apply text-sm font-bold text-black/80 block truncate;
+}
+
+.dashboard-layout__result-subtitle {
+    @apply text-[10px] font-semibold text-black/30 block truncate;
+}
+
+.dashboard-layout__result-type {
+    @apply text-[10px] font-bold text-black/20 uppercase tracking-widest px-3 py-1 bg-black/5 rounded-full flex-shrink-0;
+}
+
+.dashboard-layout__search-empty {
+    @apply flex flex-col items-center justify-center py-12;
+}
+
+.dashboard-layout__search-spinner {
+    @apply text-black/20 flex-shrink-0;
 }
 
 .dashboard-layout__command-item {

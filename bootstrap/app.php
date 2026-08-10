@@ -45,7 +45,11 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
         });
         $exceptions->renderable(function (Throwable $e) {
-            if (request()->expectsJson() || request()->header('X-Inertia') || request()->header('X-Requested-With')) {
+            if ($e instanceof ValidationException && request()->header('X-Inertia')) {
+                return back()->withErrors($e->errors())->withInput();
+            }
+
+            if (request()->expectsJson() || request()->header('X-Requested-With')) {
                 if ($e instanceof AuthenticationException) {
                     return response()->json(['message' => 'Unauthenticated.'], 401);
                 }

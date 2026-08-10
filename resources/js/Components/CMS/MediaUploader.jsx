@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import { Search } from 'lucide-react';
 import './MediaUploader.css';
 
@@ -134,6 +135,7 @@ export default function MediaUploader({
             onSuccess: () => {
                 if (onUpload) onUpload(item);
             },
+            onError: () => notify.error('Failed to assign media from library'),
         });
     };
 

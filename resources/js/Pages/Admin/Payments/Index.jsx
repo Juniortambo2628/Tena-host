@@ -4,6 +4,7 @@ import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import BulkActions from '@/Components/Dashboard/BulkActions';
 import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { CreditCard, DollarSign, Clock, CheckCircle2, AlertCircle, Search, Users } from 'lucide-react';
 import './Index.css';
@@ -17,6 +18,7 @@ const statusColors = {
 export default function PaymentIndex({ transactions, stats, filters }) {
     const [search, setSearch] = useState(filters.search || '');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const handleSearch = (value) => {
         setSearch(value);
@@ -143,11 +145,21 @@ export default function PaymentIndex({ transactions, stats, filters }) {
                     subtitleField={(item) => item.user?.name || 'Unknown'}
                     detailTitle="Transaction Details"
                     emptyMessage="No transactions found"
+                    enableSelection
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    onSearch={handleSearch}
+                    searchPlaceholder="Search transactions..."
                 />
             </GlassCard>
 
-            {/* Pagination */}
             <ServerPagination links={transactions.links} className="justify-center mt-6" />
+
+            <BulkActions
+                selectedCount={selectedIds.length}
+                onClearSelection={() => setSelectedIds([])}
+                actions={[]}
+            />
         </PageShell>
     );
 }

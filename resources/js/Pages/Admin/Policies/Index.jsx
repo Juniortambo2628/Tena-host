@@ -4,6 +4,7 @@ import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import BulkActions from '@/Components/Dashboard/BulkActions';
 import { FileText, Plus, Eye, Edit3, Trash2, ToggleLeft, ToggleRight, Shield, Cookie, AlertCircle, HandshakeIcon } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import { safeRoute } from '@/lib/route';
@@ -30,13 +31,13 @@ const typeIcons = {
 };
 
 export default function PolicyIndex({ policies }) {
+    const [selectedIds, setSelectedIds] = useState([]);
+
     const handleDelete = (policy) => {
-        if (confirm(`Delete "${policy.title}"? This action cannot be undone.`)) {
-            router.delete(route('admin.policies.destroy', policy.slug), {
-                onSuccess: () => notify.success('Policy deleted.'),
-                onError: () => notify.error('Failed to delete policy.'),
-            });
-        }
+        router.delete(route('admin.policies.destroy', policy.slug), {
+            onSuccess: () => notify.success('Policy deleted.'),
+            onError: () => notify.error('Failed to delete policy.'),
+        });
     };
 
     const handleTogglePublish = (policy) => {
@@ -120,11 +121,49 @@ export default function PolicyIndex({ policies }) {
         },
     ];
 
+    const publishedCount = policies.filter(p => p.is_published).length;
+    const draftCount = policies.filter(p => !p.is_published).length;
+
+    const bulkActions = [
+        {
+            label: 'Publish',
+            icon: <ToggleRight size={16} />,
+            variant: 'success',
+            onClick: () => {
+                selectedIds.forEach(id => {
+                    const policy = policies.find(p => p.id === id);
+                    if (policy && !policy.is_published) handleTogglePublish(policy);
+                });
+                notify.success(`${selectedIds.length} policy(ies) published`);
+                setSelectedIds([]);
+            },
+        },
+        {
+            label: 'Delete',
+            icon: <Trash2 size={16} />,
+            variant: 'danger',
+            onClick: () => {
+                if (confirm(`Delete ${selectedIds.length} policy(ies)?`)) {
+                    selectedIds.forEach(id => {
+                        const policy = policies.find(p => p.id === id);
+                        if (policy) handleDelete(policy);
+                    });
+                    setSelectedIds([]);
+                }
+            },
+        },
+    ];
+
     return (
         <PageShell
             title="Policies & Terms"
             breadcrumbs={[{ label: 'Policies', href: safeRoute('admin.policies.index') }]}
             rootRoute="admin.dashboard"
+            stats={[
+                { label: 'Total', value: policies.length },
+                { label: 'Published', value: publishedCount },
+                { label: 'Drafts', value: draftCount },
+            ]}
             actions={[
                 { label: 'New Policy', onClick: () => router.visit(route('admin.policies.create')), variant: 'black', icon: <Plus size={16} /> },
             ]}
@@ -139,8 +178,18 @@ export default function PolicyIndex({ policies }) {
                     subtitleField={(item) => typeLabels[item.type]}
                     detailTitle="Policy Details"
                     emptyMessage="No policies created yet"
+                    enableSelection
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    searchPlaceholder="Search policies..."
                 />
             </GlassCard>
+
+            <BulkActions
+                selectedCount={selectedIds.length}
+                onClearSelection={() => setSelectedIds([])}
+                actions={bulkActions}
+            />
         </PageShell>
     );
 }

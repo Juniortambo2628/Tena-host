@@ -1,0 +1,67 @@
+@reference "tailwindcss";
+
+.bulk-actions {
+    @apply fixed bottom-6 left-1/2 -translate-x-1/2 z-50;
+}
+
+.bulk-actions__inner {
+    @apply flex items-center gap-4 px-6 py-3 bg-[#1b1b1b] text-white rounded-2xl shadow-2xl shadow-black/20;
+    @apply border border-white/10 backdrop-blur-xl;
+}
+
+.bulk-actions__info {
+    @apply flex items-center gap-3;
+}
+
+.bulk-actions__count {
+    @apply flex items-center gap-2 text-sm;
+}
+
+.bulk-actions__count-text {
+    @apply text-white/80;
+}
+
+.bulk-actions__count-text strong {
+    @apply text-[#FFD300] font-bold;
+}
+
+.bulk-actions__clear {
+    @apply flex items-center gap-1 text-xs text-white/40 hover:text-white/80 transition-colors px-2 py-1 rounded-lg hover:bg-white/10;
+}
+
+.bulk-actions__divider {
+    @apply w-px h-6 bg-white/10;
+}
+
+.bulk-actions__buttons {
+    @apply flex items-center gap-2;
+}
+
+.bulk-actions__btn {
+    @apply flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-xl transition-all;
+    @apply hover:scale-105 active:scale-95;
+}
+
+.bulk-actions__btn--default {
+    @apply bg-white/10 text-white hover:bg-white/20;
+}
+
+.bulk-actions__btn--danger {
+    @apply bg-red-500/20 text-red-400 hover:bg-red-500/30;
+}
+
+.bulk-actions__btn--primary {
+    @apply bg-[#FFD300]/20 text-[#FFD300] hover:bg-[#FFD300]/30;
+}
+
+.bulk-actions__btn--success {
+    @apply bg-green-500/20 text-green-400 hover:bg-green-500/30;
+}
+
+.bulk-actions__btn--warning {
+    @apply bg-amber-500/20 text-amber-400 hover:bg-amber-500/30;
+}
+
+.bulk-actions__btn-label {
+    @apply hidden sm:inline;
+}

@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
+import { notify } from '@/Components/Toast';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
+import BulkActions from '@/Components/Dashboard/BulkActions';
 import ServerPagination from '@/Components/Dashboard/ServerPagination';
-import { Plus, Edit2, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Loader2, Search } from 'lucide-react';
 
 export default function GuestIndex({ guests, filters, properties }) {
     const [showModal, setShowModal] = useState(false);
     const [editingGuest, setEditingGuest] = useState(null);
+    const [selectedIds, setSelectedIds] = useState([]);
+    const [searchQuery, setSearchQuery] = useState(filters?.search || '');
 
     const { data, setData, post, patch, processing, errors, reset } = useForm({
         property_id: '',
@@ -21,9 +25,9 @@ export default function GuestIndex({ guests, filters, properties }) {
         phone: '',
     });
 
-    const handleSearch = (e) => {
-        if (e) e.preventDefault();
-        router.get(route('host.guests.index'), { search: data.search }, { preserveState: true });
+    const handleSearch = (value) => {
+        setSearchQuery(value);
+        router.get(route('host.guests.index'), { search: value }, { preserveState: true, replace: true });
     };
 
     const openCreateModal = () => {
@@ -61,7 +65,11 @@ export default function GuestIndex({ guests, filters, properties }) {
 
     const handleDelete = (guest) => {
         if (confirm(`Delete guest "${guest.first_name} ${guest.last_name}"?`)) {
-            router.delete(route('host.guests.destroy', guest.id), { preserveScroll: true });
+            router.delete(route('host.guests.destroy', guest.id), {
+                preserveScroll: true,
+                onSuccess: () => notify.success('Guest deleted'),
+                onError: () => notify.error('Failed to delete guest'),
+            });
         }
     };
 
@@ -152,10 +160,38 @@ export default function GuestIndex({ guests, filters, properties }) {
             />
 
             <GlassCard padding="p-0 overflow-hidden">
+                {/* Search Bar */}
+                <div className="px-6 py-4 border-b border-black/5">
+                    <div className="flex items-center gap-2 bg-black/5 px-4 py-2.5 rounded-xl w-72">
+                        <Search size={16} className="text-black/30" />
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            placeholder="Search guests..."
+                            className="bg-transparent border-none p-0 text-sm font-bold placeholder:text-black/30 focus:ring-0 w-full"
+                        />
+                    </div>
+                </div>
+
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="host-guests-table-header">
+                                <th className="host-guests-table-header-cell w-10">
+                                    <input
+                                        type="checkbox"
+                                        checked={guests.data.length > 0 && selectedIds.length === guests.data.length}
+                                        onChange={() => {
+                                            if (selectedIds.length === guests.data.length) {
+                                                setSelectedIds([]);
+                                            } else {
+                                                setSelectedIds(guests.data.map(g => g.id));
+                                            }
+                                        }}
+                                        className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
+                                    />
+                                </th>
                                 <th className="host-guests-table-header-cell">Guest</th>
                                 <th className="host-guests-table-header-cell">Contact</th>
                                 <th className="host-guests-table-header-cell">Property</th>
@@ -166,7 +202,21 @@ export default function GuestIndex({ guests, filters, properties }) {
                         <tbody className="divide-y divide-black/5">
                             {guests.data.length > 0 ? (
                                 guests.data.map((guest) => (
-                                    <tr key={guest.id} className="host-guests-table-row">
+                                    <tr key={guest.id} className={`host-guests-table-row ${selectedIds.includes(guest.id) ? 'bg-[#FFD300]/5' : ''}`}>
+                                        <td className="host-guests-table-cell w-10">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedIds.includes(guest.id)}
+                                                onChange={() => {
+                                                    if (selectedIds.includes(guest.id)) {
+                                                        setSelectedIds(selectedIds.filter(id => id !== guest.id));
+                                                    } else {
+                                                        setSelectedIds([...selectedIds, guest.id]);
+                                                    }
+                                                }}
+                                                className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
+                                            />
+                                        </td>
                                         <td className="host-guests-table-cell">
                                             <div className="flex items-center gap-4">
                                                 <div className="host-guests-avatar">
@@ -221,7 +271,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5" className="host-guests-empty">
+                                    <td colSpan="6" className="host-guests-empty">
                                         No guests found
                                     </td>
                                 </tr>
@@ -232,6 +282,27 @@ export default function GuestIndex({ guests, filters, properties }) {
 
                 <ServerPagination links={guests.links} className="justify-center mt-6" />
             </GlassCard>
+
+            <BulkActions
+                selectedCount={selectedIds.length}
+                onClearSelection={() => setSelectedIds([])}
+                actions={[
+                    {
+                        label: 'Delete',
+                        icon: <Trash2 size={16} />,
+                        variant: 'danger',
+                        onClick: () => {
+                            if (confirm(`Delete ${selectedIds.length} guest(s)?`)) {
+                                selectedIds.forEach(id => {
+                                    router.delete(route('host.guests.destroy', id), { preserveScroll: true });
+                                });
+                                notify.success(`${selectedIds.length} guest(s) deleted`);
+                                setSelectedIds([]);
+                            }
+                        },
+                    },
+                ]}
+            />
 
             <TabbedModal
                 show={showModal}

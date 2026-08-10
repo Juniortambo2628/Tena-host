@@ -28,8 +28,37 @@
     @apply hover:bg-black/[0.01] transition-colors;
 }
 
+.responsive-table__row--selected {
+    @apply bg-[#FFD300]/5 hover:bg-[#FFD300]/10;
+}
+
 .responsive-table__cell {
     @apply px-6 py-5;
+}
+
+.responsive-table__cell--checkbox,
+.responsive-table__head-cell--checkbox {
+    @apply w-12 text-center;
+}
+
+.responsive-table__checkbox {
+    @apply w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20 focus:ring-offset-0 cursor-pointer;
+}
+
+.responsive-table__search-bar {
+    @apply px-6 py-4 border-b border-black/5;
+}
+
+.responsive-table__search {
+    @apply flex items-center gap-2 bg-black/5 px-4 py-2.5 rounded-xl w-72;
+}
+
+.responsive-table__search-icon {
+    @apply text-black/30 flex-shrink-0;
+}
+
+.responsive-table__search-input {
+    @apply bg-transparent border-none p-0 text-sm font-bold placeholder:text-black/30 focus:ring-0 w-full;
 }
 
 .responsive-table__actions {
@@ -58,6 +87,10 @@
 
 .responsive-table__card {
     @apply bg-white rounded-2xl border border-black/5 p-4;
+}
+
+.responsive-table__card--selected {
+    @apply border-[#FFD300]/30 bg-[#FFD300]/5;
 }
 
 .responsive-table__card-header {

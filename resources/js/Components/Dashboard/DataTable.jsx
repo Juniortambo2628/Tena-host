@@ -18,26 +18,65 @@ export default function DataTable({
     searchPlaceholder = "Search...",
     serverPagination = null,
     onSearch = null,
+    enableSelection = false,
+    onSelectionChange = null,
+    getRowId = (row) => row.id,
 }) {
     const [sorting, setSorting] = useState([]);
     const [globalFilter, setGlobalFilter] = useState('');
+    const [rowSelection, setRowSelection] = useState({});
+
+    const selectionColumn = enableSelection ? [{
+        id: 'select',
+        header: ({ table }) => (
+            <input
+                type="checkbox"
+                checked={table.getIsAllPageRowsSelected()}
+                onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
+                className="data-table__checkbox"
+            />
+        ),
+        cell: ({ row }) => (
+            <input
+                type="checkbox"
+                checked={row.getIsSelected()}
+                onChange={(e) => row.toggleSelected(e.target.checked)}
+                className="data-table__checkbox"
+            />
+        ),
+        size: 40,
+        enableSorting: false,
+        enableHiding: false,
+    }] : [];
+
+    const allColumns = [...selectionColumn, ...columns];
 
     const table = useReactTable({
         data,
-        columns,
+        columns: allColumns,
         state: {
             sorting,
             globalFilter,
+            ...(enableSelection ? { rowSelection } : {}),
         },
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
+        ...(enableSelection ? { onRowSelectionChange: setRowSelection } : {}),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: serverPagination ? undefined : getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         manualPagination: !!serverPagination,
         pageCount: serverPagination ? serverPagination.last_page : undefined,
+        getRowId,
     });
+
+    useEffect(() => {
+        if (enableSelection && onSelectionChange) {
+            const selectedRows = table.getSelectedRowModel().rows.map(r => r.original);
+            onSelectionChange(selectedRows);
+        }
+    }, [rowSelection]);
 
     useEffect(() => {
         if (onSearch && globalFilter !== undefined) {
@@ -56,36 +95,33 @@ export default function DataTable({
         }
     };
 
+    const clearSelection = () => {
+        setRowSelection({});
+    };
+
     return (
         <div className="data-table">
             {/* Toolbar */}
-            {!serverPagination && (
-                <div className="data-table__toolbar">
-                    <div className="data-table__search">
-                        <Search size={16} className="data-table__search-icon" />
-                        <input
-                            value={globalFilter ?? ''}
-                            onChange={(e) => setGlobalFilter(e.target.value)}
-                            placeholder={searchPlaceholder}
-                            className="data-table__search-input"
-                        />
-                    </div>
-                </div>
-            )}
-
-            {serverPagination && onSearch && (
-                <div className="data-table__toolbar">
-                    <div className="data-table__search">
-                        <Search size={16} className="data-table__search-icon" />
+            <div className="data-table__toolbar">
+                <div className="data-table__search">
+                    <Search size={16} className="data-table__search-icon" />
+                    {serverPagination && onSearch ? (
                         <input
                             defaultValue={serverPagination?.search || ''}
                             onChange={(e) => onSearch(e.target.value)}
                             placeholder={searchPlaceholder}
                             className="data-table__search-input"
                         />
-                    </div>
+                    ) : (
+                        <input
+                            value={globalFilter ?? ''}
+                            onChange={(e) => setGlobalFilter(e.target.value)}
+                            placeholder={searchPlaceholder}
+                            className="data-table__search-input"
+                        />
+                    )}
                 </div>
-            )}
+            </div>
 
             {/* Table */}
             <div className="data-table__wrapper">
@@ -96,15 +132,15 @@ export default function DataTable({
                                 {headerGroup.headers.map((header) => (
                                     <th
                                         key={header.id}
-                                        className="data-table__header-cell"
-                                        onClick={header.column.getToggleSortingHandler()}
+                                        className={cn("data-table__header-cell", header.id === 'select' && 'data-table__header-cell--checkbox')}
+                                        onClick={header.id !== 'select' ? header.column.getToggleSortingHandler() : undefined}
                                     >
                                         <div className="data-table__header-content group">
                                             {flexRender(header.column.columnDef.header, header.getContext())}
-                                            {{
+                                            {header.id !== 'select' && ({
                                                 asc: <ArrowUpDown size={12} className="data-table__sort-icon--asc" />,
                                                 desc: <ArrowUpDown size={12} />,
-                                            }[header.column.getIsSorted()] ?? <ArrowUpDown size={12} className="data-table__sort-icon--inactive" />}
+                                            }[header.column.getIsSorted()] ?? <ArrowUpDown size={12} className="data-table__sort-icon--inactive" />)}
                                         </div>
                                     </th>
                                 ))}
@@ -114,9 +150,15 @@ export default function DataTable({
                     <tbody className="data-table__body">
                         {table.getRowModel().rows.length > 0 ? (
                             table.getRowModel().rows.map((row) => (
-                                <tr key={row.id} className="data-table__row">
+                                <tr
+                                    key={row.id}
+                                    className={cn("data-table__row", row.getIsSelected() && "data-table__row--selected")}
+                                >
                                     {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id} className="data-table__cell">
+                                        <td
+                                            key={cell.id}
+                                            className={cn("data-table__cell", cell.column.id === 'select' && 'data-table__cell--checkbox')}
+                                        >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </td>
                                     ))}
@@ -124,7 +166,7 @@ export default function DataTable({
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={columns.length} className="data-table__empty-cell">
+                                <td colSpan={allColumns.length} className="data-table__empty-cell">
                                     No results found.
                                 </td>
                             </tr>

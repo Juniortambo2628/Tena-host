@@ -12,9 +12,15 @@ export default function ResponsiveTable({
     detailTitle = 'Details',
     emptyMessage = 'No records found',
     onAction = null,
+    enableSelection = false,
+    selectedIds = [],
+    onSelectionChange = null,
+    searchPlaceholder = 'Search...',
+    onSearch = null,
 }) {
     const [menuOpen, setMenuOpen] = useState(null);
     const [detailItem, setDetailItem] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const toggleMenu = (id) => {
         setMenuOpen(menuOpen === id ? null : id);
@@ -24,13 +30,68 @@ export default function ResponsiveTable({
         setMenuOpen(null);
     };
 
+    const isSelected = (item) => selectedIds.includes(item.id);
+
+    const toggleRowSelection = (item) => {
+        if (!onSelectionChange) return;
+        if (isSelected(item)) {
+            onSelectionChange(selectedIds.filter(id => id !== item.id));
+        } else {
+            onSelectionChange([...selectedIds, item.id]);
+        }
+    };
+
+    const toggleAll = () => {
+        if (!onSelectionChange) return;
+        if (selectedIds.length === data.length) {
+            onSelectionChange([]);
+        } else {
+            onSelectionChange(data.map(item => item.id));
+        }
+    };
+
+    const handleSearch = (value) => {
+        setSearchQuery(value);
+        if (onSearch) onSearch(value);
+    };
+
+    const totalCols = columns.length + (actions.length > 0 ? 1 : 0) + (enableSelection ? 1 : 0);
+
     return (
         <>
+            {/* Search Bar */}
+            {(onSearch || true) && (
+                <div className="responsive-table__search-bar">
+                    <div className="responsive-table__search">
+                        <svg className="responsive-table__search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            placeholder={searchPlaceholder}
+                            className="responsive-table__search-input"
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* Desktop Table */}
             <div className="responsive-table__desktop">
                 <table className="responsive-table__table">
                     <thead>
                         <tr className="responsive-table__head-row">
+                            {enableSelection && (
+                                <th className="responsive-table__head-cell responsive-table__head-cell--checkbox">
+                                    <input
+                                        type="checkbox"
+                                        checked={data.length > 0 && selectedIds.length === data.length}
+                                        onChange={toggleAll}
+                                        className="responsive-table__checkbox"
+                                    />
+                                </th>
+                            )}
                             {columns.map((col) => (
                                 <th key={col.key} className="responsive-table__head-cell">
                                     {col.label}
@@ -43,7 +104,17 @@ export default function ResponsiveTable({
                     </thead>
                     <tbody className="responsive-table__body">
                         {data.length > 0 ? data.map((item) => (
-                            <tr key={item.id} className="responsive-table__row">
+                            <tr key={item.id} className={`responsive-table__row ${isSelected(item) ? 'responsive-table__row--selected' : ''}`}>
+                                {enableSelection && (
+                                    <td className="responsive-table__cell responsive-table__cell--checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={isSelected(item)}
+                                            onChange={() => toggleRowSelection(item)}
+                                            className="responsive-table__checkbox"
+                                        />
+                                    </td>
+                                )}
                                 {columns.map((col) => (
                                     <td key={col.key} className="responsive-table__cell">
                                         {col.render ? col.render(item) : item[col.key]}
@@ -68,7 +139,7 @@ export default function ResponsiveTable({
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={columns.length + (actions.length > 0 ? 1 : 0)} className="responsive-table__empty">
+                                <td colSpan={totalCols} className="responsive-table__empty">
                                     {emptyMessage}
                                 </td>
                             </tr>
@@ -80,9 +151,17 @@ export default function ResponsiveTable({
             {/* Mobile Cards */}
             <div className="responsive-table__mobile">
                 {data.length > 0 ? data.map((item) => (
-                    <div key={item.id} className="responsive-table__card">
+                    <div key={item.id} className={`responsive-table__card ${isSelected(item) ? 'responsive-table__card--selected' : ''}`}>
                         <div className="responsive-table__card-header">
                             <div className="responsive-table__card-primary">
+                                {enableSelection && (
+                                    <input
+                                        type="checkbox"
+                                        checked={isSelected(item)}
+                                        onChange={() => toggleRowSelection(item)}
+                                        className="responsive-table__checkbox"
+                                    />
+                                )}
                                 <span className="responsive-table__card-id">#{item.id}</span>
                                 <span className="responsive-table__card-name">
                                     {typeof primaryField === 'function' ? primaryField(item) : item[primaryField]}
