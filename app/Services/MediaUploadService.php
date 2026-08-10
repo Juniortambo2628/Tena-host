@@ -69,7 +69,7 @@ class MediaUploadService
             'original_path' => '/storage/'.$originalPath,
             'optimized_path' => null,
             'thumbnail_path' => null,
-            'mime_type' => $mimeType,
+            'mime_type' => $file->getMimeType(),
             'file_size' => Storage::disk('public')->size($originalPath),
             'width' => $width,
             'height' => $height,

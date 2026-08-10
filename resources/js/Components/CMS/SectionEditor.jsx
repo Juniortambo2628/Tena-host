@@ -150,6 +150,48 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         setHasChanges(true);
     };
 
+    const suggestedMediaKeys = useMemo(() => {
+        const existing = Object.keys(localMedia);
+        const contentKeys = Object.keys(localContent);
+
+        const arrayNames = new Set();
+        contentKeys.forEach(k => {
+            const match = k.match(/^([^.]+)\.\d+\..+$/);
+            if (match) arrayNames.add(match[1]);
+        });
+
+        const suggestions = [];
+
+        if (arrayNames.size > 0) {
+            arrayNames.forEach(arrName => {
+                const count = contentKeys.filter(k => k.startsWith(arrName + '.')).length;
+                const uniqueIndices = new Set();
+                contentKeys.forEach(k => {
+                    const m = k.match(new RegExp(`^${arrName}\\.(\\d+)\\..+$`));
+                    if (m) uniqueIndices.add(parseInt(m[1]));
+                });
+                for (const idx of [...uniqueIndices].sort((a, b) => a - b)) {
+                    const key = `${arrName}_${idx}_image`;
+                    if (!existing.includes(key)) {
+                        suggestions.push({ key, label: `${arrName.replace(/_/g, ' ')} ${idx + 1} image` });
+                    }
+                }
+            });
+        }
+
+        const commonPatterns = [
+            'main_image', 'hero_image', 'background', 'banner', 'logo',
+            'feature_image', 'cta_image', 'icon', 'thumbnail',
+        ];
+        commonPatterns.forEach(key => {
+            if (!existing.includes(key)) {
+                suggestions.push({ key, label: key.replace(/_/g, ' ') });
+            }
+        });
+
+        return suggestions;
+    }, [localMedia, localContent]);
+
     const renderContentTab = () => (
         <div className="editor-tab__content">
             <h3 className="editor-tab__heading">Text Fields</h3>
@@ -236,17 +278,36 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                     </div>
                 )}
                 <div className="editor-tab__add-media">
-                    <input
-                        type="text"
-                        value={newMediaKey}
-                        onChange={(e) => setNewMediaKey(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleAddMediaKey()}
-                        placeholder="e.g. feature_image, video, background"
-                        className="editor-tab__add-media-input"
-                    />
-                    <button onClick={handleAddMediaKey} className="editor-tab__add-media-btn">
-                        Add Media Slot
-                    </button>
+                    <div className="editor-tab__add-media-row">
+                        <select
+                            value={newMediaKey}
+                            onChange={(e) => setNewMediaKey(e.target.value)}
+                            className="editor-tab__add-media-select"
+                        >
+                            <option value="">Select a media key...</option>
+                            {suggestedMediaKeys.map(({ key, label }) => (
+                                <option key={key} value={key}>{label} ({key})</option>
+                            ))}
+                            <option value="__custom">Custom key...</option>
+                        </select>
+                        {newMediaKey === '__custom' && (
+                            <input
+                                type="text"
+                                value=""
+                                onChange={(e) => {
+                                    const val = e.target.value.trim().replace(/\s+/g, '_').toLowerCase();
+                                    setNewMediaKey(val);
+                                }}
+                                onKeyDown={(e) => e.key === 'Enter' && handleAddMediaKey()}
+                                placeholder="Type custom key..."
+                                className="editor-tab__add-media-input"
+                                autoFocus
+                            />
+                        )}
+                        <button onClick={handleAddMediaKey} className="editor-tab__add-media-btn" disabled={!newMediaKey || newMediaKey === '__custom'}>
+                            Add
+                        </button>
+                    </div>
                 </div>
             </div>
         );

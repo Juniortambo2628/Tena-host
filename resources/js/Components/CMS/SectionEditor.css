@@ -204,6 +204,20 @@
     @apply flex items-center gap-3 mt-4 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200;
 }
 
+.editor-tab__add-media-row {
+    @apply flex items-center gap-3 w-full;
+}
+
+.editor-tab__add-media-select {
+    @apply flex-1 px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl
+           focus:outline-none focus:border-[#FFD300] focus:ring-1 focus:ring-[#FFD300]/20
+           transition-all cursor-pointer appearance-none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 2rem;
+}
+
 .editor-tab__add-media-input {
     @apply flex-1 px-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl
            focus:outline-none focus:border-[#FFD300] focus:ring-1 focus:ring-[#FFD300]/20
@@ -213,6 +227,10 @@
 .editor-tab__add-media-btn {
     @apply px-5 py-2.5 text-sm font-semibold bg-black text-[#FFD300] rounded-xl
            hover:bg-gray-800 active:scale-95 transition-all whitespace-nowrap;
+}
+
+.editor-tab__add-media-btn:disabled {
+    @apply bg-black/20 text-black/30 cursor-not-allowed hover:bg-black/20 active:scale-100;
 }
 
 /* Footer */
