@@ -15,13 +15,41 @@ export function getContent(section, key, defaultValue = '') {
 
 /**
  * Get media path from a section by key.
+ * Does case-insensitive, flexible matching to handle key variations
+ * like section_0_image, SECTION_0_IMAGE, SECTIONS_0_IMAGE, etc.
  */
 export function getMedia(section, key, defaultValue = '') {
     if (!section || !section.media) return defaultValue;
-    const value = section.media[key] ?? defaultValue;
-    if (!value) return defaultValue;
-    if (typeof value === 'string') return value;
-    if (typeof value === 'object') return value.optimized_path || value.original_path || defaultValue;
+
+    // Exact match first
+    if (section.media[key] !== undefined) {
+        const value = section.media[key];
+        if (typeof value === 'string') return value;
+        if (typeof value === 'object') return value.optimized_path || value.original_path || defaultValue;
+    }
+
+    // Case-insensitive fallback
+    const lowerKey = key.toLowerCase();
+    for (const [mediaKey, value] of Object.entries(section.media)) {
+        if (mediaKey.toLowerCase() === lowerKey) {
+            if (typeof value === 'string') return value;
+            if (typeof value === 'object') return value.optimized_path || value.original_path || defaultValue;
+        }
+    }
+
+    // Fuzzy match: section_0_image should also match SECTIONS_0_IMAGE
+    // Extract the numeric index from the key (e.g., "section_0_image" -> "0")
+    const indexMatch = lowerKey.match(/(\d+)/);
+    if (indexMatch) {
+        const idx = indexMatch[1];
+        for (const [mediaKey, value] of Object.entries(section.media)) {
+            if (mediaKey.toLowerCase().includes(`_${idx}_image`) || mediaKey.toLowerCase().includes(`${idx}_image`)) {
+                if (typeof value === 'string') return value;
+                if (typeof value === 'object') return value.optimized_path || value.original_path || defaultValue;
+            }
+        }
+    }
+
     return defaultValue;
 }
 
