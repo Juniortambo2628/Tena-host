@@ -1,0 +1,126 @@
+@reference "tailwindcss";
+
+.confirm-dialog {
+    @apply relative z-[200];
+}
+
+.confirm-dialog__backdrop {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm;
+}
+
+.confirm-dialog__container {
+    @apply fixed inset-0 overflow-y-auto;
+    @apply flex min-h-full items-center justify-center p-4;
+}
+
+.confirm-dialog__panel {
+    @apply w-full max-w-md transform overflow-hidden rounded-3xl bg-white shadow-2xl;
+    @apply border border-black/5 transition-all;
+}
+
+.confirm-dialog__header {
+    @apply flex items-start justify-between px-8 pt-8;
+}
+
+.confirm-dialog__icon-wrapper {
+    @apply w-12 h-12 rounded-2xl flex items-center justify-center;
+}
+
+.confirm-dialog__icon--danger {
+    @apply text-red-500;
+}
+
+.confirm-dialog__icon--warning {
+    @apply text-amber-500;
+}
+
+.confirm-dialog__icon--info {
+    @apply text-blue-500;
+}
+
+.confirm-dialog__icon--success {
+    @apply text-green-500;
+}
+
+.confirm-dialog__icon-wrapper:has(.confirm-dialog__icon--danger) {
+    @apply bg-red-50;
+}
+
+.confirm-dialog__icon-wrapper:has(.confirm-dialog__icon--warning) {
+    @apply bg-amber-50;
+}
+
+.confirm-dialog__icon-wrapper:has(.confirm-dialog__icon--info) {
+    @apply bg-blue-50;
+}
+
+.confirm-dialog__icon-wrapper:has(.confirm-dialog__icon--success) {
+    @apply bg-green-50;
+}
+
+.confirm-dialog__close {
+    @apply w-8 h-8 rounded-xl bg-black/5 flex items-center justify-center text-black/30
+           hover:bg-black/10 hover:text-black transition-all;
+}
+
+.confirm-dialog__title {
+    @apply text-lg font-bold text-black px-8 pt-4;
+}
+
+.confirm-dialog__message {
+    @apply text-sm text-black/50 font-medium px-8 pt-2 pb-6 leading-relaxed;
+}
+
+.confirm-dialog__actions {
+    @apply flex items-center gap-3 px-8 pb-8;
+}
+
+.confirm-dialog__btn {
+    @apply flex-1 px-6 py-3 rounded-2xl text-sm font-bold transition-all
+           disabled:opacity-50 disabled:cursor-not-allowed
+           flex items-center justify-center gap-2;
+}
+
+.confirm-dialog__btn--cancel {
+    @apply bg-black/5 text-black/60 hover:bg-black/10;
+}
+
+.confirm-dialog__btn--confirm {
+    @apply text-white;
+}
+
+.confirm-dialog__btn--danger {
+    @apply bg-red-500 hover:bg-red-600;
+}
+
+.confirm-dialog__btn--warning {
+    @apply bg-amber-500 hover:bg-amber-600;
+}
+
+.confirm-dialog__btn--info {
+    @apply bg-blue-500 hover:bg-blue-600;
+}
+
+.confirm-dialog__btn--success {
+    @apply bg-green-500 hover:bg-green-600;
+}
+
+.confirm-dialog__spinner {
+    @apply w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin;
+}
+
+/* Backdrop transitions */
+.confirm-dialog__backdrop-enter { @apply transition-opacity duration-200; }
+.confirm-dialog__backdrop-enter-from { @apply opacity-0; }
+.confirm-dialog__backdrop-enter-to { @apply opacity-100; }
+.confirm-dialog__backdrop-leave { @apply transition-opacity duration-150; }
+.confirm-dialog__backdrop-leave-from { @apply opacity-100; }
+.confirm-dialog__backdrop-leave-to { @apply opacity-0; }
+
+/* Panel transitions */
+.confirm-dialog__panel-enter { @apply transition-all duration-200; }
+.confirm-dialog__panel-enter-from { @apply opacity-0 scale-95; }
+.confirm-dialog__panel-enter-to { @apply opacity-100 scale-100; }
+.confirm-dialog__panel-leave { @apply transition-all duration-150; }
+.confirm-dialog__panel-leave-from { @apply opacity-100 scale-100; }
+.confirm-dialog__panel-leave-to { @apply opacity-0 scale-95; }

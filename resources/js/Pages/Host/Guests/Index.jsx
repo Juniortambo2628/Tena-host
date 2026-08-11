@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -16,6 +17,7 @@ export default function GuestIndex({ guests, filters, properties }) {
     const [editingGuest, setEditingGuest] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
     const [searchQuery, setSearchQuery] = useState(filters?.search || '');
+    const { confirm, ConfirmDialogEl } = useConfirm();
 
     const { data, setData, post, patch, processing, errors, reset } = useForm({
         property_id: '',
@@ -63,8 +65,14 @@ export default function GuestIndex({ guests, filters, properties }) {
         }
     };
 
-    const handleDelete = (guest) => {
-        if (confirm(`Delete guest "${guest.first_name} ${guest.last_name}"?`)) {
+    const handleDelete = async (guest) => {
+        const result = await confirm({
+            title: 'Delete Guest',
+            message: `Delete guest "${guest.first_name} ${guest.last_name}"?`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
+        });
+        if (result) {
             router.delete(route('host.guests.destroy', guest.id), {
                 preserveScroll: true,
                 onSuccess: () => notify.success('Guest deleted'),
@@ -291,11 +299,23 @@ export default function GuestIndex({ guests, filters, properties }) {
                         label: 'Delete',
                         icon: <Trash2 size={16} />,
                         variant: 'danger',
-                        onClick: () => {
-                            if (confirm(`Delete ${selectedIds.length} guest(s)?`)) {
-                                selectedIds.forEach(id => {
-                                    router.delete(route('host.guests.destroy', id), { preserveScroll: true });
-                                });
+                        onClick: async () => {
+                            const result = await confirm({
+                                title: 'Delete Guests',
+                                message: `Delete ${selectedIds.length} guest(s)?`,
+                                confirmLabel: 'Delete',
+                                variant: 'danger',
+                            });
+                            if (result) {
+                                for (const id of selectedIds) {
+                                    await new Promise((resolve, reject) => {
+                                        router.delete(route('host.guests.destroy', id), {
+                                            preserveScroll: true,
+                                            onSuccess: resolve,
+                                            onError: reject,
+                                        });
+                                    });
+                                }
                                 notify.success(`${selectedIds.length} guest(s) deleted`);
                                 setSelectedIds([]);
                             }
@@ -314,6 +334,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                 confirmLabel={editingGuest ? 'Update Guest' : 'Add Guest'}
                 processing={processing}
             />
+            {ConfirmDialogEl}
         </DashboardLayout>
     );
 }

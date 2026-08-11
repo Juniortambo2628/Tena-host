@@ -7,6 +7,7 @@ import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
 import { FileText, Plus, Eye, Edit3, Trash2, ToggleLeft, ToggleRight, Shield, Cookie, AlertCircle, HandshakeIcon } from 'lucide-react';
 import { notify } from '@/Components/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 import { safeRoute } from '@/lib/route';
 import './Index.css';
 
@@ -32,12 +33,21 @@ const typeIcons = {
 
 export default function PolicyIndex({ policies }) {
     const [selectedIds, setSelectedIds] = useState([]);
+    const { confirm, ConfirmDialogEl } = useConfirm();
 
-    const handleDelete = (policy) => {
-        router.delete(route('admin.policies.destroy', policy.slug), {
-            onSuccess: () => notify.success('Policy deleted.'),
-            onError: () => notify.error('Failed to delete policy.'),
+    const handleDelete = async (policy) => {
+        const result = await confirm({
+            title: 'Delete Policy',
+            message: `Are you sure you want to delete "${policy.title}"?`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
         });
+        if (result) {
+            router.delete(route('admin.policies.destroy', policy.slug), {
+                onSuccess: () => notify.success('Policy deleted.'),
+                onError: () => notify.error('Failed to delete policy.'),
+            });
+        }
     };
 
     const handleTogglePublish = (policy) => {
@@ -129,11 +139,19 @@ export default function PolicyIndex({ policies }) {
             label: 'Publish',
             icon: <ToggleRight size={16} />,
             variant: 'success',
-            onClick: () => {
-                selectedIds.forEach(id => {
+            onClick: async () => {
+                for (const id of selectedIds) {
                     const policy = policies.find(p => p.id === id);
-                    if (policy && !policy.is_published) handleTogglePublish(policy);
-                });
+                    if (policy && !policy.is_published) {
+                        await new Promise((resolve, reject) => {
+                            router.post(route('admin.policies.toggle', policy.slug), {}, {
+                                preserveScroll: true,
+                                onSuccess: resolve,
+                                onError: reject,
+                            });
+                        });
+                    }
+                }
                 notify.success(`${selectedIds.length} policy(ies) published`);
                 setSelectedIds([]);
             },
@@ -142,12 +160,27 @@ export default function PolicyIndex({ policies }) {
             label: 'Delete',
             icon: <Trash2 size={16} />,
             variant: 'danger',
-            onClick: () => {
-                if (confirm(`Delete ${selectedIds.length} policy(ies)?`)) {
-                    selectedIds.forEach(id => {
+            onClick: async () => {
+                const result = await confirm({
+                    title: 'Delete Policies',
+                    message: `Delete ${selectedIds.length} policy(ies)?`,
+                    confirmLabel: 'Delete',
+                    variant: 'danger',
+                });
+                if (result) {
+                    for (const id of selectedIds) {
                         const policy = policies.find(p => p.id === id);
-                        if (policy) handleDelete(policy);
-                    });
+                        if (policy) {
+                            await new Promise((resolve, reject) => {
+                                router.delete(route('admin.policies.destroy', policy.slug), {
+                                    preserveScroll: true,
+                                    onSuccess: resolve,
+                                    onError: reject,
+                                });
+                            });
+                        }
+                    }
+                    notify.success(`${selectedIds.length} policy(ies) deleted`);
                     setSelectedIds([]);
                 }
             },
@@ -190,6 +223,7 @@ export default function PolicyIndex({ policies }) {
                 onClearSelection={() => setSelectedIds([])}
                 actions={bulkActions}
             />
+            {ConfirmDialogEl}
         </PageShell>
     );
 }

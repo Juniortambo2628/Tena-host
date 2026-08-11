@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import DataTable from '@/Components/Dashboard/DataTable';
@@ -13,6 +14,7 @@ import './Index.css';
 export default function Index({ hosts, stats }) {
     const data = useMemo(() => hosts.data || hosts, [hosts]);
     const [selectedRows, setSelectedRows] = useState([]);
+    const { confirm, ConfirmDialogEl } = useConfirm();
 
     const summaryStats = useMemo(() => [
         { label: 'Total Hosts', value: stats?.total ?? data.length },
@@ -72,8 +74,14 @@ export default function Index({ hosts, stats }) {
                             <Eye size={14} />
                         </button>
                         <button
-                            onClick={() => {
-                                if (confirm(`Delete host "${host.first_name} ${host.last_name}"?`)) {
+                            onClick={async () => {
+                                const result = await confirm({
+                                    title: 'Delete Host',
+                                    message: `Delete host "${host.first_name} ${host.last_name}"?`,
+                                    confirmLabel: 'Delete',
+                                    variant: 'danger',
+                                });
+                                if (result) {
                                     router.delete(route('admin.hosts.destroy', host.id), {
                                         preserveScroll: true,
                                         onSuccess: () => notify.success('Host deleted'),
@@ -97,11 +105,23 @@ export default function Index({ hosts, stats }) {
             label: 'Delete',
             icon: <Trash2 size={16} />,
             variant: 'danger',
-            onClick: () => {
-                if (confirm(`Delete ${selectedRows.length} host(s)?`)) {
-                    selectedRows.forEach(id => {
-                        router.delete(route('admin.hosts.destroy', id), { preserveScroll: true });
-                    });
+            onClick: async () => {
+                const result = await confirm({
+                    title: 'Delete Hosts',
+                    message: `Delete ${selectedRows.length} host(s)?`,
+                    confirmLabel: 'Delete',
+                    variant: 'danger',
+                });
+                if (result) {
+                    for (const id of selectedRows) {
+                        await new Promise((resolve, reject) => {
+                            router.delete(route('admin.hosts.destroy', id), {
+                                preserveScroll: true,
+                                onSuccess: resolve,
+                                onError: reject,
+                            });
+                        });
+                    }
                     notify.success(`${selectedRows.length} host(s) deleted`);
                     setSelectedRows([]);
                 }
@@ -137,6 +157,7 @@ export default function Index({ hosts, stats }) {
                 onClearSelection={() => setSelectedRows([])}
                 actions={bulkActions}
             />
+            {ConfirmDialogEl}
         </DashboardLayout>
     );
 }

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import DataTable from '@/Components/Dashboard/DataTable';
@@ -13,6 +14,7 @@ import './Index.css';
 export default function Index({ users, stats }) {
     const data = useMemo(() => users.data || users, [users]);
     const [selectedRows, setSelectedRows] = useState([]);
+    const { confirm, ConfirmDialogEl } = useConfirm();
 
     const summaryStats = useMemo(() => [
         { label: 'Total Users', value: stats?.total ?? data.length },
@@ -72,8 +74,14 @@ export default function Index({ users, stats }) {
                             <Eye size={14} />
                         </button>
                         <button
-                            onClick={() => {
-                                if (confirm(`Delete user "${user.first_name} ${user.last_name}"?`)) {
+                            onClick={async () => {
+                                const result = await confirm({
+                                    title: 'Delete User',
+                                    message: `Delete user "${user.first_name} ${user.last_name}"?`,
+                                    confirmLabel: 'Delete',
+                                    variant: 'danger',
+                                });
+                                if (result) {
                                     router.delete(route('admin.users.destroy', user.id), {
                                         preserveScroll: true,
                                         onSuccess: () => notify.success('User deleted'),
@@ -97,11 +105,23 @@ export default function Index({ users, stats }) {
             label: 'Delete',
             icon: <Trash2 size={16} />,
             variant: 'danger',
-            onClick: () => {
-                if (confirm(`Delete ${selectedRows.length} user(s)?`)) {
-                    selectedRows.forEach(id => {
-                        router.delete(route('admin.users.destroy', id), { preserveScroll: true });
-                    });
+            onClick: async () => {
+                const result = await confirm({
+                    title: 'Delete Users',
+                    message: `Delete ${selectedRows.length} user(s)?`,
+                    confirmLabel: 'Delete',
+                    variant: 'danger',
+                });
+                if (result) {
+                    for (const id of selectedRows) {
+                        await new Promise((resolve, reject) => {
+                            router.delete(route('admin.users.destroy', id), {
+                                preserveScroll: true,
+                                onSuccess: resolve,
+                                onError: reject,
+                            });
+                        });
+                    }
                     notify.success(`${selectedRows.length} user(s) deleted`);
                     setSelectedRows([]);
                 }
@@ -137,6 +157,7 @@ export default function Index({ users, stats }) {
                 onClearSelection={() => setSelectedRows([])}
                 actions={bulkActions}
             />
+            {ConfirmDialogEl}
         </DashboardLayout>
     );
 }

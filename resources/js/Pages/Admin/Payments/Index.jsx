@@ -108,19 +108,9 @@ export default function PaymentIndex({ transactions, stats, filters }) {
         >
             <Head title="Payments" />
 
-            {/* Filters */}
+            {/* Status Filters */}
             <GlassCard padding="p-4">
                 <div className="payments-page__filters">
-                    <div className="payments-page__search">
-                        <Search size={16} className="payments-page__search-icon" />
-                        <input
-                            type="text"
-                            value={search}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            placeholder="Search by receipt, phone, or user..."
-                            className="payments-page__search-input"
-                        />
-                    </div>
                     <div className="payments-page__status-filters">
                         {['all', 'completed', 'pending', 'failed'].map((status) => (
                             <button
@@ -149,7 +139,7 @@ export default function PaymentIndex({ transactions, stats, filters }) {
                     selectedIds={selectedIds}
                     onSelectionChange={setSelectedIds}
                     onSearch={handleSearch}
-                    searchPlaceholder="Search transactions..."
+                    searchPlaceholder="Search by receipt, phone, or user..."
                 />
             </GlassCard>
 

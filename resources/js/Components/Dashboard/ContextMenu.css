@@ -1,0 +1,57 @@
+@reference "tailwindcss";
+
+.context-menu {
+    @apply fixed z-[300];
+}
+
+.context-menu__inner {
+    @apply bg-white rounded-2xl shadow-2xl shadow-black/15 border border-black/5
+           py-2 min-w-[200px] overflow-hidden;
+    animation: context-menu-in 0.12s ease-out;
+}
+
+@keyframes context-menu-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.context-menu__item {
+    @apply w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-black/70
+           hover:bg-black/5 transition-colors text-left;
+}
+
+.context-menu__item--danger {
+    @apply hover:bg-red-50 hover:text-red-600;
+}
+
+.context-menu__item--success {
+    @apply hover:bg-green-50 hover:text-green-600;
+}
+
+.context-menu__item--warning {
+    @apply hover:bg-amber-50 hover:text-amber-600;
+}
+
+.context-menu__item--disabled {
+    @apply opacity-40 cursor-not-allowed hover:bg-transparent;
+}
+
+.context-menu__item-icon {
+    @apply w-5 h-5 flex items-center justify-center text-black/40 flex-shrink-0;
+}
+
+.context-menu__item--danger .context-menu__item-icon {
+    @apply text-red-400;
+}
+
+.context-menu__item-label {
+    @apply flex-1;
+}
+
+.context-menu__item-shortcut {
+    @apply text-[10px] font-bold text-black/20 tracking-wider;
+}
+
+.context-menu__divider {
+    @apply my-1 border-t border-black/5;
+}

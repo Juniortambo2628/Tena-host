@@ -6,11 +6,13 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
 import ServerPagination from '@/Components/Dashboard/ServerPagination';
+import { useConfirm } from '@/hooks/useConfirm';
 import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
 import './Index.css';
 
 export default function RegistrationIndex({ registrations }) {
     const [selectedIds, setSelectedIds] = useState([]);
+    const { confirm, ConfirmDialogEl } = useConfirm();
 
     const statusClass = (status) => {
         const map = {
@@ -35,6 +37,30 @@ export default function RegistrationIndex({ registrations }) {
             onSuccess: () => notify.success('Registration deleted'),
             onError: () => notify.error('Failed to delete registration'),
         });
+    };
+
+    const bulkUpdateStatus = async (ids, status) => {
+        for (const id of ids) {
+            await new Promise((resolve, reject) => {
+                router.put(route('admin.registrations.update', id), { status }, {
+                    preserveScroll: true,
+                    onSuccess: resolve,
+                    onError: reject,
+                });
+            });
+        }
+    };
+
+    const bulkDelete = async (ids) => {
+        for (const id of ids) {
+            await new Promise((resolve, reject) => {
+                router.delete(route('admin.registrations.destroy', id), {
+                    preserveScroll: true,
+                    onSuccess: resolve,
+                    onError: reject,
+                });
+            });
+        }
     };
 
     const columns = [
@@ -106,8 +132,8 @@ export default function RegistrationIndex({ registrations }) {
             label: 'Convert',
             icon: <CheckCircle2 size={16} />,
             variant: 'success',
-            onClick: () => {
-                selectedIds.forEach(id => handleStatusChange(id, 'converted'));
+            onClick: async () => {
+                await bulkUpdateStatus(selectedIds, 'converted');
                 notify.success(`${selectedIds.length} registration(s) converted`);
                 setSelectedIds([]);
             },
@@ -116,8 +142,8 @@ export default function RegistrationIndex({ registrations }) {
             label: 'Deactivate',
             icon: <XCircle size={16} />,
             variant: 'warning',
-            onClick: () => {
-                selectedIds.forEach(id => handleStatusChange(id, 'inactive'));
+            onClick: async () => {
+                await bulkUpdateStatus(selectedIds, 'inactive');
                 notify.success(`${selectedIds.length} registration(s) deactivated`);
                 setSelectedIds([]);
             },
@@ -126,9 +152,16 @@ export default function RegistrationIndex({ registrations }) {
             label: 'Delete',
             icon: <Trash2 size={16} />,
             variant: 'danger',
-            onClick: () => {
-                if (confirm(`Delete ${selectedIds.length} registration(s)?`)) {
-                    selectedIds.forEach(id => handleDelete(id));
+            onClick: async () => {
+                const ok = await confirm({
+                    title: 'Delete Registrations',
+                    message: `Are you sure you want to delete ${selectedIds.length} registration(s)? This action cannot be undone.`,
+                    confirmLabel: 'Delete',
+                    variant: 'danger',
+                });
+                if (ok) {
+                    await bulkDelete(selectedIds);
+                    notify.success(`${selectedIds.length} registration(s) deleted`);
                     setSelectedIds([]);
                 }
             },
@@ -169,6 +202,8 @@ export default function RegistrationIndex({ registrations }) {
                 onClearSelection={() => setSelectedIds([])}
                 actions={bulkActions}
             />
+
+            {ConfirmDialogEl}
         </PageShell>
     );
 }
