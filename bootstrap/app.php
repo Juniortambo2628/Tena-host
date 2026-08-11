@@ -52,8 +52,11 @@ return Application::configure(basePath: dirname(__DIR__))
                 $status = 500;
             }
 
-            // Inertia validation → redirect back with errors
-            if ($e instanceof ValidationException && request()->header('X-Inertia')) {
+            // Validation exceptions → always redirect back with errors (Inertia, JSON, and standard web)
+            if ($e instanceof ValidationException) {
+                if (request()->header('X-Inertia') || request()->expectsJson() || request()->header('X-Requested-With')) {
+                    return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
+                }
                 return back()->withErrors($e->errors())->withInput();
             }
 
@@ -62,10 +65,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof AuthenticationException) {
                     return response()->json(['message' => 'Unauthenticated.'], 401);
                 }
-                if ($e instanceof ValidationException) {
-                    return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
-                }
                 return response()->json(['error' => $e->getMessage()], $status);
+            }
+
+            // Unauthenticated web users → redirect to login
+            if ($e instanceof AuthenticationException) {
+                return redirect()->route('login');
             }
 
             // Standard web requests → render Blade error page
