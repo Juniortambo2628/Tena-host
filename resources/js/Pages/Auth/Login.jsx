@@ -201,50 +201,6 @@ export default function Login({ status, canResetPassword }) {
     );
 }
 
-const TypingEffect = ({ text = "Tena...na Tena", speed = 150, pause = 2000 }) => {
-    const [displayedText, setDisplayedText] = useState("");
-    const [isDeleting, setIsDeleting] = useState(false);
-
-    React.useEffect(() => {
-        let timeout;
-
-        const handleType = () => {
-            const currentLength = displayedText.length;
-
-            if (!isDeleting && currentLength < text.length) {
-                // Typing
-                setDisplayedText(text.substring(0, currentLength + 1));
-                timeout = setTimeout(handleType, speed);
-            } else if (!isDeleting && currentLength === text.length) {
-                // Pause at end
-                timeout = setTimeout(() => setIsDeleting(true), pause);
-            } else if (isDeleting && currentLength > 0) {
-                // Deleting
-                setDisplayedText(text.substring(0, currentLength - 1));
-                timeout = setTimeout(handleType, speed / 2);
-            } else {
-                // Restart
-                setIsDeleting(false);
-                timeout = setTimeout(handleType, speed);
-            }
-        };
-
-        timeout = setTimeout(handleType, speed);
-        return () => clearTimeout(timeout);
-    }, [displayedText, isDeleting, text, speed, pause]);
-
-    return (
-        <span className="login-typing">
-            {displayedText}
-            <motion.span
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
-                className="login-typing-cursor"
-            />
-        </span>
-    );
-};
-
 function SocialBtn({ icon, label }) {
     return (
         <button

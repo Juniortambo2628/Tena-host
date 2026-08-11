@@ -1,0 +1,37 @@
+@reference "tailwindcss";
+
+.auth-hero {
+    @apply hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center;
+    background-color: #FFD300;
+}
+
+.auth-hero__content {
+    @apply relative z-10 text-center px-12 flex flex-col items-center gap-8;
+}
+
+.auth-hero__logo-link {
+    @apply inline-block;
+}
+
+.auth-hero__typing-wrapper {
+    @apply min-h-[4rem] flex items-center justify-center;
+}
+
+.auth-hero__typing {
+    @apply text-4xl lg:text-5xl font-black text-[#1b1b1b] tracking-tight;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.typing-cursor {
+    @apply inline-block w-[3px] h-[1em] bg-[#1b1b1b] ml-1 align-middle;
+    animation: cursor-blink 0.6s step-end infinite;
+}
+
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.auth-hero__tagline {
+    @apply text-sm font-semibold text-[#1b1b1b]/50 max-w-xs;
+}

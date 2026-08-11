@@ -1,0 +1,73 @@
+@reference "tailwindcss";
+
+/* Base skeleton element */
+.sk {
+    @apply bg-black/[0.04] animate-pulse;
+    min-width: 2rem;
+}
+
+.sk--line {
+    @apply rounded-md;
+}
+
+.sk--circle {
+    @apply rounded-full flex-shrink-0;
+}
+
+.sk--rect {
+    @apply rounded-2xl;
+}
+
+/* Grids */
+.sk-grid {
+    @apply w-full;
+}
+
+.sk-grid--cards {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+.sk-grid--stats {
+    @apply grid grid-cols-2 md:grid-cols-4 gap-4;
+}
+
+/* Card skeleton */
+.sk-card {
+    @apply bg-white rounded-2xl border border-black/5 overflow-hidden;
+}
+
+.sk-card__body {
+    @apply p-4 space-y-2;
+}
+
+/* Table skeleton */
+.sk-table {
+    @apply w-full;
+}
+
+.sk-table__header {
+    @apply flex items-center gap-6 px-6 py-4 bg-black/[0.02] border-b border-black/5;
+}
+
+.sk-table__row {
+    @apply flex items-center gap-6 px-6 py-5 border-b border-black/5 last:border-0;
+}
+
+/* Stat skeleton */
+.sk-stat {
+    @apply bg-white rounded-2xl border border-black/5 p-5;
+}
+
+/* Hero skeleton */
+.sk-hero {
+    @apply space-y-2;
+}
+
+/* Form skeleton */
+.sk-form {
+    @apply space-y-5;
+}
+
+.sk-form__field {
+    @apply space-y-1;
+}
