@@ -51,6 +51,14 @@ export default function Welcome({ auth, laravelVersion, phpVersion, landingConte
 
     return (
         <div className="welcome-page">
+            <Head>
+                <title>Tena — Smart WiFi Management for Hospitality</title>
+                <meta name="description" content="Capture guest data through branded WiFi splash pages, drive direct bookings, and build lasting guest relationships. Built by Superhosts for Superhosts." />
+                <meta property="og:title" content="Tena — Smart WiFi Management for Hospitality" />
+                <meta property="og:description" content="Capture guest data through branded WiFi splash pages, drive direct bookings, and build lasting guest relationships." />
+                <meta property="og:type" content="website" />
+                <link rel="canonical" href="https://tena.host/" />
+            </Head>
             <nav className="welcome-nav">
                 <div className="welcome-nav-container">
                     <div className="welcome-nav-inner">

@@ -39,7 +39,7 @@ export default function Register() {
 
     return (
         <div className="register-root">
-            <Head title="Create Account | Tena" />
+            <Head title="Create Account" />
 
             {/* Return to Home */}
             <Link

@@ -17,7 +17,7 @@ export default function ForgotPassword({ status }) {
 
     return (
         <div className="forgot-root">
-            <Head title="Forgot Password | Tena" />
+            <Head title="Forgot Password" />
 
             {/* Return to Login */}
             <Link

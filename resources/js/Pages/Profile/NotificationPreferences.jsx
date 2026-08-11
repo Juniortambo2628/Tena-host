@@ -38,6 +38,7 @@ export default function NotificationPreferences({ preferences }) {
     return (
         <PageShell
             title="Notification Preferences"
+            headTitle="Notifications"
             breadcrumbs={[
                 { label: 'Profile', href: route('profile.edit') },
                 { label: 'Notifications' },

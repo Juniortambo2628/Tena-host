@@ -10,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -44,11 +45,19 @@ return Application::configure(basePath: dirname(__DIR__))
                 'trace' => $e->getTraceAsString(),
             ]);
         });
+
         $exceptions->renderable(function (Throwable $e) {
+            $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
+            if ($status < 400) {
+                $status = 500;
+            }
+
+            // Inertia validation → redirect back with errors
             if ($e instanceof ValidationException && request()->header('X-Inertia')) {
                 return back()->withErrors($e->errors())->withInput();
             }
 
+            // JSON / AJAX requests
             if (request()->expectsJson() || request()->header('X-Requested-With')) {
                 if ($e instanceof AuthenticationException) {
                     return response()->json(['message' => 'Unauthenticated.'], 401);
@@ -56,12 +65,24 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof ValidationException) {
                     return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
                 }
-                $status = method_exists($e, 'getStatusCode') ? $e->getStatusCode() : 500;
-                if ($status < 400) {
-                    $status = 500;
-                }
-
                 return response()->json(['error' => $e->getMessage()], $status);
             }
+
+            // Standard web requests → render Blade error page
+            $titles = [
+                404 => 'Page Not Found',
+                403 => 'Access Denied',
+                405 => 'Method Not Allowed',
+                419 => 'Session Expired',
+                429 => 'Too Many Requests',
+                500 => 'Server Error',
+                503 => 'Maintenance Mode',
+            ];
+
+            return response()->view('errors.'.$status, [
+                'status' => $status,
+                'title' => $titles[$status] ?? 'Error',
+                'message' => $e->getMessage(),
+            ], $status);
         });
     })->create();

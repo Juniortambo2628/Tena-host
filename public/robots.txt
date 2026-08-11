@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /host/
+Disallow: /staff/
+Disallow: /g/
+Disallow: /profile
+Disallow: /api/
+
+Sitemap: https://tena.host/sitemap.xml

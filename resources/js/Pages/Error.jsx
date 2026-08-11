@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 export default function ErrorPage({ status }) {
     const titles = {
@@ -27,6 +27,7 @@ export default function ErrorPage({ status }) {
 
     return (
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
+            <Head title={`${status} Error`} />
             <div className="max-w-lg w-full text-center">
                 <div className="mb-8">
                     <div className="w-20 h-20 bg-[#FFD300]/20 rounded-3xl flex items-center justify-center mx-auto mb-6">

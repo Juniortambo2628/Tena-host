@@ -55,6 +55,12 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'info' => fn () => $request->session()->get('info'),
             ],
+            'seo' => [
+                'siteName' => config('app.name', 'Tena'),
+                'url' => $request->url(),
+                'description' => 'Smart WiFi management for modern hospitality — capture guest data, drive direct bookings, and build lasting relationships.',
+                'ogImage' => asset('legacy/assets/Tena-logo-square.jpg'),
+            ],
         ];
     }
 }

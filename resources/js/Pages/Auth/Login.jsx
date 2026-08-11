@@ -40,7 +40,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <div className="login-root">
-            <Head title="Sign In | Tena" />
+            <Head title="Sign In" />
 
             {/* Return to Home */}
             <Link

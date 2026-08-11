@@ -24,7 +24,7 @@ export default function ResetPassword({ token, email }) {
 
     return (
         <div className="reset-root">
-            <Head title="Reset Password | Tena" />
+            <Head title="Reset Password" />
 
             {/* Return to Login */}
             <Link

@@ -42,7 +42,22 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
         'landingContent' => LandingController::getPublicData(),
     ]);
-});
+})->name('home');
+
+Route::get('/sitemap.xml', function () {
+    $url = url('/');
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    $xml .= '<url><loc>'.e($url).'</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>';
+    $xml .= '<url><loc>'.e($url.'/login').'</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>';
+    $xml .= '<url><loc>'.e($url.'/register').'</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>';
+    $xml .= '<url><loc>'.e($url.'/forgot-password').'</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>';
+    $xml .= '</urlset>';
+
+    return response($xml, 200)
+        ->header('Content-Type', 'application/xml')
+        ->header('Cache-Control', 'public, max-age=86400');
+})->name('sitemap');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');

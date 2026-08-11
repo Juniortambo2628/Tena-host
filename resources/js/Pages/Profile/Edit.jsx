@@ -21,7 +21,7 @@ export default function Edit({
     return (
         <PageShell
             title="Your Account"
-            headTitle="Profile"
+            headTitle="Account Settings"
             breadcrumbs={[
                 { label: 'Settings', href: '#' },
                 { label: 'Profile' },
