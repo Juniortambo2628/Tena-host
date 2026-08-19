@@ -3,6 +3,7 @@ import { useForm, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import { Camera } from 'lucide-react';
 import PillButton from '@/Components/Dashboard/PillButton';
+import { notify } from '@/Components/Toast';
 import { FormField, TextInput, FormActions, FormSuccess } from '@/Components/Forms/FormPrimitives';
 import './UpdateProfileInformationForm.css';
 
@@ -37,7 +38,17 @@ export default function UpdateProfileInformation({
 
     const submit = (e) => {
         e.preventDefault();
-        patch(route('profile.update'));
+        patch(route('profile.update'), {
+            forceFormData: true,
+            onSuccess: () => {
+                notify.success('Profile updated successfully.');
+            },
+            onError: (errors) => {
+                const first = Object.values(errors)[0];
+                const msg = Array.isArray(first) ? first[0] : (typeof first === 'string' ? first : 'Failed to update profile.');
+                notify.error(msg);
+            },
+        });
     };
 
     const initials = ((data.first_name?.[0] || '') + (data.last_name?.[0] || '')).toUpperCase();

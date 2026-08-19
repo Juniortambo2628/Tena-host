@@ -31,17 +31,21 @@ export default function PasskeyManagementForm({ className = '' }) {
     const registerPasskey = async () => {
         setRegistering(true);
         try {
-            await Passkeys.register({
-                onSuccess: () => {
-                    notify.success('Passkey registered successfully.');
-                    loadPasskeys();
-                },
-                onError: (error) => {
-                    notify.error(error?.message || 'Failed to register passkey.');
-                },
-            });
+            const name = prompt('Enter a name for this passkey (e.g. "My Laptop", "Phone"):');
+            if (!name) {
+                setRegistering(false);
+                return;
+            }
+
+            const result = await Passkeys.register({ name });
+
+            if (result && result.credential) {
+                notify.success('Passkey registered successfully.');
+                loadPasskeys();
+            }
         } catch (e) {
-            notify.error('Passkey registration failed.');
+            console.error('Passkey registration error:', e);
+            notify.error(e?.message || 'Failed to register passkey.');
         } finally {
             setRegistering(false);
         }
@@ -51,9 +55,22 @@ export default function PasskeyManagementForm({ className = '' }) {
         if (!confirm('Delete this passkey? This cannot be undone.')) return;
 
         try {
-            await Passkeys.delete(passkeyId);
-            notify.success('Passkey deleted.');
-            loadPasskeys();
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const response = await fetch(route('passkey.destroy', { passkey: passkeyId }), {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                notify.success('Passkey deleted.');
+                loadPasskeys();
+            } else {
+                notify.error('Failed to delete passkey.');
+            }
         } catch (e) {
             notify.error('Failed to delete passkey.');
         }

@@ -49,6 +49,7 @@ class UserController extends Controller
             'role' => $validated['role'],
             'password' => Hash::make($validated['password']),
             'username' => strtolower($validated['first_name'].'.'.$validated['last_name']),
+            'email_verified_at' => now(),
         ]);
 
         NotificationService::userCreated($user, auth()->user());
