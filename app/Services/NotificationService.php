@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Campaign;
 use App\Models\Notification;
+use App\Models\NotificationPreference;
+use App\Models\Order;
+use App\Models\Property;
 use App\Models\User;
 
 class NotificationService
@@ -31,8 +35,10 @@ class NotificationService
 
     public static function guestConnected(string $propertyName, int $count = 1): void
     {
-        $property = \App\Models\Property::where('name', $propertyName)->first();
-        if (! $property) return;
+        $property = Property::where('name', $propertyName)->first();
+        if (! $property) {
+            return;
+        }
 
         self::create(
             $property->user_id,
@@ -45,8 +51,10 @@ class NotificationService
 
     public static function campaignCompleted(int $campaignId, int $sentCount): void
     {
-        $campaign = \App\Models\Campaign::find($campaignId);
-        if (! $campaign) return;
+        $campaign = Campaign::find($campaignId);
+        if (! $campaign) {
+            return;
+        }
 
         self::create(
             $campaign->user_id,
@@ -59,8 +67,10 @@ class NotificationService
 
     public static function orderPlaced(int $orderId): void
     {
-        $order = \App\Models\Order::with('guest.property')->find($orderId);
-        if (! $order || ! $order->guest?->property) return;
+        $order = Order::with('guest.property')->find($orderId);
+        if (! $order || ! $order->guest?->property) {
+            return;
+        }
 
         self::create(
             $order->guest->property->user_id,
@@ -84,11 +94,13 @@ class NotificationService
     private static function create(int $userId, string $type, string $title, string $message, array $data = []): ?Notification
     {
         $user = User::find($userId);
-        if (! $user) return null;
+        if (! $user) {
+            return null;
+        }
 
         // Check notification preferences
         $category = self::categoryFromType($type);
-        $preference = \App\Models\NotificationPreference::where('user_id', $userId)
+        $preference = NotificationPreference::where('user_id', $userId)
             ->where('category', $category)
             ->first();
 
