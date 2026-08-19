@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserInvitationMail;
 use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules\Password as PasswordRule;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -55,7 +55,7 @@ class UserController extends Controller
         // Send password setup email via Laravel's password reset system
         $token = Password::createToken($user);
 
-        \Mail::to($user->email)->send(new \App\Mail\UserInvitationMail(
+        \Mail::to($user->email)->send(new UserInvitationMail(
             name: $user->first_name,
             role: $user->role,
             actionUrl: route('password.reset', ['token' => $token, 'email' => $user->email]),
