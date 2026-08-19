@@ -44,6 +44,10 @@
 
 .feature-card-desc {
     @apply text-gray-600 text-sm leading-relaxed flex-1;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
 }
 
 .feature-card-step {
