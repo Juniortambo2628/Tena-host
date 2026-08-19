@@ -32,6 +32,10 @@
     @apply h-24 bg-black/[0.02] rounded-xl;
 }
 
+.chart-card__empty {
+    @apply flex items-center justify-center h-full text-sm text-black/30 font-semibold;
+}
+
 /* Tooltip */
 .chart-tooltip {
     @apply bg-white rounded-xl shadow-xl shadow-black/10 border border-black/5 px-4 py-3 min-w-[120px];

@@ -37,21 +37,25 @@ export default function ChartCard({
                     {subtitle && <p className="chart-card__subtitle">{subtitle}</p>}
                 </div>
             )}
-            <div className="chart-card__body" style={{ height }}>
+            <div className="chart-card__body" style={{ height, minHeight: height }}>
                 <Suspense fallback={<ChartFallback />}>
-                    <LazyChart
-                        data={data}
-                        type={type}
-                        dataKeys={dataKeys}
-                        colors={colors}
-                        gradientId={gradientId || `grad-${title?.replace(/\s/g, '-') || 'default'}`}
-                        xAxisKey={xAxisKey}
-                        stacked={stacked}
-                        showLegend={showLegend}
-                        showGrid={showGrid}
-                        showDots={showDots}
-                        formatTooltip={formatTooltip}
-                    />
+                    {data.length > 0 ? (
+                        <LazyChart
+                            data={data}
+                            type={type}
+                            dataKeys={dataKeys}
+                            colors={colors}
+                            gradientId={gradientId || `grad-${title?.replace(/\s/g, '-') || 'default'}`}
+                            xAxisKey={xAxisKey}
+                            stacked={stacked}
+                            showLegend={showLegend}
+                            showGrid={showGrid}
+                            showDots={showDots}
+                            formatTooltip={formatTooltip}
+                        />
+                    ) : (
+                        <div className="chart-card__empty">No data available</div>
+                    )}
                 </Suspense>
             </div>
         </div>

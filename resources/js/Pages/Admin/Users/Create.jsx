@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
