@@ -556,7 +556,7 @@ it('allows host to access dashboard', function () {
         ->component('Host/Dashboard')
         ->has('properties')
         ->has('stats')
-        ->has('guestChartData')
+        ->has('analytics')
     );
 });
 
