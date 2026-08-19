@@ -1,0 +1,41 @@
+@reference "tailwindcss";
+
+.create-user-grid {
+    @apply max-w-2xl;
+}
+
+.create-user-info {
+    @apply p-4 bg-[#FFD300]/10 rounded-2xl border border-[#FFD300]/20;
+}
+
+.create-user-info-text {
+    @apply text-sm font-medium text-black/60;
+}
+
+.create-user-roles {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-3;
+}
+
+.create-user-role {
+    @apply flex items-center p-4 rounded-2xl border-2 border-black/5 cursor-pointer transition-all hover:border-black/10;
+}
+
+.create-user-role--active {
+    @apply border-[#FFD300] bg-[#FFD300]/5;
+}
+
+.create-user-role-content {
+    @apply space-y-1;
+}
+
+.create-user-role-label {
+    @apply text-sm font-bold block;
+}
+
+.create-user-role-desc {
+    @apply text-[10px] text-black/40 font-semibold;
+}
+
+.create-user-cancel {
+    @apply px-6 py-3 text-sm font-medium text-black/40 hover:text-black transition-colors;
+}

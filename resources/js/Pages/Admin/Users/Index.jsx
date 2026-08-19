@@ -7,7 +7,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import DataTable from '@/Components/Dashboard/DataTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
-import { User, Eye, Trash2, Download } from 'lucide-react';
+import { User, Eye, Trash2, Plus } from 'lucide-react';
 import StatusBadge from '@/Components/Dashboard/StatusBadge';
 import './Index.css';
 
@@ -134,10 +134,13 @@ export default function Index({ users, stats }) {
             <Head title="Users" />
             <DashboardHero
                 title="User Management"
-                subtitle="Manage registered guests"
+                subtitle="Manage users and assign roles"
                 breadcrumbs={[{ label: 'Users', href: route('admin.users.index') }]}
                 rootRoute="admin.dashboard"
                 stats={summaryStats}
+                actions={[
+                    { label: 'Add User', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('admin.users.create')) },
+                ]}
             />
 
             <GlassCard padding="p-0 overflow-hidden">
