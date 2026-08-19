@@ -1,11 +1,57 @@
 @reference "tailwindcss";
 
+/* View Switcher */
+.host-view-switcher {
+    @apply flex items-center gap-2 mb-6 p-1 bg-black/5 rounded-2xl w-fit;
+}
+
+.host-view-btn {
+    @apply flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl transition-all text-black/40 hover:text-black/70;
+}
+
+.host-view-btn--active {
+    @apply bg-white text-black shadow-sm;
+}
+
+/* Dashboard Grid */
 .host-dashboard-grid {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
 }
 
 .host-dashboard-main {
     @apply lg:col-span-2 space-y-8;
+}
+
+.host-full-width {
+    @apply col-span-1 lg:col-span-3 space-y-8;
+}
+
+.host-chart-row {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+}
+
+.host-sidebar-stat-header {
+    @apply flex items-center gap-3 mb-5;
+}
+
+.host-sidebar-stat-header h4 {
+    @apply text-sm font-bold;
+}
+
+.host-sidebar-stats {
+    @apply space-y-3;
+}
+
+.host-sidebar-stat {
+    @apply flex justify-between items-center p-3 bg-black/[0.02] rounded-xl;
+}
+
+.host-sidebar-stat-label {
+    @apply text-[10px] font-semibold text-black/40 uppercase tracking-widest;
+}
+
+.host-sidebar-stat-value {
+    @apply text-sm font-bold;
 }
 
 .host-dashboard-chart-header {

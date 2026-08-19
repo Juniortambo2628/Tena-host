@@ -1,11 +1,33 @@
 @reference "tailwindcss";
 
+/* View Switcher */
+.admin-view-switcher {
+    @apply flex items-center gap-2 mb-6 p-1 bg-black/5 rounded-2xl w-fit;
+}
+
+.admin-view-btn {
+    @apply flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl transition-all text-black/40 hover:text-black/70;
+}
+
+.admin-view-btn--active {
+    @apply bg-white text-black shadow-sm;
+}
+
+/* Dashboard Grid */
 .admin-dashboard-grid {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
 }
 
 .admin-main-content {
     @apply lg:col-span-2 space-y-8;
+}
+
+.admin-full-width {
+    @apply col-span-1 lg:col-span-3 space-y-8;
+}
+
+.admin-chart-row {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
 }
 
 .admin-chart-header {
