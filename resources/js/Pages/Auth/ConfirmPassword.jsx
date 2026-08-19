@@ -1,11 +1,10 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import React from 'react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { ChevronLeft, Lock } from 'lucide-react';
+import AuthHero from '@/Components/Auth/AuthHero';
+import PillButton from '@/Components/Dashboard/PillButton';
+import { FormField, TextInput } from '@/Components/Forms/FormPrimitives';
 import './ConfirmPassword.css';
-
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -14,44 +13,61 @@ export default function ConfirmPassword() {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('password.confirm'), {
             onFinish: () => reset('password'),
         });
     };
 
     return (
-        <GuestLayout>
+        <div className="confirm-root">
             <Head title="Confirm Password" />
 
-            <div className="confirm-message">
-                This is a secure area of the application. Please confirm your
-                password before continuing.
+            <Link href="/" className="confirm-back-link">
+                <ChevronLeft size={14} />
+                Return to Home
+            </Link>
+
+            <div className="confirm-left">
+                <div className="confirm-left-inner">
+                    <div className="confirm-logo-section">
+                        <img
+                            src="/legacy/assets/Tena-logo-square.jpg"
+                            alt="Tena Logo"
+                            className="confirm-logo-img"
+                        />
+                    </div>
+
+                    <div className="confirm-icon-wrapper">
+                        <Lock size={24} className="confirm-icon" />
+                    </div>
+
+                    <div className="confirm-title-area">
+                        <h1 className="confirm-title">Confirm your password</h1>
+                        <p className="confirm-subtitle">
+                            This is a secure area. Please confirm your password before continuing.
+                        </p>
+                    </div>
+
+                    <form onSubmit={submit} className="confirm-form">
+                        <FormField label="Password" error={errors.password} required>
+                            <TextInput
+                                id="password"
+                                type="password"
+                                value={data.password}
+                                onChange={(e) => setData('password', e.target.value)}
+                                autoFocus
+                                autoComplete="current-password"
+                            />
+                        </FormField>
+
+                        <PillButton variant="primary" processing={processing} className="w-full">
+                            Confirm
+                        </PillButton>
+                    </form>
+                </div>
             </div>
 
-            <form onSubmit={submit}>
-                <div className="confirm-field">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="confirm-input"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="confirm-error" />
-                </div>
-
-                <div className="confirm-actions">
-                    <PrimaryButton className="confirm-button" disabled={processing}>
-                        Confirm
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+            <AuthHero />
+        </div>
     );
 }
