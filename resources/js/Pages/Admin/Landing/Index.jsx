@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Head, router } from '@inertiajs/react';
 import PageShell from '@/Layouts/PageShell';
 import SectionEditor from '@/Components/CMS/SectionEditor';
@@ -10,6 +10,20 @@ export default function Index({ sections: initialSections, mediaConfig }) {
     const [sections, setSections] = useState(initialSections);
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Sync local state whenever Inertia hands us a fresh sections prop
+    // (after a toggle, a save, or a manual router.reload). Without this the
+    // enable/disable switch reads stale `is_active` and never appears to
+    // flip.
+    useEffect(() => {
+        setSections(initialSections);
+    }, [initialSections]);
+
+    const applyLocalToggle = useCallback((sectionId, nextValue) => {
+        setSections((prev) => prev.map((s) => (
+            s.id === sectionId ? { ...s, is_active: nextValue } : s
+        )));
+    }, []);
 
     const handleDragStart = (e, index) => {
         setDraggedIndex(index);
@@ -107,6 +121,7 @@ export default function Index({ sections: initialSections, mediaConfig }) {
                                     onUpdate={handleSectionUpdate}
                                     onMediaUpload={handleSectionUpdate}
                                     onMediaDelete={handleSectionUpdate}
+                                    onToggleActive={applyLocalToggle}
                                 />
                             </div>
                         </div>
