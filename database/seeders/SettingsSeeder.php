@@ -21,7 +21,7 @@ class SettingsSeeder extends Seeder
             ['key' => 'business_address', 'value' => 'Nairobi, Kenya', 'group' => 'general', 'type' => 'string'],
 
             // Branding
-            ['key' => 'email_primary_color', 'value' => '#1a1a2e', 'group' => 'branding', 'type' => 'string'],
+            ['key' => 'email_primary_color', 'value' => '#000000', 'group' => 'branding', 'type' => 'string'],
             ['key' => 'email_accent_color', 'value' => '#FFD300', 'group' => 'branding', 'type' => 'string'],
             ['key' => 'logo_url', 'value' => '', 'group' => 'branding', 'type' => 'string'],
 

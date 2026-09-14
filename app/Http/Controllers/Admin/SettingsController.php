@@ -44,6 +44,8 @@ class SettingsController extends Controller
             'waitlist_welcome_subject' => 'sometimes|string|max:255',
             'waitlist_welcome_heading' => 'sometimes|string|max:255',
             'waitlist_welcome_body' => 'sometimes|string|max:5000',
+            'contact_enquiry_heading' => 'sometimes|string|max:255',
+            'contact_enquiry_body' => 'sometimes|string|max:5000',
             'billing_enabled' => 'sometimes|in:auto,enabled,disabled',
         ];
 
@@ -58,6 +60,7 @@ class SettingsController extends Controller
             'forgot_password_email_heading', 'forgot_password_email_body',
             'waitlist_confirmation_subject', 'waitlist_confirmation_heading', 'waitlist_confirmation_body',
             'waitlist_welcome_subject', 'waitlist_welcome_heading', 'waitlist_welcome_body',
+            'contact_enquiry_heading', 'contact_enquiry_body',
         ];
 
         foreach ($data['settings'] as $key => $value) {

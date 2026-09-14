@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccessPointController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\EmailImageController;
@@ -63,6 +64,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Admin Routes
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {

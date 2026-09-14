@@ -105,6 +105,21 @@ const EMAIL_TEMPLATES = [
             { key: 'Business Address', label: 'Business Address', description: 'Your business address' },
         ],
     },
+    {
+        id: 'contact_enquiry',
+        name: 'Contact Enquiry',
+        headingKey: 'contact_enquiry_heading',
+        bodyKey: 'contact_enquiry_body',
+        headingPlaceholder: 'New contact enquiry',
+        bodyPlaceholder: 'Leave blank to use the default layout, or write a custom body...',
+        variables: [
+            { key: 'Name', label: 'Sender Name', description: 'Name from the form' },
+            { key: 'Email', label: 'Sender Email', description: 'Reply-to address' },
+            { key: 'Subject', label: 'Subject', description: 'Subject line the sender chose' },
+            { key: 'Message', label: 'Message', description: 'The visitor message' },
+            { key: 'Business Name', label: 'Business Name', description: 'Your business name' },
+        ],
+    },
 ];
 
 export default function Index({ settings }) {
@@ -142,6 +157,8 @@ export default function Index({ settings }) {
             waitlist_welcome_subject: flattened.waitlist_welcome_subject || '',
             waitlist_welcome_heading: flattened.waitlist_welcome_heading || '',
             waitlist_welcome_body: flattened.waitlist_welcome_body || '',
+            contact_enquiry_heading: flattened.contact_enquiry_heading || '',
+            contact_enquiry_body: flattened.contact_enquiry_body || '',
             billing_enabled: flattened.billing_enabled || 'auto',
         }
     });

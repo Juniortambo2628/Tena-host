@@ -1,0 +1,82 @@
+@reference "tailwindcss";
+
+.contact-form-section {
+    @apply max-w-3xl mx-auto mt-16;
+    padding-inline: 1rem;
+}
+
+.contact-form-card {
+    @apply relative overflow-hidden rounded-3xl p-8 md:p-10;
+    background: #ffffff;
+    border: 1px solid rgba(27, 27, 27, 0.08);
+    box-shadow: 0 20px 60px -20px rgba(27, 27, 27, 0.15);
+}
+
+.contact-form-header {
+    @apply text-center mb-8;
+}
+
+.contact-form-badge {
+    @apply inline-flex items-center bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-5;
+}
+
+.contact-form-title {
+    @apply text-2xl md:text-3xl font-bold text-[#1b1b1b] leading-tight mb-3;
+    letter-spacing: -0.02em;
+}
+
+.contact-form-subtitle {
+    @apply text-base text-gray-600 max-w-xl mx-auto;
+}
+
+.contact-form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-5;
+}
+
+.contact-form-field {
+    @apply flex flex-col;
+    min-width: 0;
+}
+
+.contact-form-field--full {
+    @apply md:col-span-2;
+}
+
+.contact-form-label {
+    @apply text-sm font-semibold text-[#1b1b1b] mb-2;
+}
+
+.contact-form-input,
+.contact-form-textarea {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-[#1b1b1b] placeholder-gray-400;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.contact-form-input:focus,
+.contact-form-textarea:focus {
+    @apply border-[#1b1b1b] bg-white;
+    box-shadow: 0 0 0 3px rgba(255, 211, 0, 0.35);
+}
+
+.contact-form-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.contact-form-actions {
+    @apply md:col-span-2 flex justify-center mt-2;
+}
+
+.contact-form-submit {
+    @apply inline-flex items-center px-8 py-3 rounded-xl bg-[#1b1b1b] text-white font-bold transition-colors;
+}
+
+.contact-form-submit:hover:not(:disabled) {
+    @apply bg-black;
+}
+
+.contact-form-submit:disabled {
+    @apply opacity-70 cursor-not-allowed;
+}

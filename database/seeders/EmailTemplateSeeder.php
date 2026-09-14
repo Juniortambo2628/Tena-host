@@ -50,6 +50,20 @@ class EmailTemplateSeeder extends Seeder
                 'type' => 'string',
             ],
 
+            // ── Contact Enquiry (admin notification) ──
+            [
+                'key' => 'contact_enquiry_heading',
+                'value' => 'New contact enquiry',
+                'group' => 'email_templates',
+                'type' => 'string',
+            ],
+            [
+                'key' => 'contact_enquiry_body',
+                'value' => '',
+                'group' => 'email_templates',
+                'type' => 'string',
+            ],
+
             // ── Branding defaults (used by all email templates) ──
             [
                 'key' => 'email_primary_color',

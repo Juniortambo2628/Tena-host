@@ -131,7 +131,7 @@ return new class extends Migration
             ['key' => 'waitlist_welcome_subject', 'value' => 'Welcome to the Tena Family!', 'group' => 'email_templates', 'type' => 'string'],
             ['key' => 'waitlist_welcome_heading', 'value' => 'Welcome to the Tena Family!', 'group' => 'email_templates', 'type' => 'string'],
             ['key' => 'waitlist_welcome_body', 'value' => '', 'group' => 'email_templates', 'type' => 'string'],
-            ['key' => 'email_primary_color', 'value' => '#1a1a2e', 'group' => 'branding', 'type' => 'string'],
+            ['key' => 'email_primary_color', 'value' => '#000000', 'group' => 'branding', 'type' => 'string'],
             ['key' => 'email_accent_color', 'value' => '#FFD300', 'group' => 'branding', 'type' => 'string'],
             ['key' => 'site_name', 'value' => 'Tena Host', 'group' => 'general', 'type' => 'string'],
             ['key' => 'business_address', 'value' => 'Nairobi, Kenya', 'group' => 'general', 'type' => 'string'],

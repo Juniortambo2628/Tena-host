@@ -9,6 +9,7 @@ const emailComponents = {
     reset: () => import('@/Emails/ForgotPasswordEmail'),
     waitlist_confirmation: () => import('@/Emails/WaitlistConfirmationEmail'),
     waitlist_welcome: () => import('@/Emails/WaitlistWelcomeEmail'),
+    contact_enquiry: () => import('@/Emails/ContactEnquiryEmail'),
 };
 
 function resolveBody(settings, template) {
@@ -17,6 +18,7 @@ function resolveBody(settings, template) {
         case 'receipt': return settings.receipt_email_body || '';
         case 'waitlist_confirmation': return settings.waitlist_confirmation_body || '';
         case 'waitlist_welcome': return settings.waitlist_welcome_body || '';
+        case 'contact_enquiry': return settings.contact_enquiry_body || '';
         default: return settings.forgot_password_email_body || '';
     }
 }
@@ -27,6 +29,7 @@ function resolveHeading(settings, template) {
         case 'receipt': return settings.receipt_email_heading || '';
         case 'waitlist_confirmation': return settings.waitlist_confirmation_heading || '';
         case 'waitlist_welcome': return settings.waitlist_welcome_heading || '';
+        case 'contact_enquiry': return settings.contact_enquiry_heading || '';
         default: return settings.forgot_password_email_heading || '';
     }
 }
@@ -42,6 +45,7 @@ export default function EmailPreview({ settings }) {
         { id: 'reset', name: 'Password Reset' },
         { id: 'waitlist_confirmation', name: 'Waitlist Confirmation' },
         { id: 'waitlist_welcome', name: 'Waitlist Welcome' },
+        { id: 'contact_enquiry', name: 'Contact Enquiry' },
     ];
 
     const emailProps = useMemo(() => ({
@@ -66,11 +70,16 @@ export default function EmailPreview({ settings }) {
         transactionId: "TXN_12345678",
         userName: "Empire Builder",
         resetLink: "#",
+        senderName: "Alex Superhost",
+        senderEmail: "alex@example.com",
+        subjectLine: "Interested in Tena for my listings",
+        messageBody: "Hi team, I'd love to know more about the founding host program and pricing. Thanks!",
     }), [settings.email_primary_color, settings.email_accent_color, settings.site_name,
         settings.business_address, settings.logo_url, settings.welcome_email_heading,
         settings.welcome_email_body, settings.receipt_email_heading, settings.receipt_email_body,
         settings.waitlist_confirmation_heading, settings.waitlist_confirmation_body,
         settings.waitlist_welcome_heading, settings.waitlist_welcome_body,
+        settings.contact_enquiry_heading, settings.contact_enquiry_body,
         settings.forgot_password_email_heading, settings.forgot_password_email_body,
         activeTemplate]);
 
