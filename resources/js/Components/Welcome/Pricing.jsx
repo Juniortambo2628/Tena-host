@@ -21,21 +21,26 @@ function PricingPlanCard({ plan, onOpenWaitlist }) {
                 <div className="pricing-card-price">
                     {plan.price} <span className="pricing-card-price-unit">{plan.unit}</span>
                 </div>
-                <div className={`pricing-card-desc-wrap ${expanded ? 'is-expanded' : ''}`}>
-                    <p
-                        className="pricing-card-desc"
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }}
-                    />
-                </div>
                 <button
                     type="button"
                     className="pricing-card-toggle"
                     onClick={() => setExpanded((v) => !v)}
                     aria-expanded={expanded}
+                    aria-controls={`pricing-desc-${plan.label.replace(/\s+/g, '-').toLowerCase()}`}
                 >
                     {expanded ? 'See less' : 'See more'}
                     <ChevronDown size={14} className={`pricing-card-toggle-icon ${expanded ? 'is-open' : ''}`} />
                 </button>
+                <div
+                    id={`pricing-desc-${plan.label.replace(/\s+/g, '-').toLowerCase()}`}
+                    className={`pricing-card-desc-wrap ${expanded ? 'is-expanded' : ''}`}
+                    hidden={!expanded}
+                >
+                    <p
+                        className="pricing-card-desc"
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }}
+                    />
+                </div>
                 <button
                     onClick={onOpenWaitlist}
                     className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}
