@@ -108,6 +108,8 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding-bottom: 1.5rem;
+    padding-right: 0.5rem;
+    scrollbar-gutter: stable;
 }
 
 .waitlist-form-heading {

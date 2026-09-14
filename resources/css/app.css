@@ -28,9 +28,18 @@ body {
 /* ── Global scrollbar (subtle, theme-matched) ─────────────────────
    Firefox: thin, dark-neutral thumb on transparent track.
    WebKit/Blink: 10px overall, 6px visual thumb (via inset border),
-   rounded, low-opacity dark on hover it deepens and picks up a hint
+   rounded, low-opacity dark; on hover it deepens and picks up a hint
    of the Tena yellow. Works on both the light landing page and the
-   dark dashboard. */
+   dark dashboard, and on nested scroll containers (dialogs, dropdowns,
+   code blocks). */
+
+/* Reserve gutter at the document level so the page does NOT jump
+   sideways when a dialog applies overflow:hidden on <body> and the
+   viewport scrollbar disappears. */
+html {
+    scrollbar-gutter: stable;
+}
+
 * {
     scrollbar-width: thin;
     scrollbar-color: rgba(27, 27, 27, 0.28) transparent;
@@ -64,6 +73,23 @@ body {
 
 *::-webkit-scrollbar-corner {
     background: transparent;
+}
+
+/* Any nested scroll surface (dialog body, dropdown list, code block)
+   reserves gutter too, so a scrollbar never lands on top of adjacent
+   content — like a modal's close (×) button — even before it appears.
+   The utility hooks below can be added to any custom scroll container
+   without touching this file. */
+[data-scroll-stable],
+.scroll-stable,
+.modal-scroll,
+.glass-modal__body,
+.waitlist-form-scroll,
+.editor-modal__content,
+[role="dialog"] .overflow-y-auto,
+[role="dialog"] .overflow-auto {
+    scrollbar-gutter: stable;
+    padding-right: 4px;
 }
 
 @media (prefers-color-scheme: dark) {
