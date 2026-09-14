@@ -17,7 +17,7 @@
 }
 
 .hero-text {
-    @apply w-full lg:w-1/2;
+    @apply w-full lg:w-1/2 min-w-0;
 }
 
 .hero-badge-wrap {
@@ -39,23 +39,38 @@
 }
 
 .hero-subtitle {
-    @apply text-lg text-gray-600 mb-8 max-w-lg leading-relaxed;
+    @apply text-lg text-gray-600 mb-8 leading-relaxed;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .hero-cta-group {
     @apply flex flex-col sm:flex-row gap-4;
 }
 
+.hero-btn-primary,
+.hero-btn-secondary {
+    @apply px-6 py-4 rounded-xl font-bold transition-all duration-300;
+    font-size: 0.9375rem;
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .hero-btn-primary {
-    @apply px-8 py-4 bg-[#1b1b1b] text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-base;
+    @apply bg-[#1b1b1b] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5;
 }
 
 .hero-btn-secondary {
-    @apply px-8 py-4 bg-transparent text-[#1b1b1b] border-2 border-[#1b1b1b] rounded-xl font-bold hover:bg-[#1b1b1b] hover:text-white transition-all duration-300 text-base;
+    @apply bg-transparent text-[#1b1b1b] border-2 border-[#1b1b1b] hover:bg-[#1b1b1b] hover:text-white;
 }
 
 .hero-image-col {
-    @apply w-full lg:w-1/2;
+    @apply w-full lg:w-1/2 min-w-0;
 }
 
 .hero-image-wrap {

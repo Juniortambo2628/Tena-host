@@ -1,19 +1,21 @@
 @reference "tailwindcss";
 
 .pricing-cards-grid {
-    @apply grid grid-cols-1 md:grid-cols-3 gap-8 mb-16;
+    @apply grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch;
 }
 
 .pricing-card {
     @apply bg-white/90 rounded-2xl;
     width: 100%;
     min-width: 0;
+    display: flex;
 }
 
 .pricing-card-inner {
     @apply text-center flex flex-col items-center p-8;
     width: 100%;
     min-width: 0;
+    flex: 1 1 auto;
 }
 
 .pricing-card-label {
@@ -28,21 +30,60 @@
     @apply text-lg font-normal text-gray-500;
 }
 
-.pricing-card-desc {
-    @apply text-gray-600 text-center leading-relaxed mb-8;
+.pricing-card-desc-wrap {
     width: 100%;
     min-width: 0;
-    padding: 0 0.5rem;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    max-height: 5.4rem;
+}
+
+.pricing-card-desc-wrap.is-expanded {
+    max-height: 32rem;
+}
+
+.pricing-card-desc {
+    @apply text-gray-600 leading-relaxed;
+    text-align: center;
+    width: 100%;
+    min-width: 0;
+    padding: 0 0.25rem;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    hyphens: auto;
+    margin: 0;
+}
+
+.pricing-card-desc-wrap:not(.is-expanded) .pricing-card-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.pricing-card-toggle {
+    @apply inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-[#1b1b1b] mb-6 mt-1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.pricing-card-toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.pricing-card-toggle-icon.is-open {
+    transform: rotate(180deg);
 }
 
 .pricing-card-cta-dark {
-    @apply w-full py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition-colors;
+    @apply w-full py-3 rounded-xl bg-black text-white font-semibold hover:bg-gray-800 transition-colors mt-auto;
 }
 
 .pricing-card-cta-outline {
-    @apply w-full py-3 rounded-xl border-2 border-black text-black font-semibold hover:bg-gray-50 transition-colors;
+    @apply w-full py-3 rounded-xl border-2 border-black text-black font-semibold hover:bg-gray-50 transition-colors mt-auto;
 }
 
 .pricing-cta-section {
@@ -50,40 +91,89 @@
 }
 
 .pricing-cta-card {
-    @apply bg-white relative overflow-hidden rounded-2xl;
+    @apply relative overflow-hidden rounded-3xl;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(255, 211, 0, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 0% 100%, rgba(27, 27, 27, 0.06) 0%, transparent 45%),
+        #ffffff;
+    border: 1px solid rgba(27, 27, 27, 0.08);
+    box-shadow: 0 20px 60px -20px rgba(27, 27, 27, 0.15);
 }
 
 .pricing-cta-decoration {
-    @apply absolute top-0 right-0 w-32 h-32 bg-[#FFD300]/20 rounded-bl-full -mr-8 -mt-8;
+    @apply absolute top-0 right-0 w-40 h-40 bg-[#FFD300]/30 rounded-bl-full -mr-10 -mt-10;
+    pointer-events: none;
+}
+
+.pricing-cta-decoration-bl {
+    @apply absolute bottom-0 left-0 w-32 h-32 bg-[#1b1b1b]/5 rounded-tr-full -ml-8 -mb-8;
+    pointer-events: none;
 }
 
 .pricing-cta-content {
-    @apply relative z-10 text-center p-8;
+    @apply relative z-10 p-8 md:p-12 text-center;
 }
 
 .pricing-cta-label {
     @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
 }
 
-.pricing-cta-text {
-    @apply text-lg text-gray-700 leading-relaxed mb-8 max-w-2xl mx-auto;
+.pricing-cta-headline {
+    @apply text-2xl md:text-3xl font-bold text-[#1b1b1b] leading-tight mb-4 max-w-2xl mx-auto;
+    letter-spacing: -0.02em;
+}
+
+.pricing-cta-intro {
+    @apply text-base md:text-lg text-gray-600 leading-relaxed mb-8 max-w-2xl mx-auto;
     overflow-wrap: break-word;
     word-wrap: break-word;
-    word-break: break-word;
+    hyphens: auto;
+}
+
+.pricing-cta-perks {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8;
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+.pricing-cta-perk {
+    @apply flex items-start gap-3 p-4 rounded-xl bg-white/80;
+    border: 1px solid rgba(27, 27, 27, 0.06);
+    min-width: 0;
+}
+
+.pricing-cta-perk-icon {
+    @apply flex-shrink-0 w-9 h-9 rounded-full bg-[#FFD300]/25 text-[#1b1b1b] flex items-center justify-center;
+}
+
+.pricing-cta-perk-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.pricing-cta-perk-label {
+    @apply text-sm font-bold text-[#1b1b1b];
+    line-height: 1.3;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.pricing-cta-perk-text {
+    @apply text-sm text-gray-600;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+}
+
+.pricing-cta-closing {
+    @apply text-sm text-gray-500 mb-6 max-w-2xl mx-auto;
+    font-style: italic;
 }
 
 .pricing-cta-button {
-    @apply px-8 py-3 rounded-xl border-2 border-black text-black font-bold hover:bg-gray-50 transition-colors inline-flex items-center;
-}
-
-.pricing-footer {
-    @apply text-center mt-12;
-}
-
-.pricing-footer-text {
-    @apply text-gray-500;
-}
-
-.pricing-footer-link {
-    @apply text-[#ffb100] hover:underline;
+    @apply px-8 py-3 rounded-xl bg-[#1b1b1b] text-white font-bold hover:bg-black transition-colors inline-flex items-center;
 }

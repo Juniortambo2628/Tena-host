@@ -109,8 +109,8 @@
             </p>
         </div>
 
-        <div class="footer-banner">
-            <img src="{{ $footerImageUrl }}" alt="" />
+        <div class="footer-banner" style="padding:0 30px 16px;text-align:center;">
+            <img src="{{ $footerImageUrl }}" alt="{{ $site_name ?? 'Tena Host' }}" width="600" border="0" style="display:block;width:100%;max-width:600px;height:auto;border-radius:12px;border:0;outline:none;text-decoration:none;margin:0 auto;" />
         </div>
 
         <div class="footer">

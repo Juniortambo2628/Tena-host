@@ -12,31 +12,8 @@
     }
     $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
 
-    $resolvedBody = $resolvedBody ?? '';
     $resolvedHeading = $resolvedHeading ?? '';
-
-    $varReplacements = [
-        '{{First Name}}' => $firstName ?? '',
-        '{{Last Name}}' => $lastName ?? '',
-        '{{Email}}' => $email ?? '',
-        '{{Business Name}}' => $businessName ?? 'Tena',
-        '{{Business Address}}' => $businessAddress ?? '',
-    ];
-
-    $resolveVars = function ($text) use ($varReplacements) {
-        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
-        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5);
-        $text = str_replace(array_keys($varReplacements), array_values($varReplacements), $text);
-        $text = preg_replace_callback('/\{\{\s*(.+?)\s*\}\}/s', function ($m) use ($varReplacements) {
-            $key = '{{' . trim(strip_tags($m[1])) . '}}';
-            return $varReplacements[$key] ?? '';
-        }, $text);
-        return $text;
-    };
-
-    $resolvedHeading = $resolveVars($resolvedHeading);
-    $resolvedBody = $resolveVars($resolvedBody);
-
+    $resolvedBody = $resolvedBody ?? '';
     $hasCustomBody = filled(trim(strip_tags($resolvedBody)));
 @endphp
 <!DOCTYPE html>
@@ -44,7 +21,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $resolvedHeading ?: 'Welcome to the Tena Family!' }}</title>
+    <title>{{ $resolvedHeading ?: 'New contact enquiry' }}</title>
     <!--[if mso]>
     <style>table,td,p,a,span{font-family:Arial,sans-serif !important;}</style>
     <![endif]-->
@@ -59,29 +36,41 @@
                 @if($logoUrl)
                 <tr><td align="center" style="padding:32px 40px;background-color:{{ $headerBgColor }}"><img src="{{ $logoUrl }}" alt="{{ $businessName }}" height="48" style="display:block;" /></td></tr>
                 @endif
-                <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $resolvedHeading ?: 'Welcome to the Tena Family!' }}</h1></td></tr>
-                <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333;max-width:600px">
+                <tr><td style="padding:32px 40px 8px">
+                    <h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $resolvedHeading ?: 'New contact enquiry' }}</h1>
+                    <p style="margin:8px 0 0;font-size:13px;color:#888">A visitor just sent a message from the {{ $businessName }} website.</p>
+                </td></tr>
+                <tr><td style="padding:16px 40px 8px">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f8f8;border-radius:12px">
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee;width:35%">From</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee">{{ $senderName }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888;border-bottom:1px solid #eee">Email</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333;border-bottom:1px solid #eee"><a href="mailto:{{ $senderEmail }}" style="color:{{ $primaryColor }};text-decoration:none">{{ $senderEmail }}</a></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:12px 20px;font-size:13px;color:#888">Subject</td>
+                            <td style="padding:12px 20px;font-size:14px;font-weight:600;color:#333">{{ $subjectLine }}</td>
+                        </tr>
+                    </table>
+                </td></tr>
+                <tr><td style="padding:16px 40px 32px;font-size:15px;line-height:1.7;color:#333">
                     <div style="word-wrap:break-word;overflow-wrap:break-word;word-break:normal;white-space:normal;mso-word-wrap:break-word;max-width:100%;">
-                    <p style="margin:0 0 16px">Hey {{ $firstName }},</p>
-
                     @if($hasCustomBody)
                         {!! $resolvedBody !!}
                     @else
-                        <p style="margin:0 0 16px">We're excited to share that <strong>{{ $businessName }}</strong> is getting closer to launch!</p>
-                        <p style="margin:0 0 16px">As a waitlist member, you'll be among the first to:</p>
-                        <ul style="margin:0 0 20px;padding-left:20px;line-height:2">
-                            <li>Create your host profile and list properties</li>
-                            <li>Access direct booking tools to reduce OTA commissions</li>
-                            <li>Connect with guests who are looking for unique stays</li>
-                            <li>Manage everything from one simple dashboard</li>
-                        </ul>
-                        <p style="margin:0 0 16px">We're working hard to make sure {{ $businessName }} delivers exactly what you need. Stay tuned for updates!</p>
+                        <p style="margin:0 0 8px;font-size:13px;color:#888;text-transform:uppercase;letter-spacing:0.05em">Message</p>
+                        <div style="padding:16px 20px;background:#fafafa;border-left:3px solid {{ $accentColor }};border-radius:8px;color:#333;font-size:15px;line-height:1.7">
+                            {!! nl2br(e($messageBody)) !!}
+                        </div>
                     @endif
-
-                    <p style="margin:0;font-size:14px;color:#888">Got questions? Just reply to this email — we'd love to hear from you.</p>
                     </div>
                 </td></tr>
-                <tr><td style="padding:0 40px 16px"><p style="margin:0;font-size:13px;color:#888">Thank you for being part of our journey.</p></td></tr>
+                <tr><td style="padding:0 40px 24px">
+                    <p style="margin:0"><a href="mailto:{{ $senderEmail }}?subject=Re:%20{{ rawurlencode($subjectLine) }}" style="display:inline-block;padding:14px 32px;background-color:{{ $accentColor }};color:#000;font-weight:700;font-size:14px;text-decoration:none;border-radius:10px">Reply to {{ $senderName }}</a></p>
+                </td></tr>
             </table>
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width:700px;margin-top:16px;">
                 <tr><td align="center" style="padding:0 0 8px;"><img src="{{ $footerImageUrl }}" alt="{{ $businessName }}" width="600" border="0" style="display:block;width:100%;max-width:600px;height:auto;border-radius:12px;border:0;outline:none;text-decoration:none;margin:0 auto;" /></td></tr>
