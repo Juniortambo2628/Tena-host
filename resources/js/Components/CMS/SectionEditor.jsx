@@ -7,6 +7,7 @@ import ContentField from './ContentField';
 import MediaUploader from './MediaUploader';
 import CropModal from './CropModal';
 import JsonArrayEditor from './JsonArrayEditor';
+import { getExpectedMediaSlots, isSchemaKey } from '@/lib/landingSchema';
 import './SectionEditor.css';
 
 function groupContentKeys(content) {
@@ -52,9 +53,20 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
     const [activeTab, setActiveTab] = useState(0);
     const [hasChanges, setHasChanges] = useState(false);
     const [localContent, setLocalContent] = useState(section.content || {});
-    const [localMedia, setLocalMedia] = useState(section.media || {});
+    const [localMedia, setLocalMedia] = useState(() => {
+        // Seed empty slots for every expected media_key so admins see all
+        // required placements before uploading anything.
+        const initial = { ...(section.media || {}) };
+        const contentKeys = Object.keys(section.content || {});
+        for (const slot of getExpectedMediaSlots(section.section_key, contentKeys)) {
+            if (!(slot.key in initial)) initial[slot.key] = null;
+        }
+        return initial;
+    });
     const [cropMedia, setCropMedia] = useState(null);
     const [newMediaKey, setNewMediaKey] = useState('');
+    const [showCustomKeyInput, setShowCustomKeyInput] = useState(false);
+    const [customKeyDraft, setCustomKeyDraft] = useState('');
 
     const { simple, arrays } = useMemo(() => groupContentKeys(localContent), [localContent]);
 
@@ -118,16 +130,30 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
     };
 
     const handleMediaDelete = (media) => {
+        const contentKeys = Object.keys(localContent);
+        const belongsToSchema = isSchemaKey(section.section_key, contentKeys, media.media_key);
+        const confirmMessage = belongsToSchema
+            ? `Remove the uploaded file for "${media.media_key}"? The slot will stay so you can re-upload.`
+            : `Remove the custom media slot "${media.media_key}"? This cannot be undone.`;
+
+        if (!window.confirm(confirmMessage)) return;
+
         router.delete(route('admin.landing.media.destroy', { media: media.id }), {
             preserveScroll: true,
             onSuccess: () => {
                 setLocalMedia(prev => {
                     const next = { ...prev };
-                    delete next[media.media_key];
+                    if (belongsToSchema) {
+                        // Keep the slot visible so the admin can re-upload without
+                        // re-typing the key.
+                        next[media.media_key] = null;
+                    } else {
+                        delete next[media.media_key];
+                    }
                     return next;
                 });
                 setHasChanges(true);
-                notify.success('Media deleted');
+                notify.success(belongsToSchema ? 'File removed — slot kept' : 'Media slot removed');
                 if (onMediaDelete) onMediaDelete(media);
             },
             onError: () => notify.error('Failed to delete media'),
@@ -138,59 +164,29 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         setCropMedia(media);
     };
 
-    const handleAddMediaKey = () => {
-        const key = newMediaKey.trim().replace(/\s+/g, '_').toLowerCase();
+    const handleAddMediaKey = (rawKey) => {
+        const key = (rawKey ?? newMediaKey).trim().replace(/\s+/g, '_').toLowerCase();
         if (!key) return;
-        if (localMedia[key]) {
-            notify.error('This media key already exists');
+        if (key in localMedia) {
+            notify.error('This media slot already exists');
             return;
         }
         setLocalMedia(prev => ({ ...prev, [key]: null }));
         setNewMediaKey('');
+        setCustomKeyDraft('');
+        setShowCustomKeyInput(false);
         setHasChanges(true);
     };
 
+    const expectedMediaSlots = useMemo(
+        () => getExpectedMediaSlots(section.section_key, Object.keys(localContent)),
+        [section.section_key, localContent],
+    );
+
     const suggestedMediaKeys = useMemo(() => {
-        const existing = Object.keys(localMedia);
-        const contentKeys = Object.keys(localContent);
-
-        const arrayNames = new Set();
-        contentKeys.forEach(k => {
-            const match = k.match(/^([^.]+)\.\d+\..+$/);
-            if (match) arrayNames.add(match[1]);
-        });
-
-        const suggestions = [];
-
-        if (arrayNames.size > 0) {
-            arrayNames.forEach(arrName => {
-                const count = contentKeys.filter(k => k.startsWith(arrName + '.')).length;
-                const uniqueIndices = new Set();
-                contentKeys.forEach(k => {
-                    const m = k.match(new RegExp(`^${arrName}\\.(\\d+)\\..+$`));
-                    if (m) uniqueIndices.add(parseInt(m[1]));
-                });
-                for (const idx of [...uniqueIndices].sort((a, b) => a - b)) {
-                    const key = `${arrName}_${idx}_image`;
-                    if (!existing.includes(key)) {
-                        suggestions.push({ key, label: `${arrName.replace(/_/g, ' ')} ${idx + 1} image` });
-                    }
-                }
-            });
-        }
-
-        const commonPatterns = [
-            'main_image', 'hero_image', 'background', 'banner', 'logo',
-            'feature_image', 'cta_image', 'icon', 'thumbnail',
-        ];
-        commonPatterns.forEach(key => {
-            if (!existing.includes(key)) {
-                suggestions.push({ key, label: key.replace(/_/g, ' ') });
-            }
-        });
-
-        return suggestions;
-    }, [localMedia, localContent]);
+        const existing = new Set(Object.keys(localMedia));
+        return expectedMediaSlots.filter((slot) => !existing.has(slot.key));
+    }, [expectedMediaSlots, localMedia]);
 
     const renderContentTab = () => (
         <div className="editor-tab__content">
@@ -258,56 +254,111 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
     };
 
     const renderMediaTab = () => {
+        const slotByKey = new Map(expectedMediaSlots.map((s) => [s.key, s]));
         const mediaKeys = Object.keys(localMedia);
+        const hasAvailableSlots = suggestedMediaKeys.length > 0;
+
         return (
             <div className="editor-tab__content">
                 <h3 className="editor-tab__heading">Media Files</h3>
                 {mediaKeys.length > 0 && (
                     <div className="editor-tab__media-grid">
-                        {mediaKeys.map(key => (
-                            <MediaUploader
-                                key={`${key}-${localMedia[key]?.id || 'empty'}`}
-                                sectionId={section.id}
-                                mediaKey={key}
-                                existingMedia={localMedia[key] ? { ...localMedia[key], id: localMedia[key].id || localMedia[key] } : null}
-                                onUpload={handleMediaUpload}
-                                onDelete={handleMediaDelete}
-                                onCrop={handleCropOpen}
-                            />
-                        ))}
+                        {mediaKeys.map((key) => {
+                            const slot = slotByKey.get(key);
+                            return (
+                                <div key={key} className="editor-tab__media-slot">
+                                    <MediaUploader
+                                        key={`${key}-${localMedia[key]?.id || 'empty'}`}
+                                        sectionId={section.id}
+                                        mediaKey={key}
+                                        existingMedia={localMedia[key] ? { ...localMedia[key], id: localMedia[key].id || localMedia[key] } : null}
+                                        onUpload={handleMediaUpload}
+                                        onDelete={handleMediaDelete}
+                                        onCrop={handleCropOpen}
+                                        label={slot?.label ? `Drop file here or click to browse — ${slot.label}` : 'Drop file here or click to browse'}
+                                    />
+                                    {slot?.description && (
+                                        <p className="editor-tab__media-hint">{slot.description}</p>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
-                <div className="editor-tab__add-media">
-                    <div className="editor-tab__add-media-row">
-                        <select
-                            value={newMediaKey}
-                            onChange={(e) => setNewMediaKey(e.target.value)}
-                            className="editor-tab__add-media-select"
+
+                {hasAvailableSlots ? (
+                    <div className="editor-tab__add-media">
+                        <label className="editor-tab__add-media-label">Add a missing slot for this section:</label>
+                        <div className="editor-tab__add-media-row">
+                            <select
+                                value={newMediaKey}
+                                onChange={(e) => setNewMediaKey(e.target.value)}
+                                className="editor-tab__add-media-select"
+                            >
+                                <option value="">Select a media placement…</option>
+                                {suggestedMediaKeys.map(({ key, label }) => (
+                                    <option key={key} value={key}>{label} ({key})</option>
+                                ))}
+                            </select>
+                            <button
+                                onClick={() => handleAddMediaKey()}
+                                className="editor-tab__add-media-btn"
+                                disabled={!newMediaKey}
+                            >
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    !showCustomKeyInput && (
+                        <p className="editor-tab__add-media-note">
+                            All expected media slots for this section are already present.
+                        </p>
+                    )
+                )}
+
+                <div className="editor-tab__add-media editor-tab__add-media--custom">
+                    {!showCustomKeyInput ? (
+                        <button
+                            type="button"
+                            className="editor-tab__add-media-link"
+                            onClick={() => setShowCustomKeyInput(true)}
                         >
-                            <option value="">Select a media key...</option>
-                            {suggestedMediaKeys.map(({ key, label }) => (
-                                <option key={key} value={key}>{label} ({key})</option>
-                            ))}
-                            <option value="__custom">Custom key...</option>
-                        </select>
-                        {newMediaKey === '__custom' && (
+                            Advanced: add a custom media key
+                        </button>
+                    ) : (
+                        <div className="editor-tab__add-media-row">
                             <input
                                 type="text"
-                                value=""
+                                value={customKeyDraft}
                                 onChange={(e) => {
                                     const val = e.target.value.trim().replace(/\s+/g, '_').toLowerCase();
-                                    setNewMediaKey(val);
+                                    setCustomKeyDraft(val);
                                 }}
-                                onKeyDown={(e) => e.key === 'Enter' && handleAddMediaKey()}
-                                placeholder="Type custom key..."
+                                onKeyDown={(e) => e.key === 'Enter' && customKeyDraft && handleAddMediaKey(customKeyDraft)}
+                                placeholder="e.g. sponsor_logo"
                                 className="editor-tab__add-media-input"
                                 autoFocus
                             />
-                        )}
-                        <button onClick={handleAddMediaKey} className="editor-tab__add-media-btn" disabled={!newMediaKey || newMediaKey === '__custom'}>
-                            Add
-                        </button>
-                    </div>
+                            <button
+                                onClick={() => handleAddMediaKey(customKeyDraft)}
+                                className="editor-tab__add-media-btn"
+                                disabled={!customKeyDraft}
+                            >
+                                Add
+                            </button>
+                            <button
+                                type="button"
+                                className="editor-tab__add-media-cancel"
+                                onClick={() => {
+                                    setShowCustomKeyInput(false);
+                                    setCustomKeyDraft('');
+                                }}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         );
