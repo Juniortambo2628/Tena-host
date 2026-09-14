@@ -9,6 +9,8 @@ import HowItWorks from '@/Components/Welcome/HowItWorks';
 import ROICalculator from '@/Components/Welcome/ROICalculator';
 import Pricing from '@/Components/Welcome/Pricing';
 import MediaShowcase from '@/Components/Welcome/MediaShowcase';
+import Credibility from '@/Components/Welcome/Credibility';
+import PartnersCarousel from '@/Components/Welcome/PartnersCarousel';
 import WaitlistModal from '@/Components/Welcome/WaitlistModal';
 import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
@@ -21,11 +23,13 @@ const SECTION_COMPONENTS = {
     hero: Hero,
     detailed_features: DetailedFeatures,
     features: FeatureSection,
+    credibility: Credibility,
     media_showcase: MediaShowcase,
     problem: ProblemSection,
     how_it_works: HowItWorks,
     roi_calculator: ROICalculator,
     pricing: Pricing,
+    partners: PartnersCarousel,
 };
 
 export default function Welcome({ auth, laravelVersion, phpVersion, landingContent = [] }) {

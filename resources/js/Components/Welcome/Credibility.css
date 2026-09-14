@@ -1,0 +1,120 @@
+@reference "tailwindcss";
+
+.credibility-card {
+    @apply relative overflow-hidden rounded-3xl p-8 md:p-12 lg:p-16 max-w-6xl mx-auto;
+    background:
+        radial-gradient(circle at 100% 0%, rgba(255, 211, 0, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 0% 100%, rgba(27, 27, 27, 0.06) 0%, transparent 45%),
+        #ffffff;
+    border: 1px solid rgba(27, 27, 27, 0.08);
+    box-shadow: 0 20px 60px -20px rgba(27, 27, 27, 0.15);
+}
+
+.credibility-decoration {
+    @apply absolute top-0 right-0 w-40 h-40 bg-[#FFD300]/25 rounded-bl-full -mr-10 -mt-10;
+    pointer-events: none;
+}
+
+.credibility-decoration-bl {
+    @apply absolute bottom-0 left-0 w-32 h-32 bg-[#1b1b1b]/5 rounded-tr-full -ml-8 -mb-8;
+    pointer-events: none;
+}
+
+.credibility-content {
+    @apply relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center;
+}
+
+.credibility-text {
+    @apply flex flex-col min-w-0;
+}
+
+.credibility-badge-row {
+    @apply flex items-center gap-3 mb-6 flex-wrap;
+}
+
+.credibility-partner-logo {
+    @apply w-10 h-10 rounded-lg object-cover flex-shrink-0;
+    background: #FFD300;
+}
+
+.credibility-badge {
+    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-xs px-4 py-2 rounded-full tracking-wide;
+    line-height: 1.4;
+}
+
+.credibility-title {
+    @apply text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-[#1b1b1b] leading-[1.1] mb-5;
+    letter-spacing: -0.03em;
+}
+
+.credibility-subtitle {
+    @apply text-base md:text-lg text-gray-600 leading-relaxed mb-8;
+    max-width: 44rem;
+}
+
+.credibility-stats {
+    @apply grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-5;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.credibility-stat {
+    @apply flex flex-col min-w-0;
+    padding-right: 0.5rem;
+    border-left: 3px solid #FFD300;
+    padding-left: 0.9rem;
+}
+
+.credibility-stat-value {
+    @apply text-2xl md:text-[1.75rem] font-bold text-[#1b1b1b];
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+.credibility-stat-label {
+    @apply text-xs md:text-sm text-gray-500 mt-1;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.credibility-image-col {
+    @apply relative min-w-0;
+}
+
+.credibility-image-wrap {
+    @apply relative overflow-hidden rounded-2xl;
+    aspect-ratio: 4/5;
+    box-shadow: 0 25px 60px -25px rgba(27, 27, 27, 0.35);
+}
+
+.credibility-image {
+    @apply w-full h-full object-cover;
+    display: block;
+}
+
+.credibility-image-caption {
+    @apply absolute left-4 bottom-4 right-4 text-xs font-semibold text-white/95 bg-black/45 px-3 py-2 rounded-full;
+    backdrop-filter: blur(6px);
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.credibility-footer {
+    @apply relative z-10 mt-10 md:mt-14 pt-8 border-t border-black/10 text-center;
+}
+
+.credibility-closing {
+    @apply text-base md:text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-3;
+}
+
+.credibility-tagline {
+    @apply text-lg md:text-xl font-bold text-[#1b1b1b] tracking-tight;
+    letter-spacing: -0.01em;
+}
+
+@media (min-width: 1024px) {
+    .credibility-image-wrap {
+        aspect-ratio: 3/4;
+    }
+}

@@ -1,0 +1,81 @@
+@reference "tailwindcss";
+
+.partners-header {
+    @apply text-center mb-8 md:mb-10 max-w-2xl mx-auto;
+}
+
+.partners-title {
+    @apply text-sm font-bold text-gray-500 tracking-wider uppercase;
+    letter-spacing: 0.12em;
+}
+
+.partners-subtitle {
+    @apply text-base text-gray-500 mt-2;
+}
+
+.partners-marquee {
+    @apply relative overflow-hidden;
+    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.partners-track {
+    display: flex;
+    align-items: center;
+    gap: 3.5rem;
+    padding: 1rem 0;
+    width: max-content;
+    list-style: none;
+    margin: 0;
+    animation: partners-marquee 30s linear infinite;
+}
+
+.partners-marquee:hover .partners-track {
+    animation-play-state: paused;
+}
+
+.partners-item {
+    @apply flex-shrink-0;
+}
+
+.partners-link {
+    @apply inline-flex items-center justify-center;
+    height: 48px;
+    padding: 0 0.5rem;
+    transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+    filter: grayscale(1);
+    opacity: 0.55;
+}
+
+.partners-link:hover,
+.partners-link:focus-visible {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.partners-logo {
+    max-height: 40px;
+    width: auto;
+    max-width: 160px;
+    object-fit: contain;
+    display: block;
+}
+
+@keyframes partners-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .partners-track {
+        animation: none;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+    .partners-marquee {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+}

@@ -81,13 +81,50 @@ class LandingContentSeeder extends Seeder
             ]);
         }
 
+        // Credibility Section — "Built by Superhosts. Built for SuperHosts."
+        $credibility = LandingSection::create([
+            'section_key' => 'credibility',
+            'title' => 'Built by Superhosts. Built for SuperHosts.',
+            'subtitle' => 'The experience behind Tena — Stay Awhile Rentals.',
+            'bg' => 'gray',
+            'sort_order' => 3,
+        ]);
+
+        LandingContent::insert([
+            ['section_id' => $credibility->id, 'content_key' => 'badge', 'value' => 'The experience behind Tena — Stay Awhile Rentals', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $credibility->id, 'content_key' => 'title', 'value' => 'Built by Superhosts. Built for SuperHosts.', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $credibility->id, 'content_key' => 'subtitle', 'value' => 'Tena was born from Stay Awhile Rentals — a real short-term rental business. After years of hosting thousands of guests, we saw firsthand how difficult it can be for hosts to build direct relationships with guests beyond the booking platform. That experience became Tena.', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $credibility->id, 'content_key' => 'closing_line', 'value' => "We experienced the problem ourselves. Now we're building the solution for Superhosts across Africa.", 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $credibility->id, 'content_key' => 'tagline', 'value' => 'Own the Guest. Build the Relationship.', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        $stats = [
+            ['value' => '16×', 'label' => 'Superhost'],
+            ['value' => '1,400+', 'label' => 'Reservations'],
+            ['value' => '5,000+', 'label' => 'Guest Nights'],
+            ['value' => '750+', 'label' => 'Guest Reviews'],
+            ['value' => '4.9/5', 'label' => 'Guest Rating'],
+        ];
+
+        foreach ($stats as $i => $stat) {
+            LandingContent::insert([
+                ['section_id' => $credibility->id, 'content_key' => "stats.{$i}.value", 'value' => $stat['value'], 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+                ['section_id' => $credibility->id, 'content_key' => "stats.{$i}.label", 'value' => $stat['label'], 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
+
+        LandingMedia::insert([
+            ['section_id' => $credibility->id, 'media_key' => 'main_image', 'original_path' => '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg', 'mime_type' => 'image/jpeg', 'file_size' => 0, 'sort_order' => 0, 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $credibility->id, 'media_key' => 'stay_awhile_logo', 'original_path' => '/legacy/assets/Tena-logo-square.jpg', 'mime_type' => 'image/jpeg', 'file_size' => 0, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
         // How It Works Section
         $howItWorks = LandingSection::create([
             'section_key' => 'how_it_works',
             'title' => 'How Tena Works',
             'subtitle' => 'Four simple steps to capture guest data, engage them with your brand, and drive direct bookings.',
             'bg' => 'white',
-            'sort_order' => 3,
+            'sort_order' => 4,
         ]);
 
         $steps = [
@@ -115,7 +152,7 @@ class LandingContentSeeder extends Seeder
             'title' => 'OTA Commissions Are Costing You',
             'badge' => 'Did you know?',
             'bg' => 'white',
-            'sort_order' => 4,
+            'sort_order' => 5,
         ]);
 
         LandingContent::insert([
@@ -140,7 +177,7 @@ class LandingContentSeeder extends Seeder
             'title' => 'Return on Investment Calculator',
             'subtitle' => 'Answer a few simple questions to calculate how much more you could be earning with direct bookings through Tena.',
             'bg' => 'gray',
-            'sort_order' => 5,
+            'sort_order' => 6,
         ]);
 
         // Pricing Section
@@ -149,7 +186,7 @@ class LandingContentSeeder extends Seeder
             'title' => 'Transparent Pricing',
             'subtitle' => 'Simple, predictable pricing so you can scale direct bookings without surprises.',
             'bg' => 'gray',
-            'sort_order' => 6,
+            'sort_order' => 7,
         ]);
 
         $plans = [
@@ -179,7 +216,7 @@ class LandingContentSeeder extends Seeder
             'section_key' => 'detailed_features',
             'title' => 'Detailed Features',
             'bg' => 'white',
-            'sort_order' => 7,
+            'sort_order' => 8,
         ]);
 
         $detailSections = [
@@ -210,7 +247,7 @@ class LandingContentSeeder extends Seeder
             'section_key' => 'media_showcase',
             'title' => 'Media Showcase',
             'bg' => 'white',
-            'sort_order' => 8,
+            'sort_order' => 9,
         ]);
 
         LandingContent::insert([
@@ -222,5 +259,33 @@ class LandingContentSeeder extends Seeder
         LandingMedia::insert([
             ['section_id' => $showcase->id, 'media_key' => 'showcase_media', 'original_path' => '/legacy/assets/Tena-Landing/Step-1-Connect.jpg', 'mime_type' => 'image/jpeg', 'file_size' => 0, 'sort_order' => 0, 'created_at' => now(), 'updated_at' => now()],
         ]);
+
+        // Partners Carousel Section
+        $partners = LandingSection::create([
+            'section_key' => 'partners',
+            'title' => 'Trusted by hosts and partners across Africa',
+            'subtitle' => '',
+            'bg' => 'white',
+            'sort_order' => 10,
+        ]);
+
+        $partnerList = [
+            ['name' => 'Stay Awhile Rentals', 'url' => 'https://stayawhilerentals.com'],
+            ['name' => 'Airbnb', 'url' => 'https://www.airbnb.com'],
+            ['name' => 'Booking.com', 'url' => 'https://www.booking.com'],
+            ['name' => 'Vrbo', 'url' => 'https://www.vrbo.com'],
+            ['name' => 'Expedia', 'url' => 'https://www.expedia.com'],
+            ['name' => 'Hostaway', 'url' => 'https://www.hostaway.com'],
+        ];
+
+        foreach ($partnerList as $i => $partner) {
+            LandingContent::insert([
+                ['section_id' => $partners->id, 'content_key' => "partners.{$i}.name", 'value' => $partner['name'], 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+                ['section_id' => $partners->id, 'content_key' => "partners.{$i}.url", 'value' => $partner['url'], 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ]);
+            LandingMedia::insert([
+                ['section_id' => $partners->id, 'media_key' => "partner_{$i}_logo", 'original_path' => '/legacy/assets/Tena-logo-square.jpg', 'mime_type' => 'image/jpeg', 'file_size' => 0, 'sort_order' => $i, 'created_at' => now(), 'updated_at' => now()],
+            ]);
+        }
     }
 }
