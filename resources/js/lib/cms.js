@@ -119,6 +119,18 @@ export function sanitizeHtml(html) {
 }
 
 /**
+ * Decode HTML entities and strip all tags, collapsing whitespace.
+ * Use this for slots the component renders as plain text but that the
+ * admin CMS may have saved via a rich text editor (which wraps content
+ * in `<p>` and encodes spaces as `&nbsp;`).
+ */
+export function stripHtml(html) {
+    if (!html || typeof html !== 'string') return '';
+    const decoded = sanitizeHtml(html);
+    return decoded.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+}
+
+/**
  * Extract items from a JSON-encoded content field.
  */
 export function extractJsonItems(section, key) {
