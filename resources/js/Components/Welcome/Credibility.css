@@ -22,10 +22,15 @@
 
 .credibility-content {
     @apply relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center;
+    min-width: 0;
 }
 
 .credibility-text {
-    @apply flex flex-col min-w-0;
+    @apply flex flex-col;
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .credibility-badge-row {
@@ -40,6 +45,8 @@
 .credibility-badge {
     @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-xs px-4 py-2 rounded-full tracking-wide;
     line-height: 1.4;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .credibility-title {
@@ -49,7 +56,10 @@
 
 .credibility-subtitle {
     @apply text-base md:text-lg text-gray-600 leading-relaxed mb-8;
-    max-width: 44rem;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
 }
 
 .credibility-stats {
@@ -79,12 +89,15 @@
 }
 
 .credibility-image-col {
-    @apply relative min-w-0;
+    @apply relative;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .credibility-image-wrap {
     @apply relative overflow-hidden rounded-2xl;
-    aspect-ratio: 4/5;
+    aspect-ratio: 4/3;
+    max-width: 100%;
     box-shadow: 0 25px 60px -25px rgba(27, 27, 27, 0.35);
 }
 
@@ -115,6 +128,6 @@
 
 @media (min-width: 1024px) {
     .credibility-image-wrap {
-        aspect-ratio: 3/4;
+        aspect-ratio: 16/10;
     }
 }

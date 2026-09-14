@@ -1,6 +1,6 @@
 import React from 'react';
 import { SectionWrapper } from './layouts';
-import { getContent, getMedia, extractItems, sanitizeHtml } from '@/lib/cms';
+import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml } from '@/lib/cms';
 import { SkeletonSectionHeader } from './Skeleton';
 import './Credibility.css';
 
@@ -21,8 +21,12 @@ export default function Credibility({ section }) {
         );
     }
 
-    const badge = getContent(section, 'badge', 'The experience behind Tena — Stay Awhile Rentals');
-    const title = getContent(section, 'title', 'Built by Superhosts. Built for SuperHosts.');
+    // Rich-text editor in the CMS wraps short labels in `<p>` and encodes
+    // spaces as `&nbsp;` — strip those before rendering short slots as
+    // plain text.
+    const badge = stripHtml(getContent(section, 'badge', 'The experience behind Tena — Stay Awhile Rentals'));
+    const title = stripHtml(getContent(section, 'title', 'Built by Superhosts. Built for SuperHosts.'));
+    const tagline = stripHtml(getContent(section, 'tagline', 'Own the Guest. Build the Relationship.'));
     const subtitle = getContent(
         section,
         'subtitle',
@@ -33,7 +37,6 @@ export default function Credibility({ section }) {
         'closing_line',
         "We experienced the problem ourselves. Now we're building the solution for Superhosts across Africa."
     );
-    const tagline = getContent(section, 'tagline', 'Own the Guest. Build the Relationship.');
 
     const mainImage = getMedia(section, 'main_image', '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg');
     const stayAwhileLogo = getMedia(section, 'stay_awhile_logo', '/legacy/assets/Tena-logo-square.jpg');
