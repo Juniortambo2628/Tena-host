@@ -29,7 +29,6 @@
  *       ],
  *   ]
  */
-
 $placeholderLogo = '/legacy/assets/Tena-logo-square.jpg';
 
 return [
