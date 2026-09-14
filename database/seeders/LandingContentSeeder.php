@@ -168,10 +168,10 @@ class LandingContentSeeder extends Seeder
 
         LandingContent::insert([
             ['section_id' => $pricing->id, 'content_key' => 'cta_label', 'value' => 'Become a Founding Host', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
-            ['section_id' => $pricing->id, 'content_key' => 'cta_text', 'value' => 'Join the Tena waitlist for priority access before public launch.<br/><br/>We\'re inviting only our first 100 hosts to join the Founding Host Program.<br/><br/>As a Founding Host, you\'ll receive:<br/><br/><strong>*</strong> 3 months free on the Tena platform<br/><strong>*</strong> Priority onboarding and dedicated support<br/><strong>*</strong> Early access to new features<br/><strong>*</strong> The opportunity to receive a complimentary Tena device<br/><br/>Built by Superhosts, for Superhosts, Tena helps you capture every guest—not just the booker—build lasting guest relationships, and drive more direct bookings beyond the OTAs.<br/><br/>Applications are now open. Once all 100 Founding Host spots are filled, the program will close.', 'type' => 'html', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $pricing->id, 'content_key' => 'cta_headline', 'value' => 'Join the first 100 hosts shaping Tena.', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $pricing->id, 'content_key' => 'cta_intro', 'value' => "We're inviting our first 100 Superhosts into the Founding Host Program — priority access before public launch and a direct line to the team building Tena.", 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
+            ['section_id' => $pricing->id, 'content_key' => 'cta_closing', 'value' => 'Applications are open now. Once all 100 spots are filled, the program closes.', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
             ['section_id' => $pricing->id, 'content_key' => 'cta_button', 'value' => 'Join the Waitlist Now', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
-            ['section_id' => $pricing->id, 'content_key' => 'footer_text', 'value' => 'Questions? Email', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
-            ['section_id' => $pricing->id, 'content_key' => 'footer_email', 'value' => 'info@tena.host', 'type' => 'text', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // Detailed Features Section
