@@ -10,8 +10,6 @@
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
         $logoUrl = $baseUrl . '/' . ltrim($logoUrl, '/');
     }
-    $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
-
     $resolvedBody = $resolvedBody ?? '';
     $resolvedHeading = $resolvedHeading ?? '';
 
@@ -102,7 +100,6 @@
                 <tr><td style="padding:0 40px 16px"><p style="margin:0;font-size:13px;color:#888">If you have any questions, reply to this email or contact our support team.</p></td></tr>
             </table>
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width:700px;margin-top:16px;">
-                <tr><td align="center" style="padding:0 0 8px;"><img src="{{ $footerImageUrl }}" alt="{{ $businessName }}" width="600" border="0" style="display:block;width:100%;max-width:600px;height:auto;border-radius:12px;border:0;outline:none;text-decoration:none;margin:0 auto;" /></td></tr>
                 <tr><td align="center" style="padding:8px 20px 0"><p style="margin:0;font-size:11px;color:#aaa">{{ $businessName }} &middot; {{ $businessAddress }}</p></td></tr>
             </table>
         </td></tr>

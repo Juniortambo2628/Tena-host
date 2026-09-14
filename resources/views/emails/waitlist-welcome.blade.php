@@ -10,10 +10,9 @@
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
         $logoUrl = $baseUrl . '/' . ltrim($logoUrl, '/');
     }
-    $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
-
     $resolvedBody = $resolvedBody ?? '';
     $resolvedHeading = $resolvedHeading ?? '';
+    $actionUrl = $actionUrl ?? null;
 
     $varReplacements = [
         '{{First Name}}' => $firstName ?? '',
@@ -78,13 +77,16 @@
                         <p style="margin:0 0 16px">We're working hard to make sure {{ $businessName }} delivers exactly what you need. Stay tuned for updates!</p>
                     @endif
 
-                    <p style="margin:0;font-size:14px;color:#888">Got questions? Just reply to this email — we'd love to hear from you.</p>
+                    @if($actionUrl)
+                    <p style="margin:20px 0 0"><a href="{{ $actionUrl }}" style="display:inline-block;padding:14px 32px;background-color:{{ $accentColor }};color:#000;font-weight:700;font-size:14px;text-decoration:none;border-radius:10px">Get Started</a></p>
+                    @endif
+
+                    <p style="margin:20px 0 0;font-size:14px;color:#888">Got questions? Just reply to this email — we'd love to hear from you.</p>
                     </div>
                 </td></tr>
                 <tr><td style="padding:0 40px 16px"><p style="margin:0;font-size:13px;color:#888">Thank you for being part of our journey.</p></td></tr>
             </table>
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width:700px;margin-top:16px;">
-                <tr><td align="center" style="padding:0 0 8px;"><img src="{{ $footerImageUrl }}" alt="{{ $businessName }}" width="600" border="0" style="display:block;width:100%;max-width:600px;height:auto;border-radius:12px;border:0;outline:none;text-decoration:none;margin:0 auto;" /></td></tr>
                 <tr><td align="center" style="padding:8px 20px 0"><p style="margin:0;font-size:11px;color:#aaa">{{ $businessName }} &middot; {{ $businessAddress }}</p></td></tr>
             </table>
         </td></tr>

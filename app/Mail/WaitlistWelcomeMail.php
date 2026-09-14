@@ -17,6 +17,7 @@ class WaitlistWelcomeMail extends Mailable
         public string $firstName,
         public string $lastName,
         public string $email,
+        public ?string $actionUrl = null,
     ) {}
 
     public function envelope(): Envelope
@@ -55,6 +56,7 @@ class WaitlistWelcomeMail extends Mailable
                 'firstName' => $this->firstName,
                 'lastName' => $this->lastName,
                 'email' => $this->email,
+                'actionUrl' => $this->actionUrl,
                 'resolvedHeading' => $this->resolveVariables(
                     Setting::getValue('waitlist_welcome_heading', ''),
                     $replacements
