@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AccessPointController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\EmailImageController;
@@ -16,6 +15,7 @@ use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\Auth\GuestOtpController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestPortalController;
