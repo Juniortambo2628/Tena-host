@@ -34,35 +34,6 @@
     @apply text-sm text-gray-500;
 }
 
-.roi-radio-group {
-    @apply flex gap-4;
-}
-
-.roi-radio-label {
-    @apply inline-flex items-center;
-}
-
-.roi-radio-input {
-    @apply text-[#FFD300];
-    accent-color: #FFD300;
-}
-
-.roi-radio-text {
-    @apply ml-2;
-}
-
-.roi-manager-section {
-    @apply transition-all duration-300;
-}
-
-.roi-manager-section-active {
-    @apply opacity-100 max-h-40;
-}
-
-.roi-manager-section-inactive {
-    @apply opacity-50 max-h-40 grayscale;
-}
-
 .roi-reset-btn {
     @apply text-gray-500 hover:text-gray-800 underline text-sm;
 }

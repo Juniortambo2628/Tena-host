@@ -12,8 +12,6 @@ export default function ROICalculator({ section }) {
         adr: 250,
         occupancy: 50,
         direct: 10,
-        isManager: false,
-        pmFee: 20
     });
 
     const [results, setResults] = useState({
@@ -26,10 +24,12 @@ export default function ROICalculator({ section }) {
 
     const [isUpdating, setIsUpdating] = useState(false);
 
+    const clampAdr = (v) => Math.min(500, Math.max(0, Number(v) || 0));
+
     const handleChange = (field, value) => {
         setValues(prev => ({
             ...prev,
-            [field]: field === 'isManager' ? value : Number(value)
+            [field]: field === 'adr' ? clampAdr(value) : Number(value)
         }));
         triggerUpdateAnimation();
     };
@@ -45,19 +45,13 @@ export default function ROICalculator({ section }) {
             const adr = values.adr || 0;
             const occupancy = (values.occupancy || 0) / 100;
             const direct = (values.direct || 0) / 100;
-            const pmFee = (values.pmFee || 0) / 100;
 
             const nights = 30;
             const monthlyGross = listings * adr * nights * occupancy;
             const monthlyDirect = monthlyGross * direct;
             const otaFeeAvoided = monthlyDirect * 0.20;
 
-            let managementCost = 0;
-            if (values.isManager) {
-                managementCost = monthlyDirect * pmFee;
-            }
-
-            const netBenefit = otaFeeAvoided - managementCost;
+            const netBenefit = otaFeeAvoided;
             const annual = netBenefit * 12;
 
             setResults({
@@ -94,10 +88,10 @@ export default function ROICalculator({ section }) {
 
                         <div>
                             <label className="roi-label">Average Daily Rate ($)</label>
-                            <input type="range" min="0" max="2500" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-range" />
+                            <input type="range" min="0" max="500" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-range" />
                             <div className="roi-input-row">
-                                <input type="number" min="0" max="2500" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-number-input" />
-                                <span className="roi-range-label">$0 - $2,500</span>
+                                <input type="number" min="0" max="500" value={values.adr} onChange={(e) => handleChange('adr', e.target.value)} className="roi-number-input" />
+                                <span className="roi-range-label">$0 - $500</span>
                             </div>
                         </div>
 
@@ -119,30 +113,7 @@ export default function ROICalculator({ section }) {
                             </div>
                         </div>
 
-                        <div>
-                            <label className="roi-label">Are you a property manager?</label>
-                            <div className="roi-radio-group">
-                                <label className="roi-radio-label">
-                                    <input type="radio" name="isManager" checked={values.isManager === true} onChange={() => handleChange('isManager', true)} className="roi-radio-input" />
-                                    <span className="roi-radio-text">Yes</span>
-                                </label>
-                                <label className="roi-radio-label">
-                                    <input type="radio" name="isManager" checked={values.isManager === false} onChange={() => handleChange('isManager', false)} className="roi-radio-input" />
-                                    <span className="roi-radio-text">No</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div className={`roi-manager-section ${values.isManager ? 'roi-manager-section-active' : 'roi-manager-section-inactive'}`}>
-                            <label className="roi-label">Property Management Fee (%)</label>
-                            <input type="range" min="1" max="100" value={values.pmFee} onChange={(e) => values.isManager && handleChange('pmFee', e.target.value)} disabled={!values.isManager} className="roi-range" />
-                            <div className="roi-input-row">
-                                <input type="number" min="1" max="100" value={values.pmFee} onChange={(e) => values.isManager && handleChange('pmFee', e.target.value)} disabled={!values.isManager} className="roi-number-input" />
-                                <span className="roi-range-label">1% - 100%</span>
-                            </div>
-                        </div>
-
-                        <button onClick={() => setValues({ listings: 1, adr: 250, occupancy: 50, direct: 10, isManager: false, pmFee: 20 })} className="roi-reset-btn">
+                        <button onClick={() => setValues({ listings: 1, adr: 250, occupancy: 50, direct: 10 })} className="roi-reset-btn">
                             Reset Calculator
                         </button>
                     </div>
@@ -153,7 +124,7 @@ export default function ROICalculator({ section }) {
                             <ResultCard label="Monthly Gross Revenue" value={formatCurrency(results.monthlyGross)} isUpdating={isUpdating} />
                             <ResultCard label="Monthly Direct Revenue" value={formatCurrency(results.monthlyDirect)} isUpdating={isUpdating} />
                             <ResultCard label="Estimated Monthly Savings (OTA fees avoided)" value={formatCurrency(results.monthlySavings)} isUpdating={isUpdating} />
-                            <ResultCard label="Net Monthly Benefit (after management fee)" value={formatCurrency(results.netBenefit)} isUpdating={isUpdating} />
+                            <ResultCard label="Net Monthly Benefit" value={formatCurrency(results.netBenefit)} isUpdating={isUpdating} />
                             <div className="roi-results-divider">
                                 <ResultCard label="Estimated Annual Net Benefit" value={formatCurrency(results.annualBenefit)} isUpdating={isUpdating} isTotal />
                             </div>
