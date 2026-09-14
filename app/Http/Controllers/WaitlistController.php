@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\WaitlistConfirmationMail;
-use App\Mail\WaitlistWelcomeMail;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -66,9 +65,10 @@ class WaitlistController extends Controller
 
         RateLimiter::hit($key, 300);
 
-        $isNew = $registration->wasRecentlyCreated;
-
-        // Send confirmation email
+        // Signup only triggers the "You're on the list" confirmation.
+        // The "Welcome to the Tena Family" mail is admin-triggered when
+        // the registration is converted / onboarded (see
+        // Admin\RegistrationController::update).
         try {
             Mail::to($validated['email'])->send(
                 new WaitlistConfirmationMail(
@@ -84,22 +84,6 @@ class WaitlistController extends Controller
             \Log::info("Waitlist confirmation email sent to {$validated['email']}");
         } catch (\Throwable $e) {
             \Log::error('Failed to send waitlist confirmation email: '.$e->getMessage());
-        }
-
-        // Send welcome email for new registrations
-        if ($isNew) {
-            try {
-                Mail::to($validated['email'])->send(
-                    new WaitlistWelcomeMail(
-                        firstName: $validated['first_name'],
-                        lastName: $validated['last_name'],
-                        email: $validated['email'],
-                    )
-                );
-                \Log::info("Waitlist welcome email sent to {$validated['email']}");
-            } catch (\Throwable $e) {
-                \Log::error('Failed to send waitlist welcome email: '.$e->getMessage());
-            }
         }
 
         return response()->json(['message' => "Thanks! You're on the list."], 201);

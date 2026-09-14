@@ -4,7 +4,6 @@
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
         $logoUrl = $baseUrl . '/' . ltrim($logoUrl, '/');
     }
-    $footerImageUrl = $baseUrl . '/Email/Tena-email-footer.png';
     $headerBgColor = '#ffdb00';
 @endphp
 <!DOCTYPE html>
@@ -107,10 +106,6 @@
             <p class="message">
                 If you have any questions about this transaction, please contact our support team at <a href="mailto:billing@tena.host" class="footer-link">billing@tena.host</a>.
             </p>
-        </div>
-
-        <div class="footer-banner" style="padding:0 30px 16px;text-align:center;">
-            <img src="{{ $footerImageUrl }}" alt="{{ $site_name ?? 'Tena Host' }}" width="600" border="0" style="display:block;width:100%;max-width:600px;height:auto;border-radius:12px;border:0;outline:none;text-decoration:none;margin:0 auto;" />
         </div>
 
         <div class="footer">
