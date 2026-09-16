@@ -48,7 +48,7 @@ function getTabLabel(tabId) {
     return tabId;
 }
 
-export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop }) {
+export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop, onToggleActive }) {
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
     const [hasChanges, setHasChanges] = useState(false);
@@ -95,6 +95,25 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         setLocalContent(prev => ({ ...prev, [key]: value }));
         setHasChanges(true);
     }, []);
+
+    const handleToggleActive = useCallback(() => {
+        // Capture the intended next value BEFORE the async round-trip so a
+        // stale re-render can't flip what we read in the toast handler
+        // (this bug was making every click read as "enabled").
+        const nextValue = !section.is_active;
+        if (onToggleActive) onToggleActive(section.id, nextValue);
+        router.put(route('admin.landing.sections.update', { section: section.id }), {
+            is_active: nextValue,
+        }, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => notify.success(nextValue ? 'Section enabled' : 'Section disabled'),
+            onError: () => {
+                if (onToggleActive) onToggleActive(section.id, !nextValue);
+                notify.error('Failed to update section');
+            },
+        });
+    }, [section.id, section.is_active, onToggleActive]);
 
     const handleSave = () => {
         const items = Object.entries(localContent).map(([content_key, value]) => ({
@@ -387,15 +406,8 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                     <label className="cms-section-card__toggle">
                         <input
                             type="checkbox"
-                            checked={section.is_active}
-                            onChange={(e) => {
-                                router.put(route('admin.landing.sections.update', { section: section.id }), {
-                                    is_active: e.target.checked,
-                                }, {
-                                    preserveScroll: true,
-                                    onSuccess: () => notify.success(e.target.checked ? 'Section enabled' : 'Section disabled'),
-                                });
-                            }}
+                            checked={!!section.is_active}
+                            onChange={handleToggleActive}
                         />
                         <span className="cms-section-card__toggle-slider" />
                     </label>
@@ -487,6 +499,21 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                                         </div>
 
                                         <div className="editor-modal__footer">
+                                            <label
+                                                className="editor-modal__active-toggle"
+                                                title={section.is_active ? 'Disable this section on the public page' : 'Enable this section on the public page'}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={!!section.is_active}
+                                                    onChange={handleToggleActive}
+                                                />
+                                                <span className="editor-modal__active-toggle-slider" />
+                                                <span className="editor-modal__active-toggle-label">
+                                                    {section.is_active ? 'Section enabled' : 'Section disabled'}
+                                                </span>
+                                            </label>
+                                            <div className="editor-modal__footer-spacer" />
                                             <button onClick={handleClose} className="editor-modal__cancel">
                                                 Cancel
                                             </button>

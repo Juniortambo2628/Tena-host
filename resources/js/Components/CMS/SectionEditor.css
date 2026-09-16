@@ -271,7 +271,45 @@
 
 /* Footer */
 .editor-modal__footer {
-    @apply pt-6 pb-8 px-8 md:px-12 border-t border-gray-100 flex justify-between items-center flex-shrink-0;
+    @apply pt-6 pb-8 px-8 md:px-12 border-t border-gray-100 flex items-center gap-4 flex-shrink-0 flex-wrap;
+}
+
+.editor-modal__footer-spacer {
+    flex: 1 1 auto;
+}
+
+.editor-modal__active-toggle {
+    @apply relative inline-flex items-center gap-3 cursor-pointer select-none;
+}
+
+.editor-modal__active-toggle input {
+    @apply sr-only;
+}
+
+.editor-modal__active-toggle-slider {
+    @apply w-11 h-6 bg-black/10 rounded-full transition-colors relative flex-shrink-0;
+}
+
+.editor-modal__active-toggle-slider::after {
+    content: '';
+    @apply absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform shadow;
+}
+
+.editor-modal__active-toggle input:checked + .editor-modal__active-toggle-slider {
+    @apply bg-[#FFD300];
+}
+
+.editor-modal__active-toggle input:checked + .editor-modal__active-toggle-slider::after {
+    @apply translate-x-5;
+}
+
+.editor-modal__active-toggle-label {
+    @apply text-sm font-semibold text-gray-600;
+    letter-spacing: 0.01em;
+}
+
+.editor-modal__active-toggle input:checked ~ .editor-modal__active-toggle-label {
+    @apply text-[#1b1b1b];
 }
 
 .editor-modal__cancel {
