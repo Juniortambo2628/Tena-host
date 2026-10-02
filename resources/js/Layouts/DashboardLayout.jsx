@@ -54,6 +54,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
         { name: 'Landing Page', icon: Globe, route: 'admin.landing.index' },
         { name: 'Policies', icon: FileText, route: 'admin.policies.index' },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
+        { name: 'WiFi Portal', icon: Wifi, route: 'admin.wifi.edit' },
         { name: 'Settings', icon: Settings, route: 'admin.settings.index' },
     ];
 

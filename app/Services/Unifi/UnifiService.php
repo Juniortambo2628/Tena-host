@@ -2,8 +2,10 @@
 
 namespace App\Services\Unifi;
 
+use App\Models\Setting;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -56,6 +58,71 @@ class UnifiService
         );
     }
 
+    /**
+     * Build from admin-managed settings (database), falling back to .env/config.
+     * This is what the live portal uses, so hosts can update it in the admin UI
+     * without editing .env or clearing caches.
+     */
+    public static function fromSettings(): self
+    {
+        return new self(
+            baseUrl: Setting::getValue('unifi_base_url') ?: config('unifi.base_url'),
+            username: Setting::getValue('unifi_username') ?: config('unifi.username'),
+            password: self::storedPassword(),
+            site: Setting::getValue('unifi_site') ?: config('unifi.site', 'default'),
+            isUnifiOs: (bool) Setting::getValue('unifi_is_os', config('unifi.is_unifi_os', true)),
+            verifySsl: (bool) Setting::getValue('unifi_verify_ssl', config('unifi.verify_ssl', false)),
+            timeout: (int) Setting::getValue('unifi_timeout', config('unifi.timeout', 10)),
+        );
+    }
+
+    /**
+     * The decrypted controller password from settings, or the config fallback.
+     */
+    public static function storedPassword(): ?string
+    {
+        $stored = Setting::getValue('unifi_password');
+
+        if (filled($stored)) {
+            try {
+                return Crypt::decryptString($stored);
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+
+        return config('unifi.password');
+    }
+
+    /**
+     * Verify we can log in and reach the configured site.
+     *
+     * @return array{ok: bool, message: string}
+     */
+    public function testConnection(): array
+    {
+        if (! $this->isConfigured()) {
+            return ['ok' => false, 'message' => 'Controller URL, username and password are all required.'];
+        }
+
+        try {
+            $this->login();
+
+            $response = $this->client()->get($this->apiPath('self'));
+
+            if ($response->successful()) {
+                return ['ok' => true, 'message' => 'Connected to the controller and reached site "'.$this->site.'".'];
+            }
+
+            return [
+                'ok' => false,
+                'message' => 'Logged in, but could not read site "'.$this->site.'" (HTTP '.$response->status().'). Check the Site value.',
+            ];
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'message' => $e->getMessage()];
+        }
+    }
+
     public function isConfigured(): bool
     {
         return filled($this->baseUrl) && filled($this->username) && filled($this->password);
@@ -79,7 +146,7 @@ class UnifiService
         $payload = [
             'cmd' => 'authorize-guest',
             'mac' => $this->normalizeMac($clientMac),
-            'minutes' => $minutes ?? (int) config('unifi.auth_minutes', 1440),
+            'minutes' => $minutes ?? (int) Setting::getValue('unifi_auth_minutes', config('unifi.auth_minutes', 1440)),
         ];
 
         if ($apMac) {

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\SystemController;
+use App\Http\Controllers\Admin\UnifiSettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\Auth\GuestOtpController;
@@ -95,6 +96,11 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
+    // WiFi captive portal (UniFi) settings
+    Route::get('/wifi', [UnifiSettingsController::class, 'edit'])->name('wifi.edit');
+    Route::post('/wifi', [UnifiSettingsController::class, 'update'])->name('wifi.update');
+    Route::post('/wifi/test', [UnifiSettingsController::class, 'test'])->name('wifi.test');
 
     // Notification Test
     Route::post('/notifications/test', [NotificationTestController::class, 'send'])->name('notifications.test');
