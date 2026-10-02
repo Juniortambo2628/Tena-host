@@ -29,6 +29,7 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WaitlistController;
+use App\Http\Controllers\WifiPortalController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\Property;
 use Illuminate\Foundation\Application;
@@ -236,3 +237,10 @@ require __DIR__.'/auth.php';
 
 // M-Pesa Callback (public)
 Route::post('/api/mpesa/callback', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');
+
+// Ubiquiti UniFi external captive portal (public — pre-auth guest devices).
+// Point UniFi "Guest Control -> External Portal Server" at the /portal URL.
+Route::prefix('portal')->name('portal.')->group(function () {
+    Route::get('/', [WifiPortalController::class, 'show'])->name('show');
+    Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
+});

@@ -35,6 +35,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'admin/landing/sections/*/media',
+            // Pre-auth captive-portal devices may not retain a session cookie;
+            // this endpoint carries all it needs in hidden fields.
+            'portal/connect',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
