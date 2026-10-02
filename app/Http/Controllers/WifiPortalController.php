@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Log;
  */
 class WifiPortalController extends Controller
 {
-    public function __construct(protected UnifiService $unifi)
-    {
-    }
+    public function __construct(protected UnifiService $unifi) {}
 
     /**
      * Show the splash page. UniFi appends: id (client MAC), ap (AP MAC),

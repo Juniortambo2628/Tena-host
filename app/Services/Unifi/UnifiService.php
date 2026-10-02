@@ -153,7 +153,7 @@ class UnifiService
             $payload['ap_mac'] = $this->normalizeMac($apMac);
         }
 
-        $response = $this->client()->post($this->apiPath("cmd/stamgr"), $payload);
+        $response = $this->client()->post($this->apiPath('cmd/stamgr'), $payload);
 
         if (! $response->successful()) {
             Log::warning('UniFi authorize-guest failed', [
