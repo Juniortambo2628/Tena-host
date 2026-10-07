@@ -3,12 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\MpesaTransaction;
+use App\Services\ExtrasPaymentService;
 use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class MpesaCallbackController extends Controller
 {
+    /**
+     * Result of a guest extras payment (ExtrasPaymentService).
+     */
+    public function extras(Request $request, ExtrasPaymentService $extras)
+    {
+        Log::info('M-Pesa extras callback received', $request->all());
+
+        $callback = $request->input('Body.stkCallback');
+        if (! is_array($callback)) {
+            return response()->json(['ResultCode' => 1, 'ResultDesc' => 'Missing stkCallback']);
+        }
+
+        $extras->handleCallback($callback);
+
+        return response()->json(['ResultCode' => 0, 'ResultDesc' => 'Success']);
+    }
+
     public function handle(Request $request, SubscriptionService $subscriptionService)
     {
         $data = $request->all();

@@ -93,7 +93,7 @@ from anything that already works, and to badge anything else on the pages that i
 | Business owners in the dashboard | live | `users.account_type` (`host` or `business`), set from the sign-up type or Admin → Users → "Business owner". Same dashboard, with "customers" and "locations" wording (`Components/Dashboard/Terms.jsx`) and a visit-based review message. Admin → Hosts shows type and plan |
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
-| Paid extras by M-Pesa | coming soon | **Needs a decision**: guest payments through TenaFi's paybill (TenaFi collects and settles with hosts) or each host's own till (each host needs Daraja credentials). Guest orders already exist without payment |
+| Paid extras by M-Pesa | **live** | Guests pay on **TenaFi's paybill** (`ExtrasPaymentService`): an M-Pesa prompt goes to their phone, the callback marks the order paid, TenaFi's fee is recorded, and the host gets a WhatsApp message. Admin → M-Pesa holds the paybill or till, Daraja keys, passkey, environment and fee %, and lists what each host is owed ("Mark paid out"). Until real credentials are entered (Safaricom's sandbox paybill is the placeholder), extras are ordered and paid at the property |
 | Monthly report | **live** | `MonthlyReportService` (`reports:monthly`, 1st of the month at 08:00 Nairobi): new and returning guests, campaign messages, review requests and opens. Sent by email plus a WhatsApp summary to Starter and Growth (to everyone while billing is off). Direct bookings get added once Tena Direct exists |
 | Occupancy alerts | **live** | `PropertyMonitorService` (`alerts:check`, every 5 min): more distinct guests in 12 hours than the property's limit alerts the host on the dashboard and WhatsApp/SMS, at most once a day. Rental hosts only |
 | Outage alerts | **live** | `alerts:check`: AP status from the UniFi controller (`stat/device`), else last seen. Offline more than 10 min alerts the host once, then a recovery notice |
@@ -128,6 +128,8 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 - The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
 
 ## Still needed before launch
+
+- Fill in TenaFi's paybill under Admin → M-Pesa: paybill or till number, Daraja consumer key and secret, Lipa na M-Pesa passkey, Production, and the fee on extras. The same paybill takes host subscriptions. The M-Pesa callback URLs (shown on that page) are now exempt from CSRF; before this, Safaricom's subscription callbacks would have been rejected.
 
 - Billing switches on automatically once M-Pesa (`MPESA_CONSUMER_KEY`) or Paystack keys are set (Admin → Settings → billing "auto"). Prices live in `config/billing.php`; keep them in step with the CMS pricing sections. The Paystack account must accept KES.
 

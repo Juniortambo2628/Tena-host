@@ -38,6 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
             // Pre-auth captive-portal devices may not retain a session cookie;
             // this endpoint carries all it needs in hidden fields.
             'portal/connect',
+            // Safaricom posts M-Pesa results server-to-server (no session).
+            'api/mpesa/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -60,6 +62,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if (request()->header('X-Inertia') || request()->expectsJson() || request()->header('X-Requested-With')) {
                     return response()->json(['message' => $e->getMessage(), 'errors' => $e->errors()], 422);
                 }
+
                 return back()->withErrors($e->errors())->withInput();
             }
 
@@ -68,6 +71,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof AuthenticationException) {
                     return response()->json(['message' => 'Unauthenticated.'], 401);
                 }
+
                 return response()->json(['error' => $e->getMessage()], $status);
             }
 

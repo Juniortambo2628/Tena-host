@@ -119,7 +119,7 @@ class BillingTest extends TestCase
     public function test_configured_mpesa_turns_billing_on_in_auto_mode(): void
     {
         Setting::setValue('billing_enabled', 'auto', 'billing', 'string');
-        config(['services.mpesa.key' => 'key']);
+        config(['services.mpesa.key' => 'key', 'services.mpesa.secret' => 'secret']);
 
         $this->assertTrue(PlanPricing::enforced());
         $this->actingAs($this->host)->post(route('host.billing.simulate'))->assertSessionHas('error');

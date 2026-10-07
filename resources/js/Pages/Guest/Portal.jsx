@@ -1,5 +1,5 @@
-import React from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import React, { useEffect, useState } from 'react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import {
     Wifi,
@@ -13,12 +13,40 @@ import {
 import './Portal.css';
 import BrandLogo from '@/Components/BrandLogo';
 
-export default function GuestPortal({ property, amenities, guidebook_link }) {
-    const { post, processing } = useForm();
+const kes = (n) => `KES ${Number(n || 0).toLocaleString('en-KE')}`;
 
-    const orderAmenity = (amenityId) => {
-        post(route('guest.orders.store'), { data: { amenity_id: amenityId }, preserveScroll: true });
+const PAYMENT_LABELS = {
+    pending: 'Waiting for M-Pesa',
+    paid: 'Paid',
+    failed: 'Payment failed',
+    unpaid: 'Pay your host',
+    not_required: 'Ordered',
+};
+
+export default function GuestPortal({ property, amenities, guidebook_link, orders = [], guestPhone = '', mpesaEnabled = false }) {
+    const { data, setData, post, processing, errors, transform } = useForm({ amenity_id: null, phone: guestPhone || '' });
+    const [payingFor, setPayingFor] = useState(null);
+
+    const order = (amenity) => {
+        // Priced extras are paid by M-Pesa: ask for the number first.
+        if (amenity.price > 0 && mpesaEnabled && payingFor?.id !== amenity.id) {
+            setPayingFor(amenity);
+            return;
+        }
+        transform((d) => ({ ...d, amenity_id: amenity.id }));
+        post(route('guest.orders.store'), {
+            preserveScroll: true,
+            onSuccess: () => setPayingFor(null),
+        });
     };
+
+    // While a payment is waiting on the guest's PIN, refresh the order list.
+    const waiting = orders.some((o) => o.payment_status === 'pending');
+    useEffect(() => {
+        if (!waiting) return undefined;
+        const timer = setInterval(() => router.reload({ only: ['orders'] }), 5000);
+        return () => clearInterval(timer);
+    }, [waiting]);
 
     return (
         <div className="guest-portal-page">
@@ -111,17 +139,17 @@ export default function GuestPortal({ property, amenities, guidebook_link }) {
                                     <div>
                                         <span className="guest-portal-amenity-name">{amenity.name}</span>
                                         {amenity.price > 0 && (
-                                            <span className="guest-portal-amenity-price">${parseFloat(amenity.price).toFixed(2)}</span>
+                                            <span className="guest-portal-amenity-price">{kes(amenity.price)}</span>
                                         )}
                                     </div>
                                 </div>
                                 {amenity.price > 0 ? (
                                     <button
-                                        onClick={() => orderAmenity(amenity.id)}
+                                        onClick={() => order(amenity)}
                                         disabled={processing}
                                         className="guest-portal-amenity-order-btn"
                                     >
-                                        Order
+                                        {payingFor?.id === amenity.id ? `Pay ${kes(amenity.price)}` : 'Order'}
                                     </button>
                                 ) : (
                                     <ArrowRight size={14} className="text-black/10 group-hover:text-black/30" />
@@ -129,6 +157,34 @@ export default function GuestPortal({ property, amenities, guidebook_link }) {
                             </div>
                         ))}
                     </div>
+
+                    {payingFor && (
+                        <div className="guest-portal-pay">
+                            <label htmlFor="mpesa-phone">M-Pesa number for {payingFor.name}</label>
+                            <input
+                                id="mpesa-phone"
+                                type="tel"
+                                inputMode="tel"
+                                placeholder="0712 345 678"
+                                value={data.phone}
+                                onChange={(e) => setData('phone', e.target.value)}
+                            />
+                            {errors.phone && <p className="guest-portal-pay-error">{errors.phone}</p>}
+                            <p className="guest-portal-pay-hint">Tap “Pay {kes(payingFor.price)}” above, then enter your M-Pesa PIN on your phone.</p>
+                        </div>
+                    )}
+
+                    {orders.length > 0 && (
+                        <div className="guest-portal-orders">
+                            <h4>Your orders</h4>
+                            {orders.map((o) => (
+                                <div key={o.id} className="guest-portal-order">
+                                    <span>{o.amenity?.name} · {kes(o.total)}</span>
+                                    <span className={`guest-portal-order-status is-${o.payment_status}`}>{PAYMENT_LABELS[o.payment_status] || o.payment_status}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="guest-portal-footer">

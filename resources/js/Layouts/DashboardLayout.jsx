@@ -5,6 +5,7 @@ import {
     LayoutDashboard,
     Users,
     Wifi,
+    Smartphone,
     Megaphone,
     Settings,
     AlignLeft,
@@ -58,6 +59,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
         { name: 'Policies', icon: FileText, route: 'admin.policies.index' },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
         { name: 'WiFi Portal', icon: Wifi, route: 'admin.wifi.edit' },
+        { name: 'M-Pesa', icon: Smartphone, route: 'admin.mpesa.edit' },
         { name: 'Settings', icon: Settings, route: 'admin.settings.index' },
     ];
 
