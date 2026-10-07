@@ -53,7 +53,7 @@ export default function GuestLogin() {
                 </form>
 
                 <p className="guest-login-footer">
-                    Powered by TENA
+                    Powered by TenaFi
                 </p>
             </div>
         </div>

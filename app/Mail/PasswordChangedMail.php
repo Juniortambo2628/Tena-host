@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -22,7 +23,7 @@ class PasswordChangedMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Password Changed - TENA',
+            subject: 'Password changed - '.Brand::name(),
         );
     }
 

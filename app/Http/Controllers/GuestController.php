@@ -42,8 +42,8 @@ class GuestController extends Controller
             'property_id' => 'required|exists:properties,id',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|required_without:phone|email|max:255',
+            'phone' => 'nullable|required_without:email|string|max:20',
         ]);
 
         $this->authorize('create', Guest::class);
@@ -75,7 +75,7 @@ class GuestController extends Controller
         $validated = $request->validate([
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|max:255',
+            'email' => 'sometimes|nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
         ]);
 

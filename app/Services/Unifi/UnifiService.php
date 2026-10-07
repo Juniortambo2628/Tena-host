@@ -5,6 +5,7 @@ namespace App\Services\Unifi;
 use App\Models\Setting;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -166,6 +167,29 @@ class UnifiService
         }
 
         return true;
+    }
+
+    /**
+     * Every adopted device on the site with its connection state.
+     *
+     * @return list<array{mac: string, online: bool, last_seen: ?Carbon, clients: int}>
+     */
+    public function devices(): array
+    {
+        $this->login();
+
+        $response = $this->client()->get($this->apiPath('stat/device'));
+
+        if (! $response->successful()) {
+            throw new RuntimeException('UniFi device list failed (HTTP '.$response->status().').');
+        }
+
+        return collect($response->json('data', []))->map(fn (array $d) => [
+            'mac' => $this->normalizeMac($d['mac'] ?? ''),
+            'online' => (int) ($d['state'] ?? 0) === 1, // 1 = connected
+            'last_seen' => isset($d['last_seen']) ? Carbon::createFromTimestamp($d['last_seen']) : null,
+            'clients' => (int) ($d['num_sta'] ?? 0),
+        ])->all();
     }
 
     /**

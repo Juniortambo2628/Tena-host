@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './AuthenticatedLayout.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function Authenticated({ header, children }) {
     const user = usePage().props.auth.user;
@@ -21,7 +22,7 @@ export default function Authenticated({ header, children }) {
                     <div className="nav-inner">
                         <div className="nav-left">
                             <Link href="/" className="nav-logo">
-                                TENA<span className="nav-logo-dot">.</span>
+                                <BrandLogo className="h-9 w-auto" />
                             </Link>
 
                             <div className="nav-links-desktop">

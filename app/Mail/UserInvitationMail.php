@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -23,7 +23,7 @@ class UserInvitationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'You\'ve been invited to join '.Setting::getValue('site_name', 'Tena'),
+            subject: 'You\'ve been invited to join '.Brand::name(),
         );
     }
 

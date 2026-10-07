@@ -6,6 +6,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Wifi, WifiOff, ArrowLeft, Building2 } from 'lucide-react';
+import { T } from '@/Components/Dashboard/Terms';
 
 export default function AccessPointShow({ accessPoint }) {
     const { patch, processing } = useForm({
@@ -78,7 +79,7 @@ export default function AccessPointShow({ accessPoint }) {
                                 <Building2 size={20} className="text-black/40" />
                             </div>
                             <div>
-                                <h4 className="text-sm font-black">Property</h4>
+                                <h4 className="text-sm font-black"><T>Property</T></h4>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Assigned location</p>
                             </div>
                         </div>

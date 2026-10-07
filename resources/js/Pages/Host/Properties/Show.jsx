@@ -7,6 +7,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Wifi, Users, Radio, MapPin, ArrowLeft, Trash2 } from 'lucide-react';
+import { T } from '@/Components/Dashboard/Terms';
 
 export default function PropertyShow({ property }) {
     const breadcrumbs = [
@@ -43,7 +44,7 @@ export default function PropertyShow({ property }) {
                                 <MapPin size={24} className="text-black" />
                             </div>
                             <div>
-                                <h3 className="font-black text-lg">Property Details</h3>
+                                <h3 className="font-black text-lg"><T>Property Details</T></h3>
                                 <p className="text-[10px] font-bold text-black/40 uppercase tracking-widest">Basic information</p>
                             </div>
                         </div>
@@ -87,7 +88,7 @@ export default function PropertyShow({ property }) {
                             <div className="flex items-center gap-3 p-4 bg-black/[0.02] rounded-2xl">
                                 <Users size={16} className="text-black/30" />
                                 <div className="flex-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-black/30">Total Guests</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-black/30"><T>Total Guests</T></p>
                                     <p className="text-lg font-black">{property.guests_count}</p>
                                 </div>
                             </div>

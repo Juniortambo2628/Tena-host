@@ -2,9 +2,9 @@
     $primaryColor = \App\Models\Setting::getValue('email_primary_color', '#000000');
     $accentColor = \App\Models\Setting::getValue('email_accent_color', '#FFD300');
     $headerBgColor = '#ffdb00';
-    $businessName = \App\Models\Setting::getValue('site_name', 'Tena');
+    $businessName = \App\Support\Brand::name();
     $businessAddress = \App\Models\Setting::getValue('business_address', 'Nairobi, Kenya');
-    $logoUrl = \App\Models\Setting::getValue('logo_url', '');
+    $logoUrl = \App\Support\Brand::emailLogoUrl();
 
     $baseUrl = config('app.url', 'https://tena.host');
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
@@ -19,7 +19,7 @@
         '{{Email}}' => '',
         '{{Name}}' => $name ?? 'there',
         '{{Login URL}}' => $actionUrl ?? '#',
-        '{{Business Name}}' => $businessName ?? 'Tena',
+        '{{Business Name}}' => $businessName,
         '{{Business Address}}' => $businessAddress ?? '',
     ];
 
@@ -44,7 +44,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $resolvedHeading ?: 'Welcome to Tena' }}</title>
+    <title>{{ $resolvedHeading ?: 'Welcome to TenaFi' }}</title>
     <!--[if mso]>
     <style>table,td,p,a,span{font-family:Arial,sans-serif !important;}</style>
     <![endif]-->
@@ -59,7 +59,7 @@
                 @if($logoUrl)
                 <tr><td align="center" style="padding:32px 40px;background-color:{{ $headerBgColor }}"><img src="{{ $logoUrl }}" alt="{{ $businessName }}" height="48" style="display:block;" /></td></tr>
                 @endif
-                <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $resolvedHeading ?: 'Welcome to Tena' }}</h1></td></tr>
+                <tr><td style="padding:32px 40px 16px"><h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">{{ $resolvedHeading ?: 'Welcome to TenaFi' }}</h1></td></tr>
                 <tr><td style="padding:0 40px 32px;font-size:15px;line-height:1.7;color:#333;max-width:600px">
                     <div style="word-wrap:break-word;overflow-wrap:break-word;word-break:normal;white-space:normal;mso-word-wrap:break-word;max-width:100%;">
                     <p style="margin:0 0 16px">Hello {{ $name ?? 'there' }},</p>

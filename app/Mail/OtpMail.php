@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -20,7 +21,7 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: $this->heading ?: 'Your TENA Verification Code',
+            subject: $this->heading ?: 'Your '.Brand::name().' verification code',
         );
     }
 

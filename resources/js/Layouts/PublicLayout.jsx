@@ -5,11 +5,11 @@ import { getContent, getMedia, extractItems, stripHtml, titleCase } from '@/lib/
 import { track } from '@/lib/analytics';
 import { PublicContext } from '@/Components/Public/PublicContext';
 import NavMenu from '@/Components/Public/NavMenu';
+import { useBrand } from '@/Components/BrandLogo';
 import CookiesConsent from '@/Components/CookiesConsent';
 import CookieDetailsModal from '@/Components/CookieDetailsModal';
 import './PublicLayout.css';
 
-const DEFAULT_LOGO = '/legacy/assets/Tena-logo-square.jpg';
 
 /**
  * Shell for every public page (/, /hosts, /business, /privacy, /terms).
@@ -22,7 +22,8 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
 
     const header = site.header;
     const footer = site.footer;
-    const logo = getMedia(header, 'logo', DEFAULT_LOGO);
+    const brand = useBrand();
+    const logo = getMedia(header, 'logo', brand.logo);
     const siteName = seo.site_name || 'TenaFi';
 
     // In-page anchors (#how-it-works) only exist on section pages; elsewhere

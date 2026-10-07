@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from 'react';
+import { T } from './Terms';
 import './ChartCard.css';
 
 const LazyChart = lazy(() => import('./ChartInner'));
@@ -33,8 +34,8 @@ export default function ChartCard({
         <div className={`chart-card ${className}`}>
             {(title || subtitle) && (
                 <div className="chart-card__header">
-                    {title && <h3 className="chart-card__title">{title}</h3>}
-                    {subtitle && <p className="chart-card__subtitle">{subtitle}</p>}
+                    {title && <h3 className="chart-card__title"><T>{title}</T></h3>}
+                    {subtitle && <p className="chart-card__subtitle"><T>{subtitle}</T></p>}
                 </div>
             )}
             <div className="chart-card__body" style={{ height, minHeight: height }}>

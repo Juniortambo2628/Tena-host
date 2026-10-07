@@ -5,6 +5,7 @@ import AuthHero from '@/Components/Auth/AuthHero';
 import PillButton from '@/Components/Dashboard/PillButton';
 import { FormField, TextInput } from '@/Components/Forms/FormPrimitives';
 import './ConfirmPassword.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -30,11 +31,7 @@ export default function ConfirmPassword() {
             <div className="confirm-left">
                 <div className="confirm-left-inner">
                     <div className="confirm-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="confirm-logo-img"
-                        />
+                        <BrandLogo className="confirm-logo-img" />
                     </div>
 
                     <div className="confirm-icon-wrapper">

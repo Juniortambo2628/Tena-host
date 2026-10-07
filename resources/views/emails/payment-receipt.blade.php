@@ -44,12 +44,12 @@
             @if($logoUrl)
                 <img src="{{ $logoUrl }}" alt="{{ $site_name }}" class="logo" style="display:block;margin:0 auto 20px;">
             @endif
-            <h1>{{ $site_name ?? 'Tena Host' }}</h1>
+            <h1>{{ $site_name }}</h1>
         </div>
 
         <div class="content">
             @php
-                $businessName = $site_name ?? 'Tena Host';
+                $businessName = $site_name;
                 $replacements = [
                     '{{Name}}' => $user_name ?? 'Valued Customer',
                     '{{First Name}}' => $user_name ?? 'Valued Customer',
@@ -110,7 +110,7 @@
 
         <div class="footer">
             <p class="footer-text">
-                {{ $site_name ?? 'Tena Host' }} &copy; {{ date('Y') }}. All rights reserved.
+                {{ $site_name }} &copy; {{ date('Y') }}. All rights reserved.
             </p>
             @if($business_address)
                 <p class="footer-text">{{ $business_address }}</p>

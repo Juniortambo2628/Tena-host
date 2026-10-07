@@ -35,6 +35,7 @@ class HostController extends Controller
         $validated = $request->validate([
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
+            'account_type' => 'sometimes|in:'.implode(',', User::ACCOUNT_TYPES),
         ]);
 
         $user->update($validated);

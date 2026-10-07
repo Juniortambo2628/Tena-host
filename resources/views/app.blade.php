@@ -11,7 +11,7 @@
             $siteName = $seo['site_name'] ?? 'TenaFi';
             $metaTitle = $seo['title'] ?? "TenaFi | Africa's guest relationship platform";
             $metaDescription = $seo['description'] ?? 'TenaFi turns the WiFi you already have into growth: capture every guest, stay in touch, and bring them back.';
-            $metaImage = $seo['image'] ?? asset('legacy/assets/Tena-logo-square.jpg');
+            $metaImage = $seo['image'] ?? \App\Support\Brand::emailLogoUrl();
             $metaUrl = $seo['url'] ?? url()->current();
         @endphp
         <title inertia>{{ $metaTitle }}</title>
@@ -39,7 +39,8 @@
 
         {{-- Favicon --}}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-        <link rel="apple-touch-icon" href="{{ asset('legacy/assets/Tena-logo-square.jpg') }}">
+        <link rel="icon" type="image/svg+xml" href="{{ asset('brand/tenafi-icon.svg') }}">
+        <link rel="apple-touch-icon" href="{{ asset('brand/tenafi-icon.png') }}">
 
         {{-- Fonts --}}
         <link rel="preconnect" href="https://fonts.bunny.net">

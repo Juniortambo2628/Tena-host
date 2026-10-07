@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -26,13 +27,13 @@ class WelcomeMail extends Mailable
             '{{Email}}' => '',
             '{{Name}}' => $this->name ?? 'there',
             '{{Login URL}}' => $this->actionUrl ?? '#',
-            '{{Business Name}}' => Setting::getValue('site_name', 'Tena'),
+            '{{Business Name}}' => Brand::name(),
             '{{Business Address}}' => Setting::getValue('business_address', 'Nairobi, Kenya'),
         ];
 
         return new Envelope(
             subject: $this->resolveVariables(
-                Setting::getValue('welcome_email_subject', 'Welcome to TENA'),
+                Setting::getValue('welcome_email_subject', 'Welcome to '.Brand::name()),
                 $replacements
             ),
         );
@@ -40,7 +41,7 @@ class WelcomeMail extends Mailable
 
     public function content(): Content
     {
-        $businessName = Setting::getValue('site_name', 'Tena');
+        $businessName = Brand::name();
         $businessAddress = Setting::getValue('business_address', 'Nairobi, Kenya');
 
         $replacements = [

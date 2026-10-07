@@ -19,6 +19,11 @@ class MpesaTransaction extends Model
         'PhoneNumber',
         'Status',
         'ResultDesc',
+        'meta',
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
     ];
 
     public function user()

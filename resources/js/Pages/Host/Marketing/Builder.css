@@ -25,11 +25,11 @@
 }
 
 .host-builder-type-grid {
-    @apply grid grid-cols-2 gap-2;
+    @apply grid grid-cols-3 gap-2;
 }
 
 .host-builder-type-btn {
-    @apply flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all;
+    @apply flex flex-col items-center gap-2 px-1 py-4 rounded-2xl border transition-all min-w-0;
 }
 
 .host-builder-type-btn-active {
@@ -41,7 +41,7 @@
 }
 
 .host-builder-type-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest;
+    @apply text-[11px] font-semibold;
 }
 
 .host-builder-audience-fields {

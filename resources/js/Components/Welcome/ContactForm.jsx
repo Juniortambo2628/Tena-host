@@ -61,7 +61,7 @@ export default function ContactForm() {
                     </span>
                     <h3 className="contact-form-title">Send us a message</h3>
                     <p className="contact-form-subtitle">
-                        Drop a note and the Tena team will reply within 24 hours.
+                        Drop a note and the TenaFi team will reply within 24 hours.
                     </p>
                 </div>
 

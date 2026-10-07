@@ -2,6 +2,7 @@ import React from 'react';
 import { Head } from '@inertiajs/react';
 import { Check, BookOpen, Calendar, Globe, ShoppingCart } from 'lucide-react';
 import './Guidebook.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 const MODULE_ICONS = {
     'fa-book-open': BookOpen,
@@ -23,11 +24,7 @@ export default function Guidebook({ property, amenities = [] }) {
             <Head title={`Guidebook - ${property.name}`} />
 
             <div className="guidebook-header">
-                <img
-                    src="/legacy/assets/Tena-logo-square.jpg"
-                    alt="TENA Logo"
-                    className="guidebook-logo"
-                />
+                <BrandLogo className="guidebook-logo" />
                 <p className="guidebook-label">Property Hub</p>
             </div>
 
@@ -77,7 +74,7 @@ export default function Guidebook({ property, amenities = [] }) {
             </div>
 
             <div className="guidebook-footer">
-                Powered by Tena
+                Powered by TenaFi
             </div>
         </div>
     );

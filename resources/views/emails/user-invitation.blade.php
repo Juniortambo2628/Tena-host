@@ -1,7 +1,7 @@
 @php
     $primaryColor = '#1b1b1b';
     $accentColor = '#FFD300';
-    $businessName = 'Tena';
+    $businessName = \App\Support\Brand::name();
     $businessAddress = 'Nairobi, Kenya';
     $baseUrl = config('app.url', 'https://tena.host');
 @endphp
@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You've been invited to Tena</title>
+    <title>You've been invited to {{ $businessName }}</title>
     <style>
         p, td, div, li { word-wrap:break-word; overflow-wrap:break-word; word-break:normal; }
     </style>
@@ -20,7 +20,7 @@
         <tr><td align="center">
             <table width="100%" cellpadding="0" cellspacing="0" style="max-width:700px;background-color:#fff;border-radius:16px;overflow:hidden;">
                 <tr><td align="center" style="padding:32px 40px;background-color:{{ $accentColor }}">
-                    <img src="{{ $baseUrl }}/legacy/assets/Tena-logo-square.jpg" alt="{{ $businessName }}" height="48" style="display:block;border-radius:12px;" />
+                    <img src="{{ \App\Support\Brand::emailLogoUrl() }}" alt="{{ $businessName }}" height="48" style="display:block;border-radius:12px;" />
                 </td></tr>
                 <tr><td style="padding:32px 40px 16px">
                     <h1 style="margin:0;font-size:22px;font-weight:700;color:{{ $primaryColor }}">You've been invited to join {{ $businessName }}</h1>

@@ -70,7 +70,7 @@ class MarketingController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:email,sms',
+            'type' => 'required|in:email,sms,whatsapp',
             'subject' => 'nullable|string|max:255',
             'content' => 'nullable|string',
             'trigger_event' => 'nullable|string',
@@ -116,7 +116,7 @@ class MarketingController extends Controller
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'type' => 'sometimes|in:email,sms',
+            'type' => 'sometimes|in:email,sms,whatsapp',
             'status' => 'sometimes|in:draft,active,paused,archived',
             'subject' => 'nullable|string|max:255',
             'content' => 'nullable|string',
@@ -150,7 +150,7 @@ class MarketingController extends Controller
 
         $campaign->update(['status' => 'active']);
 
-        $dispatcher = new CampaignDispatcher;
+        $dispatcher = app(CampaignDispatcher::class);
         $guests = $dispatcher->audience($campaign);
 
         foreach ($guests as $guest) {

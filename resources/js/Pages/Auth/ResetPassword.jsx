@@ -4,8 +4,13 @@ import { motion } from 'framer-motion';
 import { Lock, ArrowRight, Eye, EyeOff, ChevronLeft } from 'lucide-react';
 import AuthHero from '@/Components/Auth/AuthHero';
 import './ResetPassword.css';
+import BrandLogo from '@/Components/BrandLogo';
 
-export default function ResetPassword({ token, email }) {
+/**
+ * Also the invite page (InvitationController): with `invitation`, the
+ * form posts to the signed invite URL and signs the new user in.
+ */
+export default function ResetPassword({ token, email, invitation = null }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,
@@ -17,14 +22,14 @@ export default function ResetPassword({ token, email }) {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('password.store'), {
+        post(invitation ? invitation.action : route('password.store'), {
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
 
     return (
         <div className="reset-root">
-            <Head title="Reset Password" />
+            <Head title={invitation ? 'Welcome to TenaFi' : 'Reset Password'} />
 
             {/* Return to Login */}
             <Link
@@ -40,15 +45,13 @@ export default function ResetPassword({ token, email }) {
                 <div className="reset-left-inner">
                     {/* Logo & Header */}
                     <div className="reset-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="reset-logo-img"
-                        />
+                        <BrandLogo className="reset-logo-img" />
                         <div className="reset-title-area">
-                            <h1 className="reset-title">New Password</h1>
+                            <h1 className="reset-title">{invitation ? `Welcome, ${invitation.name}` : 'New Password'}</h1>
                             <p className="reset-subtitle">
-                                Create a strong, unique password to secure your account and manage your empire.
+                                {invitation
+                                    ? 'Your TenaFi account is ready. Choose a password to sign in.'
+                                    : 'Create a strong, unique password to secure your account and manage your empire.'}
                             </p>
                         </div>
                     </div>
@@ -56,9 +59,9 @@ export default function ResetPassword({ token, email }) {
                     <form onSubmit={submit} className="reset-form">
                         {/* Email (Hidden or Read-only usually in Laravel Breeze, but we'll show it as read-only) */}
                         <div className="reset-field-group-readonly">
-                            <label className="reset-label">Email Address</label>
+                            <label className="reset-label">{invitation ? 'You sign in with' : 'Email Address'}</label>
                             <input
-                                type="email"
+                                type="text"
                                 value={data.email}
                                 readOnly
                                 className="reset-input-readonly"
@@ -115,7 +118,7 @@ export default function ResetPassword({ token, email }) {
                             className="reset-submit"
                         >
                             <div className="reset-submit-inner">
-                                Reset Password
+                                {invitation ? 'Set password & sign in' : 'Reset Password'}
                                 <ArrowRight size={16} />
                             </div>
                         </button>

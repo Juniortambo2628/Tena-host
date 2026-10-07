@@ -7,6 +7,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import {
     Mail,
     MessageSquare,
+    MessageCircle,
     Zap,
     Users,
     Clock,
@@ -18,8 +19,18 @@ import {
     ArrowLeft
 } from 'lucide-react';
 import './Builder.css';
+import { T, useTerms } from '@/Components/Dashboard/Terms';
+import BrandLogo from '@/Components/BrandLogo';
+
+// WhatsApp falls back to SMS when it can't be delivered (see Messenger).
+const CHANNELS = [
+    { value: 'email', label: 'Email', Icon: Mail },
+    { value: 'whatsapp', label: 'WhatsApp', Icon: MessageCircle },
+    { value: 'sms', label: 'SMS', Icon: MessageSquare },
+];
 
 export default function MarketingBuilder({ campaign, properties }) {
+    const t = useTerms();
     const isEditing = !!campaign;
 
     const { data, setData, post, put, processing } = useForm({
@@ -99,22 +110,17 @@ export default function MarketingBuilder({ campaign, properties }) {
                         <GlassCard padding="host-builder-card">
                             <h4 className="host-builder-card-title-mb6">Campaign Type</h4>
                             <div className="host-builder-type-grid">
-                                <button
-                                    type="button"
-                                    onClick={() => setData('type', 'email')}
-                                    className={`host-builder-type-btn ${data.type === 'email' ? 'host-builder-type-btn-active' : 'host-builder-type-btn-inactive'}`}
-                                >
-                                    <Mail size={20} />
-                                    <span className="host-builder-type-label">Email</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setData('type', 'sms')}
-                                    className={`host-builder-type-btn ${data.type === 'sms' ? 'host-builder-type-btn-active' : 'host-builder-type-btn-inactive'}`}
-                                >
-                                    <MessageSquare size={20} />
-                                    <span className="host-builder-type-label">SMS</span>
-                                </button>
+                                {CHANNELS.map(({ value, label, Icon }) => (
+                                    <button
+                                        key={value}
+                                        type="button"
+                                        onClick={() => setData('type', value)}
+                                        className={`host-builder-type-btn ${data.type === value ? 'host-builder-type-btn-active' : 'host-builder-type-btn-inactive'}`}
+                                    >
+                                        <Icon size={20} />
+                                        <span className="host-builder-type-label">{label}</span>
+                                    </button>
+                                ))}
                             </div>
                         </GlassCard>
 
@@ -192,7 +198,7 @@ export default function MarketingBuilder({ campaign, properties }) {
                                         {data.type === 'email' ? (
                                             <>
                                                 <div className="host-builder-email-header">
-                                                    <img src="/legacy/assets/Tena-logo-square.jpg" className="w-16 h-16 rounded-2xl" />
+                                                    <BrandLogo className="w-16 h-16 rounded-2xl" />
                                                 </div>
                                                 <div className="host-builder-email-body">
                                                     <h2 className="host-builder-email-heading">
@@ -212,7 +218,7 @@ export default function MarketingBuilder({ campaign, properties }) {
                                                     <p className="host-builder-sms-text">
                                                         {data.content || "Hey {guest_name}! Welcome to {property_name}. Use code TENA15 for 15% off!"}
                                                     </p>
-                                                    <span className="host-builder-sms-footer">Sent via Tena Automation</span>
+                                                    <span className="host-builder-sms-footer">{data.type === 'whatsapp' ? 'WhatsApp' : 'SMS'} · Sent via TenaFi</span>
                                                 </div>
                                             </div>
                                         )}
@@ -236,21 +242,21 @@ export default function MarketingBuilder({ campaign, properties }) {
                                                     onChange={e => setData('target_audience', e.target.value)}
                                                     className="host-builder-audience-select"
                                                 >
-                                                    <option value="all_guests">All Guests</option>
-                                                    <option value="new_guests">New Guests (First Visit)</option>
-                                                    <option value="returning_guests">Returning Guests</option>
-                                                    <option value="vip_guests">VIP Guests</option>
+                                                    <option value="all_guests">{t('All Guests')}</option>
+                                                    <option value="new_guests">{t('New Guests (First Visit)')}</option>
+                                                    <option value="returning_guests">{t('Returning Guests')}</option>
+                                                    <option value="vip_guests">{t('VIP Guests')}</option>
                                                 </select>
                                             </div>
 
                                             <div>
-                                                <label className="host-builder-audience-label">Property</label>
+                                                <label className="host-builder-audience-label"><T>Property</T></label>
                                                 <select
                                                     value={data.audience_property_id || 'all'}
                                                     onChange={e => setData('audience_property_id', e.target.value === 'all' ? null : e.target.value)}
                                                     className="host-builder-audience-select"
                                                 >
-                                                    <option value="all">All Properties</option>
+                                                    <option value="all">{t('All Properties')}</option>
                                                     {properties?.map(p => (
                                                         <option key={p.id} value={p.id}>{p.name}</option>
                                                     ))}
@@ -279,7 +285,7 @@ export default function MarketingBuilder({ campaign, properties }) {
 
                                             <div className="host-builder-audience-estimate">
                                                 <p className="host-builder-audience-estimate-label">Estimated Reach</p>
-                                                <p className="host-builder-audience-estimate-value">~150 guests</p>
+                                                <p className="host-builder-audience-estimate-value"><T>~150 guests</T></p>
                                                 <p className="host-builder-audience-estimate-note">Based on current filters</p>
                                             </div>
                                         </div>

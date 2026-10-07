@@ -1,7 +1,5 @@
 <?php
 
-use App\Services\NullSmsDriver;
-
 return [
 
     /*
@@ -52,8 +50,26 @@ return [
         'callback_url' => env('MPESA_CALLBACK_URL'),
     ],
 
+    // Text messaging (App\Services\Messaging\Messenger). Drivers: null,
+    // africastalking, whatsapp_cloud, or a class implementing SmsDriverInterface.
     'sms' => [
-        'driver' => env('SMS_DRIVER', NullSmsDriver::class),
+        'driver' => env('SMS_DRIVER', 'null'),
+    ],
+
+    'africastalking' => [
+        'username' => env('AFRICASTALKING_USERNAME'), // "sandbox" uses the sandbox API
+        'api_key' => env('AFRICASTALKING_API_KEY'),
+        'from' => env('AFRICASTALKING_FROM'),          // approved sender ID, optional
+    ],
+
+    'whatsapp' => [
+        'driver' => env('WHATSAPP_DRIVER', 'null'),
+        'token' => env('WHATSAPP_TOKEN'),
+        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
+        'template' => env('WHATSAPP_TEMPLATE'),         // approved template with one body variable
+        'language' => env('WHATSAPP_TEMPLATE_LANGUAGE', 'en'),
+        'api_version' => env('WHATSAPP_API_VERSION', 'v21.0'),
+        'fallback_to_sms' => env('WHATSAPP_FALLBACK_TO_SMS', true),
     ],
 
     'pms' => [

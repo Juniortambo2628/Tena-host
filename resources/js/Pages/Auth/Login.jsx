@@ -18,6 +18,7 @@ import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
 import AuthHero from '@/Components/Auth/AuthHero';
 import './Login.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -56,11 +57,7 @@ export default function Login({ status, canResetPassword }) {
                 <div className="login-left-inner">
                     {/* Logo & Header */}
                     <div className="login-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="login-logo-img"
-                        />
+                        <BrandLogo className="login-logo-img" />
                         <div className="login-title-area">
                             <h1 className="login-title">Sign in</h1>
                             <p className="login-subtitle">Enter your credentials to manage your empire.</p>
@@ -75,17 +72,20 @@ export default function Login({ status, canResetPassword }) {
 
                     <form onSubmit={submit} className="login-form">
                         <div className="login-field-group">
-                            <label className="login-label">Email Address</label>
+                            <label className="login-label" htmlFor="login-identifier">Email or phone</label>
                             <div className="login-input-group">
                                 <div className="login-input-icon">
                                     <Mail size={16} />
                                 </div>
                                 <input
-                                    type="email"
+                                    id="login-identifier"
+                                    type="text"
+                                    inputMode="email"
+                                    autoComplete="username"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     className="login-input-email"
-                                    placeholder="john@example.com"
+                                    placeholder="you@example.com or 0712 345 678"
                                 />
                             </div>
                             {errors.email && <p className="login-error">{errors.email}</p>}

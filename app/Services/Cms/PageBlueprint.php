@@ -50,6 +50,25 @@ class PageBlueprint
         LandingPage::clearCache();
     }
 
+    /**
+     * Flip a feature's "Coming soon" badge (Site-wide → Feature status) once
+     * it ships. For data migrations; admins can still change it afterwards.
+     */
+    public static function setFeatureStatus(string $feature, string $status): void
+    {
+        $section = LandingSection::where('section_key', 'feature_status')
+            ->whereHas('page', fn ($q) => $q->where('slug', LandingPage::SITE))
+            ->first();
+
+        $keyRow = $section?->contents()->where('content_key', 'like', 'items.%.key')->where('value', $feature)->first();
+
+        if ($keyRow) {
+            $statusKey = preg_replace('/\.key$/', '.status', $keyRow->content_key);
+            $section->contents()->where('content_key', $statusKey)->update(['value' => $status]);
+            LandingPage::clearCache();
+        }
+    }
+
     private static function syncSection(LandingPage $page, string $key, array $definition, int $order, bool $relaunch): void
     {
         $section = LandingSection::where('page_id', $page->id)->where('section_key', $key)->first();

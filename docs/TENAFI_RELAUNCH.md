@@ -85,15 +85,21 @@ from anything that already works, and to badge anything else on the pages that i
 
 | Feature | Status | Evidence |
 | --- | --- | --- |
+| WiFi login guest capture | live | `WifiPortalController`, `GuestCaptureService`. First name and WhatsApp number required, email optional; consent wording and timestamp stored per guest; optional marketing opt-in; one-tap reconnect for returning devices |
+| WhatsApp and SMS messaging | live once configured | `App\Services\Messaging\Messenger` with Africa's Talking SMS and the WhatsApp Cloud API. Campaigns can be Email, WhatsApp or SMS; WhatsApp falls back to SMS. Needs the `.env` keys below |
+| Thank-you and review requests | live | `ReviewRequestService`, `reviews:send` (hourly). Per property: Google review link, on/off, delay and message (Properties → Edit). Each guest is asked once after check-out or their last WiFi visit; `/r/{token}` counts clicks |
+| Billing in KES (Basic, Starter, Growth) | live | `config/billing.php`, `PlanPricing`. Per-unit price, 20%/30% multi-unit discounts, extra devices, quarterly 5% off, yearly 2 months free. M-Pesa STK first, card via Paystack in KES. The server always computes the amount, and each payment extends the plan by its cycle |
+| Sign-up → account onboarding | live | Admin → Sign-ups → "Create account" (`SignupConversionService`). Creates the host account (email optional; phone-only users sign in with their number), a first property, and the plan and units they picked, then sends a 7-day signed invite by email and/or WhatsApp. Run it again to re-send the invite |
+| Business owners in the dashboard | live | `users.account_type` (`host` or `business`), set from the sign-up type or Admin → Users → "Business owner". Same dashboard, with "customers" and "locations" wording (`Components/Dashboard/Terms.jsx`) and a visit-based review message. Admin → Hosts shows type and plan |
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
-| Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
-| Monthly report | coming soon | not built |
-| Occupancy alerts | coming soon | only the `occupancy_threshold` field exists; no alerting |
-| Outage alerts | coming soon | not built |
-| Business customer homepage | coming soon | not built (the portal is property-centric) |
-| Tena Direct page | coming soon | not built |
-| Free / VIP WiFi tiers | coming soon | not built |
+| Paid extras by M-Pesa | coming soon | **Needs a decision**: guest payments through TenaFi's paybill (TenaFi collects and settles with hosts) or each host's own till (each host needs Daraja credentials). Guest orders already exist without payment |
+| Monthly report | **live** | `MonthlyReportService` (`reports:monthly`, 1st of the month at 08:00 Nairobi): new and returning guests, campaign messages, review requests and opens. Sent by email plus a WhatsApp summary to Starter and Growth (to everyone while billing is off). Direct bookings get added once Tena Direct exists |
+| Occupancy alerts | **live** | `PropertyMonitorService` (`alerts:check`, every 5 min): more distinct guests in 12 hours than the property's limit alerts the host on the dashboard and WhatsApp/SMS, at most once a day. Rental hosts only |
+| Outage alerts | **live** | `alerts:check`: AP status from the UniFi controller (`stat/device`), else last seen. Offline more than 10 min alerts the host once, then a recovery notice |
+| Business customer homepage | **live** | `/places/{id}` (`VenueController`): menu (active amenities), offers and events, edited under Properties → Edit → Customer homepage. Business customers land there after connecting. An optional birthday at WiFi login triggers `birthdays:send` (daily 09:00): the business's birthday treat on WhatsApp, once a year, to opted-in customers |
+| Tena Direct page | coming soon | not built. It's a booking engine (availability, rates, payments), a project of its own |
+| Free / VIP WiFi tiers | coming soon | not built. Needs UniFi bandwidth profiles or vouchers per tier, plus pricing for VIP |
 
 Flip any of these under Site-wide → Feature status, and every badge on every page updates.
 
@@ -109,6 +115,7 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 8. Analytics: **done**.
    Events: `path_card_hosts`, `path_card_business`, `join_click`, `signup_step_1`, `signup_step_2`, `signup_submit`, `signup_success`.
    They are counted daily in `analytics` and pushed to `window.dataLayer` for GA4/GTM.
+   Admin → Overview → Signups charts a 30-day funnel per audience from these events: path card clicks, Join, step 1 and step 2 done, then sign-ups saved, accounts created and paying (`FunnelReport`). It also charts monthly sign-ups by type. Active plans are under Revenue.
 9. Privacy Policy and Terms linked in the footers: **done** (`/privacy`, `/terms`)
 
 ## Differences from the static handoff
@@ -122,8 +129,18 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 
 ## Still needed before launch
 
-- Upload TenaFi brand assets: logo, og:image, and the product mockups above.
-  Most images in `/legacy/assets` still show the old "Tena" wordmark.
+- Billing switches on automatically once M-Pesa (`MPESA_CONSUMER_KEY`) or Paystack keys are set (Admin → Settings → billing "auto"). Prices live in `config/billing.php`; keep them in step with the CMS pricing sections. The Paystack account must accept KES.
+
+- Add the scheduler cron on the server: `* * * * * php artisan schedule:run`. Review requests depend on it.
+
+- Messaging credentials in production `.env`:
+  - `SMS_DRIVER=africastalking`, `AFRICASTALKING_USERNAME`, `AFRICASTALKING_API_KEY`, and an approved sender ID in `AFRICASTALKING_FROM`
+  - `WHATSAPP_DRIVER=whatsapp_cloud`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`
+  - `WHATSAPP_TEMPLATE`: a Meta-approved template whose body is just `{{1}}`. Business-started WhatsApp messages need one.
+- Campaigns only reach WiFi guests who ticked "Send me offers". Guests added by hand or by PMS sync have no consent record and are included, so the host is responsible for those.
+
+- The app now uses a TenaFi wordmark (`public/brand/`, built from Glen's yellow logo pill) via `App\Support\Brand`. Admin → Settings → site name and logo override it everywhere: dashboard, auth pages, guest portal, captive portal, emails and favicon. Upload the official logo there when it's final, plus the og:image and the product mockups above.
+- The seeded Privacy, Terms and DPA documents still say "Tena Host" and use tena.host addresses. Replace them in Admin → Policies with the TenaFi versions.
 - Publish the Privacy and Terms policies in Admin → Policies. Unpublished ones return 404.
 - Confirm PMS sync works in production, or set it back to "coming soon".
 - `public/index.php` points at the production `tena-core` layout. Confirm it matches the tena-fi.com host.

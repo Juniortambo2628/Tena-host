@@ -6,7 +6,7 @@ import './MediaShowcase.css';
 export default function MediaShowcase({ section }) {
     if (!section) return null;
 
-    const heading = getContent(section, 'heading', 'See Tena in Action');
+    const heading = getContent(section, 'heading', 'See TenaFi in action');
     const description = getContent(section, 'description', '');
     const mediaType = getContent(section, 'media_type', 'video');
     const mediaSrc = getMedia(section, 'showcase_media')

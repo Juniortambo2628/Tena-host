@@ -39,14 +39,18 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => 'required|in:admin,host,staff,guest',
+            // "business" is a host account with business wording.
+            'role' => 'required|in:admin,host,business,staff,guest',
         ]);
+        $accountType = $validated['role'] === 'business' ? User::ACCOUNT_BUSINESS : User::ACCOUNT_HOST;
+        $validated['role'] = $validated['role'] === 'business' ? 'host' : $validated['role'];
 
         $user = User::create([
             'first_name' => $validated['first_name'],
             'last_name' => $validated['last_name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
+            'account_type' => $accountType,
             'username' => strtolower($validated['first_name'].'.'.$validated['last_name']),
             'password' => Hash::make(uniqid('tena_', true)),
             'email_verified_at' => null,

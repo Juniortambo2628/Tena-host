@@ -229,6 +229,17 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                                 xAxisKey="name"
                                 showLegend
                             />
+                            <ChartCard
+                                data={analytics.planMix}
+                                type="pie"
+                                dataKeys={['value']}
+                                colors={['#9CA3AF', '#FFD300', '#1E1E1E']}
+                                title="Active plans"
+                                subtitle="Paid subscriptions by plan"
+                                height={300}
+                                xAxisKey="name"
+                                showLegend
+                            />
                         </motion.div>
                     </div>
                 )}
@@ -272,14 +283,30 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                 {activeView === 'registrations' && (
                     <div className="admin-full-width">
                         <motion.div variants={item} className="admin-chart-row">
+                            {Object.entries(analytics.funnels || {}).map(([audience, stages]) => (
+                                <ChartCard
+                                    key={audience}
+                                    data={stages}
+                                    type="bar"
+                                    dataKeys={['value']}
+                                    colors={[audience === 'business' ? '#1E1E1E' : '#FFD300']}
+                                    title={audience === 'business' ? 'Business funnel' : 'Host funnel'}
+                                    subtitle="Last 30 days: click → sign-up → account → paying"
+                                    height={300}
+                                />
+                            ))}
+                        </motion.div>
+                        <motion.div variants={item} className="admin-chart-row">
                             <ChartCard
-                                data={analytics.signups}
+                                data={analytics.signupsByType}
                                 type="bar"
-                                dataKeys={['signups']}
-                                colors={['#EC4899']}
-                                title="Waitlist Signups"
-                                subtitle="Monthly registrations"
+                                dataKeys={['host', 'business']}
+                                colors={['#FFD300', '#1E1E1E']}
+                                title="Sign-ups by type"
+                                subtitle="Hosts and business owners, monthly"
                                 height={300}
+                                stacked
+                                showLegend
                             />
                             <ChartCard
                                 data={analytics.referralSources}

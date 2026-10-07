@@ -183,3 +183,83 @@
 .host-billing-empty-text {
     @apply text-black/40 font-bold text-sm;
 }
+
+.host-billing-plan-through {
+    @apply text-emerald-600 ml-2;
+}
+
+.host-billing-plans {
+    @apply grid grid-cols-1 sm:grid-cols-3 gap-3 my-6;
+}
+
+.host-billing-plan-option {
+    @apply flex flex-col items-start gap-1 p-5 rounded-2xl border-2 border-black/5 bg-white text-left transition-all hover:border-black/20;
+}
+
+.host-billing-plan-option.is-selected {
+    @apply border-black bg-black text-white;
+}
+
+.host-billing-plan-option-name {
+    @apply text-sm font-bold;
+}
+
+.host-billing-plan-option-price {
+    @apply text-2xl font-black;
+}
+
+.host-billing-plan-option.is-selected .host-billing-plan-option-price {
+    @apply text-[#FFD300];
+}
+
+.host-billing-plan-option-unit {
+    @apply text-xs opacity-60;
+}
+
+.host-billing-selection-grid {
+    @apply grid sm:grid-cols-2 gap-4 mb-6;
+}
+
+.host-billing-number {
+    @apply w-full px-4 py-3 bg-white border border-black/5 rounded-xl font-bold focus:ring-2 focus:ring-black/10 focus:border-transparent;
+}
+
+.host-billing-hint {
+    @apply block text-xs text-gray-500 mt-1;
+}
+
+.host-billing-summary {
+    @apply rounded-2xl bg-black/5 p-5 space-y-2 text-sm;
+}
+
+.host-billing-summary > div {
+    @apply flex justify-between gap-4;
+}
+
+.host-billing-summary dt {
+    @apply text-gray-600;
+}
+
+.host-billing-summary dd {
+    @apply font-bold text-black;
+}
+
+.host-billing-summary-total {
+    @apply border-t border-black/10 pt-3 mt-3 text-base;
+}
+
+.host-billing-summary-total dd {
+    @apply text-xl font-black;
+}
+
+.host-billing-paystack-info {
+    @apply flex flex-col items-center gap-3 py-4 text-center;
+}
+
+.host-billing-paystack-icon {
+    @apply text-black/40;
+}
+
+.host-billing-paystack-text {
+    @apply text-sm text-gray-600 font-medium;
+}

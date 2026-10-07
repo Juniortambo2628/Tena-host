@@ -157,7 +157,7 @@
 }
 
 .guest-portal-footer-brand img {
-    @apply w-5 h-5 rounded-sm grayscale opacity-30;
+    @apply h-6 w-auto rounded-md grayscale opacity-40;
 }
 
 .guest-portal-footer-brand-name {

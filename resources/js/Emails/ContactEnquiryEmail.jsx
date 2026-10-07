@@ -6,12 +6,12 @@ import * as React from 'react';
 export const ContactEnquiryEmail = ({
     senderName = 'Alex Superhost',
     senderEmail = 'alex@example.com',
-    subjectLine = 'Interested in Tena for my listings',
+    subjectLine = 'Interested in TenaFi for my listings',
     messageBody = "Hi team, I'd love to know more about the founding host program and pricing. Thanks!",
     primaryColor = '#000000',
     accentColor = '#FFD300',
-    businessName = 'Tena',
-    logoUrl = '/legacy/assets/Tena-logo-square.jpg',
+    businessName = 'TenaFi',
+    logoUrl = '/brand/tenafi-logo.png',
     heading,
     body,
 }) => {

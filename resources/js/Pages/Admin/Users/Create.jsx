@@ -11,6 +11,7 @@ import './Create.css';
 
 const ROLES = [
     { value: 'host', label: 'Host', description: 'Can manage properties, guests, and marketing' },
+    { value: 'business', label: 'Business owner', description: 'A café, salon or shop: customers, reviews and marketing' },
     { value: 'admin', label: 'Admin', description: 'Full platform access and management' },
     { value: 'staff', label: 'Staff', description: 'Limited access to assigned properties' },
     { value: 'guest', label: 'Guest', description: 'Basic guest portal access' },

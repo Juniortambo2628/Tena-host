@@ -8,12 +8,15 @@ use App\Models\MpesaTransaction;
 use App\Models\Property;
 use App\Models\Registration;
 use App\Models\User;
+use App\Services\Analytics\FunnelReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
 {
+    public function __construct(protected FunnelReport $funnel) {}
+
     public function index()
     {
         $totalHosts = User::where('role', 'host')->count();
@@ -65,53 +68,16 @@ class AdminDashboardController extends Controller
     private function getAnalytics(): array
     {
         // Revenue over last 6 months (real M-Pesa data)
-        $revenue = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $revenue[] = [
-                'name' => $date->format('M'),
-                'revenue' => (float) MpesaTransaction::where('Status', 'completed')
-                    ->whereMonth('created_at', $date->month)
-                    ->whereYear('created_at', $date->year)
-                    ->sum('Amount'),
-            ];
-        }
+        $revenue = $this->monthly('revenue', fn ($q) => (float) $q(MpesaTransaction::where('Status', 'completed'))->sum('Amount'));
 
         // Guest growth over last 6 months
-        $guests = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $guests[] = [
-                'name' => $date->format('M'),
-                'guests' => Guest::whereMonth('created_at', $date->month)
-                    ->whereYear('created_at', $date->year)
-                    ->count(),
-            ];
-        }
+        $guests = $this->monthly('guests', fn ($q) => $q(Guest::query())->count());
 
         // Property growth over last 6 months
-        $properties = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $properties[] = [
-                'name' => $date->format('M'),
-                'properties' => Property::whereMonth('created_at', $date->month)
-                    ->whereYear('created_at', $date->year)
-                    ->count(),
-            ];
-        }
+        $properties = $this->monthly('properties', fn ($q) => $q(Property::query())->count());
 
         // Registration signups over last 6 months
-        $signups = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $signups[] = [
-                'name' => $date->format('M'),
-                'signups' => Registration::whereMonth('created_at', $date->month)
-                    ->whereYear('created_at', $date->year)
-                    ->count(),
-            ];
-        }
+        $signups = $this->monthly('signups', fn ($q) => $q(Registration::query())->count());
 
         // Registration referral sources
         $referralSources = Registration::select('referral_source', DB::raw('count(*) as count'))
@@ -160,6 +126,25 @@ class AdminDashboardController extends Controller
             'propertyTypes' => $propertyTypes,
             'dailyGuests' => $dailyGuests,
             'transactionStatus' => $transactionStatus,
+            'signupsByType' => $this->funnel->signupsByType(),
+            'funnels' => $this->funnel->funnels(),
+            'planMix' => $this->funnel->planMix(),
         ];
+    }
+
+    /**
+     * One point per month for the last six months. $count receives a
+     * scope that limits a query to that month's created_at.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function monthly(string $key, callable $count): array
+    {
+        return collect(range(5, 0))->map(function (int $ago) use ($key, $count) {
+            $month = Carbon::now()->startOfMonth()->subMonths($ago);
+            $inMonth = fn ($query) => $query->whereBetween('created_at', [$month, $month->copy()->endOfMonth()]);
+
+            return ['name' => $month->format('M'), $key => $count($inMonth)];
+        })->all();
     }
 }

@@ -1,222 +1,274 @@
-import React, { useState, useEffect } from 'react';
-import { Head, useForm, usePage, router } from '@inertiajs/react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Head, usePage, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { CreditCard, Smartphone, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import './Billing.css';
 
-export default function Billing({ paystackPublicKey, subscription, mpesaTransactions }) {
+const kes = (n) => `KES ${Number(n || 0).toLocaleString('en-KE')}`;
+
+const formatDate = (value) => new Date(value).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' });
+
+/**
+ * Plan picker + payment. Every price shown comes from the server's quote
+ * (PlanPricing); changing the selection reloads just the quote.
+ */
+export default function Billing({ paystackPublicKey, billingLive, subscription, mpesaTransactions, plans, cycles, volumeDiscounts, extraDevicePrice, currentQuote, quote }) {
     const { auth } = usePage().props;
-    const [activeTab, setActiveTab] = useState('card');
-    const [processing, setProcessing] = useState(false);
-    const [paystackReady, setPaystackReady] = useState(false);
+    const [selection, setSelection] = useState({
+        plan: quote.plan,
+        units: quote.units,
+        extra_devices: quote.extra_devices,
+        cycle: quote.cycle,
+    });
+    const firstRender = useRef(true);
 
     useEffect(() => {
-        if (window.PaystackPop && paystackPublicKey) {
-            setPaystackReady(true);
-        }
-    }, [paystackPublicKey]);
-
-    const { data: mpesaData, setData: setMpesaData, post: postMpesa, processing: mpesaProcessing, errors: mpesaErrors } = useForm({
-        phone_number: auth.user.phone_number || '',
-        amount: 6500, // KES equivalent approx
-    });
-
-    const handlePaystackPayment = () => {
-        if (!paystackReady || !paystackPublicKey) {
+        if (firstRender.current) {
+            firstRender.current = false;
             return;
         }
+        const timer = setTimeout(() => {
+            router.reload({ only: ['quote'], data: selection, preserveState: true, preserveScroll: true, replace: true });
+        }, 250);
+        return () => clearTimeout(timer);
+    }, [selection]);
 
-        setProcessing(true);
-
-        const handler = window.PaystackPop.setup({
-            key: paystackPublicKey,
-            email: auth.user.email,
-            amount: 650000, // Amount in kobo (NGN 6500)
-            currency: 'NGN',
-            ref: 'TENA_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-            metadata: {
-                custom_fields: [
-                    {
-                        display_name: "User ID",
-                        variable_name: "user_id",
-                        value: auth.user.id,
-                    },
-                    {
-                        display_name: "Plan",
-                        variable_name: "plan",
-                        value: "Pro Host Monthly",
-                    }
-                ]
-            },
-            callback: function(response) {
-                // Send reference to backend
-                router.post(route('host.billing.paystack'), {
-                    reference: response.reference,
-                    amount: 6500,
-                }, {
-                    onFinish: () => setProcessing(false),
-                    onSuccess: () => notify.success('Payment processed successfully'),
-                    onError: () => notify.error('Payment processing failed. Please try again.'),
-                });
-            },
-            onClose: function() {
-                setProcessing(false);
-            },
-        });
-
-        handler.openIframe();
-    };
-
-    const submitMpesa = (e) => {
-        e.preventDefault();
-        postMpesa(route('host.billing.mpesa'));
-    };
+    const update = (key, value) => setSelection((s) => ({ ...s, [key]: value }));
+    const paidThrough = subscription?.ends_at;
+    const isActive = paidThrough && new Date(paidThrough) > new Date();
+    const discountTiers = Object.entries(volumeDiscounts).sort(([a], [b]) => a - b)
+        .map(([units, percent]) => `${percent}% off from ${units} units`).join(', ');
 
     return (
         <DashboardLayout title="Billing & Subscription">
             <Head title="Billing" />
 
             <div className="host-billing-container">
-                {/* Header */}
                 <div>
-                    <h1 className="host-billing-heading">Billing & Subscription</h1>
-                    <p className="host-billing-subheading">Manage your subscription and payment methods.</p>
+                    <h1 className="host-billing-heading">Billing &amp; Subscription</h1>
+                    <p className="host-billing-subheading">One price per unit. Everything included. Pay by M-Pesa or card.</p>
                 </div>
 
-                {/* Subscription Status Card */}
                 <div className="host-billing-plan-card">
                     <div className="host-billing-plan-header">
                         <div>
-                            <h2 className="host-billing-plan-title">Current Plan</h2>
+                            <h2 className="host-billing-plan-title">Current plan</h2>
                             <p className="host-billing-plan-desc">
-                                {subscription ? 'Pro Host Plan' : 'Free Trial'}
-                                {subscription && subscription.ends_at && <span className="host-billing-plan-ending">(Ending soon)</span>}
+                                {currentQuote
+                                    ? `${currentQuote.plan_name} · ${currentQuote.units} unit${currentQuote.units > 1 ? 's' : ''} · ${currentQuote.cycle_label}`
+                                    : 'No plan yet'}
+                                {paidThrough && (
+                                    <span className={isActive ? 'host-billing-plan-through' : 'host-billing-plan-ending'}>
+                                        {isActive ? `Paid through ${formatDate(paidThrough)}` : `Expired ${formatDate(paidThrough)}`}
+                                    </span>
+                                )}
                             </p>
                         </div>
-                        <div className="host-billing-plan-badge">
-                            {subscription ? 'Active' : 'Inactive'}
-                        </div>
+                        <div className="host-billing-plan-badge">{isActive ? 'Active' : 'Inactive'}</div>
                     </div>
                 </div>
 
-                {/* Payment Methods */}
-                <div className="host-billing-methods-grid">
-                    {/* Payment Form */}
-                    <div className="host-billing-payment-card">
-                        <h3 className="host-billing-payment-title">Payment Method</h3>
+                <div className="host-billing-plan-card">
+                    <h2 className="host-billing-plan-title">{isActive ? 'Renew or change plan' : 'Choose your plan'}</h2>
 
-                        {/* Tabs */}
-                        <div className="host-billing-tabs">
+                    <div className="host-billing-plans" role="radiogroup" aria-label="Plan">
+                        {plans.map((plan) => (
                             <button
-                                onClick={() => setActiveTab('card')}
-                                className={`host-billing-tab ${activeTab === 'card' ? 'host-billing-tab-active-card' : 'host-billing-tab-inactive'}`}
-                            >
-                                Card (Paystack)
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('mpesa')}
-                                className={`host-billing-tab ${activeTab === 'mpesa' ? 'host-billing-tab-active-mpesa' : 'host-billing-tab-inactive'}`}
-                            >
-                                M-Pesa
-                            </button>
-                        </div>
-
-                        {activeTab === 'card' ? (
-                            <div className="host-billing-form">
-                                <div className="host-billing-paystack-info">
-                                    <CreditCard size={32} className="host-billing-paystack-icon" />
-                                    <p className="host-billing-paystack-text">
-                                        Pay securely with your debit/credit card via Paystack
-                                    </p>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    disabled={!paystackReady || processing}
-                                    onClick={handlePaystackPayment}
-                                    className="host-billing-submit-btn"
-                                >
-                                    {processing ? <Loader2 className="animate-spin" size={20} /> : <CreditCard size={20} />}
-                                    Pay NGN 6,500/mo
-                                </button>
-                                <p className="host-billing-secured-text">Secured by Paystack</p>
-                            </div>
-                        ) : (
-                            <form onSubmit={submitMpesa} className="host-billing-form">
-                                <div>
-                                    <label className="host-billing-field-label">Phone Number</label>
-                                    <div className="host-billing-input-wrapper">
-                                        <Smartphone className="host-billing-input-icon" size={20} />
-                                        <input
-                                            type="text"
-                                            value={mpesaData.phone_number}
-                                            onChange={e => setMpesaData('phone_number', e.target.value)}
-                                            className="host-billing-input"
-                                            placeholder="0712345678"
-                                        />
-                                    </div>
-                                    {mpesaErrors.phone_number && <p className="host-billing-field-error">{mpesaErrors.phone_number}</p>}
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={mpesaProcessing}
-                                    className="host-billing-mpesa-btn"
-                                >
-                                    {mpesaProcessing ? <Loader2 className="animate-spin" size={20} /> : <Smartphone size={20} />}
-                                    Pay KES {mpesaData.amount}
-                                </button>
-                                <p className="host-billing-mpesa-text">Lipa na M-Pesa Online</p>
-                            </form>
-                        )}
-
-                        {/* Simulation Button (Dev Only) */}
-                        <div className="host-billing-simulate-section">
-                            <button
+                                key={plan.id}
                                 type="button"
-                                onClick={() => router.post(route('host.billing.simulate'))}
-                                className="host-billing-simulate-btn"
+                                role="radio"
+                                aria-checked={selection.plan === plan.id}
+                                onClick={() => update('plan', plan.id)}
+                                className={`host-billing-plan-option ${selection.plan === plan.id ? 'is-selected' : ''}`}
                             >
-                                (Dev) Simulate M-Pesa Payment Success
+                                <span className="host-billing-plan-option-name">{plan.name}</span>
+                                <span className="host-billing-plan-option-price">{kes(plan.price)}</span>
+                                <span className="host-billing-plan-option-unit">per unit / month</span>
                             </button>
-                        </div>
-
+                        ))}
                     </div>
 
-                    {/* Transaction History (M-Pesa) */}
-                    <div className="host-billing-tx-section">
-                        <h3 className="host-billing-tx-title">Recent M-Pesa Transactions</h3>
-                        <div className="host-billing-tx-list">
-                            {mpesaTransactions.length > 0 ? mpesaTransactions.map((tx) => (
-                                <div key={tx.id} className="host-billing-tx-card">
-                                    <div className="host-billing-tx-info">
-                                        <div className={`host-billing-tx-status-icon ${tx.Status === 'completed' ? 'host-billing-tx-status-completed' :
-                                            tx.Status === 'pending' ? 'host-billing-tx-status-pending' : 'host-billing-tx-status-failed'
-                                            }`}>
-                                            {tx.Status === 'completed' ? <CheckCircle2 size={20} /> :
-                                                tx.Status === 'pending' ? <Loader2 size={20} className="animate-spin" /> : <AlertCircle size={20} />}
-                                        </div>
-                                        <div>
-                                            <p className="host-billing-tx-amount">KES {tx.Amount}</p>
-                                            <p className="host-billing-tx-date">{new Date(tx.created_at).toLocaleDateString()}</p>
-                                        </div>
-                                    </div>
-                                    <span className={`host-billing-tx-status-badge ${tx.Status === 'completed' ? 'host-billing-tx-status-completed' :
-                                        tx.Status === 'pending' ? 'host-billing-tx-status-pending' : 'host-billing-tx-status-failed'
-                                        }`}>
-                                        {tx.Status}
-                                    </span>
-                                </div>
-                            )) : (
-                                <div className="host-billing-empty">
-                                    <p className="host-billing-empty-text">No recent transactions</p>
-                                </div>
-                            )}
-                        </div>
+                    <div className="host-billing-selection-grid">
+                        <label>
+                            <span className="host-billing-field-label">Units (rentals or locations)</span>
+                            <input type="number" min="1" max="1000" className="host-billing-number" value={selection.units}
+                                onChange={(e) => update('units', Math.max(1, parseInt(e.target.value, 10) || 1))} />
+                            <small className="host-billing-hint">{discountTiers}</small>
+                        </label>
+                        <label>
+                            <span className="host-billing-field-label">Extra devices at the same site</span>
+                            <input type="number" min="0" max="100" className="host-billing-number" value={selection.extra_devices}
+                                onChange={(e) => update('extra_devices', Math.max(0, parseInt(e.target.value, 10) || 0))} />
+                            <small className="host-billing-hint">{kes(extraDevicePrice)} a month each</small>
+                        </label>
                     </div>
+
+                    <span className="host-billing-field-label">Pay</span>
+                    <div className="host-billing-tabs">
+                        {cycles.map((cycle) => (
+                            <button key={cycle.id} type="button" onClick={() => update('cycle', cycle.id)}
+                                className={`host-billing-tab ${selection.cycle === cycle.id ? 'host-billing-tab-active-card' : 'host-billing-tab-inactive'}`}>
+                                {cycle.label}
+                                {cycle.discount > 0 && ` · ${cycle.discount}% off`}
+                                {cycle.free_months > 0 && ` · ${cycle.free_months} months free`}
+                            </button>
+                        ))}
+                    </div>
+
+                    <QuoteSummary quote={quote} />
+                </div>
+
+                <div className="host-billing-methods-grid">
+                    <PaymentPanel quote={quote} selection={selection} user={auth.user} paystackPublicKey={paystackPublicKey} billingLive={billingLive} />
+                    <Transactions transactions={mpesaTransactions} />
                 </div>
             </div>
         </DashboardLayout>
+    );
+}
+
+function QuoteSummary({ quote }) {
+    const units = `${quote.units} unit${quote.units > 1 ? 's' : ''}`;
+
+    return (
+        <dl className="host-billing-summary">
+            <div><dt>{quote.plan_name} × {units}</dt><dd>{kes(quote.unit_price * quote.units)}/mo</dd></div>
+            {quote.volume_discount > 0 && <div><dt>Multi-unit discount</dt><dd>−{quote.volume_discount}%</dd></div>}
+            {quote.extra_devices > 0 && <div><dt>Extra devices × {quote.extra_devices}</dt><dd>{kes(quote.extra_devices_total)}/mo</dd></div>}
+            <div><dt>Monthly</dt><dd>{kes(quote.monthly_total)}</dd></div>
+            {quote.cycle_discount > 0 && <div><dt>{quote.cycle_label} discount</dt><dd>−{quote.cycle_discount}%</dd></div>}
+            {quote.free_months > 0 && <div><dt>Months free</dt><dd>{quote.free_months}</dd></div>}
+            <div className="host-billing-summary-total">
+                <dt>Due now for {quote.months} month{quote.months > 1 ? 's' : ''}</dt>
+                <dd>{kes(quote.total)}</dd>
+            </div>
+        </dl>
+    );
+}
+
+function PaymentPanel({ quote, selection, user, paystackPublicKey, billingLive }) {
+    const [method, setMethod] = useState('mpesa');
+    const [phone, setPhone] = useState(user.phone_number || '');
+    const [processing, setProcessing] = useState(false);
+    const [errors, setErrors] = useState({});
+    const cardAvailable = !!paystackPublicKey;
+
+    const post = (url, data, onSuccess) => {
+        setProcessing(true);
+        router.post(url, { ...selection, ...data }, {
+            preserveScroll: true,
+            onError: setErrors,
+            onSuccess: () => { setErrors({}); onSuccess?.(); },
+            onFinish: () => setProcessing(false),
+        });
+    };
+
+    const payCard = () => {
+        if (!window.PaystackPop) {
+            notify.error('Card payments are still loading. Please try again.');
+            return;
+        }
+        setProcessing(true);
+        window.PaystackPop.setup({
+            key: paystackPublicKey,
+            email: user.email,
+            amount: quote.total * 100,
+            currency: quote.currency,
+            ref: `TENAFI_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+            metadata: { user_id: user.id, plan: quote.plan, units: quote.units, cycle: quote.cycle },
+            callback: (response) => post(route('host.billing.paystack'), { reference: response.reference }),
+            onClose: () => setProcessing(false),
+        }).openIframe();
+    };
+
+    return (
+        <div className="host-billing-payment-card">
+            <h3 className="host-billing-payment-title">Payment method</h3>
+
+            {cardAvailable && (
+                <div className="host-billing-tabs">
+                    <button type="button" onClick={() => setMethod('mpesa')}
+                        className={`host-billing-tab ${method === 'mpesa' ? 'host-billing-tab-active-mpesa' : 'host-billing-tab-inactive'}`}>
+                        M-Pesa
+                    </button>
+                    <button type="button" onClick={() => setMethod('card')}
+                        className={`host-billing-tab ${method === 'card' ? 'host-billing-tab-active-card' : 'host-billing-tab-inactive'}`}>
+                        Card
+                    </button>
+                </div>
+            )}
+
+            {method === 'mpesa' ? (
+                <form className="host-billing-form" onSubmit={(e) => { e.preventDefault(); post(route('host.billing.mpesa'), { phone_number: phone }); }}>
+                    <div>
+                        <label className="host-billing-field-label" htmlFor="mpesa-phone">M-Pesa number</label>
+                        <div className="host-billing-input-wrapper">
+                            <Smartphone className="host-billing-input-icon" size={20} />
+                            <input id="mpesa-phone" type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
+                                className="host-billing-input" placeholder="0712 345 678" />
+                        </div>
+                        {errors.phone_number && <p className="host-billing-field-error">{errors.phone_number}</p>}
+                    </div>
+                    <button type="submit" disabled={processing} className="host-billing-mpesa-btn">
+                        {processing ? <Loader2 className="animate-spin" size={20} /> : <Smartphone size={20} />}
+                        Pay {kes(quote.total)}
+                    </button>
+                    <p className="host-billing-mpesa-text">You'll get an M-Pesa prompt on your phone</p>
+                </form>
+            ) : (
+                <div className="host-billing-form">
+                    <div className="host-billing-paystack-info">
+                        <CreditCard size={32} className="host-billing-paystack-icon" />
+                        <p className="host-billing-paystack-text">Pay securely by debit or credit card</p>
+                    </div>
+                    <button type="button" disabled={processing} onClick={payCard} className="host-billing-submit-btn">
+                        {processing ? <Loader2 className="animate-spin" size={20} /> : <CreditCard size={20} />}
+                        Pay {kes(quote.total)}
+                    </button>
+                    <p className="host-billing-secured-text">Secured by Paystack</p>
+                </div>
+            )}
+
+            {!billingLive && (
+                <div className="host-billing-simulate-section">
+                    <button type="button" disabled={processing} onClick={() => post(route('host.billing.simulate'), {})} className="host-billing-simulate-btn">
+                        Simulate a successful payment (billing is off)
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function Transactions({ transactions }) {
+    const status = (tx) => (tx.Status === 'completed' ? 'completed' : tx.Status === 'pending' ? 'pending' : 'failed');
+    const icons = { completed: <CheckCircle2 size={20} />, pending: <Loader2 size={20} className="animate-spin" />, failed: <AlertCircle size={20} /> };
+
+    return (
+        <div className="host-billing-tx-section">
+            <h3 className="host-billing-tx-title">Recent payments</h3>
+            <div className="host-billing-tx-list">
+                {transactions.length > 0 ? transactions.map((tx) => (
+                    <div key={tx.id} className="host-billing-tx-card">
+                        <div className="host-billing-tx-info">
+                            <div className={`host-billing-tx-status-icon host-billing-tx-status-${status(tx)}`}>{icons[status(tx)]}</div>
+                            <div>
+                                <p className="host-billing-tx-amount">{kes(tx.Amount)}</p>
+                                <p className="host-billing-tx-date">
+                                    {formatDate(tx.created_at)}
+                                    {tx.meta && ` · ${tx.meta.plan_name}, ${tx.meta.months} mo`}
+                                </p>
+                            </div>
+                        </div>
+                        <span className={`host-billing-tx-status-badge host-billing-tx-status-${status(tx)}`}>{tx.Status}</span>
+                    </div>
+                )) : (
+                    <div className="host-billing-empty">
+                        <p className="host-billing-empty-text">No payments yet</p>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }

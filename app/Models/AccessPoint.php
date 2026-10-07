@@ -18,10 +18,12 @@ class AccessPoint extends Model
         'status',
         'last_seen',
         'connected_clients_count',
+        'outage_alerted_at',
     ];
 
     protected $casts = [
         'last_seen' => 'datetime',
+        'outage_alerted_at' => 'datetime',
     ];
 
     /**

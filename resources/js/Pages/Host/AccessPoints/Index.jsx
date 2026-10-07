@@ -8,6 +8,7 @@ import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
 import DataTable from '@/Components/Dashboard/DataTable';
 import { Plus, Wifi, WifiOff } from 'lucide-react';
+import { T } from '@/Components/Dashboard/Terms';
 
 export default function AccessPointIndex({ accessPoints, filters, properties }) {
     const [showModal, setShowModal] = useState(false);
@@ -91,7 +92,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
             content: (
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Property</label>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
                         <select
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.property_id}

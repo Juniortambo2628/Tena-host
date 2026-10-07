@@ -8,9 +8,9 @@ export const WaitlistWelcomeEmail = ({
     lastName = "User",
     primaryColor = "#000000",
     accentColor = "#FFD300",
-    businessName = "Tena",
+    businessName = 'TenaFi',
     businessAddress = "Nairobi, Kenya",
-    logoUrl = "/legacy/assets/Tena-logo-square.jpg",
+    logoUrl = '/brand/tenafi-logo.png',
     heading,
     body
 }) => {
@@ -24,7 +24,7 @@ export const WaitlistWelcomeEmail = ({
                         <Img src={logoUrl} width="42" height="42" alt={businessName} style={logo} />
                     </Section>
                     <Section style={content}>
-                        <Heading style={h1}>{heading || 'Welcome to the Tena Family!'}</Heading>
+                        <Heading style={h1}>{heading || 'Welcome to the TenaFi family!'}</Heading>
                         {body ? (
                             <Section style={text} dangerouslySetInnerHTML={{ __html: body }} />
                         ) : (

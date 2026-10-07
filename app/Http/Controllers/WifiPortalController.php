@@ -3,20 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccessPoint;
+use App\Models\Property;
+use App\Services\GuestCaptureService;
 use App\Services\Unifi\UnifiService;
+use App\Support\Brand;
+use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Public external captive portal for Ubiquiti UniFi.
  *
  * The UniFi AP/controller redirects a connecting device to GET /portal with
- * query params describing the client, and the device taps "Connect" to POST
- * /portal/connect, which authorizes it against the controller.
+ * query params describing the client. On a property TenaFi knows (its AP is
+ * registered), the guest opts in with their name and WhatsApp number before
+ * POST /portal/connect authorizes the device; a returning device reconnects
+ * with one tap. Unknown APs fall back to a plain connect button.
+ *
+ * Errors re-render the page instead of redirecting with session errors:
+ * captive-portal browsers often drop cookies.
  */
 class WifiPortalController extends Controller
 {
-    public function __construct(protected UnifiService $unifi) {}
+    public function __construct(
+        protected UnifiService $unifi,
+        protected GuestCaptureService $guests,
+    ) {}
 
     /**
      * Show the splash page. UniFi appends: id (client MAC), ap (AP MAC),
@@ -44,6 +57,45 @@ class WifiPortalController extends Controller
             'url' => 'nullable|string|max:2048', // original destination
         ]);
 
+        $context = $this->context($request);
+
+        if ($context['property'] && ! $context['returningGuest']) {
+            $request->merge(['phone' => Phone::toE164($request->input('phone'))]);
+            $validator = Validator::make($request->all(), [
+                'first_name' => 'required|string|max:60',
+                'phone' => ['required', 'string', function ($attribute, $value, $fail) {
+                    if (! Phone::isValid($value)) {
+                        $fail('Enter a valid WhatsApp number, e.g. 712 345 678.');
+                    }
+                }],
+                'email' => 'nullable|email|max:150',
+                'consent' => 'accepted',
+                'marketing_opt_in' => 'nullable|boolean',
+                'birthday_month' => 'nullable|integer|between:1,12|required_with:birthday_day',
+                'birthday_day' => 'nullable|integer|between:1,31|required_with:birthday_month',
+            ], [
+                'first_name.required' => 'Please add your first name.',
+                'phone.required' => 'Please add your WhatsApp number.',
+                'consent.accepted' => 'Please tick the box to agree before connecting.',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->view('portal.splash', $context + [
+                    'errors' => $validator->errors(),
+                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in', 'birthday_month', 'birthday_day'),
+                ], 422);
+            }
+
+            $this->guests->capture(
+                $context['property'],
+                $validator->validated(),
+                $context['consentText'],
+                $context['deviceMac'],
+            );
+        } elseif ($context['returningGuest']) {
+            $this->guests->recordVisit($context['returningGuest'], $context['deviceMac']);
+        }
+
         try {
             $authorized = $this->unifi->authorizeGuest(
                 clientMac: $data['id'],
@@ -69,13 +121,18 @@ class WifiPortalController extends Controller
                 ->update(['last_seen' => now(), 'status' => 'online']);
         }
 
+        // Business customers land on the business's homepage (menu, offers).
+        if ($context['property']?->host?->isBusiness()) {
+            return redirect()->route('venue.show', $context['property']);
+        }
+
         // Send the device back to where it was headed, or to a success page.
         $target = $data['url'] ?? null;
         if ($target && preg_match('#^https?://#i', $target)) {
             return redirect()->away($target);
         }
 
-        return view('portal.connected', $this->context($request));
+        return view('portal.connected', $context);
     }
 
     /**
@@ -93,15 +150,33 @@ class WifiPortalController extends Controller
 
         $property = null;
         if (! empty($params['ap'])) {
-            $property = AccessPoint::with('property:id,name')
+            $property = AccessPoint::with('property')
                 ->where('mac_address', $this->unifi->normalizeMac($params['ap']))
                 ->first()?->property;
         }
 
+        $deviceMac = ! empty($params['id']) ? $this->unifi->normalizeMac($params['id']) : null;
+        $propertyName = $property?->name ?? Brand::name();
+
         return [
             'params' => $params,
-            'propertyName' => $property?->name ?? config('app.name'),
+            'property' => $property,
+            'propertyName' => $propertyName,
+            'logoUrl' => $property?->logo_path ? asset('storage/'.ltrim($property->logo_path, '/')) : null,
+            'deviceMac' => $deviceMac,
+            'returningGuest' => $property ? $this->guests->findReturning($property, $deviceMac) : null,
+            'consentText' => static::consentText($propertyName),
+            'isBusiness' => (bool) $property?->host?->isBusiness(),
         ];
+    }
+
+    /**
+     * The exact wording shown next to the consent checkbox, stored with each
+     * guest. Review requests rely on it, so it names them.
+     */
+    public static function consentText(string $propertyName): string
+    {
+        return "I agree that {$propertyName} may store my details and contact me by WhatsApp, SMS or email about my visit, including a request for a review. Privacy policy applies.";
     }
 
     /**

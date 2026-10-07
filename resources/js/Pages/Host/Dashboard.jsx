@@ -9,6 +9,7 @@ import { notify } from '@/Components/Toast';
 import { Wifi, ShieldCheck, Plus, Activity, Users, DollarSign, BarChart3, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './Dashboard.css';
+import { T } from '@/Components/Dashboard/Terms';
 
 const VIEWS = [
     { id: 'overview', label: 'Overview', icon: <Activity size={14} /> },
@@ -96,14 +97,14 @@ export default function Dashboard({ properties, stats, analytics }) {
                             <motion.div variants={item}>
                                 <GlassCard padding="p-0 overflow-hidden">
                                     <div className="host-dashboard-table-header">
-                                        <h3 className="host-dashboard-table-title">Active Properties</h3>
+                                        <h3 className="host-dashboard-table-title"><T>Active Properties</T></h3>
                                         <PillButton variant="ghost" className="text-[10px] py-2 px-4" onClick={() => router.get(route('host.properties.index'))}>See all</PillButton>
                                     </div>
                                     <div className="host-dashboard-table-wrapper">
                                         <table className="host-dashboard-table">
                                             <thead>
                                                 <tr className="host-dashboard-table-head-row">
-                                                    <th className="host-dashboard-table-th">Property</th>
+                                                    <th className="host-dashboard-table-th"><T>Property</T></th>
                                                     <th className="host-dashboard-table-th">Network</th>
                                                     <th className="host-dashboard-table-th">Occupancy</th>
                                                     <th className="host-dashboard-table-th">Actions</th>
@@ -178,7 +179,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                             <motion.div variants={item}>
                                 <GlassCard padding="p-0 overflow-hidden">
                                     <div className="host-dashboard-table-header">
-                                        <h3 className="host-dashboard-table-title">Recent Guests</h3>
+                                        <h3 className="host-dashboard-table-title"><T>Recent Guests</T></h3>
                                     </div>
                                     <div className="host-dashboard-guard-devices">
                                         {properties.slice(0, 3).map(p => (

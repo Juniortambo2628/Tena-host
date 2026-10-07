@@ -12,6 +12,7 @@ import { notify } from '@/Components/Toast';
 import { safeRoute, hasRoute } from '@/lib/route';
 import EmailTemplateEditor from '@/Components/Admin/EmailTemplateEditor';
 import './Index.css';
+import { LOGO_PATH } from '@/constants';
 
 function debounce(func, wait) {
     let timeout;
@@ -28,7 +29,7 @@ const EMAIL_TEMPLATES = [
         subjectKey: 'welcome_email_subject',
         headingKey: 'welcome_email_heading',
         bodyKey: 'welcome_email_body',
-        subjectPlaceholder: 'Welcome to TENA',
+        subjectPlaceholder: 'Welcome to TenaFi',
         headingPlaceholder: 'Welcome home, {name}.',
         bodyPlaceholder: 'Customize the welcome message...',
         variables: [
@@ -74,7 +75,7 @@ const EMAIL_TEMPLATES = [
         subjectKey: 'waitlist_confirmation_subject',
         headingKey: 'waitlist_confirmation_heading',
         bodyKey: 'waitlist_confirmation_body',
-        subjectPlaceholder: "You're on the Tena waitlist!",
+        subjectPlaceholder: "You're on the TenaFi waitlist!",
         headingPlaceholder: "You're on the list!",
         bodyPlaceholder: 'Customize the confirmation message...',
         variables: [
@@ -94,8 +95,8 @@ const EMAIL_TEMPLATES = [
         subjectKey: 'waitlist_welcome_subject',
         headingKey: 'waitlist_welcome_heading',
         bodyKey: 'waitlist_welcome_body',
-        subjectPlaceholder: 'Welcome to the Tena Family!',
-        headingPlaceholder: 'Welcome to the Tena Family!',
+        subjectPlaceholder: 'Welcome to the TenaFi family!',
+        headingPlaceholder: 'Welcome to the TenaFi family!',
         bodyPlaceholder: 'Customize the welcome message...',
         variables: [
             { key: 'First Name', label: 'First Name', description: 'Recipient first name' },
@@ -137,7 +138,7 @@ export default function Index({ settings }) {
 
     const { data, setData, post, processing } = useForm({
         settings: {
-            site_name: flattened.site_name || 'Tena Platform',
+            site_name: flattened.site_name || 'TenaFi',
             maintenance_mode: flattened.maintenance_mode || '0',
             support_email: flattened.support_email || 'support@tena.com',
             signup_alert_emails: flattened.signup_alert_emails || '',
@@ -145,7 +146,7 @@ export default function Index({ settings }) {
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || '#FFD300',
             business_address: flattened.business_address || 'Nairobi, Kenya',
-            logo_url: flattened.logo_url || '/legacy/assets/Tena-logo-square.jpg',
+            logo_url: flattened.logo_url || LOGO_PATH,
             welcome_email_heading: flattened.welcome_email_heading || '',
             welcome_email_body: flattened.welcome_email_body || '',
             welcome_email_subject: flattened.welcome_email_subject || '',

@@ -5,11 +5,11 @@
 }
 
 .twofa-back-link {
-    @apply fixed top-8 left-8 z-50 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
+    @apply absolute md:fixed top-6 md:top-8 left-8 z-50 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
 }
 
 .twofa-left {
-    @apply w-full md:w-1/2 flex items-center justify-center p-8 lg:p-24 bg-white relative;
+    @apply w-full md:w-1/2 flex items-center justify-center p-8 pt-20 md:pt-8 lg:p-24 bg-white relative;
 }
 
 .twofa-left-inner {
@@ -109,7 +109,7 @@
 }
 
 .twofa-right-logo {
-    @apply w-16 h-16 rounded-2xl opacity-80;
+    @apply h-14 w-auto rounded-2xl opacity-80;
 }
 
 .twofa-right-title {
