@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
-import { ChevronRight, Mail, MapPin } from 'lucide-react';
+import { ChevronRight, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { getContent, getMedia, extractItems, stripHtml } from '@/lib/cms';
 import { track } from '@/lib/analytics';
 import { PublicContext } from '@/Components/Public/PublicContext';
@@ -15,7 +15,7 @@ const DEFAULT_LOGO = '/legacy/assets/Tena-logo-square.jpg';
  * Header, footer and SEO come from the CMS (Site-wide page) so all pages
  * stay in sync from one place.
  */
-export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#paths', hasSections = true, children }) {
+export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#paths', hasSections = true, navLinks: pageNavLinks = [], sections = [], children }) {
     const [showCookieDetails, setShowCookieDetails] = useState(false);
 
     const header = site.header;
@@ -26,15 +26,16 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
     // In-page anchors (#how-it-works) only exist on section pages; elsewhere
     // send them to the homepage version of that anchor.
     const resolveHref = (href) => (href?.startsWith('#') && !hasSections ? `/${href}` : href);
-    const navLinks = extractItems(header, 'links', ['label', 'href']);
+    const navLinks = pageNavLinks.length > 0 ? pageNavLinks : extractItems(header, 'links', ['label', 'href']);
     const footerLinks = extractItems(footer, 'links', ['label', 'href']);
     const resolvedJoin = resolveHref(joinHref);
 
     const loginUrl = getContent(header, 'login_url', '/login');
-    const contactEmail = stripHtml(getContent(footer, 'contact_email', 'info@tena-fi.com'));
+    const contactEmail = stripHtml(getContent(footer, 'contact_email', ''));
+    const whatsapp = stripHtml(getContent(footer, 'whatsapp', ''));
 
     return (
-        <PublicContext.Provider value={{ site, page, joinHref: resolvedJoin }}>
+        <PublicContext.Provider value={{ site, page, sections, joinHref: resolvedJoin }}>
             <div className="welcome-page">
                 <Head title={seo.title || siteName} />
 
@@ -96,11 +97,19 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                 </ul>
                             </div>
                             <div>
-                                <h5 className="welcome-footer-heading">Contact</h5>
+                                <h5 className="welcome-footer-heading">Talk to us</h5>
                                 <ul className="welcome-footer-links">
-                                    <li className="welcome-footer-contact">
-                                        <Mail size={16} className="inline" /> <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-                                    </li>
+                                    {contactEmail && (
+                                        <li className="welcome-footer-contact">
+                                            <Mail size={16} className="inline" /> <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                                        </li>
+                                    )}
+                                    {whatsapp && (
+                                        <li className="welcome-footer-contact">
+                                            <MessageCircle size={16} className="inline" />{' '}
+                                            <a href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener">WhatsApp {whatsapp}</a>
+                                        </li>
+                                    )}
                                     <li className="welcome-footer-contact">
                                         <MapPin size={16} className="inline" /> {stripHtml(getContent(footer, 'location', 'Nairobi, Kenya'))}
                                     </li>

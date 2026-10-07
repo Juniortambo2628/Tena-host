@@ -8,19 +8,30 @@ use Illuminate\Validation\Rule;
 
 /**
  * The sign-up questions live in the CMS (the "signup" section of /hosts and
- * /business, steps.{i}.fields). This turns that definition into server-side
- * validation so the form, the stored record and the rules never drift.
+ * /business, steps.{i}.fields), following Glen's SIGNUP-FIELDS.md. This
+ * turns that definition into server-side validation so the form, the stored
+ * record and the rules never drift.
  */
 class SignupFormSchema
 {
     /** Fields every sign-up must carry, whatever the CMS says. */
     private const CORE_RULES = [
-        'first_name' => ['required', 'string', 'max:50'],
-        'email' => ['required', 'email', 'max:150'],
+        'firstName' => ['required', 'string', 'max:50'],
+        'phone' => ['required', 'string', 'regex:/^\+\d{10,15}$/'],
     ];
 
+    /** Envelope keys the form sends alongside the answers. */
+    private const META_RULES = [
+        'estimatedPriceKES' => ['nullable', 'integer', 'min:0'],
+        'consentText' => ['nullable', 'string', 'max:1000'],
+        'submittedAt' => ['nullable', 'date'],
+        'source' => ['nullable', 'string', 'max:100'],
+    ];
+
+    public const META_KEYS = ['consent', 'consentText', 'submittedAt', 'source'];
+
     /**
-     * @param  Collection<int, array<string, mixed>>  $fields
+     * @param  Collection<string, array<string, mixed>>  $fields
      */
     public function __construct(
         public readonly string $type,
@@ -52,7 +63,59 @@ class SignupFormSchema
             ->filter(fn ($field) => ! empty($field['key']))
             ->keyBy('key');
 
-        return new self($type, $section->page->slug, (string) ($content['consent_text'] ?? ''), $fields);
+        return new self($type, $section->page->slug, strip_tags((string) ($content['consent_text'] ?? '')), $fields);
+    }
+
+    /**
+     * Stored values for a field's options: "starter|Starter" -> "starter".
+     *
+     * @return array<int, string>
+     */
+    public static function optionValues(array $field): array
+    {
+        return collect((array) ($field['options'] ?? []))
+            ->map(fn ($option) => is_array($option) ? ($option['value'] ?? '') : explode('|', (string) $option, 2)[0])
+            ->map(fn ($value) => trim((string) $value))
+            ->filter(fn ($value) => $value !== '')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Phone numbers are stored in E.164. Kenyan numbers may arrive as
+     * "0712 345 678", "712345678" or "254712345678".
+     */
+    public static function normalizePhone(?string $phone): ?string
+    {
+        if ($phone === null || trim($phone) === '') {
+            return null;
+        }
+
+        $digits = preg_replace('/\D+/', '', $phone);
+
+        return match (true) {
+            str_starts_with(trim($phone), '+') => '+'.$digits,
+            str_starts_with($digits, '254') => '+'.$digits,
+            default => '+254'.ltrim($digits, '0'),
+        };
+    }
+
+    /**
+     * Normalise input before validation (phone formats, trimmed strings).
+     */
+    public function prepare(array $input): array
+    {
+        foreach ($this->fields as $key => $field) {
+            if (($field['type'] ?? null) === 'tel' && isset($input[$key]) && is_string($input[$key])) {
+                $input[$key] = static::normalizePhone($input[$key]);
+            }
+        }
+
+        if (isset($input['phone']) && is_string($input['phone'])) {
+            $input['phone'] = static::normalizePhone($input['phone']);
+        }
+
+        return $input;
     }
 
     /**
@@ -60,15 +123,16 @@ class SignupFormSchema
      */
     public function rules(): array
     {
-        $rules = $this->fields->map(fn (array $field) => $this->rulesFor($field))->all();
+        $rules = [];
+        foreach ($this->fields as $key => $field) {
+            $rules += $this->rulesFor($key, $field);
+        }
 
         foreach (self::CORE_RULES as $key => $core) {
             $rules[$key] = $core;
         }
 
-        $rules['consent'] = ['accepted'];
-
-        return $rules;
+        return $rules + self::META_RULES + ['consent' => ['accepted']];
     }
 
     /**
@@ -76,25 +140,30 @@ class SignupFormSchema
      */
     public function attributes(): array
     {
-        return $this->fields->mapWithKeys(fn ($f) => [$f['key'] => strtolower($f['label'] ?? $f['key'])])->all();
+        return $this->fields->mapWithKeys(fn ($f) => [$f['key'] => strtolower(strip_tags($f['label'] ?? $f['key']))])->all();
     }
 
     /**
-     * @return array<int, mixed>
+     * @return array<string, array<int, mixed>>
      */
-    private function rulesFor(array $field): array
+    private function rulesFor(string $key, array $field): array
     {
-        $rules = [filter_var($field['required'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'required' : 'nullable'];
-        $options = array_values(array_filter((array) ($field['options'] ?? []), 'strlen'));
+        $presence = filter_var($field['required'] ?? false, FILTER_VALIDATE_BOOLEAN) ? 'required' : 'nullable';
+        $options = static::optionValues($field);
+        $choice = $options ? ['string', Rule::in($options)] : ['string', 'max:255'];
 
-        return array_merge($rules, match ($field['type'] ?? 'text') {
-            'email' => ['email', 'max:150'],
-            'tel' => ['string', 'max:20', 'regex:/^[0-9+()\-\s]{6,20}$/'],
-            'select', 'radio' => $options ? ['string', Rule::in($options)] : ['string', 'max:255'],
-            'checkbox' => ['boolean'],
-            'number' => ['numeric', 'min:0'],
-            'textarea' => ['string', 'max:2000'],
-            default => ['string', 'max:255'],
-        });
+        return match ($field['type'] ?? 'text') {
+            'multiSelect' => [
+                $key => [$presence, 'array'],
+                "{$key}.*" => $choice,
+            ],
+            'email' => [$key => [$presence, 'email', 'max:150']],
+            'tel' => [$key => [$presence, 'string', 'regex:/^\+\d{10,15}$/']],
+            'select', 'radio', 'singleSelect', 'planCards' => [$key => array_merge([$presence], $choice)],
+            'checkbox' => [$key => [$presence, 'boolean']],
+            'number' => [$key => [$presence, 'numeric', 'min:0']],
+            'textarea' => [$key => [$presence, 'string', 'max:2000']],
+            default => [$key => [$presence, 'string', 'max:255']],
+        };
     }
 }

@@ -86,6 +86,12 @@ export const SECTION_MEDIA_SCHEMA = {
         ],
     },
 
+    stats: {
+        slots: [
+            { key: 'image', label: 'Illustration (optional)', description: 'e.g. the occupancy calendar graphic. Shown under the numbers with the image caption.' },
+        ],
+    },
+
     signup: { slots: [] },
     plans: { slots: [] },
     footer: { slots: [] },
@@ -109,7 +115,8 @@ function featureSlots(contentKeys, arrName, keyPattern, labelPattern) {
  * Each slot is { key, label, description? }.
  */
 export function getExpectedMediaSlots(sectionKey, contentKeys = []) {
-    const entry = SECTION_MEDIA_SCHEMA[sectionKey];
+    // "stats__problem" uses the "stats" schema.
+    const entry = SECTION_MEDIA_SCHEMA[String(sectionKey).split('__')[0]];
     if (!entry) return [];
     const dynamic = entry.dynamic ? entry.dynamic(contentKeys) : [];
     const merged = [...(entry.slots || []), ...dynamic];

@@ -1,79 +1,120 @@
 # TenaFi relaunch: public pages on the existing stack
 
-Glen's handoff (Oct 5) shipped static `index.html` / `hosts.html` / `business.html`.
-We kept our Laravel + Inertia/React stack instead and rebuilt those pages as
-CMS-driven pages, reusing the existing section components.
+Glen's handoff (`tenafi-website-handoff.zip`, spec dated 2026-10-02) shipped static `index.html`, `hosts.html` and `business.html`.
+We kept our Laravel + Inertia/React stack instead and rebuilt those pages as CMS-driven pages.
+The copy, sources and sign-up questions are taken from his files. The design is built from our reusable section components.
 
 ## Pages
 
-| URL | CMS page | Sections (in order) |
-| --- | --- | --- |
-| `/` | Main landing page | seo, hero, path_cards (`#paths`), problem, how_it_works |
-| `/hosts` | Short-term rental operators | seo, hero, problem (44% stat), how_it_works, detailed_features, credibility, partners, pricing, signup (`#join`), roi_calculator (off) |
-| `/business` | Business owners | seo, hero, problem, how_it_works, detailed_features, pricing, signup (`#signup`) |
-| `/privacy`, `/terms` | Admin → Policies | rendered in the same public layout |
-| — | Site-wide (not routable) | seo defaults + og:image, header (logo, nav), footer, plans, feature_status |
+| URL | Sections (in order; `#anchors` match Glen's) |
+| --- | --- |
+| `/` | hero, path_cards `#choose`, comparison__problem `#problem`, how_it_works `#how`, cta_banner__founding |
+| `/hosts` | nav, hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
+| `/business` | nav, hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
+| `/privacy`, `/terms` | Admin → Policies, in the same layout |
+| Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), footer, feature_status |
 
-Every section's text and images can be edited in **Admin → Public Pages**, with one tab per page.
-The defaults live in `database/blueprints/public_pages.php`.
+Everything is editable in **Admin → Public Pages**, with one tab per page. The defaults live in `database/blueprints/public_pages.php`.
 
-## How it fits together
+### Section types (all reusable on any page)
 
-- **DB**: `landing_pages` is new, and `landing_sections.page_id` is unique per `(page_id, section_key)`.
-  Sign-ups reuse `registrations`, which gets new columns: `type` (host|business), `business_name`, `answers` (JSON),
-  `consent_text`, `consented_at`, `consent_ip` and `source_page`. Existing waitlist rows become `type = host` automatically.
-- **Blueprint sync** (`App\Services\Cms\PageBlueprint`): additive by default, so it never overwrites CMS edits.
-  The one-off relaunch migration also rewrites the old homepage copy (now `/hosts`).
-  It keeps admin-uploaded media but swaps the `/legacy/` placeholder images.
-- **One renderer**: `Pages/Public/Page.jsx` maps `section_key` to a component, inside `Layouts/PublicLayout.jsx`.
-- **Plans** are defined once (Site-wide → Plans) and shared by every pricing section.
-- **"Coming soon" badges**: each feature row has a `feature` key, and its status is set in Site-wide → Feature status.
-  Flipping one status updates every page.
-- **Sign-up**: both forms post to `POST /api/signups`. The questions are defined in the CMS (`steps.{i}.fields`),
-  and the server validates against that same definition (`SignupFormSchema`).
-  The consent wording is stored from the CMS, never taken from the client.
-  The confirmation message only shows after the server has saved the record.
-- **Alerts** (`SignupAlertService`): an email to Settings → "Sign-up alert emails" (falls back to the support email),
-  an optional JSON webhook (use Zapier, Make or Twilio to forward it to WhatsApp), an admin dashboard notification,
-  and the applicant confirmation email.
-- **Analytics**: `track()` pushes to `window.dataLayer` (GA4/GTM) and to `POST /api/track`, which keeps daily counters
-  in `analytics` as `public.<event>:<page>`.
-  Events tracked: `path_card_hosts`, `path_card_business`, `join_click`, `signup_step_N`, `signup_submit`, `signup_success`.
-- **SEO**: `app.blade.php` renders the title, description, canonical, og:* and twitter:* tags server-side
-  from each page's `seo` section, falling back to the site-wide `seo` section.
-- **Redirects**: `config/public_pages.php` (301s for old URLs → `/hosts`).
+| Type | What it is |
+| --- | --- |
+| `hero` | Badge, headline, subtitle, optional body and trust note, two CTAs |
+| `path_cards` | Audience chooser cards (tracked clicks) |
+| `stats` | Headline numbers with sources, optional illustration and caption |
+| `comparison` | Side-by-side panels with stat, points and text; one can be highlighted |
+| `features` | Icon card grid with optional step labels and per-card "Coming soon" |
+| `how_it_works` | Step cards |
+| `detailed_features` | Image + text blocks (product mockups) |
+| `credibility` | Stay Awhile story and stats |
+| `pricing` | Plan cards; plan buttons link to `#join?plan=<id>` |
+| `cta_banner` | Founding 20 and cross-links between audiences |
+| `faq` | Question and answer accordion |
+| `signup` | The CMS-defined sign-up form |
+
+To use one type twice on a page, add a variant suffix (`stats__problem`, `stats__commission`).
+
+### Editing conventions
+
+- **Multi-line fields** (comparison points, plan features, next steps) hold one item per line.
+  End a line with `[[feature_key]]` to show a "Coming soon" badge until that feature is live.
+- **Feature rows and steps** also take a `feature` key for the same badge.
+- **Select options** are `value|Label`, e.g. `10-49|10 to 49`, or just `Label`.
+
+## Sign-up (matches `SIGNUP-FIELDS.md`)
+
+- Both forms post to `POST /api/signups` with `type` (`host` or `business`) and the spec's camelCase keys.
+  Host fields: `firstName`, `lastName`, `phone`, `email`, `units`, `area`, `platforms[]`, `superhost`, `isp`, `plan`.
+  Business fields add `role`, `businessName`, `businessType`, `locations`, `customersPerDay` and `googleProfile`
+  (and have no `units`, `platforms` or `superhost`).
+  The form also sends `estimatedPriceKES`, `consentText`, `submittedAt` and `source`.
+  Only the "Live" fields are included; the "Proposed" ones are left out until Glen confirms them.
+- **Steps**: 1 "Your details", 2 "Your rentals" / "Your business", then a confirmation step.
+  The confirmation shows a summary, the estimated price and the next steps.
+  It only appears after the server has saved the record. If saving fails, the form stays on step 2 and shows Glen's error message.
+- **Phone** is required and shown with a fixed +254 prefix. It is stored in E.164 (`+254712345678`);
+  formats like `0712…`, `712…`, `254…` and `+254 …` are all accepted.
+  **Email is optional.** A repeat application from the same number updates the earlier record instead of duplicating it.
+- **Plans**: the plan cards take their prices from the page's pricing section.
+  Hosts get the live multi-unit discount (10–49 units = 20% off, 50+ = 30% off; editable under signup → discounts).
+  `#join?plan=growth` pre-selects a plan.
+- **Storage**: answers with a dedicated column go there: name, phone, email, business name, `area` → `location`, and units.
+  Everything else goes to `registrations.answers` (JSON).
+  The consent wording is stored from the CMS, never taken from the client, along with the timestamp and IP (Kenya Data Protection Act, 2019).
+- **Alerts**:
+  - Email to Settings → "Sign-up alert emails". This is pre-filled with glen@tena.host, as the spec asks.
+  - An optional JSON webhook, which you can point at Zapier, Make or Twilio to reach WhatsApp.
+  - An admin dashboard notification.
+  - The applicant confirmation email, when they gave an email address.
+- **Existing waitlist**: those rows are already in the same table as `type = host`.
 
 ## Feature status (checked against the code on Oct 7)
 
+Glen's pages badge occupancy alerts, outage alerts and PMS sync as "Coming soon". His README asks us to remove the badge
+from anything that already works, and to badge anything else on the pages that isn't built yet.
+
 | Feature | Status | Evidence |
 | --- | --- | --- |
-| Guest homepage / house guide | live | `GuestPortalController`, `Guest/Guidebook` |
-| PMS / channel manager sync | live | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook |
-| M-Pesa extras on guest homepage | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
+| Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
+| PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
+| Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
 | Monthly report | coming soon | not built |
-| Occupancy alerts | coming soon | only `occupancy_threshold` and dashboard rate exist; no alerting |
+| Occupancy alerts | coming soon | only the `occupancy_threshold` field exists; no alerting |
 | Outage alerts | coming soon | not built |
 | Business customer homepage | coming soon | not built (the portal is property-centric) |
+| Tena Direct page | coming soon | not built |
+| Free / VIP WiFi tiers | coming soon | not built |
 
-## Glen's checklist
+Flip any of these under Site-wide → Feature status, and every badge on every page updates.
 
-1. Pages at `/`, `/hosts`, `/business`, with 301s from old URLs: **done**
-2. Confirm live features / "Coming soon" badges: **done** (table above; editable in CMS)
-3. One sign-up endpoint with `type`; confirmation only after save; consent wording and timestamp stored: **done**
-4. Email alert on every sign-up: **done**. WhatsApp goes through the webhook setting.
-5. Existing waitlist moved into the sign-ups table as `type = host`: **done** (same table, new columns)
-6. LOGIN → real login page: **done** (`/login`, editable in the header section)
-7. og:image / social tags: **done**. Upload the new TenaFi logo under Site-wide → Header (logo) and Site-wide → SEO (og_image).
-8. Analytics: **done** (first-party counters, plus dataLayer events once GA4/GTM is installed)
-9. Privacy Policy and Terms pages linked in the footers: **done** (`/privacy`, `/terms`, from Admin → Policies)
+## Glen's go-live checklist
+
+1. Pages at `/`, `/hosts`, `/business`, with 301s from old URLs to `/hosts`: **done** (`config/public_pages.php`)
+2. Live features / "Coming soon" badges: **done** (table above)
+3. One endpoint for both forms, with the confirmation only shown after a successful save, and consent wording and timestamp stored: **done**
+4. Notify Glen on every new sign-up: **done** by email; WhatsApp works through the webhook setting.
+5. Existing waitlist migrated as `type = host`: **done** (same table)
+6. LOGIN → `/login`: **done**
+7. og:image and twitter tags: **done**. Upload the new TenaFi logo under Site-wide → Header (logo) and Site-wide → SEO (og_image).
+8. Analytics: **done**.
+   Events: `path_card_hosts`, `path_card_business`, `join_click`, `signup_step_1`, `signup_step_2`, `signup_submit`, `signup_success`.
+   They are counted daily in `analytics` and pushed to `window.dataLayer` for GA4/GTM.
+9. Privacy Policy and Terms linked in the footers: **done** (`/privacy`, `/terms`)
+
+## Differences from the static handoff
+
+- Glen's HTML mockups (the WiFi login card, the guest homepage, WhatsApp and report "phones", the occupancy calendar)
+  are image slots in the CMS here: detailed_features images, and stats__problem → "Illustration".
+  Export them from his HTML or design files and upload them. Keep the "Illustration only" caption.
+- The old homepage's partners carousel and ROI calculator aren't in Glen's design.
+  They are switched off, not deleted (Admin → Public Pages → Short-term rental operators).
+- The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
 
 ## Still needed before launch
 
-- **Copy check against Glen's zip.** The preview links and zip could not be opened from this environment,
-  so the seeded copy and sign-up questions were written from his email. Diff them against `hosts.html`,
-  `business.html` and `SIGNUP-FIELDS.md` and adjust in the CMS (no deploy needed).
-- **Brand assets.** Most images in `/legacy/assets` still show the old "Tena" wordmark.
-  Upload TenaFi versions in the CMS media slots.
-- Set **Settings → Sign-up alert emails** (and the webhook, if WhatsApp alerts are wanted).
-- Publish the privacy and terms policies (Admin → Policies). Unpublished ones return 404.
-- `public/index.php` points at the production `tena-core` layout. Confirm this matches the `tena-fi.com` host.
+- Upload TenaFi brand assets: logo, og:image, and the product mockups above.
+  Most images in `/legacy/assets` still show the old "Tena" wordmark.
+- Publish the Privacy and Terms policies in Admin → Policies. Unpublished ones return 404.
+- Confirm PMS sync works in production, or set it back to "coming soon".
+- `public/index.php` points at the production `tena-core` layout. Confirm it matches the tena-fi.com host.

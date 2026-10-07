@@ -1,8 +1,25 @@
 @reference "tailwindcss";
 
 .welcome-page {
-    @apply min-h-screen bg-white text-[#1b1b1b] font-sans selection:bg-[#FFD300] selection:text-black;
+    @apply min-h-screen bg-white text-[#1E1E1E] selection:bg-[#FFD300] selection:text-black;
+    /* TenaFi brand font (handoff brand reference) */
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     overflow-x: hidden;
+}
+
+/* Keep #anchor targets clear of the fixed header. */
+.welcome-page [id] {
+    scroll-margin-top: 6rem;
+}
+
+.welcome-page .section-header-title,
+.welcome-page .feature-card-title {
+    font-family: inherit;
+}
+
+/* "Coming soon" badge for features that are not live yet. */
+.soon-badge {
+    @apply ml-2 inline-block rounded-full bg-[#FFD300]/25 px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-[#1E1E1E] whitespace-nowrap;
 }
 
 .welcome-nav {

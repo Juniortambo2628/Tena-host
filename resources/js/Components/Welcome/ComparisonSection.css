@@ -1,0 +1,53 @@
+@reference "tailwindcss";
+
+.comparison-grid {
+    @apply grid grid-cols-1 gap-6 md:grid-cols-2 max-w-5xl mx-auto;
+}
+
+.comparison-col {
+    @apply flex flex-col gap-4 rounded-3xl border border-gray-200 bg-white p-8;
+}
+
+.comparison-col--highlight {
+    @apply border-[#FFD300] bg-[#FFD300]/10 shadow-lg;
+}
+
+.comparison-label {
+    @apply text-sm font-bold uppercase tracking-widest text-[#5B6170];
+}
+
+.comparison-stat {
+    @apply flex items-baseline gap-3;
+}
+
+.comparison-stat-value {
+    @apply text-5xl font-black leading-none text-[#1E1E1E];
+}
+
+.comparison-stat-label {
+    @apply text-sm text-[#5B6170];
+}
+
+.comparison-points {
+    @apply space-y-3;
+}
+
+.comparison-points li {
+    @apply flex items-start gap-2 text-[#1E1E1E];
+}
+
+.comparison-point-icon {
+    @apply mt-1 shrink-0 text-[#1E1E1E];
+}
+
+.comparison-text {
+    @apply text-[#1E1E1E] font-medium;
+}
+
+.comparison-note {
+    @apply mt-10 text-center text-lg font-semibold text-[#1E1E1E] max-w-3xl mx-auto;
+}
+
+.comparison-sources {
+    @apply mt-6 text-center text-xs text-[#5B6170] max-w-3xl mx-auto;
+}

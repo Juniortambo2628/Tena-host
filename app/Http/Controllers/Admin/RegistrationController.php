@@ -43,7 +43,7 @@ class RegistrationController extends Controller
         // transitions the signup into "converted" from something else —
         // never on the initial signup, and never on repeat updates that
         // leave the status where it was.
-        if ($validated['status'] === 'converted' && $previousStatus !== 'converted') {
+        if ($validated['status'] === 'converted' && $previousStatus !== 'converted' && $registration->email) {
             try {
                 Mail::to($registration->email)->send(
                     new WaitlistWelcomeMail(

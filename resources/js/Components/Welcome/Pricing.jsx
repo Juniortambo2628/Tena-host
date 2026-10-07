@@ -4,40 +4,46 @@ import { getContent, extractItems, sanitizeHtml, stripHtml, isTruthy } from '@/l
 import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
 import { SkeletonSectionHeader, SkeletonPricingGrid } from './Skeleton';
-import { ArrowRight, ChevronDown, Sparkles, Zap, Award, Clock } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, Sparkles, Zap, Award, Clock } from 'lucide-react';
+import LineList from '@/Components/Public/LineList';
 import ContactForm from './ContactForm';
 import './Pricing.css';
 
 function PricingPlanCard({ plan }) {
+    const { joinHref } = usePublic();
     const [expanded, setExpanded] = useState(false);
+    const descId = `pricing-desc-${String(plan.label).replace(/\s+/g, '-').toLowerCase()}`;
+    // "#join?plan=growth" pre-selects the plan in this page's sign-up form.
+    const href = plan.id && joinHref.includes('#') ? `${joinHref}?plan=${plan.id}` : joinHref;
+
     return (
-        <div className="pricing-card">
+        <div className={`pricing-card ${plan.badge ? 'pricing-card--featured' : ''}`}>
             <div className="pricing-card-inner">
+                {stripHtml(plan.badge) && <span className="pricing-card-badge">{stripHtml(plan.badge)}</span>}
                 <span className="pricing-card-label">{plan.label}</span>
+                {stripHtml(plan.tagline) && <p className="pricing-card-tagline">{stripHtml(plan.tagline)}</p>}
                 <div className="pricing-card-price">
                     {plan.price} <span className="pricing-card-price-unit">{plan.unit}</span>
                 </div>
-                <button
-                    type="button"
-                    className="pricing-card-toggle"
-                    onClick={() => setExpanded((v) => !v)}
-                    aria-expanded={expanded}
-                    aria-controls={`pricing-desc-${plan.label.replace(/\s+/g, '-').toLowerCase()}`}
-                >
-                    {expanded ? 'See less' : 'See more'}
-                    <ChevronDown size={14} className={`pricing-card-toggle-icon ${expanded ? 'is-open' : ''}`} />
-                </button>
-                <div
-                    id={`pricing-desc-${plan.label.replace(/\s+/g, '-').toLowerCase()}`}
-                    className={`pricing-card-desc-wrap ${expanded ? 'is-expanded' : ''}`}
-                    hidden={!expanded}
-                >
-                    <p
-                        className="pricing-card-desc"
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }}
-                    />
-                </div>
-                <CtaLink className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}>
+                <LineList text={plan.features} className="pricing-card-features" icon={<Check size={16} className="pricing-card-feature-icon" />} />
+                {stripHtml(plan.description) && (
+                    <>
+                        <button
+                            type="button"
+                            className="pricing-card-toggle"
+                            onClick={() => setExpanded((v) => !v)}
+                            aria-expanded={expanded}
+                            aria-controls={descId}
+                        >
+                            {expanded ? 'See less' : 'See more'}
+                            <ChevronDown size={14} className={`pricing-card-toggle-icon ${expanded ? 'is-open' : ''}`} />
+                        </button>
+                        <div id={descId} className={`pricing-card-desc-wrap ${expanded ? 'is-expanded' : ''}`} hidden={!expanded}>
+                            <p className="pricing-card-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }} />
+                        </div>
+                    </>
+                )}
+                <CtaLink href={href} event="join_click" className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}>
                     {plan.cta}
                 </CtaLink>
             </div>
@@ -64,11 +70,12 @@ export default function Pricing({ section }) {
 
     // Plans are shared site-wide (Site-wide -> Plans) so every page quotes
     // the same prices; a page may still override them with its own rows.
-    const planFields = ['label', 'price', 'unit', 'description', 'cta', 'variant'];
+    const planFields = ['id', 'label', 'tagline', 'badge', 'price', 'price_kes', 'unit', 'features', 'description', 'cta', 'variant'];
     const ownPlans = extractItems(section, 'plans', planFields);
     const plans = ownPlans.length > 0 ? ownPlans : extractItems(site?.plans, 'plans', planFields);
     const currencyNote = stripHtml(getContent(site?.plans, 'currency_note', ''));
     const perks = extractItems(section, 'perks', ['symbol', 'label', 'text']);
+    const footnote = getContent(section, 'footnote', '');
     const showContactForm = isTruthy(getContent(section, 'show_contact_form', '0'));
 
     const ctaLabel = getContent(section, 'cta_label', '');
@@ -78,7 +85,7 @@ export default function Pricing({ section }) {
     const ctaButton = getContent(section, 'cta_button', 'Join');
 
     return (
-        <SectionWrapper id="pricing" bg={section.bg || 'gray'}>
+        <SectionWrapper bg={section.bg || 'gray'}>
             <SectionHeader title={title} subtitle={subtitle} />
 
             {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
@@ -121,6 +128,8 @@ export default function Pricing({ section }) {
                     </div>
                 </div>
             </div>}
+
+            {stripHtml(footnote) && <p className="pricing-footnote">{stripHtml(footnote)}</p>}
 
             {showContactForm && <ContactForm />}
         </SectionWrapper>

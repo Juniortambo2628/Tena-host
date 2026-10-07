@@ -78,6 +78,10 @@ class SignupAlertService
 
     private function confirmApplicant(Registration $registration): void
     {
+        if (! $registration->email) {
+            return; // Email is optional; the team follows up on WhatsApp.
+        }
+
         $answers = $registration->answers ?? [];
 
         $this->attempt('applicant confirmation', fn () => Mail::to($registration->email)->send(
@@ -85,9 +89,9 @@ class SignupAlertService
                 firstName: (string) $registration->first_name,
                 lastName: (string) $registration->last_name,
                 email: $registration->email,
-                propertyType: (string) ($registration->property_type ?: ($answers['business_type'] ?? '')),
-                units: (string) ($registration->units ?: ($answers['branches'] ?? '')),
-                primaryPlatform: (string) $registration->primary_platform,
+                propertyType: (string) ($answers['businessType'] ?? ($registration->property_type !== 'other' ? $registration->property_type : '')),
+                units: (string) ($registration->units ?: ($answers['locations'] ?? '')),
+                primaryPlatform: implode(', ', (array) ($answers['platforms'] ?? $registration->primary_platform)),
                 biggestChallenge: (string) $registration->biggest_challenge,
             )
         ));

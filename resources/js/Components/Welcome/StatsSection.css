@@ -1,0 +1,42 @@
+@reference "tailwindcss";
+
+.stats-grid {
+    @apply grid grid-cols-1 gap-6 max-w-5xl mx-auto;
+}
+
+.stats-grid--2 { @apply sm:grid-cols-2; }
+.stats-grid--3 { @apply md:grid-cols-3; }
+.stats-grid--4 { @apply sm:grid-cols-2 lg:grid-cols-4; }
+
+.stats-item {
+    @apply flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm;
+}
+
+.stats-value {
+    @apply text-4xl font-black leading-none text-[#1E1E1E];
+}
+
+.stats-label {
+    @apply text-sm leading-relaxed text-[#5B6170];
+}
+
+.stats-figure {
+    @apply mt-10 max-w-4xl mx-auto;
+}
+
+.stats-figure img {
+    @apply w-full rounded-2xl;
+}
+
+.stats-figure figcaption,
+.stats-caption {
+    @apply mt-3 text-center text-xs italic text-[#5B6170];
+}
+
+.stats-note {
+    @apply mt-8 text-center font-semibold text-[#1E1E1E] max-w-3xl mx-auto;
+}
+
+.stats-sources {
+    @apply mt-6 text-center text-xs text-[#5B6170] max-w-3xl mx-auto;
+}

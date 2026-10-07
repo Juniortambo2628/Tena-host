@@ -39,6 +39,7 @@ const FIELD_OPTIONS = {
     symbol: opts('sparkles', 'zap', 'award', 'clock'),
     reverse: YES_NO,
     show_contact_form: YES_NO,
+    highlight: YES_NO,
 };
 
 function detectFieldType(key, value) {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSignupRequest;
 use App\Models\Registration;
+use App\Services\Cms\SignupFormSchema;
 use App\Services\SignupAlertService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\RateLimiter;
@@ -13,25 +14,21 @@ use function Illuminate\Support\defer;
 
 /**
  * Single endpoint for both public sign-up forms (POST /api/signups with
- * type = host | business). Questions that have a dedicated registrations
- * column are stored there; everything else goes into `answers`.
+ * type = host | business), using the payload keys from SIGNUP-FIELDS.md.
+ * Answers with a dedicated registrations column are stored there; all the
+ * rest (plan, platforms, isp, ...) goes into `answers`.
  */
 class SignupController extends Controller
 {
-    /** Column => max length, matching the registrations table. */
+    /** Payload key => [registrations column, max length]. */
     private const COLUMNS = [
-        'first_name' => 50,
-        'last_name' => 50,
-        'email' => 100,
-        'phone' => 20,
-        'business_name' => 150,
-        'location' => 100,
-        'property_type' => 50,
-        'units' => 20,
-        'primary_platform' => 50,
-        'biggest_challenge' => 100,
-        'referral_source' => 50,
-        'message' => 5000,
+        'firstName' => ['first_name', 50],
+        'lastName' => ['last_name', 50],
+        'email' => ['email', 100],
+        'phone' => ['phone', 20],
+        'businessName' => ['business_name', 150],
+        'area' => ['location', 100],
+        'units' => ['units', 20],
     ];
 
     public function store(StoreSignupRequest $request, SignupAlertService $alerts): JsonResponse
@@ -47,13 +44,24 @@ class SignupController extends Controller
         }
 
         $schema = $request->schema();
-        $validated = collect($request->validated())->except(['type', 'consent']);
+        $validated = collect($request->validated())->except(['type', ...SignupFormSchema::META_KEYS]);
 
-        $columns = $validated->only(array_keys(self::COLUMNS))
-            ->map(fn ($value, $column) => $value === null ? null : Str::limit((string) $value, self::COLUMNS[$column], ''));
+        $attributes = [];
+        foreach (self::COLUMNS as $field => [$column, $limit]) {
+            if ($validated->has($field)) {
+                $value = $validated[$field];
+                $attributes[$column] = $value === null ? null : Str::limit((string) $value, $limit, '');
+            }
+        }
+        if (isset($attributes['email'])) {
+            $attributes['email'] = Str::lower($attributes['email']);
+        }
+        if (isset($attributes['units']) && preg_match('/\d+/', $attributes['units'], $m)) {
+            $attributes['property_count'] = (int) $m[0];
+        }
 
-        $attributes = $columns->except('email')->all() + [
-            'answers' => $validated->except(array_keys(self::COLUMNS))->all(),
+        $attributes += [
+            'answers' => $validated->except(array_keys(self::COLUMNS))->filter(fn ($v) => $v !== null && $v !== [])->all(),
             'agree_updates' => true,
             // The wording comes from the CMS, never from the client.
             'consent_text' => $schema->consentText,
@@ -62,14 +70,9 @@ class SignupController extends Controller
             'source_page' => $schema->pageSlug,
         ];
 
-        if (isset($attributes['units']) && preg_match('/\d+/', $attributes['units'], $m)) {
-            $attributes['property_count'] = (int) $m[0];
-        }
-
-        $registration = Registration::firstOrNew([
-            'email' => Str::lower($columns['email']),
-            'type' => $schema->type,
-        ]);
+        // The WhatsApp number is the one required contact, so a repeat
+        // application from the same number updates the earlier one.
+        $registration = Registration::firstOrNew(['phone' => $attributes['phone'], 'type' => $schema->type]);
         $isNew = ! $registration->exists;
         $registration->fill($attributes);
         if ($isNew) {

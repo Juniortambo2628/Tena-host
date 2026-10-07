@@ -1,5 +1,5 @@
 import React from 'react';
-import { getContent, getMedia, extractItems, sanitizeHtml } from '@/lib/cms';
+import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml } from '@/lib/cms';
 import { SkeletonHero } from './Skeleton';
 import CtaLink from '@/Components/Public/CtaLink';
 import './Hero.css';
@@ -14,6 +14,8 @@ export default function Hero({ section }) {
     // Empty URL = this page's "Join" target (its sign-up form).
     const ctaPrimaryUrl = getContent(section, 'cta_primary_url', '');
     const ctaSecondary = getContent(section, 'cta_secondary', 'How it works');
+    const body = getContent(section, 'body', '');
+    const note = stripHtml(getContent(section, 'note', ''));
     const ctaSecondaryUrl = getContent(section, 'cta_secondary_url', '#how-it-works');
     const mainImage = getMedia(section, 'main_image', '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg');
 
@@ -34,6 +36,7 @@ export default function Hero({ section }) {
                             </div>
                             <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: sanitizeHtml(title) }} />
                             <p className="hero-subtitle" dangerouslySetInnerHTML={{ __html: sanitizeHtml(subtitle) }} />
+                            {stripHtml(body) && <p className="hero-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(body) }} />}
                             <div className="hero-cta-group">
                                 <CtaLink href={ctaPrimaryUrl} className="hero-btn-primary">
                                     {ctaPrimary}
@@ -44,6 +47,7 @@ export default function Hero({ section }) {
                                     </CtaLink>
                                 )}
                             </div>
+                            {note && <p className="hero-note">{note}</p>}
                         </div>
                         <div className="hero-image-col">
                             <div className="hero-image-wrap">

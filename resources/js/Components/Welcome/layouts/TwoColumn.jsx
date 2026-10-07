@@ -11,7 +11,7 @@ export function TwoColumnFeatureRow({ icon, title, desc, badge }) {
             <div>
                 <h6 className="two-column-feature-title">
                     {title}
-                    {badge && <span className="two-column-feature-badge">{badge}</span>}
+                    {badge && <span className="soon-badge">{badge}</span>}
                 </h6>
                 <p className="two-column-feature-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(desc) }} />
             </div>

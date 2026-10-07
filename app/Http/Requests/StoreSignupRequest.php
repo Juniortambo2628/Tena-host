@@ -27,6 +27,21 @@ class StoreSignupRequest extends FormRequest
         return $this->schema ??= SignupFormSchema::forType($type);
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($schema = $this->schema()) {
+            $this->replace($schema->prepare($this->all()));
+        }
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone.regex' => 'Enter a valid WhatsApp number, e.g. 712 345 678.',
+            'consent.accepted' => 'Tick the box so we can contact you about your application.',
+        ];
+    }
+
     public function rules(): array
     {
         $typeRules = ['required', Rule::in(Registration::TYPES)];

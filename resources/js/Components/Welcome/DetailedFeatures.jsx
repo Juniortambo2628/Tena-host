@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SectionWrapper, TwoColumn } from './layouts';
+import { SectionWrapper, SectionHeader, TwoColumn } from './layouts';
 import { getContent, getMedia, extractJsonItems, comingSoonBadge, stripHtml } from '@/lib/cms';
 import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
@@ -67,9 +67,15 @@ export default function DetailedFeatures({ section }) {
     }
 
     const ctaText = stripHtml(getContent(section, 'cta_text', 'Get started'));
+    const heading = stripHtml(getContent(section, 'title', ''));
 
     return (
         <div className="detailed-features-wrapper">
+            {heading && (
+                <SectionWrapper bg="white" padding="sm">
+                    <SectionHeader title={heading} subtitle={getContent(section, 'subtitle', '')} />
+                </SectionWrapper>
+            )}
             {sections.map((s, i) => (
                 <SectionWrapper key={s.id} id={s.id} bg={s.bg} padding="lg">
                     <TwoColumn

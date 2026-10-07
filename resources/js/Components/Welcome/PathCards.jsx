@@ -19,11 +19,10 @@ export default function PathCards({ section }) {
         );
     }
 
-    const anchor = stripHtml(getContent(section, 'anchor', 'paths'));
     const cards = extractItems(section, 'cards', ['label', 'title', 'description', 'cta', 'href', 'event']);
 
     return (
-        <SectionWrapper id={anchor} bg={section.bg || 'white'}>
+        <SectionWrapper bg={section.bg || 'white'}>
             <SectionHeader
                 title={stripHtml(getContent(section, 'title', ''))}
                 subtitle={getContent(section, 'subtitle', '')}

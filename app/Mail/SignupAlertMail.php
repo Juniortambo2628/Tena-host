@@ -28,9 +28,11 @@ class SignupAlertMail extends Mailable
 
     public function envelope(): Envelope
     {
+        $r = $this->registration;
+
         return new Envelope(
-            subject: static::summaryLine($this->registration),
-            replyTo: [new Address($this->registration->email, trim("{$this->registration->first_name} {$this->registration->last_name}"))],
+            subject: static::summaryLine($r),
+            replyTo: $r->email ? [new Address($r->email, trim("{$r->first_name} {$r->last_name}"))] : [],
             tags: ['signup', $this->registration->type],
         );
     }

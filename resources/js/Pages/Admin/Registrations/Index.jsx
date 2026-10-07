@@ -16,7 +16,8 @@ const TYPE_TABS = [
     { value: 'business', label: 'Businesses' },
 ];
 
-const humanize = (key) => key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+// "customersPerDay" / "primary_platform" -> "Customers Per Day" / "Primary Platform"
+const humanize = (key) => key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
 export default function RegistrationIndex({ registrations, filters = {}, typeCounts = {} }) {
     const [selectedIds, setSelectedIds] = useState([]);
@@ -83,7 +84,7 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             key: 'email',
             label: 'Email',
             render: (item) => (
-                <span className="registrations-page__email">{item.email}</span>
+                <span className="registrations-page__email">{item.email || item.phone || '-'}</span>
             ),
         },
         {
@@ -98,7 +99,7 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             label: 'Business / Property',
             render: (item) => (
                 <span className="registrations-page__property-type">
-                    {item.business_name || item.answers?.business_type || item.property_type}
+                    {item.business_name || item.answers?.businessType || (item.property_type !== 'other' ? item.property_type : '-')}
                 </span>
             ),
         },
@@ -111,7 +112,7 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             key: 'units',
             label: 'Units',
             render: (item) => (
-                <span className="registrations-page__units">{item.units || item.answers?.branches || '-'}</span>
+                <span className="registrations-page__units">{item.units || item.answers?.locations || '-'}</span>
             ),
         },
         {

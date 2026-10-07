@@ -168,3 +168,32 @@ export function comingSoonBadge(site, featureKey) {
 export function isTruthy(value) {
     return ['1', 'true', 'yes', 'on'].includes(String(value ?? '').trim().toLowerCase());
 }
+
+/**
+ * Section type without its variant suffix: "stats__problem" -> "stats".
+ * Lets one page use the same section type more than once.
+ */
+export function baseSectionKey(sectionKey) {
+    return String(sectionKey || '').split('__')[0];
+}
+
+/**
+ * Split a multi-line CMS field into list items. A line ending in
+ * [[feature_key]] gets that feature's "Coming soon" badge (or none once
+ * the feature is live).
+ */
+export function textLines(text, site) {
+    // U+E000 marks line breaks through stripHtml, which collapses whitespace
+    // (and HTML decoding drops NUL, so it can't be used as the marker).
+    const BREAK = '\uE000';
+    return stripHtml(String(text || '').replace(/<br\s*\/?>|<\/p>/gi, '\n').replace(/\r?\n/g, BREAK))
+        .split(BREAK)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+            const match = line.match(/^(.*?)\s*\[\[([a-z0-9_]+)\]\]$/);
+            return match
+                ? { text: match[1], badge: comingSoonBadge(site, match[2]) }
+                : { text: line, badge: null };
+        });
+}
