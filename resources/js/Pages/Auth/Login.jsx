@@ -75,17 +75,20 @@ export default function Login({ status, canResetPassword }) {
 
                     <form onSubmit={submit} className="login-form">
                         <div className="login-field-group">
-                            <label className="login-label">Email Address</label>
+                            <label className="login-label" htmlFor="login-identifier">Email or phone</label>
                             <div className="login-input-group">
                                 <div className="login-input-icon">
                                     <Mail size={16} />
                                 </div>
                                 <input
-                                    type="email"
+                                    id="login-identifier"
+                                    type="text"
+                                    inputMode="email"
+                                    autoComplete="username"
                                     value={data.email}
                                     onChange={(e) => setData('email', e.target.value)}
                                     className="login-input-email"
-                                    placeholder="john@example.com"
+                                    placeholder="you@example.com or 0712 345 678"
                                 />
                             </div>
                             {errors.email && <p className="login-error">{errors.email}</p>}

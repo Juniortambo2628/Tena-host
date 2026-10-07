@@ -132,6 +132,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/registrations', [RegistrationController::class, 'index'])->name('registrations.index');
     Route::put('/registrations/{registration}', [RegistrationController::class, 'update'])->name('registrations.update');
     Route::delete('/registrations/{registration}', [RegistrationController::class, 'destroy'])->name('registrations.destroy');
+    Route::post('/registrations/{registration}/convert', [RegistrationController::class, 'convert'])->name('registrations.convert');
 
     // Landing Page CMS
     Route::get('/landing', [LandingController::class, 'index'])->name('landing.index');

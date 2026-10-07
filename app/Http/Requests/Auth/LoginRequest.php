@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Support\Phone;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,7 +29,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            // Email address or phone number (phone-only accounts).
+            'email' => ['required', 'string', 'max:100'],
             'password' => ['required', 'string'],
         ];
     }
@@ -42,7 +44,7 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        if (! Auth::attempt($this->credentials(), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -51,6 +53,23 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+    }
+
+    /**
+     * Sign in by email, or by phone when the identifier isn't an email.
+     *
+     * @return array<string, string|null>
+     */
+    protected function credentials(): array
+    {
+        $identifier = trim((string) $this->input('email'));
+
+        return [
+            ...(str_contains($identifier, '@')
+                ? ['email' => $identifier]
+                : ['phone_number' => Phone::toE164($identifier)]),
+            'password' => (string) $this->input('password'),
+        ];
     }
 
     /**

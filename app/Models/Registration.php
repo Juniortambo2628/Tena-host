@@ -37,6 +37,7 @@ class Registration extends Model
         'consented_at',
         'consent_ip',
         'source_page',
+        'user_id',
     ];
 
     protected $casts = [

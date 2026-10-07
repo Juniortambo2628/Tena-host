@@ -7,7 +7,7 @@ import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
 import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { useConfirm } from '@/hooks/useConfirm';
-import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
+import { UserPlus, XCircle, Trash2 } from 'lucide-react';
 import './Index.css';
 
 const TYPE_TABS = [
@@ -38,6 +38,33 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             onSuccess: () => notify.success(`Registration ${status}`),
             onError: () => notify.error('Failed to update registration'),
         });
+    };
+
+    // Create the account and invite by every channel the sign-up gave us.
+    const inviteChannels = (item) => [item.email && 'email', item.phone && 'whatsapp'].filter(Boolean);
+
+    const convertOne = (item) => new Promise((resolve, reject) => {
+        router.post(route('admin.registrations.convert', item.id), { channels: inviteChannels(item) }, {
+            preserveScroll: true,
+            onSuccess: (page) => {
+                const { success, error } = page.props.flash || {};
+                error ? notify.error(error) : notify.success(success || 'Account created');
+                resolve();
+            },
+            onError: () => { notify.error('Could not create the account'); reject(); },
+        });
+    });
+
+    const handleConvert = async (item) => {
+        const via = inviteChannels(item).map((c) => (c === 'whatsapp' ? 'WhatsApp' : 'email')).join(' and ');
+        const ok = await confirm({
+            title: item.user_id ? 'Re-send invite' : 'Create account',
+            message: item.user_id
+                ? `Send ${item.first_name} a new sign-in link by ${via}?`
+                : `Create a TenaFi account for ${item.first_name} with their plan and a first property, and invite them by ${via}?`,
+            confirmLabel: item.user_id ? 'Re-send' : 'Create & invite',
+        });
+        if (ok) await convertOne(item).catch(() => {});
     };
 
     const handleDelete = (id) => {
@@ -161,10 +188,10 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
     const tableActions = [
         {
             key: 'convert',
-            label: 'Convert',
-            icon: <CheckCircle2 size={14} />,
+            label: 'Create account',
+            icon: <UserPlus size={14} />,
             variant: 'convert',
-            onClick: (item) => handleStatusChange(item.id, 'converted'),
+            onClick: handleConvert,
         },
         {
             key: 'deactivate',
@@ -184,12 +211,20 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
 
     const bulkActions = [
         {
-            label: 'Convert',
-            icon: <CheckCircle2 size={16} />,
+            label: 'Create accounts',
+            icon: <UserPlus size={16} />,
             variant: 'success',
             onClick: async () => {
-                await bulkUpdateStatus(selectedIds, 'converted');
-                notify.success(`${selectedIds.length} registration(s) converted`);
+                const items = registrations.data.filter((r) => selectedIds.includes(r.id));
+                const ok = await confirm({
+                    title: 'Create accounts',
+                    message: `Create accounts for ${items.length} sign-up(s) and invite each by email and/or WhatsApp?`,
+                    confirmLabel: 'Create & invite',
+                });
+                if (!ok) return;
+                for (const item of items) {
+                    await convertOne(item).catch(() => {});
+                }
                 setSelectedIds([]);
             },
         },

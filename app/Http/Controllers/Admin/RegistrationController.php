@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\WaitlistWelcomeMail;
 use App\Models\Registration;
+use App\Services\SignupConversionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -60,6 +61,26 @@ class RegistrationController extends Controller
         }
 
         return redirect()->back()->with('success', 'Registration updated successfully.');
+    }
+
+    /**
+     * Create the account for a sign-up (or re-send its invite).
+     */
+    public function convert(Request $request, Registration $registration, SignupConversionService $conversion)
+    {
+        $validated = $request->validate([
+            'channels' => 'required|array|min:1',
+            'channels.*' => 'in:email,whatsapp',
+        ]);
+
+        ['user' => $user, 'sent' => $sent] = $conversion->convert($registration, $validated['channels']);
+
+        return redirect()->back()->with(
+            $sent ? 'success' : 'error',
+            $sent
+                ? "Account ready for {$user->first_name}. Invite sent by ".implode(' and ', array_unique($sent)).'.'
+                : "Account ready for {$user->first_name}, but the invite couldn't be sent. Check the messaging settings.",
+        );
     }
 
     public function destroy(Registration $registration)
