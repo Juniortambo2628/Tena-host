@@ -1,40 +1,59 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
-import { stripHtml } from '@/lib/cms';
+import { titleCase } from '@/lib/cms';
 
 /**
  * The same header links on every public page. A link to an audience page
- * opens a megamenu of that page's sections (built server-side from each
- * section's "menu_label", see LandingPage::navMenus) on hover or focus.
+ * has a megamenu of that page's sections (built server-side from each
+ * section's "menu_label", see LandingPage::navMenus).
+ *
+ * One component for every screen size: on desktop the menu opens on hover
+ * or keyboard focus; on mobile (and touch) the chevron button expands it
+ * inline inside the header drawer. `open` shows the drawer on mobile.
  */
-export default function NavMenu({ links, resolveHref }) {
+export default function NavMenu({ links, resolveHref, open = false, onNavigate }) {
     const { menus = {} } = usePage().props;
+    const [expanded, setExpanded] = useState(null);
     const current = typeof window !== 'undefined' ? window.location.pathname : '';
 
     return (
-        <ul className="welcome-nav-links">
+        <ul id="site-nav" className={`welcome-nav-links ${open ? 'is-open' : ''}`}>
             {links.map((link) => {
                 const items = menus[link.href] || [];
-                const label = stripHtml(link.label);
-                const isCurrent = link.href === current;
+                const label = titleCase(link.label);
+                const isExpanded = expanded === link.href;
+                const menuId = `nav-menu-${link.href.replace(/\W+/g, '')}`;
 
                 return (
-                    <li key={link.href} className={`nav-item ${items.length ? 'nav-item--menu' : ''}`}>
-                        <a href={resolveHref(link.href)} className="welcome-nav-link" aria-current={isCurrent ? 'page' : undefined} aria-haspopup={items.length ? 'true' : undefined}>
-                            {label}
-                            {items.length > 0 && <ChevronDown size={14} className="nav-item-chevron" aria-hidden="true" />}
-                        </a>
+                    <li key={link.href} className={`nav-item ${items.length ? 'nav-item--menu' : ''} ${isExpanded ? 'is-expanded' : ''}`}>
+                        <div className="nav-item-row">
+                            <a href={resolveHref(link.href)} className="welcome-nav-link" aria-current={link.href === current ? 'page' : undefined} onClick={onNavigate}>
+                                {label}
+                            </a>
+                            {items.length > 0 && (
+                                <button
+                                    type="button"
+                                    className="nav-item-toggle"
+                                    aria-expanded={isExpanded}
+                                    aria-controls={menuId}
+                                    aria-label={`${label} sections`}
+                                    onClick={() => setExpanded(isExpanded ? null : link.href)}
+                                >
+                                    <ChevronDown size={16} className="nav-item-chevron" aria-hidden="true" />
+                                </button>
+                            )}
+                        </div>
                         {items.length > 0 && (
-                            <div className="nav-mega" role="menu" aria-label={label}>
+                            <div id={menuId} className="nav-mega">
                                 <div className="nav-mega-panel">
-                                    <a href={link.href} className="nav-mega-overview" role="menuitem">
+                                    <a href={link.href} className="nav-mega-overview" onClick={onNavigate}>
                                         {label} <ArrowRight size={14} />
                                     </a>
                                     <div className="nav-mega-grid">
                                         {items.map((item) => (
-                                            <a key={item.href} href={item.href} className="nav-mega-item" role="menuitem">
-                                                <span className="nav-mega-label">{item.label}</span>
+                                            <a key={item.href} href={item.href} className="nav-mega-item" onClick={onNavigate}>
+                                                <span className="nav-mega-label">{titleCase(item.label)}</span>
                                                 {item.description && <span className="nav-mega-desc">{item.description}</span>}
                                             </a>
                                         ))}

@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import React, { useState } from 'react';
-import { ChevronRight, Mail, MapPin, MessageCircle } from 'lucide-react';
-import { getContent, getMedia, extractItems, stripHtml } from '@/lib/cms';
+import { ChevronRight, Mail, MapPin, Menu, MessageCircle, X } from 'lucide-react';
+import { getContent, getMedia, extractItems, stripHtml, titleCase } from '@/lib/cms';
 import { track } from '@/lib/analytics';
 import { PublicContext } from '@/Components/Public/PublicContext';
 import NavMenu from '@/Components/Public/NavMenu';
@@ -18,6 +18,7 @@ const DEFAULT_LOGO = '/legacy/assets/Tena-logo-square.jpg';
  */
 export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#paths', hasSections = true, sections = [], children }) {
     const [showCookieDetails, setShowCookieDetails] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const header = site.header;
     const footer = site.footer;
@@ -48,18 +49,28 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                     <img src={logo} alt={`${siteName} logo`} />
                                 </Link>
                             </div>
-                            <NavMenu links={navLinks} resolveHref={resolveHref} />
+                            <NavMenu links={navLinks} resolveHref={resolveHref} open={menuOpen} onNavigate={() => setMenuOpen(false)} />
                             <div className="welcome-nav-actions">
                                 <a href={loginUrl} className="welcome-login-btn">
-                                    {stripHtml(getContent(header, 'login_label', 'Login'))}
+                                    {titleCase(getContent(header, 'login_label', 'Login'))}
                                 </a>
                                 <a
                                     href={resolvedJoin}
                                     className="welcome-join-btn"
                                     onClick={() => track('join_click', page?.slug)}
                                 >
-                                    {stripHtml(getContent(header, 'join_label', 'Join'))}
+                                    {titleCase(getContent(header, 'join_label', 'Join'))}
                                 </a>
+                                <button
+                                    type="button"
+                                    className="welcome-nav-toggle"
+                                    aria-expanded={menuOpen}
+                                    aria-controls="site-nav"
+                                    aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                                    onClick={() => setMenuOpen((v) => !v)}
+                                >
+                                    {menuOpen ? <X size={22} /> : <Menu size={22} />}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -85,7 +96,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                         <li key={link.href}>
                                             <a href={resolveHref(link.href)} className="welcome-footer-link">
                                                 <ChevronRight size={12} className="mr-2 inline text-[#FFD300]" />
-                                                {stripHtml(link.label)}
+                                                {titleCase(link.label)}
                                             </a>
                                         </li>
                                     ))}

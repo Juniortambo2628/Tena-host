@@ -81,9 +81,9 @@ return [
         'header' => [
             'title' => 'Header & navigation (default)',
             'content' => [
-                'login_label' => 'LOGIN',
+                'login_label' => 'Login',
                 'login_url' => '/login',
-                'join_label' => 'JOIN',
+                'join_label' => 'Join',
                 'links' => [
                     ['label' => 'Short-term rentals', 'href' => '/hosts'],
                     ['label' => 'Business owners', 'href' => '/business'],

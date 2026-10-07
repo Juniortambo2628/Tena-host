@@ -44,7 +44,7 @@ class UserController extends Controller
 
         $user = User::create([
             'first_name' => $validated['first_name'],
-            'last_name' => $validated['validated']['last_name'] ?? $validated['last_name'],
+            'last_name' => $validated['last_name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
             'username' => strtolower($validated['first_name'].'.'.$validated['last_name']),

@@ -42,56 +42,91 @@
     @apply h-12 w-12 rounded-xl;
 }
 
-.welcome-nav-links {
-    @apply hidden md:flex items-center space-x-10;
-}
-
 .welcome-nav-link {
-    @apply text-sm font-bold uppercase tracking-widest text-black hover:text-[#FFD300] transition-colors;
+    @apply text-sm font-bold tracking-wide text-black hover:text-[#FFD300] transition-colors;
 }
 
 .welcome-nav-link[aria-current='page'] {
     @apply text-[#FFD300];
 }
 
-/* Megamenus: same header links on every page; audience links open a panel
-   of that page's sections on hover or keyboard focus. */
-.nav-item {
-    @apply relative;
+/* Header navigation: the same links on every page. Audience links carry a
+   megamenu of that page's sections. Mobile: a drawer under the header with
+   menus expanded inline by the chevron. Desktop (md+): an inline row, menus
+   open on hover, keyboard focus or the chevron (touch). */
+.welcome-nav-toggle {
+    @apply ml-1 inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#1E1E1E] hover:bg-gray-100 md:hidden;
 }
 
-.nav-item--menu > .welcome-nav-link {
-    @apply inline-flex items-center gap-1 py-7;
+.welcome-nav-links {
+    @apply absolute left-0 right-0 top-full hidden max-h-[calc(100vh-5rem)] flex-col overflow-y-auto border-b border-gray-100 bg-white px-4 py-2 shadow-xl;
+    @apply md:static md:flex md:max-h-none md:flex-row md:items-center md:gap-8 md:overflow-visible md:border-0 md:bg-transparent md:p-0 md:shadow-none;
+}
+
+.welcome-nav-links.is-open {
+    @apply flex;
+}
+
+.nav-item {
+    @apply relative border-b border-gray-100 last:border-0 md:border-0;
+}
+
+.nav-item-row {
+    @apply flex items-center justify-between md:gap-1;
+}
+
+.nav-item-row .welcome-nav-link {
+    @apply flex-1 py-4 text-base md:flex-none md:py-7 md:text-sm;
+}
+
+.nav-item-toggle {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-lg text-[#1E1E1E] hover:bg-gray-100 md:h-8 md:w-6 md:hover:bg-transparent;
 }
 
 .nav-item-chevron {
     @apply transition-transform;
 }
 
-.nav-mega {
-    @apply invisible absolute left-1/2 top-full z-50 w-[34rem] -translate-x-1/2 pt-1 opacity-0 transition duration-150;
-}
-
-.nav-item--menu:hover .nav-mega,
-.nav-item--menu:focus-within .nav-mega {
-    @apply visible opacity-100;
-}
-
-.nav-item--menu:hover .nav-item-chevron,
-.nav-item--menu:focus-within .nav-item-chevron {
+.nav-item.is-expanded .nav-item-chevron {
     @apply rotate-180;
 }
 
+/* Mobile: the panel sits inline in the drawer, shown when expanded. */
+.nav-mega {
+    @apply hidden pb-3;
+}
+
+.nav-item.is-expanded .nav-mega {
+    @apply block;
+}
+
+@media (min-width: 768px) {
+    .nav-mega {
+        @apply invisible absolute left-1/2 top-full z-50 block w-[34rem] -translate-x-1/2 pb-0 pt-1 opacity-0 transition duration-150;
+    }
+
+    .nav-item--menu:hover .nav-mega,
+    .nav-item--menu:focus-within .nav-mega,
+    .nav-item.is-expanded .nav-mega {
+        @apply visible opacity-100;
+    }
+
+    .nav-item--menu:hover .nav-item-chevron,
+    .nav-item--menu:focus-within .nav-item-chevron {
+        @apply rotate-180;
+    }
+}
+
 .nav-mega-panel {
-    @apply rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl;
+    @apply rounded-2xl bg-gray-50 p-3 md:border md:border-gray-100 md:bg-white md:p-5 md:shadow-2xl;
 }
 
 .nav-mega-overview {
-    @apply mb-3 flex items-center gap-2 border-b border-gray-100 pb-3 text-sm font-bold text-[#1E1E1E] hover:text-[#5B6170];
+    @apply mb-2 flex items-center gap-2 border-b border-gray-200 px-3 pb-3 pt-1 text-sm font-bold text-[#1E1E1E] hover:text-[#5B6170] md:mb-3 md:border-gray-100 md:px-0 md:pt-0;
 }
 
 .nav-mega-grid {
-    @apply grid grid-cols-2 gap-1;
+    @apply grid grid-cols-1 gap-1 sm:grid-cols-2;
 }
 
 .nav-mega-item {
@@ -111,11 +146,11 @@
 }
 
 .welcome-login-btn {
-    @apply text-sm font-bold uppercase tracking-widest px-6 py-2 border-2 border-black rounded-none bg-transparent text-black hover:bg-black hover:text-white transition-all;
+    @apply text-sm font-bold tracking-wide px-6 py-2 border-2 border-black rounded-none bg-transparent text-black hover:bg-black hover:text-white transition-all;
 }
 
 .welcome-join-btn {
-    @apply text-sm font-bold uppercase tracking-widest px-6 py-2.5 bg-[#FFD300] text-black rounded-xl shadow-lg shadow-[#FFD300]/20 hover:scale-[1.05] active:scale-[0.98] transition-all;
+    @apply text-sm font-bold tracking-wide px-6 py-2.5 bg-[#FFD300] text-black rounded-xl shadow-lg shadow-[#FFD300]/20 hover:scale-[1.05] active:scale-[0.98] transition-all;
 }
 
 .welcome-footer {

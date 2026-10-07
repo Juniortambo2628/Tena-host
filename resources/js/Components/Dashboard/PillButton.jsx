@@ -7,7 +7,10 @@ export default function PillButton({
     variant = 'primary',
     className = '',
     disabled = false,
-    type = 'button',
+    processing = false,
+    // Without a click handler a pill button can only be a form submit, so
+    // default to that; an explicit `type` still wins.
+    type = onClick ? 'button' : 'submit',
     icon = null
 }) {
     const baseStyles = "tena-btn";
@@ -24,7 +27,8 @@ export default function PillButton({
         <button
             type={type}
             onClick={onClick}
-            disabled={disabled}
+            disabled={disabled || processing}
+            aria-busy={processing || undefined}
             className={`${baseStyles} ${variants[variant]} ${className}`}
         >
             {icon && <span className="pill-button__icon">{icon}</span>}
