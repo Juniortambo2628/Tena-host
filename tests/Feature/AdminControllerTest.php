@@ -1,11 +1,13 @@
 <?php
 
-use App\Models\LandingContent;
+use App\Mail\UserInvitationMail;
 use App\Models\LandingSection;
 use App\Models\PolicyDocument;
 use App\Models\Registration;
 use App\Models\Setting;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 /*
@@ -435,10 +437,10 @@ it('allows an admin to manage landing content', function () {
 it('allows an admin to view system info', function () {
     $admin = User::factory()->admin()->create();
 
-    $mockObj = new \stdClass();
+    $mockObj = new stdClass;
     $mockObj->size_mb = 1.5;
 
-    \Illuminate\Support\Facades\DB::shouldReceive('select')
+    DB::shouldReceive('select')
         ->once()
         ->andReturn([$mockObj]);
 
@@ -453,4 +455,37 @@ it('denies a non-admin from viewing system info', function () {
     $response = $this->actingAs($host)->get(route('admin.system.index'));
 
     $response->assertForbidden();
+});
+
+/*
+|--------------------------------------------------------------------------
+| User Creation (invitation flow)
+|--------------------------------------------------------------------------
+*/
+
+it('lets an admin create a user and sends the invitation email', function () {
+    Mail::fake();
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.users.store'), [
+        'first_name' => 'Glen',
+        'last_name' => 'Mwangi',
+        'email' => 'glen@tena-fi.com',
+        'role' => 'admin',
+    ]);
+
+    $user = User::firstWhere('email', 'glen@tena-fi.com');
+    expect($user)->not->toBeNull()
+        ->and($user->role)->toBe('admin')
+        ->and($user->last_name)->toBe('Mwangi');
+    $response->assertRedirect(route('admin.users.show', $user->id));
+    Mail::assertSent(UserInvitationMail::class, fn ($mail) => $mail->hasTo('glen@tena-fi.com'));
+});
+
+it('rejects creating a user with an email that already exists', function () {
+    $admin = User::factory()->admin()->create(['email' => 'taken@example.com']);
+
+    $this->actingAs($admin)->post(route('admin.users.store'), [
+        'first_name' => 'A', 'last_name' => 'B', 'email' => 'taken@example.com', 'role' => 'host',
+    ])->assertSessionHasErrors('email');
 });

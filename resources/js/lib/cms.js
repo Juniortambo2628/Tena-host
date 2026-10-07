@@ -197,3 +197,22 @@ export function textLines(text, site) {
                 : { text: line, badge: null };
         });
 }
+
+const MINOR_WORDS = new Set(['a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to']);
+
+/**
+ * Title-case a short UI label: "short-term rentals" / "LOGIN" ->
+ * "Short-Term Rentals" / "Login". All-caps words are lowered first;
+ * mixed-case words keep their inner capitals ("TenaFi").
+ */
+export function titleCase(text) {
+    return stripHtml(text)
+        .split(/(\s+|-)/)
+        .map((word, i) => {
+            if (/^(\s+|-)$/.test(word) || !word) return word;
+            const base = word === word.toUpperCase() ? word.toLowerCase() : word;
+            if (i > 0 && MINOR_WORDS.has(base.toLowerCase())) return base.toLowerCase();
+            return base.charAt(0).toUpperCase() + base.slice(1);
+        })
+        .join('');
+}
