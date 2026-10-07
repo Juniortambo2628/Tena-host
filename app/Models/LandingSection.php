@@ -4,19 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Cache;
 
 class LandingSection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['section_key', 'title', 'subtitle', 'badge', 'bg', 'is_active', 'sort_order'];
+    protected $fillable = ['page_id', 'section_key', 'title', 'subtitle', 'badge', 'bg', 'is_active', 'sort_order'];
 
     protected $casts = [
         'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];
+
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(LandingPage::class, 'page_id');
+    }
 
     public function contents(): HasMany
     {
@@ -65,22 +70,10 @@ class LandingSection extends Model
     }
 
     /**
-     * Get all active sections ordered, cached for 1 hour.
+     * Public page caches are per page; any CMS write clears them all.
      */
-    public static function getActiveSections(): array
-    {
-        return Cache::remember('landing_sections', 3600, function () {
-            return static::where('is_active', true)
-                ->orderBy('sort_order')
-                ->with(['contents', 'media'])
-                ->get()
-                ->map->toPublicArray()
-                ->toArray();
-        });
-    }
-
     public static function clearCache(): void
     {
-        Cache::forget('landing_sections');
+        LandingPage::clearCache();
     }
 }

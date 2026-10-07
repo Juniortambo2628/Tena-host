@@ -12,12 +12,20 @@ use Inertia\Inertia;
 
 class RegistrationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $registrations = Registration::latest()->paginate(15);
+        $type = in_array($request->query('type'), Registration::TYPES, true) ? $request->query('type') : null;
+
+        $registrations = Registration::query()
+            ->when($type, fn ($q) => $q->where('type', $type))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Admin/Registrations/Index', [
             'registrations' => $registrations,
+            'filters' => ['type' => $type],
+            'typeCounts' => Registration::selectRaw('type, count(*) as total')->groupBy('type')->pluck('total', 'type'),
         ]);
     }
 
@@ -35,7 +43,7 @@ class RegistrationController extends Controller
         // transitions the signup into "converted" from something else —
         // never on the initial signup, and never on repeat updates that
         // leave the status where it was.
-        if ($validated['status'] === 'converted' && $previousStatus !== 'converted') {
+        if ($validated['status'] === 'converted' && $previousStatus !== 'converted' && $registration->email) {
             try {
                 Mail::to($registration->email)->send(
                     new WaitlistWelcomeMail(

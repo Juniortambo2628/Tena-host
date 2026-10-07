@@ -71,3 +71,15 @@
            border-black/10 text-black/30 hover:text-[#FFD300] hover:border-[#FFD300]/30
            transition-all cursor-pointer;
 }
+
+.json-array-editor__item-move {
+    @apply px-1.5 text-xs text-black/40 hover:text-black disabled:opacity-20;
+}
+
+.json-array-editor__checkbox {
+    @apply inline-flex items-center gap-2 text-sm;
+}
+
+.json-array-editor__hint {
+    @apply mt-1 text-[11px] text-black/40;
+}

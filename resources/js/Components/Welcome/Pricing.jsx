@@ -1,65 +1,61 @@
 import React, { useState } from 'react';
 import { SectionWrapper, SectionHeader } from './layouts';
-import { getContent, extractItems, sanitizeHtml } from '@/lib/cms';
+import { getContent, extractItems, sanitizeHtml, stripHtml, isTruthy } from '@/lib/cms';
+import { usePublic } from '@/Components/Public/PublicContext';
+import CtaLink from '@/Components/Public/CtaLink';
 import { SkeletonSectionHeader, SkeletonPricingGrid } from './Skeleton';
-import { ArrowRight, ChevronDown, Sparkles, Zap, Award, Clock } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, Sparkles, Zap, Award, Clock } from 'lucide-react';
+import LineList from '@/Components/Public/LineList';
 import ContactForm from './ContactForm';
 import './Pricing.css';
 
-const defaultPlans = [
-    { label: 'Monthly Subscription', price: '$10', unit: '/ listing / month', description: 'Includes guest data collection, analytics dashboard, and marketing tools (SMS & Email).', cta: 'Join Waitlist', variant: 'dark' },
-    { label: 'Device Cost', price: '$150', unit: 'one-time', description: 'One-time WiFi hardware cost to run the splash pages and capture guests on-site.', cta: 'Get Early Access', variant: 'outline' },
-    { label: 'Founding Host Bundle', price: '$45', unit: '/ month', description: 'Pay monthly ($79/month for first 6 months) — drops to $49/month after the device is paid off. Founding hosts get 1 month free.', cta: 'Claim Founding Offer', variant: 'dark' },
-];
-
-function PricingPlanCard({ plan, onOpenWaitlist }) {
+function PricingPlanCard({ plan }) {
+    const { joinHref } = usePublic();
     const [expanded, setExpanded] = useState(false);
+    const descId = `pricing-desc-${String(plan.label).replace(/\s+/g, '-').toLowerCase()}`;
+    // "#join?plan=growth" pre-selects the plan in this page's sign-up form.
+    const href = plan.id && joinHref.includes('#') ? `${joinHref}?plan=${plan.id}` : joinHref;
+
     return (
-        <div className="pricing-card">
+        <div className={`pricing-card ${plan.badge ? 'pricing-card--featured' : ''}`}>
             <div className="pricing-card-inner">
+                {stripHtml(plan.badge) && <span className="pricing-card-badge">{stripHtml(plan.badge)}</span>}
                 <span className="pricing-card-label">{plan.label}</span>
+                {stripHtml(plan.tagline) && <p className="pricing-card-tagline">{stripHtml(plan.tagline)}</p>}
                 <div className="pricing-card-price">
                     {plan.price} <span className="pricing-card-price-unit">{plan.unit}</span>
                 </div>
-                <button
-                    type="button"
-                    className="pricing-card-toggle"
-                    onClick={() => setExpanded((v) => !v)}
-                    aria-expanded={expanded}
-                    aria-controls={`pricing-desc-${plan.label.replace(/\s+/g, '-').toLowerCase()}`}
-                >
-                    {expanded ? 'See less' : 'See more'}
-                    <ChevronDown size={14} className={`pricing-card-toggle-icon ${expanded ? 'is-open' : ''}`} />
-                </button>
-                <div
-                    id={`pricing-desc-${plan.label.replace(/\s+/g, '-').toLowerCase()}`}
-                    className={`pricing-card-desc-wrap ${expanded ? 'is-expanded' : ''}`}
-                    hidden={!expanded}
-                >
-                    <p
-                        className="pricing-card-desc"
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }}
-                    />
-                </div>
-                <button
-                    onClick={onOpenWaitlist}
-                    className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}
-                >
+                <LineList text={plan.features} className="pricing-card-features" icon={<Check size={16} className="pricing-card-feature-icon" />} />
+                {stripHtml(plan.description) && (
+                    <>
+                        <button
+                            type="button"
+                            className="pricing-card-toggle"
+                            onClick={() => setExpanded((v) => !v)}
+                            aria-expanded={expanded}
+                            aria-controls={descId}
+                        >
+                            {expanded ? 'See less' : 'See more'}
+                            <ChevronDown size={14} className={`pricing-card-toggle-icon ${expanded ? 'is-open' : ''}`} />
+                        </button>
+                        <div id={descId} className={`pricing-card-desc-wrap ${expanded ? 'is-expanded' : ''}`} hidden={!expanded}>
+                            <p className="pricing-card-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(plan.description) }} />
+                        </div>
+                    </>
+                )}
+                <CtaLink href={href} event="join_click" className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}>
                     {plan.cta}
-                </button>
+                </CtaLink>
             </div>
         </div>
     );
 }
 
-const FOUNDING_PERKS = [
-    { icon: Sparkles, label: '3 months free', text: 'on the Tena platform' },
-    { icon: Zap, label: 'Priority onboarding', text: 'and dedicated support' },
-    { icon: Award, label: 'Early access', text: 'to new features as they ship' },
-    { icon: Clock, label: 'Complimentary device', text: 'chance to receive a Tena router' },
-];
+const PERK_ICONS = { sparkles: Sparkles, zap: Zap, award: Award, clock: Clock };
 
-export default function Pricing({ onOpenWaitlist, section }) {
+export default function Pricing({ section }) {
+    const { site } = usePublic();
+
     if (!section) {
         return (
             <SectionWrapper id="pricing" bg="gray">
@@ -72,26 +68,35 @@ export default function Pricing({ onOpenWaitlist, section }) {
     const title = getContent(section, 'title', 'Transparent Pricing');
     const subtitle = getContent(section, 'subtitle', 'Simple, predictable pricing so you can scale direct bookings without surprises.');
 
-    const cmsPlans = extractItems(section, 'plans', ['label', 'price', 'unit', 'description', 'cta', 'variant']);
-    const plans = cmsPlans.length > 0 ? cmsPlans : defaultPlans;
+    // Plans are shared site-wide (Site-wide -> Plans) so every page quotes
+    // the same prices; a page may still override them with its own rows.
+    const planFields = ['id', 'label', 'tagline', 'badge', 'price', 'price_kes', 'unit', 'features', 'description', 'cta', 'variant'];
+    const ownPlans = extractItems(section, 'plans', planFields);
+    const plans = ownPlans.length > 0 ? ownPlans : extractItems(site?.plans, 'plans', planFields);
+    const currencyNote = stripHtml(getContent(site?.plans, 'currency_note', ''));
+    const perks = extractItems(section, 'perks', ['symbol', 'label', 'text']);
+    const footnote = getContent(section, 'footnote', '');
+    const showContactForm = isTruthy(getContent(section, 'show_contact_form', '0'));
 
-    const ctaLabel = getContent(section, 'cta_label', 'Become a Founding Host');
-    const ctaHeadline = getContent(section, 'cta_headline', 'Join the first 100 hosts shaping Tena.');
-    const ctaIntro = getContent(section, 'cta_intro', "We're inviting our first 100 Superhosts into the Founding Host Program — priority access before public launch and a direct line to the team building Tena.");
-    const ctaClosing = getContent(section, 'cta_closing', 'Applications are open now. Once all 100 spots are filled, the program closes.');
-    const ctaButton = getContent(section, 'cta_button', 'Join the Waitlist Now');
+    const ctaLabel = getContent(section, 'cta_label', '');
+    const ctaHeadline = getContent(section, 'cta_headline', '');
+    const ctaIntro = getContent(section, 'cta_intro', '');
+    const ctaClosing = getContent(section, 'cta_closing', '');
+    const ctaButton = getContent(section, 'cta_button', 'Join');
 
     return (
-        <SectionWrapper id="pricing" bg={section.bg || 'gray'}>
+        <SectionWrapper bg={section.bg || 'gray'}>
             <SectionHeader title={title} subtitle={subtitle} />
+
+            {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
 
             <div className="pricing-cards-grid">
                 {plans.map((plan, index) => (
-                    <PricingPlanCard key={index} plan={plan} onOpenWaitlist={onOpenWaitlist} />
+                    <PricingPlanCard key={index} plan={plan} />
                 ))}
             </div>
 
-            <div className="pricing-cta-section">
+            {ctaHeadline && <div className="pricing-cta-section">
                 <div className="pricing-cta-card">
                     <div className="pricing-cta-decoration"></div>
                     <div className="pricing-cta-decoration-bl"></div>
@@ -101,7 +106,9 @@ export default function Pricing({ onOpenWaitlist, section }) {
                         <p className="pricing-cta-intro">{ctaIntro}</p>
 
                         <ul className="pricing-cta-perks">
-                            {FOUNDING_PERKS.map(({ icon: Icon, label, text }, i) => (
+                            {perks.map(({ symbol, label, text }, i) => {
+                                const Icon = PERK_ICONS[symbol] || Sparkles;
+                                return (
                                 <li key={i} className="pricing-cta-perk">
                                     <span className="pricing-cta-perk-icon"><Icon size={18} /></span>
                                     <div className="pricing-cta-perk-body">
@@ -109,19 +116,22 @@ export default function Pricing({ onOpenWaitlist, section }) {
                                         <span className="pricing-cta-perk-text">{text}</span>
                                     </div>
                                 </li>
-                            ))}
+                                );
+                            })}
                         </ul>
 
                         <p className="pricing-cta-closing">{ctaClosing}</p>
 
-                        <button onClick={onOpenWaitlist} className="pricing-cta-button">
+                        <CtaLink className="pricing-cta-button">
                             {ctaButton} <ArrowRight size={14} className="ml-2 inline" />
-                        </button>
+                        </CtaLink>
                     </div>
                 </div>
-            </div>
+            </div>}
 
-            <ContactForm />
+            {stripHtml(footnote) && <p className="pricing-footnote">{stripHtml(footnote)}</p>}
+
+            {showContactForm && <ContactForm />}
         </SectionWrapper>
     );
 }

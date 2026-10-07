@@ -10,6 +10,7 @@ export default function FeatureCard({
     imageAlt,
     variant = 'default',
     step,
+    badge,
 }) {
     const cardClasses = [
         'feature-card',
@@ -30,13 +31,13 @@ export default function FeatureCard({
                 </div>
             )}
             <div className="feature-card-content">
-                {step && <span className="feature-card-step">Step {step}</span>}
+                {step && <span className="feature-card-step">{/^\d+$/.test(String(step)) ? `Step ${step}` : step}</span>}
                 {!image && icon && (
                     <div className="feature-card-icon-wrap">
                         <i className={icon}></i>
                     </div>
                 )}
-                <h4 className="feature-card-title">{title}</h4>
+                <h4 className="feature-card-title">{title}{badge && <span className="soon-badge">{badge}</span>}</h4>
                 <p className="feature-card-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }} />
             </div>
         </div>

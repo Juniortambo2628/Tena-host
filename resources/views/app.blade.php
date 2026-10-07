@@ -5,32 +5,37 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        {{-- Primary Meta Tags --}}
-        <title inertia>{{ config('app.name', 'Tena') }}</title>
-        <meta name="title" content="{{ config('app.name', 'Tena') }} — Smart WiFi Management for Hospitality">
-        <meta name="description" content="Tena helps hospitality businesses capture guest data through branded WiFi splash pages, drive direct bookings, and build lasting guest relationships. Built by Superhosts for Superhosts.">
-        <meta name="keywords" content="WiFi splash page, guest data collection, hospitality WiFi, direct bookings, guest marketing, WiFi management, hotel WiFi, vacation rental WiFi">
-        <meta name="author" content="Tena">
+        {{-- Primary / social meta. Public CMS pages pass `seo` props (see PublicPageController); everything else gets the defaults. --}}
+        @php
+            $seo = $page['props']['seo'] ?? [];
+            $siteName = $seo['site_name'] ?? 'TenaFi';
+            $metaTitle = $seo['title'] ?? "TenaFi | Africa's guest relationship platform";
+            $metaDescription = $seo['description'] ?? 'TenaFi turns the WiFi you already have into growth: capture every guest, stay in touch, and bring them back.';
+            $metaImage = $seo['image'] ?? asset('legacy/assets/Tena-logo-square.jpg');
+            $metaUrl = $seo['url'] ?? url()->current();
+        @endphp
+        <title inertia>{{ $metaTitle }}</title>
+        <meta name="description" content="{{ $metaDescription }}">
+        <meta name="author" content="{{ $siteName }}">
         <meta name="robots" content="index, follow">
         <meta name="theme-color" content="#FFD300">
 
-        {{-- Open Graph / Facebook --}}
         <meta property="og:type" content="website">
-        <meta property="og:url" content="{{ url('/') }}">
-        <meta property="og:title" content="{{ config('app.name', 'Tena') }} — Smart WiFi Management for Hospitality">
-        <meta property="og:description" content="Capture guest data through branded WiFi splash pages, drive direct bookings, and build lasting guest relationships.">
-        <meta property="og:image" content="{{ asset('legacy/assets/Tena-logo-square.jpg') }}">
-        <meta property="og:site_name" content="{{ config('app.name', 'Tena') }}">
+        <meta property="og:url" content="{{ $metaUrl }}">
+        <meta property="og:title" content="{{ $metaTitle }}">
+        <meta property="og:description" content="{{ $metaDescription }}">
+        <meta property="og:image" content="{{ $metaImage }}">
+        <meta property="og:site_name" content="{{ $siteName }}">
 
-        {{-- Twitter --}}
-        <meta property="twitter:card" content="summary_large_image">
-        <meta property="twitter:url" content="{{ url('/') }}">
-        <meta property="twitter:title" content="{{ config('app.name', 'Tena') }} — Smart WiFi Management for Hospitality">
-        <meta property="twitter:description" content="Capture guest data through branded WiFi splash pages, drive direct bookings, and build lasting guest relationships.">
-        <meta property="twitter:image" content="{{ asset('legacy/assets/Tena-logo-square.jpg') }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:url" content="{{ $metaUrl }}">
+        <meta name="twitter:title" content="{{ $metaTitle }}">
+        <meta name="twitter:description" content="{{ $metaDescription }}">
+        <meta name="twitter:image" content="{{ $metaImage }}">
 
-        {{-- Canonical --}}
-        <link rel="canonical" href="{{ url('/') }}">
+        @if(! empty($seo))
+        <link rel="canonical" href="{{ $metaUrl }}">
+        @endif
 
         {{-- Favicon --}}
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -38,7 +43,7 @@
 
         {{-- Fonts --}}
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900|inter:400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
         {{-- Font Awesome --}}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />

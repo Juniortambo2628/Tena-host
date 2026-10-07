@@ -2,14 +2,17 @@ import React from 'react';
 import { sanitizeHtml } from '@/lib/cms';
 import './TwoColumn.css';
 
-export function TwoColumnFeatureRow({ icon, title, desc }) {
+export function TwoColumnFeatureRow({ icon, title, desc, badge }) {
     return (
         <div className="two-column-feature-row">
             <div className="two-column-feature-icon-wrap">
                 <i className={icon}></i>
             </div>
             <div>
-                <h6 className="two-column-feature-title">{title}</h6>
+                <h6 className="two-column-feature-title">
+                    {title}
+                    {badge && <span className="soon-badge">{badge}</span>}
+                </h6>
                 <p className="two-column-feature-desc" dangerouslySetInnerHTML={{ __html: sanitizeHtml(desc) }} />
             </div>
         </div>

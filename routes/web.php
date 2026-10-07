@@ -27,34 +27,43 @@ use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PublicPageController;
+use App\Http\Controllers\SignupController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\WaitlistController;
+use App\Http\Controllers\TrackController;
 use App\Http\Controllers\WifiPortalController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
+use App\Models\LandingPage;
 use App\Models\Property;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-        'landingContent' => LandingController::getPublicData(),
-    ]);
-})->name('home');
+// Public CMS pages: / here, /hosts and /business via the catch-all at the
+// bottom of this file (so it never shadows an app route).
+Route::get('/', [PublicPageController::class, 'show'])->name('home');
+
+foreach (config('public_pages.policies') as $path => $slug) {
+    Route::get("/{$path}", [PublicPageController::class, 'policy'])->defaults('slug', $slug)->name("public.{$path}");
+}
+
+foreach (config('public_pages.redirects') as $from => $to) {
+    Route::permanentRedirect($from, $to);
+}
 
 Route::get('/sitemap.xml', function () {
-    $url = url('/');
+    $paths = LandingPage::where('is_routable', true)->where('is_active', true)->orderBy('sort_order')
+        ->pluck('slug')
+        ->map(fn ($slug) => $slug === 'home' ? '/' : "/{$slug}")
+        ->merge(array_map(fn ($path) => "/{$path}", array_keys(config('public_pages.policies'))))
+        ->push('/login');
+
     $xml = '<?xml version="1.0" encoding="UTF-8"?>';
     $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-    $xml .= '<url><loc>'.e($url).'</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>';
-    $xml .= '<url><loc>'.e($url.'/login').'</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>';
-    $xml .= '<url><loc>'.e($url.'/register').'</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>';
-    $xml .= '<url><loc>'.e($url.'/forgot-password').'</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>';
+    foreach ($paths as $path) {
+        $priority = $path === '/' ? '1.0' : '0.8';
+        $xml .= '<url><loc>'.e(url($path)).'</loc><changefreq>weekly</changefreq><priority>'.$priority.'</priority></url>';
+    }
     $xml .= '</urlset>';
 
     return response($xml, 200)
@@ -65,7 +74,8 @@ Route::get('/sitemap.xml', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
+Route::post('/api/signups', [SignupController::class, 'store'])->name('signups.store');
+Route::post('/api/track', [TrackController::class, 'store'])->name('track');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 // Admin Routes
@@ -250,3 +260,8 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
 });
+
+// Catch-all for CMS pages (/hosts, /business, ...). Must stay last.
+Route::get('/{slug}', [PublicPageController::class, 'show'])
+    ->where('slug', '[a-z0-9-]+')
+    ->name('public.page');

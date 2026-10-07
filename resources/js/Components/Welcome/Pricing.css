@@ -169,3 +169,45 @@
 .pricing-cta-button {
     @apply px-8 py-3 rounded-xl bg-[#1b1b1b] text-white font-bold hover:bg-black transition-colors inline-flex items-center;
 }
+
+.pricing-currency-note {
+    @apply -mt-6 mb-8 text-center text-sm text-gray-500;
+}
+
+.pricing-card--featured {
+    @apply ring-2 ring-[#FFD300] shadow-xl;
+}
+
+.pricing-card-badge {
+    @apply -mt-2 mb-3 inline-block rounded-full bg-[#FFD300] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#1E1E1E];
+}
+
+.pricing-card-tagline {
+    @apply -mt-3 mb-4 text-sm font-medium text-[#5B6170];
+}
+
+.pricing-card-features {
+    @apply my-6 w-full space-y-2.5 text-left text-sm;
+}
+
+.pricing-card-features li {
+    @apply flex items-start gap-2 text-[#1E1E1E];
+}
+
+.pricing-card-feature-icon {
+    @apply mt-0.5 shrink-0;
+}
+
+.pricing-footnote {
+    @apply -mt-8 mb-4 text-center text-sm text-[#5B6170] max-w-4xl mx-auto leading-relaxed;
+}
+
+a.pricing-card-cta-dark,
+a.pricing-card-cta-outline {
+    @apply block text-center;
+}
+
+/* Long unit text ("per unit, per month (about $35)") sits under the price. */
+.pricing-card-price .pricing-card-price-unit {
+    @apply mt-2 block text-sm;
+}

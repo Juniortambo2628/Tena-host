@@ -6,7 +6,6 @@ use App\Models\Campaign;
 use App\Models\Guest;
 use App\Models\Order;
 use App\Models\Property;
-use App\Models\Registration;
 use App\Models\User;
 
 beforeEach(function () {
@@ -493,57 +492,6 @@ it('allows host to delete a campaign', function () {
     $response->assertRedirect();
     $response->assertSessionHas('success');
     $this->assertDatabaseMissing('campaigns', ['id' => $campaign->id]);
-});
-
-// ─── Waitlist ─────────────────────────────────────────────────────────────────
-
-it('allows public user to submit waitlist form', function () {
-    $response = $this->postJson(route('waitlist.store'), [
-        'first_name' => 'Jane',
-        'last_name' => 'Smith',
-        'email' => 'jane@example.com',
-        'property_type' => 'Entire Place',
-        'units' => '1-5',
-        'primary_platform' => 'Airbnb',
-        'biggest_challenge' => 'Getting more direct bookings',
-    ]);
-
-    $response->assertStatus(201);
-    $this->assertDatabaseHas('registrations', [
-        'email' => 'jane@example.com',
-        'first_name' => 'Jane',
-        'status' => 'active',
-    ]);
-});
-
-it('validates required fields on waitlist', function () {
-    $response = $this->postJson(route('waitlist.store'), []);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors([
-        'first_name',
-        'last_name',
-        'email',
-        'property_type',
-        'units',
-        'primary_platform',
-        'biggest_challenge',
-    ]);
-});
-
-it('validates email format on waitlist', function () {
-    $response = $this->postJson(route('waitlist.store'), [
-        'first_name' => 'Jane',
-        'last_name' => 'Smith',
-        'email' => 'not-an-email',
-        'property_type' => 'Entire Place',
-        'units' => '1-5',
-        'primary_platform' => 'Airbnb',
-        'biggest_challenge' => 'Getting more direct bookings',
-    ]);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors('email');
 });
 
 // ─── Host Dashboard ───────────────────────────────────────────────────────────

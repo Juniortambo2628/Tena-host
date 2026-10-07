@@ -68,6 +68,34 @@ export const SECTION_MEDIA_SCHEMA = {
         slots: [],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n} logo'),
     },
+
+    path_cards: {
+        slots: [],
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'cards', 'card_{i}_image', 'Card {n} image'),
+    },
+
+    seo: {
+        slots: [
+            { key: 'og_image', label: 'Social share image', description: 'Shown when the page is shared on WhatsApp, LinkedIn, X, etc. 1200×630 recommended. Leave empty on a page to use the site-wide image.' },
+        ],
+    },
+
+    header: {
+        slots: [
+            { key: 'logo', label: 'Site logo', description: 'TenaFi logo used in the header and footer of every public page.' },
+        ],
+    },
+
+    stats: {
+        slots: [
+            { key: 'image', label: 'Illustration (optional)', description: 'e.g. the occupancy calendar graphic. Shown under the numbers with the image caption.' },
+        ],
+    },
+
+    signup: { slots: [] },
+    plans: { slots: [] },
+    footer: { slots: [] },
+    feature_status: { slots: [] },
 };
 
 function featureSlots(contentKeys, arrName, keyPattern, labelPattern) {
@@ -87,7 +115,8 @@ function featureSlots(contentKeys, arrName, keyPattern, labelPattern) {
  * Each slot is { key, label, description? }.
  */
 export function getExpectedMediaSlots(sectionKey, contentKeys = []) {
-    const entry = SECTION_MEDIA_SCHEMA[sectionKey];
+    // "stats__problem" uses the "stats" schema.
+    const entry = SECTION_MEDIA_SCHEMA[String(sectionKey).split('__')[0]];
     if (!entry) return [];
     const dynamic = entry.dynamic ? entry.dynamic(contentKeys) : [];
     const merged = [...(entry.slots || []), ...dynamic];

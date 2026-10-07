@@ -15,3 +15,19 @@
 .problem-image-item:first-child {
     @apply col-span-2;
 }
+
+.problem-stat {
+    @apply mt-6 flex items-center gap-4 rounded-2xl border border-[#FFD300]/40 bg-[#FFD300]/10 p-5;
+}
+
+.problem-stat-value {
+    @apply text-4xl font-black text-black leading-none;
+}
+
+.problem-stat-label {
+    @apply flex flex-col text-sm font-semibold text-gray-800;
+}
+
+.problem-stat-source {
+    @apply mt-1 text-xs font-normal text-gray-500;
+}

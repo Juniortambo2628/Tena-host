@@ -117,3 +117,11 @@
 .hero-feature-desc {
     @apply text-gray-500 text-sm leading-relaxed flex-1;
 }
+
+.hero-body {
+    @apply -mt-4 mb-8 text-base text-[#5B6170] leading-relaxed;
+}
+
+.hero-note {
+    @apply mt-6 text-sm text-[#5B6170];
+}

@@ -141,3 +141,59 @@ export function extractJsonItems(section, key) {
         return [];
     }
 }
+
+/**
+ * Map of feature key => status from the site-wide "feature_status" section
+ * (e.g. { occupancy_alerts: 'coming_soon', pms_sync: 'live' }).
+ */
+export function getFeatureStatus(site) {
+    const items = extractItems(site?.feature_status, 'items', ['key', 'status']);
+    return Object.fromEntries(items.map((item) => [item.key, item.status]));
+}
+
+/**
+ * Badge text for a feature that is not live yet, or null when it is live
+ * (or when the row is not tied to a feature at all).
+ */
+export function comingSoonBadge(site, featureKey) {
+    if (!featureKey) return null;
+    const status = getFeatureStatus(site)[featureKey];
+    if (status === 'live') return null;
+    return stripHtml(getContent(site?.feature_status, 'badge_label', 'Coming soon'));
+}
+
+/**
+ * True for CMS "boolean" text values ('1', 'true', 'yes', 'on').
+ */
+export function isTruthy(value) {
+    return ['1', 'true', 'yes', 'on'].includes(String(value ?? '').trim().toLowerCase());
+}
+
+/**
+ * Section type without its variant suffix: "stats__problem" -> "stats".
+ * Lets one page use the same section type more than once.
+ */
+export function baseSectionKey(sectionKey) {
+    return String(sectionKey || '').split('__')[0];
+}
+
+/**
+ * Split a multi-line CMS field into list items. A line ending in
+ * [[feature_key]] gets that feature's "Coming soon" badge (or none once
+ * the feature is live).
+ */
+export function textLines(text, site) {
+    // U+E000 marks line breaks through stripHtml, which collapses whitespace
+    // (and HTML decoding drops NUL, so it can't be used as the marker).
+    const BREAK = '\uE000';
+    return stripHtml(String(text || '').replace(/<br\s*\/?>|<\/p>/gi, '\n').replace(/\r?\n/g, BREAK))
+        .split(BREAK)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+            const match = line.match(/^(.*?)\s*\[\[([a-z0-9_]+)\]\]$/);
+            return match
+                ? { text: match[1], badge: comingSoonBadge(site, match[2]) }
+                : { text: line, badge: null };
+        });
+}

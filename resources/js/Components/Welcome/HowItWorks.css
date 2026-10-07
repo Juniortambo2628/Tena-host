@@ -3,3 +3,11 @@
 .how-steps-grid {
     @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
 }
+
+.how-steps-grid--3 {
+    @apply lg:grid-cols-3;
+}
+
+.how-steps-grid--5 {
+    @apply lg:grid-cols-5;
+}

@@ -9,7 +9,8 @@ import { ToastProvider, notify } from '@/Components/Toast';
 const appName = import.meta.env.VITE_APP_NAME || 'Tena';
 
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    // Public pages pass full CMS titles ("TenaFi | ..."); don't suffix those.
+    title: (title) => (!title ? appName : title.includes(appName) ? title : `${title} - ${appName}`),
     resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
     setup({ el, App, props }) {
         if (import.meta.env.SSR) {

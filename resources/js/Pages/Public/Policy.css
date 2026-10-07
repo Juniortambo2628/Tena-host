@@ -1,0 +1,31 @@
+@reference "tailwindcss";
+
+.policy-page {
+    @apply pt-32;
+}
+
+.policy-page__content {
+    @apply text-gray-700 leading-relaxed text-base;
+}
+
+.policy-page__content h1,
+.policy-page__content h2 {
+    @apply text-2xl font-bold text-black mt-10 mb-4;
+}
+
+.policy-page__content h3 {
+    @apply text-lg font-semibold text-black mt-8 mb-3;
+}
+
+.policy-page__content p {
+    @apply mb-4;
+}
+
+.policy-page__content ul,
+.policy-page__content ol {
+    @apply mb-4 pl-6 list-disc;
+}
+
+.policy-page__content a {
+    @apply underline decoration-[#FFD300] underline-offset-2;
+}

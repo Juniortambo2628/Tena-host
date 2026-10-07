@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.faq-list {
+    @apply divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white;
+}
+
+.faq-item {
+    @apply px-6;
+}
+
+.faq-question {
+    @apply flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-semibold text-[#1E1E1E];
+}
+
+.faq-question::-webkit-details-marker {
+    display: none;
+}
+
+.faq-icon {
+    @apply shrink-0 transition-transform;
+}
+
+.faq-item[open] .faq-icon {
+    @apply rotate-45;
+}
+
+.faq-answer {
+    @apply pb-5 text-[#5B6170] leading-relaxed;
+}
