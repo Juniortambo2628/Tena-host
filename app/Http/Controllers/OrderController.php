@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Amenity;
 use App\Models\Order;
+use App\Services\ExtrasPaymentService;
+use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -13,7 +15,7 @@ class OrderController extends Controller
     /**
      * Store a newly created order (host or guest).
      */
-    public function store(Request $request)
+    public function store(Request $request, ExtrasPaymentService $payments)
     {
         $user = $request->user();
 
@@ -26,6 +28,12 @@ class OrderController extends Controller
 
             $validated = $request->validate([
                 'amenity_id' => 'required|exists:amenities,id',
+                // M-Pesa number for the payment prompt (priced extras only).
+                'phone' => ['nullable', 'string', 'max:20', function ($attribute, $value, $fail) {
+                    if ($value && ! Phone::isValid(Phone::toE164($value))) {
+                        $fail('Enter your M-Pesa number, e.g. 0712 345 678.');
+                    }
+                }],
             ]);
 
             $amenity = Amenity::findOrFail($validated['amenity_id']);
@@ -36,7 +44,7 @@ class OrderController extends Controller
                 abort(403, 'This amenity is not available at your property.');
             }
 
-            Order::create([
+            $order = Order::create([
                 'guest_id' => $guest->id,
                 'property_id' => $amenity->property_id,
                 'amenity_id' => $amenity->id,
@@ -44,7 +52,9 @@ class OrderController extends Controller
                 'total' => $amenity->price,
             ]);
 
-            return redirect()->back()->with('success', 'Order placed successfully.');
+            $result = $payments->checkout($order, $validated['phone'] ?? $guest->phone);
+
+            return redirect()->back()->with($result['status'] === 'failed' ? 'error' : 'success', $result['message']);
         }
 
         $validated = $request->validate([

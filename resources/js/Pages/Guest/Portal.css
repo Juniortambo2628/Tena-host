@@ -163,3 +163,51 @@
 .guest-portal-footer-brand-name {
     @apply text-sm font-bold tracking-tighter text-black/20;
 }
+
+.guest-portal-pay {
+    @apply mt-4 rounded-2xl bg-black/5 p-4 space-y-2;
+}
+
+.guest-portal-pay label {
+    @apply block text-xs font-bold text-black/60;
+}
+
+.guest-portal-pay input {
+    @apply w-full rounded-xl border border-black/10 bg-white px-4 py-3 font-bold;
+}
+
+.guest-portal-pay-error {
+    @apply text-xs font-bold text-red-600;
+}
+
+.guest-portal-pay-hint {
+    @apply text-xs text-black/50;
+}
+
+.guest-portal-orders {
+    @apply mt-6 space-y-2 px-2;
+}
+
+.guest-portal-orders h4 {
+    @apply text-xs font-black uppercase tracking-widest text-black/40;
+}
+
+.guest-portal-order {
+    @apply flex items-center justify-between gap-3 text-sm font-bold;
+}
+
+.guest-portal-order-status {
+    @apply rounded-full px-3 py-1 text-[11px] bg-black/5 text-black/60;
+}
+
+.guest-portal-order-status.is-paid {
+    @apply bg-emerald-100 text-emerald-700;
+}
+
+.guest-portal-order-status.is-pending {
+    @apply bg-amber-100 text-amber-700;
+}
+
+.guest-portal-order-status.is-failed {
+    @apply bg-red-100 text-red-700;
+}

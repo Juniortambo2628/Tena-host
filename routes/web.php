@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\EmailImageController;
 use App\Http\Controllers\Admin\HostController;
 use App\Http\Controllers\Admin\LandingController;
+use App\Http\Controllers\Admin\MpesaSettingsController;
 use App\Http\Controllers\Admin\NotificationTestController;
 use App\Http\Controllers\Admin\PolicyDocumentController;
 use App\Http\Controllers\Admin\RegistrationController;
@@ -112,6 +113,9 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/wifi', [UnifiSettingsController::class, 'edit'])->name('wifi.edit');
     Route::post('/wifi', [UnifiSettingsController::class, 'update'])->name('wifi.update');
     Route::post('/wifi/test', [UnifiSettingsController::class, 'test'])->name('wifi.test');
+    Route::get('/mpesa', [MpesaSettingsController::class, 'edit'])->name('mpesa.edit');
+    Route::post('/mpesa', [MpesaSettingsController::class, 'update'])->name('mpesa.update');
+    Route::post('/mpesa/payouts/{user}/settle', [MpesaSettingsController::class, 'settle'])->name('mpesa.settle');
 
     // Notification Test
     Route::post('/notifications/test', [NotificationTestController::class, 'send'])->name('notifications.test');
@@ -255,6 +259,7 @@ require __DIR__.'/auth.php';
 
 // M-Pesa Callback (public)
 Route::post('/api/mpesa/callback', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');
+Route::post('/api/mpesa/extras/callback', [MpesaCallbackController::class, 'extras'])->name('mpesa.extras.callback');
 
 // Ubiquiti UniFi external captive portal (public — pre-auth guest devices).
 // Point UniFi "Guest Control -> External Portal Server" at the /portal URL.

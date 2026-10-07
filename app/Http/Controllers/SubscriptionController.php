@@ -77,7 +77,7 @@ class SubscriptionController extends Controller
         $quote = $this->quoteFor($data);
         $phone = Phone::toE164($data['phone_number']);
 
-        $response = $mpesa->initiateStkPush($phone, $quote['total'], 'TenaFi '.$quote['plan_name']);
+        $response = $mpesa->initiateStkPush($phone, $quote['total'], 'TenaFi', 'Subscription');
 
         if ($response['success']) {
             MpesaTransaction::create([

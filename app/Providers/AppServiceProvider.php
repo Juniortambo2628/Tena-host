@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\MpesaService;
 use App\Services\Unifi\UnifiService;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         // Resolve the portal's UniFi client from admin-managed settings
         // (database) with .env as the fallback.
         $this->app->bind(UnifiService::class, fn () => UnifiService::fromSettings());
+        $this->app->bind(MpesaService::class, fn () => MpesaService::fromSettings());
     }
 
     /**

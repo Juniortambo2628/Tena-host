@@ -17,7 +17,27 @@ class Order extends Model
         'amenity_id',
         'status',
         'total',
+        'payment_status',
+        'payer_phone',
+        'mpesa_checkout_request_id',
+        'mpesa_receipt',
+        'paid_at',
+        'platform_fee',
+        'settled_at',
     ];
+
+    protected $casts = [
+        'total' => 'decimal:2',
+        'platform_fee' => 'decimal:2',
+        'paid_at' => 'datetime',
+        'settled_at' => 'datetime',
+    ];
+
+    /** What the host is owed for this order once it's paid. */
+    public function getHostPayoutAttribute(): float
+    {
+        return round((float) $this->total - (float) $this->platform_fee, 2);
+    }
 
     /**
      * Get the guest who placed the order.

@@ -72,8 +72,22 @@ export default function OrderIndex({ orders, filters }) {
             header: 'Total',
             accessorKey: 'total',
             cell: info => (
-                <span className="text-sm font-black">${parseFloat(info.getValue()).toFixed(2)}</span>
+                <span className="text-sm font-black">KES {Number(info.getValue() || 0).toLocaleString('en-KE')}</span>
             )
+        },
+        {
+            header: 'Payment',
+            accessorKey: 'payment_status',
+            cell: info => {
+                const order = info.row.original;
+                const labels = { paid: 'Paid (M-Pesa)', pending: 'Awaiting M-Pesa', failed: 'Payment failed', unpaid: 'Collect at property', not_required: 'Free' };
+                return (
+                    <span className="text-[10px] font-black uppercase tracking-widest text-black/60" title={order.mpesa_receipt || ''}>
+                        {labels[info.getValue()] || info.getValue()}
+                        {order.payment_status === 'paid' && (order.settled_at ? ' · settled' : ' · payout due')}
+                    </span>
+                );
+            }
         },
         {
             header: 'Status',

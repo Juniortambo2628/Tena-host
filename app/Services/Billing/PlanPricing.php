@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Models\Setting;
+use App\Services\MpesaService;
 use InvalidArgumentException;
 
 /**
@@ -95,7 +96,7 @@ class PlanPricing
         return match (Setting::getValue('billing_enabled', 'auto')) {
             'enabled' => true,
             'disabled' => false,
-            default => (bool) (config('services.mpesa.key') || config('services.paystack.public_key')),
+            default => MpesaService::fromSettings()->isConfigured() || (bool) config('services.paystack.public_key'),
         };
     }
 }
