@@ -18,7 +18,9 @@
 |   - multi-line text fields (points, features) hold one item per line;
 |     end a line with [[feature_key]] to badge it "Coming soon" until that
 |     feature is marked live under Site-wide -> Feature status;
-|   - "anchor" makes the section reachable at #anchor;
+|   - "anchor" makes the section reachable at #anchor; adding "menu_label"
+|     (and optionally "menu_description") also lists it in that page's
+|     header megamenu, so menus always match the page;
 |   - a section key may carry a variant suffix ("stats__problem") so one
 |     page can use the same section type more than once;
 |   - select options are "value|Label" (or just "Label").
@@ -225,18 +227,6 @@ return [
                 'meta_description' => 'Turn your existing WiFi into higher occupancy. TenaFi turns every guest into someone you can invite back, so past guests fill your empty nights and book direct, commission-free.',
             ],
         ],
-        'nav' => [
-            'title' => 'Page navigation',
-            'content' => [
-                'links' => [
-                    ['label' => 'Occupancy', 'href' => '#h-problem'],
-                    ['label' => 'How it works', 'href' => '#h-how'],
-                    ['label' => 'Product', 'href' => '#h-product'],
-                    ['label' => 'Pricing', 'href' => '#h-pricing'],
-                    ['label' => 'For business owners', 'href' => '/business'],
-                ],
-            ],
-        ],
         'hero' => [
             'title' => 'Hero',
             'bg' => 'gray',
@@ -257,6 +247,7 @@ return [
             'title' => 'The real problem',
             'content' => [
                 'anchor' => 'h-problem',
+                'menu_label' => 'Occupancy',
                 'badge' => 'The real problem',
                 'title' => "It isn\u{2019}t just OTA fees. It\u{2019}s empty nights.",
                 'subtitle' => 'Nairobi added listings much faster than it added guests, so more hosts are chasing the same OTA traffic. Meanwhile every guest who already loved your place leaves without you keeping their contact, and the only way they can find you again is through the OTA.',
@@ -286,6 +277,7 @@ return [
             'title' => 'How TenaFi fills your calendar',
             'content' => [
                 'anchor' => 'h-how',
+                'menu_label' => 'How it works',
                 'title' => 'How TenaFi fills your calendar',
                 'subtitle' => 'Value from the first week, long before a guest comes back. Then it keeps building: the longer TenaFi runs, the bigger your guest list and the more nights it can help fill.',
                 'steps' => [
@@ -333,6 +325,7 @@ return [
             'title' => 'What your guests see, and what you get',
             'content' => [
                 'anchor' => 'h-product',
+                'menu_label' => 'Product',
                 'title' => 'What your guests see, and what you get',
                 'subtitle' => "From WiFi login to a booking you don\u{2019}t pay commission on.",
                 'cta_text' => 'Grow your occupancy',
@@ -381,6 +374,8 @@ return [
             'bg' => 'gray',
             'content' => [
                 'anchor' => 'h-protect',
+                'menu_label' => 'Protect your property',
+                'menu_description' => 'Occupancy and outage alerts, PMS sync.',
                 'title' => 'Protect your property',
                 'subtitle' => "Know what\u{2019}s happening at your units, even when you\u{2019}re not there.",
                 'items' => [
@@ -417,6 +412,7 @@ return [
             'bg' => 'gray',
             'content' => [
                 'anchor' => 'h-pricing',
+                'menu_label' => 'Pricing',
                 'title' => 'One price per unit. Everything included.',
                 'subtitle' => 'The device, installation, WiFi page, guest list and support, on a 12-month plan, then month to month.',
                 'footnote' => "Multi-unit operators: 20% off from 10 units, 30% off from 50. Extra devices at the same site: KES 1,500 a month each. Pay quarterly for 5% off, or yearly and get 2 months free. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
@@ -459,6 +455,8 @@ return [
             'title' => 'Sign-up (#join)',
             'content' => [
                 'anchor' => 'join',
+                'menu_label' => 'Apply',
+                'menu_description' => 'Join the Founding 20. First two months free.',
                 'signup_type' => 'host',
                 'badge' => 'Founding 20',
                 'title' => "Let\u{2019}s get started",
@@ -507,17 +505,6 @@ return [
             'content' => [
                 'meta_title' => 'TenaFi for business owners: turn your WiFi into more Google reviews',
                 'meta_description' => 'Turn your existing WiFi into more Google reviews. Every customer who connects gets a same-day thank-you with a one-tap review link, then offers that bring them back. Managed for you.',
-            ],
-        ],
-        'nav' => [
-            'title' => 'Page navigation',
-            'content' => [
-                'links' => [
-                    ['label' => 'How it works', 'href' => '#b-how'],
-                    ['label' => 'Google reviews', 'href' => '#b-reviews'],
-                    ['label' => 'Pricing', 'href' => '#b-pricing'],
-                    ['label' => 'For short-term rentals', 'href' => '/hosts'],
-                ],
             ],
         ],
         'hero' => [
@@ -584,6 +571,7 @@ return [
             'title' => 'How it works',
             'content' => [
                 'anchor' => 'b-how',
+                'menu_label' => 'How it works',
                 'title' => 'How TenaFi works',
                 'subtitle' => "Four steps, and we run all of them. We don\u{2019}t sell internet; TenaFi plugs into the connection you already have.",
                 'steps' => [
@@ -598,6 +586,7 @@ return [
             'title' => 'What your customers see, and what you get',
             'content' => [
                 'anchor' => 'b-product',
+                'menu_label' => 'Product',
                 'title' => 'What your customers see, and what you get',
                 'subtitle' => 'From WiFi login to a new Google review. Example businesses.',
                 'cta_text' => 'Get more reviews',
@@ -643,6 +632,7 @@ return [
             'bg' => 'gray',
             'content' => [
                 'anchor' => 'b-reviews',
+                'menu_label' => 'Google reviews',
                 'badge' => 'Did you know?',
                 'title' => 'Reviews decide who finds you. Repeat visits decide your profit.',
                 'subtitle' => '',
@@ -661,6 +651,7 @@ return [
             'title' => 'Pricing',
             'content' => [
                 'anchor' => 'b-pricing',
+                'menu_label' => 'Pricing',
                 'title' => 'One price per location. Everything included.',
                 'subtitle' => 'The device, installation, WiFi page, customer list and support. A 12-month plan, then month to month.',
                 'footnote' => "Several locations? We\u{2019}ll quote group pricing. Extra devices at the same site: KES 1,500 a month each. Pay quarterly for 5% off, or yearly and get 2 months free. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
@@ -703,6 +694,8 @@ return [
             'title' => 'Sign-up (#signup)',
             'content' => [
                 'anchor' => 'signup',
+                'menu_label' => 'Sign up',
+                'menu_description' => 'Join the Founding 20. First two months free.',
                 'signup_type' => 'business',
                 'badge' => 'Founding 20',
                 'title' => "Let\u{2019}s get started",

@@ -52,9 +52,8 @@ foreach (config('public_pages.redirects') as $from => $to) {
 }
 
 Route::get('/sitemap.xml', function () {
-    $paths = LandingPage::where('is_routable', true)->where('is_active', true)->orderBy('sort_order')
-        ->pluck('slug')
-        ->map(fn ($slug) => $slug === 'home' ? '/' : "/{$slug}")
+    $paths = LandingPage::where('is_routable', true)->where('is_active', true)->orderBy('sort_order')->get()
+        ->map->path()
         ->merge(array_map(fn ($path) => "/{$path}", array_keys(config('public_pages.policies'))))
         ->push('/login');
 

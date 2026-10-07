@@ -28,7 +28,7 @@ class PublicPageController extends Controller
         return $this->render('Public/Page', [
             'page' => ['slug' => $page->slug, 'name' => $page->name],
             'sections' => $sections,
-        ], $pageSeo, $page->slug === 'home' ? '/' : "/{$page->slug}");
+        ], $pageSeo, $page->path());
     }
 
     public function policy(string $slug): Response
@@ -50,6 +50,7 @@ class PublicPageController extends Controller
 
         return Inertia::render($component, $props + [
             'site' => $site,
+            'menus' => LandingPage::navMenus(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path),
         ]);
     }

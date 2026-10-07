@@ -4,6 +4,7 @@ import { ChevronRight, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { getContent, getMedia, extractItems, stripHtml } from '@/lib/cms';
 import { track } from '@/lib/analytics';
 import { PublicContext } from '@/Components/Public/PublicContext';
+import NavMenu from '@/Components/Public/NavMenu';
 import CookiesConsent from '@/Components/CookiesConsent';
 import CookieDetailsModal from '@/Components/CookieDetailsModal';
 import './PublicLayout.css';
@@ -15,7 +16,7 @@ const DEFAULT_LOGO = '/legacy/assets/Tena-logo-square.jpg';
  * Header, footer and SEO come from the CMS (Site-wide page) so all pages
  * stay in sync from one place.
  */
-export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#paths', hasSections = true, navLinks: pageNavLinks = [], sections = [], children }) {
+export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#paths', hasSections = true, sections = [], children }) {
     const [showCookieDetails, setShowCookieDetails] = useState(false);
 
     const header = site.header;
@@ -26,7 +27,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
     // In-page anchors (#how-it-works) only exist on section pages; elsewhere
     // send them to the homepage version of that anchor.
     const resolveHref = (href) => (href?.startsWith('#') && !hasSections ? `/${href}` : href);
-    const navLinks = pageNavLinks.length > 0 ? pageNavLinks : extractItems(header, 'links', ['label', 'href']);
+    const navLinks = extractItems(header, 'links', ['label', 'href']);
     const footerLinks = extractItems(footer, 'links', ['label', 'href']);
     const resolvedJoin = resolveHref(joinHref);
 
@@ -47,13 +48,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                     <img src={logo} alt={`${siteName} logo`} />
                                 </Link>
                             </div>
-                            <div className="welcome-nav-links">
-                                {navLinks.map((link) => (
-                                    <a key={link.href} href={resolveHref(link.href)} className="welcome-nav-link">
-                                        {stripHtml(link.label)}
-                                    </a>
-                                ))}
-                            </div>
+                            <NavMenu links={navLinks} resolveHref={resolveHref} />
                             <div className="welcome-nav-actions">
                                 <a href={loginUrl} className="welcome-login-btn">
                                     {stripHtml(getContent(header, 'login_label', 'Login'))}

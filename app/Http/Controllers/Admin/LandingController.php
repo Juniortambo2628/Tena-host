@@ -59,7 +59,7 @@ class LandingController extends Controller
             'pages' => $pages->map(fn ($p) => [
                 'slug' => $p->slug,
                 'name' => $p->name,
-                'url' => $p->is_routable ? ($p->slug === 'home' ? '/' : "/{$p->slug}") : null,
+                'url' => $p->is_routable ? $p->path() : null,
             ]),
             'currentPage' => $currentPage?->slug,
             'sections' => $sections,

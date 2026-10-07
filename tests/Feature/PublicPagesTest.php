@@ -11,6 +11,7 @@ use App\Models\Registration;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Cms\PageBlueprint;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
@@ -73,8 +74,8 @@ it('renders each public page from its own CMS sections', function (string $url, 
         );
 })->with([
     'main' => ['/', 'home', ['seo', 'hero', 'path_cards', 'comparison__problem', 'how_it_works', 'cta_banner__founding']],
-    'hosts' => ['/hosts', 'hosts', ['seo', 'nav', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'stats__commission', 'comparison__party', 'detailed_features', 'features__protect', 'credibility', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
-    'business' => ['/business', 'business', ['seo', 'nav', 'hero', 'features__why', 'comparison__qr', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
+    'hosts' => ['/hosts', 'hosts', ['seo', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'stats__commission', 'comparison__party', 'detailed_features', 'features__protect', 'credibility', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
+    'business' => ['/business', 'business', ['seo', 'hero', 'features__why', 'comparison__qr', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
 ]);
 
 it('retires sections of the old homepage that the handoff dropped', function () {
@@ -82,6 +83,47 @@ it('retires sections of the old homepage that the handoff dropped', function () 
 
     expect($hosts->sections()->where('is_active', false)->pluck('section_key')->all())
         ->toContain('partners');
+});
+
+it('shows the same header links on every page, with megamenus built from each page\'s sections', function (string $url) {
+    $this->get($url)->assertInertia(fn ($page) => $page
+        ->where('site.header.content', fn ($c) => [$c['links.0.href'], $c['links.1.href'], $c['links.2.href']] === ['/hosts', '/business', '/#how'])
+        ->where('menus./hosts', fn ($items) => collect($items)->pluck('label')->all() === ['Occupancy', 'How it works', 'Product', 'Protect your property', 'Pricing', 'Apply'])
+        ->where('menus./business', fn ($items) => collect($items)->pluck('href')->all() === ['/business#b-how', '/business#b-product', '/business#b-reviews', '/business#b-pricing', '/business#signup'])
+    );
+})->with(['/', '/hosts', '/business']);
+
+it('clears every page cache on a CMS write, even when some are cold', function () {
+    LandingPage::publicSections('hosts'); // only the second page is warm
+    LandingSection::clearCache();
+
+    expect(Cache::has(LandingPage::cacheKey('hosts')))->toBeFalse();
+});
+
+it('keeps megamenus in sync with CMS edits to sections', function () {
+    $admin = User::factory()->admin()->create();
+    $pricing = LandingSection::whereHas('page', fn ($q) => $q->where('slug', 'hosts'))->where('section_key', 'pricing')->first();
+    LandingPage::navMenus(); // warm the cache
+
+    $this->actingAs($admin)->put(route('admin.landing.content.update'), [
+        'section_id' => $pricing->id,
+        'items' => [['content_key' => 'menu_label', 'value' => 'Plans & prices']],
+    ]);
+
+    expect(collect(LandingPage::navMenus()['/hosts'])->pluck('label'))->toContain('Plans & prices')->not->toContain('Pricing');
+
+    $this->actingAs($admin)->put(route('admin.landing.sections.update', $pricing), ['is_active' => false]);
+
+    expect(collect(LandingPage::navMenus()['/hosts'])->pluck('label'))->not->toContain('Plans & prices');
+});
+
+it('retires the old per-page nav sections', function () {
+    $hosts = LandingPage::firstWhere('slug', 'hosts');
+    $hosts->sections()->create(['section_key' => 'nav', 'title' => 'Page navigation']);
+
+    (require database_path('migrations/2026_10_07_000004_replace_page_nav_with_megamenus.php'))->up();
+
+    expect($hosts->sections()->where('section_key', 'nav')->exists())->toBeFalse();
 });
 
 it('gives every sign-up page a signup section with its own anchor and type', function () {
@@ -131,7 +173,7 @@ it('reflects CMS edits on the public page immediately', function () {
         'items' => [['content_key' => 'cta_primary', 'value' => 'Get more reviews']],
     ])->assertRedirect();
 
-    $this->get('/business')->assertInertia(fn ($page) => $page->where('sections.2.content.cta_primary', 'Get more reviews'));
+    $this->get('/business')->assertInertia(fn ($page) => $page->where('sections.1.content.cta_primary', 'Get more reviews'));
 });
 
 it('lets admins switch between pages in the CMS', function () {

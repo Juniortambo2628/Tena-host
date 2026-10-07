@@ -1,6 +1,6 @@
 import React from 'react';
 import PublicLayout from '@/Layouts/PublicLayout';
-import { getContent, baseSectionKey, extractItems, stripHtml } from '@/lib/cms';
+import { getContent, baseSectionKey, stripHtml } from '@/lib/cms';
 import Hero from '@/Components/Welcome/Hero';
 import PathCards from '@/Components/Welcome/PathCards';
 import FeatureSection from '@/Components/Welcome/FeatureSection';
@@ -53,11 +53,8 @@ function joinTarget(sections) {
 }
 
 export default function Page({ page, sections = [], site = {}, seo = {} }) {
-    // A page-level "nav" section replaces the site-wide header links.
-    const navLinks = extractItems(sections.find((s) => s.section_key === 'nav'), 'links', ['label', 'href']);
-
     return (
-        <PublicLayout site={site} page={page} seo={seo} joinHref={joinTarget(sections)} navLinks={navLinks} sections={sections}>
+        <PublicLayout site={site} page={page} seo={seo} joinHref={joinTarget(sections)} sections={sections}>
             {sections.map((section) => {
                 const Component = SECTION_COMPONENTS[baseSectionKey(section.section_key)];
                 if (!Component) return null;
