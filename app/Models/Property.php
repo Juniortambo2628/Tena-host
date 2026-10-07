@@ -28,11 +28,17 @@ class Property extends Model
         'pms_integration_type',
         'pms_connection_status',
         'pms_last_sync_at',
+        'review_url',
+        'review_requests_enabled',
+        'review_request_delay_hours',
+        'review_message',
     ];
 
     protected $casts = [
         'branding_json' => 'array',
         'pms_last_sync_at' => 'datetime',
+        'review_requests_enabled' => 'boolean',
+        'review_request_delay_hours' => 'integer',
     ];
 
     protected $with = [

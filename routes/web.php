@@ -28,6 +28,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\PublicPageController;
+use App\Http\Controllers\ReviewLinkController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\SubscriptionController;
@@ -259,6 +260,9 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
 });
+
+// Short review link sent to guests (counts the click, then redirects).
+Route::get('/r/{token}', ReviewLinkController::class)->where('token', '[A-Za-z0-9]{8}')->name('reviews.go');
 
 // Catch-all for CMS pages (/hosts, /business, ...). Must stay last.
 Route::get('/{slug}', [PublicPageController::class, 'show'])
