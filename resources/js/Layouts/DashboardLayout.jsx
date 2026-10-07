@@ -208,12 +208,14 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                         <header className="dashboard-layout__header">
                             <div className="dashboard-layout__header-left">
                                 <button
+                                    type="button"
                                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                                     className="dashboard-layout__sidebar-toggle"
+                                    aria-label={isSidebarOpen ? 'Collapse navigation' : 'Expand navigation'}
+                                    aria-expanded={isSidebarOpen}
                                 >
                                     {isSidebarOpen ? <AlignLeft size={20} className="dashboard-layout__sidebar-toggle-icon" /> : <AlignJustify size={20} className="dashboard-layout__sidebar-toggle-icon" />}
                                 </button>
-                                <span className="dashboard-layout__nav-heading">Navigation</span>
                             </div>
 
                             <div className="dashboard-layout__header-right">
