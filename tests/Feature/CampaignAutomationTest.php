@@ -154,7 +154,7 @@ class CampaignAutomationTest extends TestCase
         $recipient = CampaignRecipient::sole();
         $body = Http::recorded()->first()[0]['text']['body'];
         $link = route('campaigns.click', ['token' => $recipient->token, 'n' => 0]);
-        $this->assertSame("Hi Guest! Book direct: {$link}", $body);
+        $this->assertSame("Hi Guest! Book direct: {$link}\n\nReply STOP to opt out.", $body);
 
         $this->get($link)->assertRedirect('https://example.com/direct?ref=wifi');
         $this->get($link)->assertRedirect('https://example.com/direct?ref=wifi');

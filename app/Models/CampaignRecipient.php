@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
  */
 class CampaignRecipient extends Model
 {
-    protected $fillable = ['campaign_id', 'guest_id', 'token', 'opened_at', 'clicked_at'];
+    protected $fillable = ['campaign_id', 'guest_id', 'token', 'opened_at', 'clicked_at', 'message_id'];
 
     protected $casts = [
         'opened_at' => 'datetime',

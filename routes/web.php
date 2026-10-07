@@ -24,6 +24,7 @@ use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestPortalController;
 use App\Http\Controllers\HostDashboardController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\MessagingWebhookController;
 use App\Http\Controllers\MpesaCallbackController;
 use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\OrderController;
@@ -270,6 +271,11 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
 });
+
+// Inbound messaging: STOP/START replies and WhatsApp read receipts.
+Route::get('/api/whatsapp/webhook', [MessagingWebhookController::class, 'verifyWhatsApp'])->name('whatsapp.webhook.verify');
+Route::post('/api/whatsapp/webhook', [MessagingWebhookController::class, 'whatsApp'])->name('whatsapp.webhook');
+Route::post('/api/sms/inbound', [MessagingWebhookController::class, 'sms'])->name('sms.inbound');
 
 // Campaign link and open tracking (CampaignLinks).
 Route::get('/c/{token}/o.gif', [CampaignTrackingController::class, 'open'])->where('token', '[A-Za-z0-9]{8}')->name('campaigns.open');

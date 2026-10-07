@@ -8,6 +8,7 @@ use App\Models\CampaignRecipient;
 use App\Models\Guest;
 use App\Models\Property;
 use App\Services\Messaging\Messenger;
+use App\Services\Messaging\OptOutService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
@@ -44,8 +45,12 @@ class CampaignDispatcher
             }
 
             if (in_array($campaign->type, Messenger::CHANNELS, true)) {
-                $content = CampaignLinks::track($campaign->content ?? '', $recipient);
+                $content = OptOutService::withFooter(CampaignLinks::track($campaign->content ?? '', $recipient));
                 $result = $this->messenger->toGuest($guest, $campaign->type, $content);
+
+                if ($result['success'] && $result['channel'] === 'whatsapp') {
+                    $recipient->update(['message_id' => $result['message'] ?? null]);
+                }
 
                 if (! $result['success']) {
                     Log::warning('Campaign message not sent', [
@@ -100,6 +105,7 @@ class CampaignDispatcher
             // at WiFi login but didn't opt in to offers are left out (Kenya
             // Data Protection Act, 2019).
             ->where(fn ($q) => $q->whereNull('consented_at')->orWhere('marketing_opt_in', true))
+            ->whereNull('opted_out_at') // replied STOP
             ->when($campaign->type === 'email', fn ($q) => $q->whereNotNull('email'))
             ->when(in_array($campaign->type, Messenger::CHANNELS, true), fn ($q) => $q->whereNotNull('phone'))
             ->tap(fn ($q) => match ($campaign->target_audience) {
