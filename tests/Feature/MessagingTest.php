@@ -153,7 +153,7 @@ class MessagingTest extends TestCase
         SendCampaignJob::dispatchSync($campaign, $guest);
 
         $this->assertSame(1, $campaign->fresh()->total_sent);
-        Http::assertSent(fn (Request $r) => $r['template']['components'][0]['parameters'][0]['text'] === 'Karibu Wanjiru!');
+        Http::assertSent(fn (Request $r) => $r['template']['components'][0]['parameters'][0]['text'] === "Karibu Wanjiru!\n\nReply STOP to opt out.");
     }
 
     public function test_campaign_audience_respects_marketing_opt_in(): void
