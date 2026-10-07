@@ -161,9 +161,9 @@ class MessagingTest extends TestCase
         $optedIn = $this->guest(['consented_at' => now(), 'marketing_opt_in' => true]);
         $propertyId = $optedIn->property_id;
         Guest::factory()->create(['property_id' => $propertyId, 'consented_at' => now(), 'marketing_opt_in' => false]);
-        $manual = Guest::factory()->create(['property_id' => $propertyId, 'consented_at' => null]);
+        $manual = Guest::factory()->create(['property_id' => $propertyId, 'consented_at' => null, 'phone' => '+254700000009']);
 
-        $campaign = new Campaign(['property_id' => $propertyId, 'type' => 'sms']);
+        $campaign = new Campaign(['user_id' => $optedIn->property->user_id, 'property_id' => $propertyId, 'type' => 'sms']);
 
         $this->assertEqualsCanonicalizing(
             [$optedIn->id, $manual->id],

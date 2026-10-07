@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendCampaignJob;
 use App\Models\Campaign;
 use App\Models\MarketingEvent;
-use App\Services\CampaignDispatcher;
+use App\Services\CampaignAutomation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -148,16 +147,15 @@ class MarketingController extends Controller
             return redirect()->back()->with('info', 'Campaign is already active.');
         }
 
-        $campaign->update(['status' => 'active']);
+        $queued = app(CampaignAutomation::class)->activate($campaign);
 
-        $dispatcher = app(CampaignDispatcher::class);
-        $guests = $dispatcher->audience($campaign);
+        $message = match (true) {
+            ! CampaignAutomation::isBroadcast($campaign) => 'Campaign is live. Each guest gets it after "'.$campaign->trigger_event.'".',
+            $queued === 0 && $campaign->scheduled_at?->isFuture() => 'Campaign scheduled for '.$campaign->scheduled_at->format('j M Y, H:i').'.',
+            default => "Campaign activated. {$queued} guests queued for delivery.",
+        };
 
-        foreach ($guests as $guest) {
-            SendCampaignJob::dispatch($campaign, $guest);
-        }
-
-        return redirect()->back()->with('success', "Campaign activated. {$guests->count()} guests queued for delivery.");
+        return redirect()->back()->with('success', $message);
     }
 
     /**

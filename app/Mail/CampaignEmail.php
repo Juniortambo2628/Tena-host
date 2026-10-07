@@ -3,7 +3,9 @@
 namespace App\Mail;
 
 use App\Models\Campaign;
+use App\Models\CampaignRecipient;
 use App\Models\Guest;
+use App\Services\CampaignLinks;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -20,9 +22,8 @@ class CampaignEmail extends Mailable
     public function __construct(
         public Campaign $campaign,
         public Guest $guest,
-    ) {
-        //
-    }
+        public ?CampaignRecipient $recipient = null,
+    ) {}
 
     /**
      * Get the message envelope.
@@ -58,6 +59,14 @@ class CampaignEmail extends Mailable
             '%PROPERTY%' => e($this->campaign->property?->name ?? ''),
         ];
 
-        return strtr($content, $replacements);
+        $html = strtr($content, $replacements);
+
+        if (! $this->recipient) {
+            return $html;
+        }
+
+        // Tracked links and an open pixel (CampaignLinks).
+        return CampaignLinks::track($html, $this->recipient, html: true)
+            .'<img src="'.e(CampaignLinks::pixel($this->recipient)).'" width="1" height="1" alt="" style="display:block;border:0" />';
     }
 }

@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\UnifiSettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\Auth\GuestOtpController;
+use App\Http\Controllers\CampaignTrackingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GuestController;
@@ -267,6 +268,10 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
 });
+
+// Campaign link and open tracking (CampaignLinks).
+Route::get('/c/{token}/o.gif', [CampaignTrackingController::class, 'open'])->where('token', '[A-Za-z0-9]{8}')->name('campaigns.open');
+Route::get('/c/{token}/{n}', [CampaignTrackingController::class, 'click'])->where(['token' => '[A-Za-z0-9]{8}', 'n' => '[0-9]{1,2}'])->name('campaigns.click');
 
 // Business customer homepage (menu, offers, events).
 Route::get('/places/{property}', [VenueController::class, 'show'])->whereNumber('property')->name('venue.show');

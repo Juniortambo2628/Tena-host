@@ -69,4 +69,9 @@ class Guest extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function campaignRecipients()
+    {
+        return $this->hasMany(CampaignRecipient::class);
+    }
 }
