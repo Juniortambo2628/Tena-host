@@ -9,8 +9,8 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 | URL | Sections (in order; `#anchors` match Glen's) |
 | --- | --- |
 | `/` | hero, path_cards `#choose`, comparison__problem `#problem`, how_it_works `#how`, cta_banner__founding |
-| `/hosts` | nav, hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
-| `/business` | nav, hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
+| `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
+| `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
 | Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), footer, feature_status |
 
@@ -34,6 +34,15 @@ Everything is editable in **Admin → Public Pages**, with one tab per page. The
 | `signup` | The CMS-defined sign-up form |
 
 To use one type twice on a page, add a variant suffix (`stats__problem`, `stats__commission`).
+
+### Navigation
+
+Every page shows the same three header links (Site-wide → Header): Short-term rentals, Business owners and How it works.
+Hovering over or keyboard-focusing an audience link opens a **megamenu** of that page's sections.
+
+The megamenu is built from the sections themselves: any section with an `anchor` and a `menu_label` becomes an item.
+Its description is the optional `menu_description`, falling back to the section title.
+Renaming, hiding or reordering a section updates the menu automatically, so there is no separate menu to maintain.
 
 ### Editing conventions
 
