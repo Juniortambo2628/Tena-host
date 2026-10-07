@@ -47,6 +47,11 @@ class MpesaCallbackController extends Controller
                 }
             }
 
+            // Callbacks can repeat; only the first one extends the plan.
+            if ($transaction->Status === 'completed') {
+                return response()->json(['ResultCode' => 0, 'ResultDesc' => 'Already processed']);
+            }
+
             $transaction->update([
                 'Status' => 'completed',
                 'MpesaReceiptNumber' => $mpesaReceiptNumber,
@@ -54,9 +59,15 @@ class MpesaCallbackController extends Controller
             ]);
 
             $user = $transaction->user;
-            if ($user && ! $user->subscribed('default')) {
-                $subscriptionService->activateForUser($user, 'mpesa', $mpesaReceiptNumber, $amount ?? 0);
-            } else {
+            if ($user && $transaction->meta && (float) $amount >= (float) $transaction->Amount) {
+                $subscriptionService->extend($user, 'mpesa', (string) $mpesaReceiptNumber, $transaction->meta);
+            } elseif ($user) {
+                Log::warning('M-Pesa payment did not cover the quote; plan not extended', [
+                    'transaction' => $transaction->id, 'paid' => $amount, 'expected' => $transaction->Amount,
+                ]);
+            }
+
+            if ($user) {
                 $subscriptionService->sendReceipt($user, $transaction);
             }
 

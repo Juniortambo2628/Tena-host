@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Setting;
+use App\Services\Billing\PlanPricing;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,15 +20,7 @@ class EnsureUserIsSubscribed
             return $next($request);
         }
 
-        $billingEnabled = Setting::getValue('billing_enabled', 'auto');
-
-        // If billing is explicitly disabled, skip subscription checks.
-        if ($billingEnabled === 'disabled') {
-            return $next($request);
-        }
-
-        // In 'auto' mode, skip if no Paystack key is configured.
-        if ($billingEnabled === 'auto' && ! config('services.paystack.public_key')) {
+        if (! PlanPricing::enforced()) {
             return $next($request);
         }
 

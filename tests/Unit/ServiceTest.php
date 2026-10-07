@@ -1,8 +1,10 @@
 <?php
 
+use App\Mail\PaymentReceiptMail;
 use App\Models\MpesaTransaction;
 use App\Models\User;
 use App\Services\SubscriptionService;
+use App\Traits\HasImageUpload;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
@@ -25,7 +27,7 @@ test('activateForUser creates subscription and transaction', function () {
         'email' => 'test@example.com',
     ]);
 
-    $service = new SubscriptionService();
+    $service = app(SubscriptionService::class);
     $transaction = $service->activateForUser($user, 'mpesa', 'REF123', 1500.00);
 
     expect($transaction)->toBeInstanceOf(MpesaTransaction::class)
@@ -44,10 +46,10 @@ test('activateForUser sends receipt email', function () {
         'email' => 'receipt@example.com',
     ]);
 
-    $service = new SubscriptionService();
+    $service = app(SubscriptionService::class);
     $service->activateForUser($user, 'mpesa', 'REF456', 2000.00);
 
-    Mail::assertSent(\App\Mail\PaymentReceiptMail::class, function ($mail) {
+    Mail::assertSent(PaymentReceiptMail::class, function ($mail) {
         return $mail->hasTo('receipt@example.com');
     });
 });
@@ -60,7 +62,7 @@ test('activateForUser does not create duplicate subscription', function () {
         'email' => 'test@example.com',
     ]);
 
-    $service = new SubscriptionService();
+    $service = app(SubscriptionService::class);
 
     $service->activateForUser($user, 'mpesa', 'REF789', 1000.00);
     $service->activateForUser($user->fresh(), 'mpesa', 'REF012', 1000.00);
@@ -84,7 +86,7 @@ test('sendReceipt does not throw when user has no email', function () {
         'ResultDesc' => 'Test payment',
     ]);
 
-    $service = new SubscriptionService();
+    $service = app(SubscriptionService::class);
     $service->sendReceipt($user, $transaction);
 
     Mail::assertNothingSent();
@@ -101,7 +103,7 @@ test('storeImage stores file and returns path', function () {
 
     $class = new class
     {
-        use \App\Traits\HasImageUpload;
+        use HasImageUpload;
 
         public function testStore(UploadedFile $file, string $dir, string $disk = 'public'): string
         {
@@ -121,7 +123,7 @@ test('updateImage deletes old file and stores new', function () {
 
     $class = new class
     {
-        use \App\Traits\HasImageUpload;
+        use HasImageUpload;
 
         public function testUpdate(?UploadedFile $file, ?string $currentPath, string $dir, string $disk = 'public'): ?string
         {
@@ -148,7 +150,7 @@ test('updateImage returns current path when no new file', function () {
 
     $class = new class
     {
-        use \App\Traits\HasImageUpload;
+        use HasImageUpload;
 
         public function testUpdate(?UploadedFile $file, ?string $currentPath, string $dir, string $disk = 'public'): ?string
         {

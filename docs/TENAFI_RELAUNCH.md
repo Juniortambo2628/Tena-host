@@ -88,6 +88,7 @@ from anything that already works, and to badge anything else on the pages that i
 | WiFi login guest capture | live | `WifiPortalController`, `GuestCaptureService`. First name and WhatsApp number required, email optional; consent wording and timestamp stored per guest; optional marketing opt-in; one-tap reconnect for returning devices |
 | WhatsApp and SMS messaging | live once configured | `App\Services\Messaging\Messenger` with Africa's Talking SMS and the WhatsApp Cloud API. Campaigns can be Email, WhatsApp or SMS; WhatsApp falls back to SMS. Needs the `.env` keys below |
 | Thank-you and review requests | live | `ReviewRequestService`, `reviews:send` (hourly). Per property: Google review link, on/off, delay and message (Properties → Edit). Each guest is asked once after check-out or their last WiFi visit; `/r/{token}` counts clicks |
+| Billing in KES (Basic, Starter, Growth) | live | `config/billing.php`, `PlanPricing`. Per-unit price, 20%/30% multi-unit discounts, extra devices, quarterly 5% off, yearly 2 months free. M-Pesa STK first, card via Paystack in KES. The server always computes the amount, and each payment extends the plan by its cycle |
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
 | Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
@@ -124,6 +125,8 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 - The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
 
 ## Still needed before launch
+
+- Billing switches on automatically once M-Pesa (`MPESA_CONSUMER_KEY`) or Paystack keys are set (Admin → Settings → billing "auto"). Prices live in `config/billing.php`; keep them in step with the CMS pricing sections. The Paystack account must accept KES.
 
 - Add the scheduler cron on the server: `* * * * * php artisan schedule:run`. Review requests depend on it.
 

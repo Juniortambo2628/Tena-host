@@ -38,6 +38,10 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
         'last_login',
+        'billing_plan',
+        'billing_units',
+        'billing_extra_devices',
+        'billing_cycle',
     ];
 
     protected $hidden = [
@@ -49,6 +53,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'last_login' => 'datetime',
+        'billing_units' => 'integer',
+        'billing_extra_devices' => 'integer',
         'two_factor_enabled' => 'boolean',
         'two_factor_secret' => 'encrypted',
         'two_factor_recovery_codes' => 'encrypted:array',
