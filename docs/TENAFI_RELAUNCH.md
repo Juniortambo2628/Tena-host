@@ -86,6 +86,7 @@ from anything that already works, and to badge anything else on the pages that i
 | Feature | Status | Evidence |
 | --- | --- | --- |
 | WiFi login guest capture | live | `WifiPortalController`, `GuestCaptureService`. First name and WhatsApp number required, email optional; consent wording and timestamp stored per guest; optional marketing opt-in; one-tap reconnect for returning devices |
+| WhatsApp and SMS messaging | live once configured | `App\Services\Messaging\Messenger` with Africa's Talking SMS and the WhatsApp Cloud API. Campaigns can be Email, WhatsApp or SMS; WhatsApp falls back to SMS. Needs the `.env` keys below |
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
 | Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
@@ -122,6 +123,12 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 - The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
 
 ## Still needed before launch
+
+- Messaging credentials in production `.env`:
+  - `SMS_DRIVER=africastalking`, `AFRICASTALKING_USERNAME`, `AFRICASTALKING_API_KEY`, and an approved sender ID in `AFRICASTALKING_FROM`
+  - `WHATSAPP_DRIVER=whatsapp_cloud`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`
+  - `WHATSAPP_TEMPLATE`: a Meta-approved template whose body is just `{{1}}`. Business-started WhatsApp messages need one.
+- Campaigns only reach WiFi guests who ticked "Send me offers". Guests added by hand or by PMS sync have no consent record and are included, so the host is responsible for those.
 
 - Upload TenaFi brand assets: logo, og:image, and the product mockups above.
   Most images in `/legacy/assets` still show the old "Tena" wordmark.

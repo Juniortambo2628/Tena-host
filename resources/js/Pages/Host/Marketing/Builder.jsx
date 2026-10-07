@@ -7,6 +7,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import {
     Mail,
     MessageSquare,
+    MessageCircle,
     Zap,
     Users,
     Clock,
@@ -18,6 +19,13 @@ import {
     ArrowLeft
 } from 'lucide-react';
 import './Builder.css';
+
+// WhatsApp falls back to SMS when it can't be delivered (see Messenger).
+const CHANNELS = [
+    { value: 'email', label: 'Email', Icon: Mail },
+    { value: 'whatsapp', label: 'WhatsApp', Icon: MessageCircle },
+    { value: 'sms', label: 'SMS', Icon: MessageSquare },
+];
 
 export default function MarketingBuilder({ campaign, properties }) {
     const isEditing = !!campaign;
@@ -99,22 +107,17 @@ export default function MarketingBuilder({ campaign, properties }) {
                         <GlassCard padding="host-builder-card">
                             <h4 className="host-builder-card-title-mb6">Campaign Type</h4>
                             <div className="host-builder-type-grid">
-                                <button
-                                    type="button"
-                                    onClick={() => setData('type', 'email')}
-                                    className={`host-builder-type-btn ${data.type === 'email' ? 'host-builder-type-btn-active' : 'host-builder-type-btn-inactive'}`}
-                                >
-                                    <Mail size={20} />
-                                    <span className="host-builder-type-label">Email</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setData('type', 'sms')}
-                                    className={`host-builder-type-btn ${data.type === 'sms' ? 'host-builder-type-btn-active' : 'host-builder-type-btn-inactive'}`}
-                                >
-                                    <MessageSquare size={20} />
-                                    <span className="host-builder-type-label">SMS</span>
-                                </button>
+                                {CHANNELS.map(({ value, label, Icon }) => (
+                                    <button
+                                        key={value}
+                                        type="button"
+                                        onClick={() => setData('type', value)}
+                                        className={`host-builder-type-btn ${data.type === value ? 'host-builder-type-btn-active' : 'host-builder-type-btn-inactive'}`}
+                                    >
+                                        <Icon size={20} />
+                                        <span className="host-builder-type-label">{label}</span>
+                                    </button>
+                                ))}
                             </div>
                         </GlassCard>
 
@@ -212,7 +215,7 @@ export default function MarketingBuilder({ campaign, properties }) {
                                                     <p className="host-builder-sms-text">
                                                         {data.content || "Hey {guest_name}! Welcome to {property_name}. Use code TENA15 for 15% off!"}
                                                     </p>
-                                                    <span className="host-builder-sms-footer">Sent via Tena Automation</span>
+                                                    <span className="host-builder-sms-footer">{data.type === 'whatsapp' ? 'WhatsApp' : 'SMS'} · Sent via TenaFi</span>
                                                 </div>
                                             </div>
                                         )}

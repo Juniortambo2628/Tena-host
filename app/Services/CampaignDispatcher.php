@@ -5,22 +5,14 @@ namespace App\Services;
 use App\Mail\CampaignEmail;
 use App\Models\Campaign;
 use App\Models\Guest;
+use App\Services\Messaging\Messenger;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CampaignDispatcher
 {
-    protected SmsDriverInterface $smsDriver;
-
-    public function __construct()
-    {
-        $driverClass = config('services.sms.driver');
-
-        $this->smsDriver = $driverClass && class_exists($driverClass)
-            ? app($driverClass)
-            : new NullSmsDriver;
-    }
+    public function __construct(protected Messenger $messenger) {}
 
     /**
      * Deliver a campaign to a single guest.
@@ -43,30 +35,19 @@ class CampaignDispatcher
                 return true;
             }
 
-            if ($campaign->type === 'sms') {
-                if (! $guest->phone) {
-                    Log::warning('Campaign SMS skipped: guest has no phone', [
-                        'campaign_id' => $campaign->id,
-                        'guest_id' => $guest->id,
-                    ]);
-
-                    return false;
-                }
-
-                $message = $this->personalizeContent($campaign->content ?? '', $guest);
-                $result = $this->smsDriver->send($guest->phone, $message);
+            if (in_array($campaign->type, Messenger::CHANNELS, true)) {
+                $result = $this->messenger->toGuest($guest, $campaign->type, $campaign->content ?? '');
 
                 if (! $result['success']) {
-                    Log::error('Campaign SMS failed', [
+                    Log::warning('Campaign message not sent', [
                         'campaign_id' => $campaign->id,
                         'guest_id' => $guest->id,
+                        'channel' => $result['channel'],
                         'error' => $result['message'] ?? 'Unknown error',
                     ]);
-
-                    return false;
                 }
 
-                return true;
+                return $result['success'];
             }
 
             return false;
@@ -96,6 +77,10 @@ class CampaignDispatcher
             $query->where('property_id', $campaign->property_id);
         }
 
+        // Campaigns are direct marketing: guests who gave contact consent at
+        // WiFi login but didn't opt in to offers are left out (Kenya Data Protection Act, 2019).
+        $query->where(fn ($q) => $q->whereNull('consented_at')->orWhere('marketing_opt_in', true));
+
         if ($campaign->audience_from) {
             $query->whereDate('created_at', '>=', $campaign->audience_from);
         }
@@ -105,20 +90,5 @@ class CampaignDispatcher
         }
 
         return $query->get();
-    }
-
-    /**
-     * Personalize campaign content for a guest.
-     */
-    protected function personalizeContent(string $content, Guest $guest): string
-    {
-        $replacements = [
-            '%FIRSTNAME%' => $guest->first_name,
-            '%LASTNAME%' => $guest->last_name,
-            '%EMAIL%' => $guest->email,
-            '%PROPERTY%' => $guest->property?->name ?? '',
-        ];
-
-        return strtr($content, $replacements);
     }
 }

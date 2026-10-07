@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Mail\OtpMail;
 use App\Models\Otp;
+use App\Services\Messaging\Messenger;
+use App\Support\Phone;
 use Illuminate\Support\Facades\Mail;
 
 class OtpService
@@ -61,9 +63,6 @@ class OtpService
             return;
         }
 
-        // For phone numbers, use configured SMS driver.
-        $driverClass = config('services.sms.driver', NullSmsDriver::class);
-        $driver = app($driverClass);
-        $driver->send($otp->identifier, "Your TENA verification code is: {$otp->code}");
+        app(Messenger::class)->send('sms', Phone::toE164($otp->identifier), "Your TenaFi verification code is: {$otp->code}");
     }
 }
