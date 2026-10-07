@@ -45,11 +45,19 @@ export default function GuestShow({ guest }) {
                         <div className="space-y-6">
                             <div>
                                 <label className="host-guests-show-label">Email Address</label>
-                                <p className="host-guests-show-value">{guest.email}</p>
+                                <p className="host-guests-show-value">{guest.email || 'Not provided'}</p>
                             </div>
                             <div>
                                 <label className="host-guests-show-label">Phone Number</label>
                                 <p className="host-guests-show-value">{guest.phone || 'Not provided'}</p>
+                            </div>
+                            <div>
+                                <label className="host-guests-show-label">Consent</label>
+                                <p className="host-guests-show-value">
+                                    {guest.consented_at ? `Agreed ${new Date(guest.consented_at).toLocaleDateString()}` : 'Not recorded'}
+                                    {guest.marketing_opt_in ? ' · Opted in to offers' : ''}
+                                </p>
+                                {guest.consent_text && <p className="host-guests-show-address-note">“{guest.consent_text}”</p>}
                             </div>
                             <div>
                                 <label className="host-guests-show-label">Associated Property</label>

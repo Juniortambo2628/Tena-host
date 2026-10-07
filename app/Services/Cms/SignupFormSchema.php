@@ -3,6 +3,7 @@
 namespace App\Services\Cms;
 
 use App\Models\LandingSection;
+use App\Support\Phone;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
@@ -82,37 +83,18 @@ class SignupFormSchema
     }
 
     /**
-     * Phone numbers are stored in E.164. Kenyan numbers may arrive as
-     * "0712 345 678", "712345678" or "254712345678".
-     */
-    public static function normalizePhone(?string $phone): ?string
-    {
-        if ($phone === null || trim($phone) === '') {
-            return null;
-        }
-
-        $digits = preg_replace('/\D+/', '', $phone);
-
-        return match (true) {
-            str_starts_with(trim($phone), '+') => '+'.$digits,
-            str_starts_with($digits, '254') => '+'.$digits,
-            default => '+254'.ltrim($digits, '0'),
-        };
-    }
-
-    /**
      * Normalise input before validation (phone formats, trimmed strings).
      */
     public function prepare(array $input): array
     {
         foreach ($this->fields as $key => $field) {
             if (($field['type'] ?? null) === 'tel' && isset($input[$key]) && is_string($input[$key])) {
-                $input[$key] = static::normalizePhone($input[$key]);
+                $input[$key] = Phone::toE164($input[$key]);
             }
         }
 
         if (isset($input['phone']) && is_string($input['phone'])) {
-            $input['phone'] = static::normalizePhone($input['phone']);
+            $input['phone'] = Phone::toE164($input['phone']);
         }
 
         return $input;

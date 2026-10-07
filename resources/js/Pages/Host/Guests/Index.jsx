@@ -240,7 +240,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                                         </td>
                                         <td className="host-guests-table-cell">
                                             <div className="flex flex-col gap-1">
-                                                <span className="host-guests-email">{guest.email}</span>
+                                                <span className="host-guests-email">{guest.email || 'No email'}</span>
                                                 <span className="host-guests-phone">{guest.phone || 'No phone'}</span>
                                             </div>
                                         </td>

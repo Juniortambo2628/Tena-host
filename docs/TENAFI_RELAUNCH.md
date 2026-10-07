@@ -85,6 +85,7 @@ from anything that already works, and to badge anything else on the pages that i
 
 | Feature | Status | Evidence |
 | --- | --- | --- |
+| WiFi login guest capture | live | `WifiPortalController`, `GuestCaptureService`. First name and WhatsApp number required, email optional; consent wording and timestamp stored per guest; optional marketing opt-in; one-tap reconnect for returning devices |
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
 | Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |

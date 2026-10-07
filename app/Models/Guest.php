@@ -23,6 +23,10 @@ class Guest extends Model
         'last_connected',
         'total_visits',
         'source',
+        'marketing_opt_in',
+        'consent_text',
+        'consented_at',
+        'device_mac',
         'external_id',
         'check_in',
         'check_out',
@@ -30,6 +34,8 @@ class Guest extends Model
 
     protected $casts = [
         'last_connected' => 'datetime',
+        'consented_at' => 'datetime',
+        'marketing_opt_in' => 'boolean',
         'check_in' => 'date',
         'check_out' => 'date',
     ];
