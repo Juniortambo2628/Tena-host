@@ -95,8 +95,8 @@ from anything that already works, and to badge anything else on the pages that i
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
 | Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
 | Monthly report | coming soon | not built |
-| Occupancy alerts | coming soon | only the `occupancy_threshold` field exists; no alerting |
-| Outage alerts | coming soon | not built |
+| Occupancy alerts | **live** | `PropertyMonitorService` (`alerts:check`, every 5 min): more distinct guests in 12 hours than the property's limit alerts the host on the dashboard and WhatsApp/SMS, at most once a day. Rental hosts only |
+| Outage alerts | **live** | `alerts:check`: AP status from the UniFi controller (`stat/device`), else last seen. Offline more than 10 min alerts the host once, then a recovery notice |
 | Business customer homepage | coming soon | not built (the portal is property-centric) |
 | Tena Direct page | coming soon | not built |
 | Free / VIP WiFi tiers | coming soon | not built |

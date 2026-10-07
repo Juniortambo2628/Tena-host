@@ -32,6 +32,7 @@ class Property extends Model
         'review_requests_enabled',
         'review_request_delay_hours',
         'review_message',
+        'occupancy_alerted_at',
     ];
 
     protected $casts = [
@@ -39,6 +40,7 @@ class Property extends Model
         'pms_last_sync_at' => 'datetime',
         'review_requests_enabled' => 'boolean',
         'review_request_delay_hours' => 'integer',
+        'occupancy_alerted_at' => 'datetime',
     ];
 
     protected $with = [

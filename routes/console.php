@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 // Needs the server cron: * * * * * php artisan schedule:run
 Schedule::command('reviews:send')->hourly()->withoutOverlapping();
+Schedule::command('alerts:check')->everyFiveMinutes()->withoutOverlapping();

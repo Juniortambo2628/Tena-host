@@ -82,6 +82,14 @@ class NotificationService
         );
     }
 
+    /**
+     * An alert about one of the host's properties (outage, occupancy).
+     */
+    public static function propertyAlert(Property $property, string $type, string $title, string $message, array $data = []): ?Notification
+    {
+        return self::create($property->user_id, $type, $title, $message, ['property_id' => $property->id] + $data);
+    }
+
     public static function systemAlert(string $title, string $message, int $userId): ?Notification
     {
         return self::create(
@@ -144,6 +152,9 @@ class NotificationService
             'campaign_completed' => 'user',
             'order_placed' => 'user',
             'system_alert' => 'system',
+            'outage_alert' => 'property',
+            'outage_resolved' => 'property',
+            'occupancy_alert' => 'property',
         ];
 
         return $map[$type] ?? 'system';
