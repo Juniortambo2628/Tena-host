@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Head, useForm, router } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -31,6 +31,7 @@ const CHANNELS = [
 
 export default function MarketingBuilder({ campaign, properties }) {
     const t = useTerms();
+
     const isEditing = !!campaign;
 
     const { data, setData, post, put, processing } = useForm({
@@ -48,6 +49,23 @@ export default function MarketingBuilder({ campaign, properties }) {
         scheduled_at: campaign?.scheduled_at || '',
         status: campaign?.status || 'draft',
     });
+
+    // Live "Estimated reach": the same audience query sending uses.
+    const [reach, setReach] = useState(null);
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            window.axios.get(route('host.marketing.estimate'), {
+                params: {
+                    type: data.type,
+                    target_audience: data.target_audience,
+                    audience_property_id: data.audience_property_id === 'all' ? null : data.audience_property_id || null,
+                    audience_from: data.audience_from || null,
+                    audience_to: data.audience_to || null,
+                },
+            }).then(({ data: res }) => setReach(res.count)).catch(() => setReach(null));
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [data.type, data.target_audience, data.audience_property_id, data.audience_from, data.audience_to]);
 
     const [activeTab, setActiveTab] = useState('design');
 
@@ -285,8 +303,8 @@ export default function MarketingBuilder({ campaign, properties }) {
 
                                             <div className="host-builder-audience-estimate">
                                                 <p className="host-builder-audience-estimate-label">Estimated Reach</p>
-                                                <p className="host-builder-audience-estimate-value"><T>~150 guests</T></p>
-                                                <p className="host-builder-audience-estimate-note">Based on current filters</p>
+                                                <p className="host-builder-audience-estimate-value">{reach === null ? '…' : t(`${reach.toLocaleString()} guest${reach === 1 ? '' : 's'}`)}</p>
+                                                <p className="host-builder-audience-estimate-note">Opted in, with {data.type === 'email' ? 'an email address' : 'a phone number'}, matching these filters</p>
                                             </div>
                                         </div>
                                     </div>

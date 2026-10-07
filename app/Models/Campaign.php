@@ -28,6 +28,8 @@ class Campaign extends Model
         'total_sent',
         'total_opened',
         'total_clicked',
+        'activated_at',
+        'sent_at',
     ];
 
     protected $casts = [
@@ -37,6 +39,8 @@ class Campaign extends Model
         'audience_from' => 'date',
         'audience_to' => 'date',
         'scheduled_at' => 'datetime',
+        'activated_at' => 'datetime',
+        'sent_at' => 'datetime',
     ];
 
     public function user()
@@ -47,6 +51,11 @@ class Campaign extends Model
     public function property()
     {
         return $this->belongsTo(Property::class);
+    }
+
+    public function recipients()
+    {
+        return $this->hasMany(CampaignRecipient::class);
     }
 
     public function events()

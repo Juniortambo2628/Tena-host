@@ -31,6 +31,7 @@ class Guest extends Model
         'review_clicked_at',
         'birthday',
         'birthday_sent_year',
+        'notes',
         'external_id',
         'check_in',
         'check_out',
@@ -68,5 +69,10 @@ class Guest extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function campaignRecipients()
+    {
+        return $this->hasMany(CampaignRecipient::class);
     }
 }

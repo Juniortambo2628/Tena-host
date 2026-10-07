@@ -101,29 +101,35 @@ export function extractItems(section, prefix, fields) {
  */
 export function sanitizeHtml(html) {
     if (!html || typeof html !== 'string') return '';
-    const textarea = typeof document !== 'undefined' ? document.createElement('textarea') : null;
-    let decoded = html;
-    if (textarea) {
-        textarea.innerHTML = html;
-        decoded = textarea.value;
-    } else {
-        decoded = decoded
-            .replace(/&amp;/g, '&')
+    const decode = (value) => {
+        if (typeof document !== 'undefined') {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = value;
+            return textarea.value;
+        }
+        return value
             .replace(/&lt;/g, '<')
             .replace(/&gt;/g, '>')
             .replace(/&quot;/g, '"')
-            .replace(/&#039;/g, "'")
-            .replace(/&nbsp;/g, ' ');
-    }
-    return decoded.replace(/&nbsp;/g, ' ');
+            .replace(/&#0?39;/g, "'")
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&');
+    };
+    // Editor content can arrive escaped twice ("&lt;p&gt;…&amp;nbsp;").
+    let decoded = decode(html);
+    if (/&(lt|gt|amp|nbsp|quot|#0?39);/.test(decoded)) decoded = decode(decoded);
+    // Non-breaking spaces from the rich-text editor stop text from wrapping.
+    return decoded.replace(/&nbsp;|\u00a0/g, ' ');
 }
 
 /**
- * Decode HTML entities and strip all tags, collapsing whitespace.
- * Use this for slots the component renders as plain text but that the
- * admin CMS may have saved via a rich text editor (which wraps content
- * in `<p>` and encodes spaces as `&nbsp;`).
+ * A CMS field as plain text: for pills, buttons and other single-line
+ * slots that must never show markup.
  */
+export function getText(section, key, fallback = '') {
+    return stripHtml(getContent(section, key, fallback));
+}
+
 export function stripHtml(html) {
     if (!html || typeof html !== 'string') return '';
     const decoded = sanitizeHtml(html);

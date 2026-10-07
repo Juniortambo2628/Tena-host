@@ -173,7 +173,7 @@
 }
 
 .host-marketing-index-suggestion {
-    @apply flex items-center justify-between cursor-pointer;
+    @apply flex flex-col items-start gap-1 cursor-pointer;
 }
 
 .host-marketing-index-suggestion-text {

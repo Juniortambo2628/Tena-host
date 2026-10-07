@@ -1,19 +1,20 @@
 import React from 'react';
-import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml } from '@/lib/cms';
+import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, getText } from '@/lib/cms';
 import { SkeletonHero } from './Skeleton';
 import CtaLink from '@/Components/Public/CtaLink';
+import FitText from '@/Components/Public/FitText';
 import './Hero.css';
 
 export default function Hero({ section }) {
     if (!section) return <SkeletonHero />;
 
-    const badge = getContent(section, 'badge', "Africa's guest relationship platform");
+    const badge = getText(section, 'badge', "Africa's guest relationship platform");
     const title = getContent(section, 'title', 'Turn your existing WiFi into <span class="text-[#FFD300]">growth</span>.');
     const subtitle = getContent(section, 'subtitle', '');
-    const ctaPrimary = getContent(section, 'cta_primary', 'Join');
+    const ctaPrimary = getText(section, 'cta_primary', 'Join');
     // Empty URL = this page's "Join" target (its sign-up form).
     const ctaPrimaryUrl = getContent(section, 'cta_primary_url', '');
-    const ctaSecondary = getContent(section, 'cta_secondary', 'How it works');
+    const ctaSecondary = getText(section, 'cta_secondary', 'How it works');
     const body = getContent(section, 'body', '');
     const note = stripHtml(getContent(section, 'note', ''));
     const ctaSecondaryUrl = getContent(section, 'cta_secondary_url', '#how-it-works');
@@ -32,7 +33,7 @@ export default function Hero({ section }) {
                     <div className="hero-content">
                         <div className="hero-text">
                             <div className="hero-badge-wrap">
-                                <span className="hero-badge">{badge}</span>
+                                <FitText className="hero-badge" max={14} min={10}>{badge}</FitText>
                             </div>
                             <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: sanitizeHtml(title) }} />
                             <p className="hero-subtitle" dangerouslySetInnerHTML={{ __html: sanitizeHtml(subtitle) }} />

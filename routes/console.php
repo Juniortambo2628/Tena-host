@@ -13,3 +13,6 @@ Schedule::command('reviews:send')->hourly()->withoutOverlapping();
 Schedule::command('alerts:check')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('reports:monthly')->monthlyOn(1, '08:00')->timezone('Africa/Nairobi');
 Schedule::command('birthdays:send')->dailyAt('09:00')->timezone('Africa/Nairobi');
+Schedule::command('campaigns:run')->everyFiveMinutes()->withoutOverlapping();
+// Bookings also arrive by PMS webhook; this catches anything missed.
+Schedule::command('pms:sync-guests')->hourly()->withoutOverlapping();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getContent, getMedia, extractItems } from '@/lib/cms';
+import { getContent, getMedia, extractItems, getText } from '@/lib/cms';
 import { SectionWrapper } from './layouts';
 import './PartnersCarousel.css';
 
@@ -15,8 +15,8 @@ const defaultPartners = [
 export default function PartnersCarousel({ section }) {
     if (!section) return null;
 
-    const title = getContent(section, 'title', 'Trusted by hosts and partners across Africa');
-    const subtitle = getContent(section, 'subtitle', '');
+    const title = getText(section, 'title', 'Trusted by hosts and partners across Africa');
+    const subtitle = getText(section, 'subtitle', '');
 
     const cmsPartners = extractItems(section, 'partners', ['name', 'url']);
     const partners = (cmsPartners.length > 0 ? cmsPartners : defaultPartners).map((partner, i) => ({

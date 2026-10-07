@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\SendCampaignJob;
 use App\Models\Campaign;
 use App\Models\MarketingEvent;
+use App\Services\CampaignAutomation;
 use App\Services\CampaignDispatcher;
+use App\Services\MarketingInsights;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,9 @@ class MarketingController extends Controller
                     : ($c->updated_at->isYesterday() ? 'Yesterday' : $c->updated_at->format('M j')),
             ]);
 
+        $reachable = app(CampaignDispatcher::class)
+            ->audienceQuery(new Campaign(['user_id' => Auth::id(), 'type' => 'whatsapp']))->count();
+
         $totalSent = Campaign::where('user_id', Auth::id())->sum('total_sent');
         $totalOpened = Campaign::where('user_id', Auth::id())->sum('total_opened');
         $totalClicked = Campaign::where('user_id', Auth::id())->sum('total_clicked');
@@ -47,9 +51,33 @@ class MarketingController extends Controller
                 'totalSent' => $totalSent,
                 'avgOpenRate' => $totalSent > 0 ? round(($totalOpened / $totalSent) * 100, 1).'%' : '0%',
                 'clicks' => $totalClicked,
-                'revenue' => '$0.00',
+                'reachable' => $reachable,
             ],
+            'insights' => app(MarketingInsights::class)->forHost(Auth::user()),
+            'triggers' => collect([CampaignAutomation::CONNECTS, CampaignAutomation::BEFORE_ARRIVAL, CampaignAutomation::CHECKOUT_DAY])
+                ->map(fn ($trigger) => [
+                    'title' => $trigger,
+                    'active' => Campaign::where('user_id', Auth::id())->where('status', 'active')->where('trigger_event', $trigger)->count(),
+                ])->all(),
         ]);
+    }
+
+    /**
+     * How many guests a draft campaign would reach (builder "Estimated reach").
+     */
+    public function estimate(Request $request, CampaignDispatcher $dispatcher)
+    {
+        $data = $request->validate([
+            'type' => 'required|in:email,sms,whatsapp',
+            'target_audience' => 'nullable|string|max:32',
+            'audience_property_id' => 'nullable|integer',
+            'audience_from' => 'nullable|date',
+            'audience_to' => 'nullable|date',
+        ]);
+
+        $campaign = new Campaign($data + ['user_id' => Auth::id()]);
+
+        return response()->json(['count' => $dispatcher->audienceQuery($campaign)->count()]);
     }
 
     /**
@@ -148,16 +176,15 @@ class MarketingController extends Controller
             return redirect()->back()->with('info', 'Campaign is already active.');
         }
 
-        $campaign->update(['status' => 'active']);
+        $queued = app(CampaignAutomation::class)->activate($campaign);
 
-        $dispatcher = app(CampaignDispatcher::class);
-        $guests = $dispatcher->audience($campaign);
+        $message = match (true) {
+            ! CampaignAutomation::isBroadcast($campaign) => 'Campaign is live. Each guest gets it after "'.$campaign->trigger_event.'".',
+            $queued === 0 && $campaign->scheduled_at?->isFuture() => 'Campaign scheduled for '.$campaign->scheduled_at->format('j M Y, H:i').'.',
+            default => "Campaign activated. {$queued} guests queued for delivery.",
+        };
 
-        foreach ($guests as $guest) {
-            SendCampaignJob::dispatch($campaign, $guest);
-        }
-
-        return redirect()->back()->with('success', "Campaign activated. {$guests->count()} guests queued for delivery.");
+        return redirect()->back()->with('success', $message);
     }
 
     /**
