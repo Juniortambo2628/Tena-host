@@ -70,6 +70,9 @@ return [
         'language' => env('WHATSAPP_TEMPLATE_LANGUAGE', 'en'),
         'api_version' => env('WHATSAPP_API_VERSION', 'v21.0'),
         'fallback_to_sms' => env('WHATSAPP_FALLBACK_TO_SMS', true),
+        // Webhook (replies, STOP, read receipts): /api/whatsapp/webhook
+        'verify_token' => env('WHATSAPP_VERIFY_TOKEN'),
+        'app_secret' => env('WHATSAPP_APP_SECRET'),
     ],
 
     'pms' => [

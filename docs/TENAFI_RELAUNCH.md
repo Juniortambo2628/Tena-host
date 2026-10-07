@@ -144,7 +144,8 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 - Campaigns only reach WiFi guests who ticked "Send me offers". Guests added by hand or by PMS sync have no consent record and are included, so the host is responsible for those.
 
 - The app now uses a TenaFi wordmark (`public/brand/`, built from Glen's yellow logo pill) via `App\Support\Brand`. Admin → Settings → site name and logo override it everywhere: dashboard, auth pages, guest portal, captive portal, emails and favicon. Upload the official logo there when it's final, plus the og:image and the product mockups above.
-- The seeded Privacy, Terms and DPA documents still say "Tena Host" and use tena.host addresses. Replace them in Admin → Policies with the TenaFi versions.
+- The policy documents (Privacy, Terms, Cookies, Refunds, Acceptable Use, DPA) are now TenaFi drafts (`database/policies/tenafi.php`, v2.0). They cover the Kenya Data Protection Act, WiFi guest data, STOP opt-out, M-Pesa extras and sub-processors. Have counsel review them, then edit in Admin → Policies.
+- WhatsApp webhook: in the Meta app, set the callback URL to `/api/whatsapp/webhook`, with `WHATSAPP_VERIFY_TOKEN` and `WHATSAPP_APP_SECRET` in `.env`, and subscribe to messages. For SMS STOP, point the Africa's Talking incoming-messages callback at `/api/sms/inbound`.
 - Publish the Privacy and Terms policies in Admin → Policies. Unpublished ones return 404.
 - Confirm PMS sync works in production, or set it back to "coming soon".
 - `public/index.php` points at the production `tena-core` layout. Confirm it matches the tena-fi.com host.

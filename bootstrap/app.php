@@ -40,6 +40,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'portal/connect',
             // Safaricom posts M-Pesa results server-to-server (no session).
             'api/mpesa/*',
+            'api/whatsapp/*',
+            'api/sms/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
