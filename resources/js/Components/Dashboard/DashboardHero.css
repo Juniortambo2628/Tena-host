@@ -1,7 +1,8 @@
 @reference "tailwindcss";
 
 .dashboard-hero {
-    @apply sticky top-0 z-20 -mx-10 px-10 py-4 mb-6 bg-[#FDFCF7]/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+    top: var(--dashboard-header-h, 0px);
+    @apply sticky z-20 -mx-10 px-10 py-4 mb-6 bg-[#FDFCF7]/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
 }
 
 .dashboard-hero__header {

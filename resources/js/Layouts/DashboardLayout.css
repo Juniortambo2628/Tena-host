@@ -104,9 +104,14 @@
 
 .dashboard-layout__scroller {
     @apply flex-1 overflow-y-auto flex flex-col;
+    /* Height of the sticky header (toggle h-12 + py-4 + 1px border). Sticky
+       elements below it (DashboardHero) offset by this so they never slide
+       underneath the frosted header. */
+    --dashboard-header-h: calc(3rem + 2rem + 1px);
 }
 
 .dashboard-layout__header {
+    min-height: var(--dashboard-header-h);
     @apply px-8 py-4 flex justify-between items-center sticky top-0 z-[60] bg-[#FDFCF7]/60 backdrop-blur-md border-b border-black/5 transition-all duration-300;
 }
 
@@ -120,10 +125,6 @@
 
 .dashboard-layout__sidebar-toggle-icon {
     @apply text-black/60;
-}
-
-.dashboard-layout__nav-heading {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/20 transform rotate-90 hidden md:block;
 }
 
 .dashboard-layout__header-right {
