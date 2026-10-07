@@ -204,7 +204,7 @@ it('shows "Coming soon" only for features that are not live', function () {
     $live = $status->filter(fn ($v, $k) => str_ends_with($k, '.status') && $v === 'live')
         ->keys()->map(fn ($k) => $status[str_replace('.status', '.key', $k)])->values()->all();
 
-    expect($live)->toEqualCanonicalizing(['guest_homepage', 'pms_sync', 'outage_alerts', 'occupancy_alerts']);
+    expect($live)->toEqualCanonicalizing(['guest_homepage', 'pms_sync', 'outage_alerts', 'occupancy_alerts', 'monthly_report']);
 });
 
 /*

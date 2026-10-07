@@ -118,7 +118,7 @@ return [
                     ['key' => 'guest_homepage', 'label' => 'Guest homepage (house guide, local tips)', 'status' => 'live'],
                     ['key' => 'pms_sync', 'label' => 'PMS / channel manager sync', 'status' => 'live'],
                     ['key' => 'mpesa_extras', 'label' => 'Paid extras by M-Pesa on the guest homepage', 'status' => 'coming_soon'],
-                    ['key' => 'monthly_report', 'label' => 'Monthly report', 'status' => 'coming_soon'],
+                    ['key' => 'monthly_report', 'label' => 'Monthly report', 'status' => 'live'],
                     ['key' => 'occupancy_alerts', 'label' => 'Occupancy alerts', 'status' => 'live'],
                     ['key' => 'outage_alerts', 'label' => 'Outage alerts', 'status' => 'live'],
                     ['key' => 'business_homepage', 'label' => 'Business customer homepage (menu, offers)', 'status' => 'coming_soon'],

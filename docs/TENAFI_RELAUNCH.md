@@ -94,7 +94,7 @@ from anything that already works, and to badge anything else on the pages that i
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
 | Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
-| Monthly report | coming soon | not built |
+| Monthly report | **live** | `MonthlyReportService` (`reports:monthly`, 1st of the month at 08:00 Nairobi): new and returning guests, campaign messages, review requests and opens. Sent by email plus a WhatsApp summary to Starter and Growth (to everyone while billing is off). Direct bookings get added once Tena Direct exists |
 | Occupancy alerts | **live** | `PropertyMonitorService` (`alerts:check`, every 5 min): more distinct guests in 12 hours than the property's limit alerts the host on the dashboard and WhatsApp/SMS, at most once a day. Rental hosts only |
 | Outage alerts | **live** | `alerts:check`: AP status from the UniFi controller (`stat/device`), else last seen. Offline more than 10 min alerts the host once, then a recovery notice |
 | Business customer homepage | coming soon | not built (the portal is property-centric) |
