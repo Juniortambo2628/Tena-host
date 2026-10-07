@@ -42,13 +42,18 @@ const FIELD_OPTIONS = {
     highlight: YES_NO,
 };
 
+const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'login_label', 'join_label']);
+
 function detectFieldType(key, value) {
     const lowerKey = key.toLowerCase();
     if (FIELD_OPTIONS[lowerKey]) return 'select';
+    // Single-line slots (pills, button labels) stay plain text: a rich
+    // editor would save <p> and &nbsp; into them.
+    if (PLAIN_TEXT_KEYS.has(lowerKey) || /(^|_)(badge|label|button|cta)$/.test(lowerKey)) return 'text';
     if (lowerKey.includes('icon')) return 'icon';
     if (lowerKey === 'media_type') return 'select';
     if (lowerKey === 'description' || lowerKey === 'text' || lowerKey === 'body') return 'richtext';
-    if (lowerKey === 'cta_text' || lowerKey === 'badge' || lowerKey === 'subtitle') return 'richtext';
+    if (lowerKey === 'subtitle') return 'richtext';
     if (typeof value === 'string' && value.startsWith('[')) return 'json_array';
     if (typeof value === 'string' && value.includes('<')) return 'html';
     if (typeof value === 'string' && value.length > 120) return 'textarea';

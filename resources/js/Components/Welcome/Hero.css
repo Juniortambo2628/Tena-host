@@ -4,8 +4,9 @@
     @apply pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-44 bg-gray-50;
 }
 
+/* Wider than the page's other sections so the two columns have room. */
 .hero-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8;
 }
 
 .hero-main-card {
@@ -20,12 +21,14 @@
     @apply w-full lg:w-1/2 min-w-0;
 }
 
+/* The pill always stays on one line inside the text column (FitText
+   shrinks the font to fit). */
 .hero-badge-wrap {
-    @apply mb-6;
+    @apply mb-6 min-w-0;
 }
 
 .hero-badge {
-    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide;
+    @apply inline-block align-top bg-[#1b1b1b] text-[#FFD300] font-bold px-5 py-2.5 rounded-full tracking-wide;
 }
 
 .hero-title {
@@ -120,6 +123,17 @@
 
 .hero-body {
     @apply -mt-4 mb-8 text-base text-[#5B6170] leading-relaxed;
+}
+
+/* Rich text from the CMS editor must wrap inside the text column, even
+   when it carries inline styles or highlights. */
+.hero-subtitle,
+.hero-body,
+.hero-subtitle *,
+.hero-body * {
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    max-width: 100%;
 }
 
 .hero-note {

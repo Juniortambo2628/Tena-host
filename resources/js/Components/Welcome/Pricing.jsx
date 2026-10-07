@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SectionWrapper, SectionHeader } from './layouts';
-import { getContent, extractItems, sanitizeHtml, stripHtml, isTruthy } from '@/lib/cms';
+import { getContent, extractItems, sanitizeHtml, stripHtml, isTruthy, getText } from '@/lib/cms';
 import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
 import { SkeletonSectionHeader, SkeletonPricingGrid } from './Skeleton';
@@ -78,11 +78,11 @@ export default function Pricing({ section }) {
     const footnote = getContent(section, 'footnote', '');
     const showContactForm = isTruthy(getContent(section, 'show_contact_form', '0'));
 
-    const ctaLabel = getContent(section, 'cta_label', '');
-    const ctaHeadline = getContent(section, 'cta_headline', '');
-    const ctaIntro = getContent(section, 'cta_intro', '');
-    const ctaClosing = getContent(section, 'cta_closing', '');
-    const ctaButton = getContent(section, 'cta_button', 'Join');
+    const ctaLabel = getText(section, 'cta_label', '');
+    const ctaHeadline = getText(section, 'cta_headline', '');
+    const ctaIntro = getText(section, 'cta_intro', '');
+    const ctaClosing = getText(section, 'cta_closing', '');
+    const ctaButton = getText(section, 'cta_button', 'Join');
 
     return (
         <SectionWrapper bg={section.bg || 'gray'}>
