@@ -33,6 +33,9 @@ class Property extends Model
         'review_request_delay_hours',
         'review_message',
         'occupancy_alerted_at',
+        'offers',
+        'events',
+        'birthday_offer',
     ];
 
     protected $casts = [

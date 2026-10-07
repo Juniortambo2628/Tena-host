@@ -5,10 +5,10 @@ import './Edit.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { ArrowLeft, Loader2, Star } from 'lucide-react';
+import { ArrowLeft, Loader2, Star, Store } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 
-export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {} }) {
+export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
     const { data, setData, post, processing, errors } = useForm({
         name: property.name || '',
         address: property.address || '',
@@ -19,6 +19,9 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         review_url: property.review_url || '',
         review_request_delay_hours: property.review_request_delay_hours || 24,
         review_message: property.review_message || '',
+        offers: property.offers || '',
+        events: property.events || '',
+        birthday_offer: property.birthday_offer || '',
         _method: 'patch',
     });
 
@@ -164,6 +167,38 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                 {errors.review_message && <p className="host-properties-edit-error">{errors.review_message}</p>}
                             </div>
                         </fieldset>
+
+                        {venueUrl && (
+                            <fieldset className="host-properties-edit-section">
+                                <legend className="host-properties-edit-section-title">
+                                    <Store size={14} /> Customer homepage
+                                </legend>
+                                <p className="host-properties-edit-hint">
+                                    Customers see this right after connecting: your menu (active amenities), offers and events.{' '}
+                                    <a href={venueUrl} target="_blank" rel="noopener" className="underline">Preview it</a>.
+                                </p>
+                                {[
+                                    ['offers', 'Offers', 'One per line, e.g. 2-for-1 cappuccinos before 10am'],
+                                    ['events', 'Events', 'One per line, e.g. Live music, Friday 7pm'],
+                                    ['birthday_offer', 'Birthday treat', 'Happy birthday {guest_name}! Show this for a free slice of cake at {property_name} this week.'],
+                                ].map(([key, label, placeholder]) => (
+                                    <div key={key}>
+                                        <label className="host-properties-edit-label">{label}</label>
+                                        <textarea
+                                            rows="3"
+                                            className="host-properties-edit-input resize-none"
+                                            placeholder={placeholder}
+                                            value={data[key]}
+                                            onChange={e => setData(key, e.target.value)}
+                                        />
+                                        {errors[key] && <p className="host-properties-edit-error">{errors[key]}</p>}
+                                    </div>
+                                ))}
+                                <p className="host-properties-edit-hint">
+                                    Birthday treats go out on WhatsApp on the customer's birthday, to customers who gave a birthday and opted in to offers. Leave it empty to turn them off.
+                                </p>
+                            </fieldset>
+                        )}
 
                         <div className="host-properties-edit-actions">
                             <PillButton

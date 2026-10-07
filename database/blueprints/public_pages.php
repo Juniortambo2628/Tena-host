@@ -121,7 +121,7 @@ return [
                     ['key' => 'monthly_report', 'label' => 'Monthly report', 'status' => 'live'],
                     ['key' => 'occupancy_alerts', 'label' => 'Occupancy alerts', 'status' => 'live'],
                     ['key' => 'outage_alerts', 'label' => 'Outage alerts', 'status' => 'live'],
-                    ['key' => 'business_homepage', 'label' => 'Business customer homepage (menu, offers)', 'status' => 'coming_soon'],
+                    ['key' => 'business_homepage', 'label' => 'Business customer homepage (menu, offers)', 'status' => 'live'],
                     ['key' => 'tena_direct', 'label' => 'Tena Direct booking page', 'status' => 'coming_soon'],
                     ['key' => 'vip_wifi', 'label' => 'Free and VIP WiFi tiers', 'status' => 'coming_soon'],
                 ],

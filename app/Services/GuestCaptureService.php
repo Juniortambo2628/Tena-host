@@ -39,6 +39,9 @@ class GuestCaptureService
             'marketing_opt_in' => $guest->marketing_opt_in || ! empty($data['marketing_opt_in']),
             'consent_text' => $consentText,
             'consented_at' => now(),
+            'birthday' => filled($data['birthday_month'] ?? null)
+                ? sprintf('%02d-%02d', $data['birthday_month'], $data['birthday_day'])
+                : $guest->birthday,
         ]);
 
         $this->recordVisit($guest, $deviceMac);

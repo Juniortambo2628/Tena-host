@@ -71,6 +71,8 @@ class WifiPortalController extends Controller
                 'email' => 'nullable|email|max:150',
                 'consent' => 'accepted',
                 'marketing_opt_in' => 'nullable|boolean',
+                'birthday_month' => 'nullable|integer|between:1,12|required_with:birthday_day',
+                'birthday_day' => 'nullable|integer|between:1,31|required_with:birthday_month',
             ], [
                 'first_name.required' => 'Please add your first name.',
                 'phone.required' => 'Please add your WhatsApp number.',
@@ -80,7 +82,7 @@ class WifiPortalController extends Controller
             if ($validator->fails()) {
                 return response()->view('portal.splash', $context + [
                     'errors' => $validator->errors(),
-                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in'),
+                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in', 'birthday_month', 'birthday_day'),
                 ], 422);
             }
 
@@ -117,6 +119,11 @@ class WifiPortalController extends Controller
         if (! empty($data['ap'])) {
             AccessPoint::where('mac_address', $this->unifi->normalizeMac($data['ap']))
                 ->update(['last_seen' => now(), 'status' => 'online']);
+        }
+
+        // Business customers land on the business's homepage (menu, offers).
+        if ($context['property']?->host?->isBusiness()) {
+            return redirect()->route('venue.show', $context['property']);
         }
 
         // Send the device back to where it was headed, or to a success page.
@@ -159,6 +166,7 @@ class WifiPortalController extends Controller
             'deviceMac' => $deviceMac,
             'returningGuest' => $property ? $this->guests->findReturning($property, $deviceMac) : null,
             'consentText' => static::consentText($propertyName),
+            'isBusiness' => (bool) $property?->host?->isBusiness(),
         ];
     }
 

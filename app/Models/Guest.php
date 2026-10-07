@@ -29,6 +29,8 @@ class Guest extends Model
         'device_mac',
         'review_requested_at',
         'review_clicked_at',
+        'birthday',
+        'birthday_sent_year',
         'external_id',
         'check_in',
         'check_out',

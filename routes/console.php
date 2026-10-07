@@ -12,3 +12,4 @@ Artisan::command('inspire', function () {
 Schedule::command('reviews:send')->hourly()->withoutOverlapping();
 Schedule::command('alerts:check')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('reports:monthly')->monthlyOn(1, '08:00')->timezone('Africa/Nairobi');
+Schedule::command('birthdays:send')->dailyAt('09:00')->timezone('Africa/Nairobi');

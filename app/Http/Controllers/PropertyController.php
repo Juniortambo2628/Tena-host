@@ -38,6 +38,7 @@ class PropertyController extends Controller
         return Inertia::render('Host/Properties/Edit', [
             'property' => $property,
             'reviewDefaults' => ['message' => ReviewRequestService::defaultMessage($property)],
+            'venueUrl' => $property->host?->isBusiness() ? route('venue.show', $property) : null,
             'reviewStats' => [
                 'requested' => $property->guests()->whereNotNull('review_requested_at')->count(),
                 'clicked' => $property->guests()->whereNotNull('review_clicked_at')->count(),
@@ -101,6 +102,9 @@ class PropertyController extends Controller
             'splash_image' => 'nullable|image|max:2048',
             'review_url' => 'nullable|url:https|max:500|required_if_accepted:review_requests_enabled',
             'review_requests_enabled' => 'sometimes|boolean',
+            'offers' => 'nullable|string|max:2000',
+            'events' => 'nullable|string|max:2000',
+            'birthday_offer' => 'nullable|string|max:500',
             'review_request_delay_hours' => 'sometimes|integer|min:1|max:168',
             'review_message' => ['nullable', 'string', 'max:500', function ($attribute, $value, $fail) {
                 if ($value && ! str_contains($value, '{review_link}')) {

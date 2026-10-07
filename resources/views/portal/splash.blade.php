@@ -60,6 +60,27 @@
                     @if($fieldError('email'))<small class="field-error">{{ $fieldError('email') }}</small>@endif
                 </label>
 
+                @if($isBusiness)
+                    <div class="field">
+                        <span>Birthday <em>(optional, for a treat on your day)</em></span>
+                        <span class="birthday">
+                            <select name="birthday_day" aria-label="Day">
+                                <option value="">Day</option>
+                                @for($d = 1; $d <= 31; $d++)
+                                    <option value="{{ $d }}" @selected((int) ($old['birthday_day'] ?? 0) === $d)>{{ $d }}</option>
+                                @endfor
+                            </select>
+                            <select name="birthday_month" aria-label="Month">
+                                <option value="">Month</option>
+                                @foreach(range(1, 12) as $m)
+                                    <option value="{{ $m }}" @selected((int) ($old['birthday_month'] ?? 0) === $m)>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
+                                @endforeach
+                            </select>
+                        </span>
+                        @if($fieldError('birthday_day') ?: $fieldError('birthday_month'))<small class="field-error">Pick both a day and a month.</small>@endif
+                    </div>
+                @endif
+
                 <label class="check">
                     <input type="checkbox" name="consent" value="1" required>
                     <span>{{ $consentText }} <a href="{{ url('/privacy') }}" target="_blank" rel="noopener">Read it</a>.</span>

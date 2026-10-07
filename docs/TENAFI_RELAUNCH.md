@@ -93,13 +93,13 @@ from anything that already works, and to badge anything else on the pages that i
 | Business owners in the dashboard | live | `users.account_type` (`host` or `business`), set from the sign-up type or Admin → Users → "Business owner". Same dashboard, with "customers" and "locations" wording (`Components/Dashboard/Terms.jsx`) and a visit-based review message. Admin → Hosts shows type and plan |
 | Guest homepage (house guide, local tips) | live | `GuestPortalController`, `Guest/Guidebook` |
 | PMS / channel manager sync | **live (badge removed)** | Beds24, Cloudbeds and Hostaway drivers, `SyncPmsGuests`, PMS webhook. Confirm it works in production. |
-| Paid extras by M-Pesa | coming soon | M-Pesa is used for host billing only; guest orders don't take payment |
+| Paid extras by M-Pesa | coming soon | **Needs a decision**: guest payments through TenaFi's paybill (TenaFi collects and settles with hosts) or each host's own till (each host needs Daraja credentials). Guest orders already exist without payment |
 | Monthly report | **live** | `MonthlyReportService` (`reports:monthly`, 1st of the month at 08:00 Nairobi): new and returning guests, campaign messages, review requests and opens. Sent by email plus a WhatsApp summary to Starter and Growth (to everyone while billing is off). Direct bookings get added once Tena Direct exists |
 | Occupancy alerts | **live** | `PropertyMonitorService` (`alerts:check`, every 5 min): more distinct guests in 12 hours than the property's limit alerts the host on the dashboard and WhatsApp/SMS, at most once a day. Rental hosts only |
 | Outage alerts | **live** | `alerts:check`: AP status from the UniFi controller (`stat/device`), else last seen. Offline more than 10 min alerts the host once, then a recovery notice |
-| Business customer homepage | coming soon | not built (the portal is property-centric) |
-| Tena Direct page | coming soon | not built |
-| Free / VIP WiFi tiers | coming soon | not built |
+| Business customer homepage | **live** | `/places/{id}` (`VenueController`): menu (active amenities), offers and events, edited under Properties → Edit → Customer homepage. Business customers land there after connecting. An optional birthday at WiFi login triggers `birthdays:send` (daily 09:00): the business's birthday treat on WhatsApp, once a year, to opted-in customers |
+| Tena Direct page | coming soon | not built. It's a booking engine (availability, rates, payments), a project of its own |
+| Free / VIP WiFi tiers | coming soon | not built. Needs UniFi bandwidth profiles or vouchers per tier, plus pricing for VIP |
 
 Flip any of these under Site-wide → Feature status, and every badge on every page updates.
 

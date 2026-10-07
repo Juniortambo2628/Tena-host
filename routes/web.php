@@ -33,6 +33,7 @@ use App\Http\Controllers\SignupController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TrackController;
+use App\Http\Controllers\VenueController;
 use App\Http\Controllers\WifiPortalController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\LandingPage;
@@ -261,6 +262,9 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
 });
+
+// Business customer homepage (menu, offers, events).
+Route::get('/places/{property}', [VenueController::class, 'show'])->whereNumber('property')->name('venue.show');
 
 // Short review link sent to guests (counts the click, then redirects).
 Route::get('/r/{token}', ReviewLinkController::class)->where('token', '[A-Za-z0-9]{8}')->name('reviews.go');

@@ -26,7 +26,7 @@
     .field { display: block; margin-bottom: 14px; }
     .field > span:first-child { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
     .field em { font-weight: 400; font-style: normal; color: var(--muted); }
-    input[type=text], input[type=email], input[type=tel] {
+    input[type=text], input[type=email], input[type=tel], select {
         width: 100%; font-size: 16px; padding: 13px 14px; border: 1px solid var(--line);
         border-radius: 12px; background: #fff; color: var(--ink); -webkit-appearance: none;
     }
@@ -35,6 +35,7 @@
     .tel { display: flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
     .tel input { border: 0; border-radius: 0; }
     .tel:has(input[aria-invalid=true]) { border-color: var(--danger); }
+    .birthday { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
     .tel-prefix { display: flex; align-items: center; padding: 0 12px; background: var(--bg); font-weight: 600; color: var(--muted); border-right: 1px solid var(--line); }
     .check { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.45; color: var(--muted); margin: 6px 0 12px; }
     .check input { width: 20px; height: 20px; margin: 0; flex: none; accent-color: var(--ink); }
