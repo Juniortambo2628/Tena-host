@@ -12,12 +12,20 @@ use Inertia\Inertia;
 
 class RegistrationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $registrations = Registration::latest()->paginate(15);
+        $type = in_array($request->query('type'), Registration::TYPES, true) ? $request->query('type') : null;
+
+        $registrations = Registration::query()
+            ->when($type, fn ($q) => $q->where('type', $type))
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Admin/Registrations/Index', [
             'registrations' => $registrations,
+            'filters' => ['type' => $type],
+            'typeCounts' => Registration::selectRaw('type, count(*) as total')->groupBy('type')->pluck('total', 'type'),
         ]);
     }
 

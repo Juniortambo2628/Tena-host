@@ -6,7 +6,8 @@ import { notify } from '@/Components/Toast';
 import { GripVertical, Eye } from 'lucide-react';
 import './Index.css';
 
-export default function Index({ sections: initialSections, mediaConfig }) {
+export default function Index({ pages = [], currentPage, sections: initialSections, mediaConfig }) {
+    const activePage = pages.find((p) => p.slug === currentPage);
     const [sections, setSections] = useState(initialSections);
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -61,28 +62,44 @@ export default function Index({ sections: initialSections, mediaConfig }) {
     };
 
     const handleSectionUpdate = useCallback(() => {
-        router.reload({ only: ['sections'], preserveScroll: true });
+        router.reload({ only: ['sections'], data: { page: currentPage }, preserveScroll: true });
     }, []);
 
     return (
         <PageShell
-            title="Landing Page CMS"
-            subtitle="Manage all public landing page content, images, and section ordering"
-            headTitle="Landing Page CMS"
-            breadcrumbs={[{ label: 'Landing Page', href: route('admin.landing.index') }]}
+            title="Public Pages CMS"
+            subtitle="Manage content, images and section order for every public page"
+            headTitle="Public Pages CMS"
+            breadcrumbs={[{ label: 'Public Pages', href: route('admin.landing.index') }]}
             rootRoute="admin.dashboard"
-            actions={[
+            actions={activePage?.url ? [
                 {
                     label: 'View Live Page',
-                    onClick: () => window.open('/', '_blank'),
+                    onClick: () => window.open(activePage.url, '_blank'),
                     variant: 'ghost',
                     icon: <Eye size={14} />,
                 },
-            ]}
+            ] : []}
         >
-            <Head title="Landing Page CMS" />
+            <Head title="Public Pages CMS" />
 
             <div className="landing-cms">
+                <div className="landing-cms__pages" role="tablist" aria-label="Pages">
+                    {pages.map((p) => (
+                        <button
+                            key={p.slug}
+                            type="button"
+                            role="tab"
+                            aria-selected={p.slug === currentPage}
+                            className={`landing-cms__page-tab ${p.slug === currentPage ? 'landing-cms__page-tab--active' : ''}`}
+                            onClick={() => router.get(route('admin.landing.index'), { page: p.slug }, { preserveScroll: true })}
+                        >
+                            <span className="landing-cms__page-tab-name">{p.name}</span>
+                            <span className="landing-cms__page-tab-url">{p.url || 'shared by all pages'}</span>
+                        </button>
+                    ))}
+                </div>
+
                 <div className="landing-cms__header">
                     <div className="landing-cms__header-info">
                         <p className="landing-cms__header-text">

@@ -5,7 +5,9 @@ import './ROICalculator.css';
 
 export default function ROICalculator({ section }) {
     const title = section ? getContent(section, 'title', 'Return on Investment Calculator') : 'Return on Investment Calculator';
-    const subtitle = section ? getContent(section, 'subtitle', 'Answer a few simple questions to calculate how much more you could be earning with direct bookings through Tena.') : '';
+    const subtitle = section ? getContent(section, 'subtitle', 'Answer a few simple questions to see what direct bookings through TenaFi could be worth.') : '';
+    // Platform fee avoided on a direct booking, as a percentage (CMS: commission_rate).
+    const commissionRate = (parseFloat(getContent(section, 'commission_rate', '15')) || 15) / 100;
 
     const [values, setValues] = useState({
         listings: 1,
@@ -49,7 +51,7 @@ export default function ROICalculator({ section }) {
             const nights = 30;
             const monthlyGross = listings * adr * nights * occupancy;
             const monthlyDirect = monthlyGross * direct;
-            const otaFeeAvoided = monthlyDirect * 0.20;
+            const otaFeeAvoided = monthlyDirect * commissionRate;
 
             const netBenefit = otaFeeAvoided;
             const annual = netBenefit * 12;
@@ -64,7 +66,7 @@ export default function ROICalculator({ section }) {
         };
 
         calculateROI();
-    }, [values]);
+    }, [values, commissionRate]);
 
     const formatCurrency = (val) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);

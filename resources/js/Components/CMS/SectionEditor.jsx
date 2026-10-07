@@ -27,14 +27,30 @@ function groupContentKeys(content) {
     return { simple, arrays };
 }
 
+const opts = (...values) => values.map((v) => (typeof v === 'string' ? { value: v, label: v } : v));
+const YES_NO = opts({ value: '1', label: 'Yes' }, { value: '0', label: 'No' });
+
+// Content keys with a fixed set of values get a dropdown instead of free text.
+const FIELD_OPTIONS = {
+    status: opts({ value: 'live', label: 'Live (no badge)' }, { value: 'coming_soon', label: 'Coming soon' }),
+    signup_type: opts('host', 'business'),
+    variant: opts('dark', 'outline'),
+    bg: opts('white', 'gray', 'dark'),
+    symbol: opts('sparkles', 'zap', 'award', 'clock'),
+    reverse: YES_NO,
+    show_contact_form: YES_NO,
+};
+
 function detectFieldType(key, value) {
     const lowerKey = key.toLowerCase();
+    if (FIELD_OPTIONS[lowerKey]) return 'select';
     if (lowerKey.includes('icon')) return 'icon';
     if (lowerKey === 'media_type') return 'select';
     if (lowerKey === 'description' || lowerKey === 'text' || lowerKey === 'body') return 'richtext';
     if (lowerKey === 'cta_text' || lowerKey === 'badge' || lowerKey === 'subtitle') return 'richtext';
     if (typeof value === 'string' && value.startsWith('[')) return 'json_array';
     if (typeof value === 'string' && value.includes('<')) return 'html';
+    if (typeof value === 'string' && value.length > 120) return 'textarea';
     return 'text';
 }
 
@@ -218,6 +234,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                         value={value}
                         onChange={(v) => handleContentChange(key, v)}
                         type={detectFieldType(key, value)}
+                        options={FIELD_OPTIONS[key.toLowerCase()]}
                         rows={typeof value === 'string' && value.length > 100 ? 4 : 2}
                     />
                 ))}
@@ -259,6 +276,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                                                 value={value}
                                                 onChange={(v) => handleContentChange(key, v)}
                                                 type={fieldType}
+                                                options={FIELD_OPTIONS[field.toLowerCase()]}
                                                 rows={field === 'description' || field === 'desc' ? 3 : 2}
                                             />
                                         );

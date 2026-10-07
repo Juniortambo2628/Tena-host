@@ -141,3 +141,30 @@ export function extractJsonItems(section, key) {
         return [];
     }
 }
+
+/**
+ * Map of feature key => status from the site-wide "feature_status" section
+ * (e.g. { occupancy_alerts: 'coming_soon', pms_sync: 'live' }).
+ */
+export function getFeatureStatus(site) {
+    const items = extractItems(site?.feature_status, 'items', ['key', 'status']);
+    return Object.fromEntries(items.map((item) => [item.key, item.status]));
+}
+
+/**
+ * Badge text for a feature that is not live yet, or null when it is live
+ * (or when the row is not tied to a feature at all).
+ */
+export function comingSoonBadge(site, featureKey) {
+    if (!featureKey) return null;
+    const status = getFeatureStatus(site)[featureKey];
+    if (status === 'live') return null;
+    return stripHtml(getContent(site?.feature_status, 'badge_label', 'Coming soon'));
+}
+
+/**
+ * True for CMS "boolean" text values ('1', 'true', 'yes', 'on').
+ */
+export function isTruthy(value) {
+    return ['1', 'true', 'yes', 'on'].includes(String(value ?? '').trim().toLowerCase());
+}

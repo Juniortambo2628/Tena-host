@@ -140,6 +140,8 @@ export default function Index({ settings }) {
             site_name: flattened.site_name || 'Tena Platform',
             maintenance_mode: flattened.maintenance_mode || '0',
             support_email: flattened.support_email || 'support@tena.com',
+            signup_alert_emails: flattened.signup_alert_emails || '',
+            signup_alert_webhook_url: flattened.signup_alert_webhook_url || '',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || '#FFD300',
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -295,6 +297,23 @@ export default function Index({ settings }) {
                                             type="email"
                                             value={data.settings.support_email}
                                             onChange={(e) => updateSetting('support_email', e.target.value)}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Sign-up alert emails" hint="Comma-separated. Every new host/business sign-up is emailed here. Empty = support email.">
+                                        <TextInput
+                                            value={data.settings.signup_alert_emails}
+                                            placeholder="glen@tena-fi.com, ops@tena-fi.com"
+                                            onChange={(e) => updateSetting('signup_alert_emails', e.target.value)}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Sign-up alert webhook (optional)" hint="Receives a JSON POST per sign-up. Connect it to Zapier / Make / Twilio to forward alerts to WhatsApp.">
+                                        <TextInput
+                                            type="url"
+                                            value={data.settings.signup_alert_webhook_url}
+                                            placeholder="https://hooks.zapier.com/..."
+                                            onChange={(e) => updateSetting('signup_alert_webhook_url', e.target.value)}
                                         />
                                     </FormField>
 

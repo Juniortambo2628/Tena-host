@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\NotificationPreference;
 use App\Models\Order;
 use App\Models\Property;
+use App\Models\Registration;
 use App\Models\User;
 
 class NotificationService
@@ -89,6 +90,20 @@ class NotificationService
             $title,
             $message
         );
+    }
+
+    /**
+     * Tell every admin about a new public sign-up.
+     */
+    public static function signupReceived(Registration $registration): void
+    {
+        User::where('role', 'admin')->pluck('id')->each(fn ($adminId) => self::create(
+            $adminId,
+            'signup_received',
+            'New '.$registration->type.' sign-up',
+            trim("{$registration->first_name} {$registration->last_name}").($registration->business_name ? " ({$registration->business_name})" : '').' applied via /'.$registration->source_page.'.',
+            ['registration_id' => $registration->id, 'type' => $registration->type]
+        ));
     }
 
     private static function create(int $userId, string $type, string $title, string $message, array $data = []): ?Notification

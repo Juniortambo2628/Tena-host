@@ -10,7 +10,15 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { CheckCircle2, XCircle, Trash2 } from 'lucide-react';
 import './Index.css';
 
-export default function RegistrationIndex({ registrations }) {
+const TYPE_TABS = [
+    { value: null, label: 'All' },
+    { value: 'host', label: 'Hosts' },
+    { value: 'business', label: 'Businesses' },
+];
+
+const humanize = (key) => key.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+export default function RegistrationIndex({ registrations, filters = {}, typeCounts = {} }) {
     const [selectedIds, setSelectedIds] = useState([]);
     const { confirm, ConfirmDialogEl } = useConfirm();
 
@@ -79,18 +87,64 @@ export default function RegistrationIndex({ registrations }) {
             ),
         },
         {
-            key: 'property_type',
-            label: 'Property Type',
+            key: 'type',
+            label: 'Type',
             render: (item) => (
-                <span className="registrations-page__property-type">{item.property_type}</span>
+                <span className={`registrations-page__type registrations-page__type--${item.type}`}>{item.type}</span>
             ),
+        },
+        {
+            key: 'business',
+            label: 'Business / Property',
+            render: (item) => (
+                <span className="registrations-page__property-type">
+                    {item.business_name || item.answers?.business_type || item.property_type}
+                </span>
+            ),
+        },
+        {
+            key: 'location',
+            label: 'Location',
+            render: (item) => <span className="registrations-page__units">{item.location || '-'}</span>,
         },
         {
             key: 'units',
             label: 'Units',
             render: (item) => (
-                <span className="registrations-page__units">{item.units}</span>
+                <span className="registrations-page__units">{item.units || item.answers?.branches || '-'}</span>
             ),
+        },
+        {
+            key: 'phone',
+            label: 'Phone',
+            detailOnly: true,
+            render: (item) => item.phone || '-',
+        },
+        {
+            key: 'answers',
+            label: 'Other answers',
+            detailOnly: true,
+            render: (item) => {
+                const rows = Object.entries({
+                    primary_platform: item.primary_platform,
+                    biggest_challenge: item.biggest_challenge,
+                    referral_source: item.referral_source,
+                    ...(item.answers || {}),
+                }).filter(([, v]) => v !== null && v !== undefined && v !== '');
+                return rows.length ? (
+                    <ul className="registrations-page__answers">
+                        {rows.map(([k, v]) => <li key={k}><strong>{humanize(k)}:</strong> {Array.isArray(v) ? v.join(', ') : String(v)}</li>)}
+                    </ul>
+                ) : '-';
+            },
+        },
+        {
+            key: 'consent',
+            label: 'Consent',
+            detailOnly: true,
+            render: (item) => item.consented_at
+                ? <span className="registrations-page__consent">{new Date(item.consented_at).toLocaleString()} via /{item.source_page}: “{item.consent_text}”</span>
+                : '-',
         },
         {
             key: 'status',
@@ -170,8 +224,8 @@ export default function RegistrationIndex({ registrations }) {
 
     return (
         <PageShell
-            title="Waitlist Registrations"
-            breadcrumbs={[{ label: 'Registrations' }]}
+            title="Sign-ups"
+            breadcrumbs={[{ label: 'Sign-ups' }]}
             rootRoute="admin.dashboard"
             stats={[
                 { label: 'Total', value: registrations.total },
@@ -179,6 +233,24 @@ export default function RegistrationIndex({ registrations }) {
                 { label: 'Converted', value: registrations.data.filter(r => r.status === 'converted').length },
             ]}
         >
+            <div className="registrations-page__tabs" role="tablist">
+                {TYPE_TABS.map((tab) => {
+                    const count = tab.value ? (typeCounts[tab.value] || 0) : Object.values(typeCounts).reduce((a, b) => a + Number(b), 0);
+                    return (
+                        <button
+                            key={tab.label}
+                            type="button"
+                            role="tab"
+                            aria-selected={filters.type === tab.value}
+                            className={`registrations-page__tab ${(filters.type ?? null) === tab.value ? 'registrations-page__tab--active' : ''}`}
+                            onClick={() => router.get(route('admin.registrations.index'), tab.value ? { type: tab.value } : {}, { preserveScroll: true })}
+                        >
+                            {tab.label} <span className="registrations-page__tab-count">{count}</span>
+                        </button>
+                    );
+                })}
+            </div>
+
             <GlassCard padding="p-0 overflow-hidden">
                 <ResponsiveTable
                     data={registrations.data}

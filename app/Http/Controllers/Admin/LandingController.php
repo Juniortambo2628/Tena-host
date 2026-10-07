@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\LandingContent;
 use App\Models\LandingMedia;
+use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
@@ -20,9 +21,13 @@ class LandingController extends Controller
     /**
      * Display the landing page CMS editor.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $pages = LandingPage::orderBy('sort_order')->get(['id', 'slug', 'name', 'is_routable']);
+        $currentPage = $pages->firstWhere('slug', $request->query('page')) ?? $pages->first();
+
         $sections = LandingSection::with(['contents', 'media'])
+            ->where('page_id', $currentPage?->id)
             ->orderBy('sort_order')
             ->get()
             ->map(fn ($section) => [
@@ -51,6 +56,12 @@ class LandingController extends Controller
             ]);
 
         return Inertia::render('Admin/Landing/Index', [
+            'pages' => $pages->map(fn ($p) => [
+                'slug' => $p->slug,
+                'name' => $p->name,
+                'url' => $p->is_routable ? ($p->slug === 'home' ? '/' : "/{$p->slug}") : null,
+            ]),
+            'currentPage' => $currentPage?->slug,
             'sections' => $sections,
             'mediaConfig' => [
                 'maxSize' => MediaUploadService::getMaxFileSize(),
@@ -88,6 +99,11 @@ class LandingController extends Controller
             'order' => 'required|array',
             'order.*' => 'required|integer|exists:landing_sections,id',
         ]);
+
+        // Sorting is per page; refuse a mixed list rather than interleave pages.
+        if (LandingSection::whereIn('id', $request->order)->distinct()->count('page_id') > 1) {
+            return back()->with('error', 'Sections from different pages cannot be reordered together.');
+        }
 
         foreach ($request->order as $index => $sectionId) {
             LandingSection::where('id', $sectionId)->update(['sort_order' => $index]);
@@ -308,13 +324,5 @@ class LandingController extends Controller
             ]);
 
         return response()->json($media);
-    }
-
-    /**
-     * Get public landing page data (for the frontend).
-     */
-    public static function getPublicData(): array
-    {
-        return LandingSection::getActiveSections();
     }
 }

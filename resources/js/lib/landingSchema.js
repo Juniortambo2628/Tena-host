@@ -68,6 +68,28 @@ export const SECTION_MEDIA_SCHEMA = {
         slots: [],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n} logo'),
     },
+
+    path_cards: {
+        slots: [],
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'cards', 'card_{i}_image', 'Card {n} image'),
+    },
+
+    seo: {
+        slots: [
+            { key: 'og_image', label: 'Social share image', description: 'Shown when the page is shared on WhatsApp, LinkedIn, X, etc. 1200×630 recommended. Leave empty on a page to use the site-wide image.' },
+        ],
+    },
+
+    header: {
+        slots: [
+            { key: 'logo', label: 'Site logo', description: 'TenaFi logo used in the header and footer of every public page.' },
+        ],
+    },
+
+    signup: { slots: [] },
+    plans: { slots: [] },
+    footer: { slots: [] },
+    feature_status: { slots: [] },
 };
 
 function featureSlots(contentKeys, arrName, keyPattern, labelPattern) {

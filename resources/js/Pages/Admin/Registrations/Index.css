@@ -115,3 +115,39 @@
 .registrations-page__page-link--disabled {
     @apply text-black/30 bg-black/5 cursor-not-allowed;
 }
+
+.registrations-page__tabs {
+    @apply mb-4 flex flex-wrap gap-2;
+}
+
+.registrations-page__tab {
+    @apply inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black/60 transition hover:border-[#FFD300];
+}
+
+.registrations-page__tab--active {
+    @apply border-[#FFD300] bg-[#FFD300]/15 text-black;
+}
+
+.registrations-page__tab-count {
+    @apply rounded-full bg-black/5 px-2 text-xs;
+}
+
+.registrations-page__type {
+    @apply inline-block rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide;
+}
+
+.registrations-page__type--host {
+    @apply bg-blue-50 text-blue-700;
+}
+
+.registrations-page__type--business {
+    @apply bg-amber-50 text-amber-700;
+}
+
+.registrations-page__answers {
+    @apply space-y-1 text-left text-sm;
+}
+
+.registrations-page__consent {
+    @apply text-xs text-black/60;
+}

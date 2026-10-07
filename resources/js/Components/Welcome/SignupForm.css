@@ -1,0 +1,131 @@
+@reference "tailwindcss";
+
+.signup-card {
+    @apply rounded-3xl border border-gray-100 bg-white p-6 shadow-xl sm:p-10;
+}
+
+.signup-progress {
+    @apply mb-8 flex items-center gap-2 sm:gap-4;
+}
+
+.signup-progress li {
+    @apply flex flex-1 items-center gap-2 text-sm font-semibold text-gray-400;
+}
+
+.signup-progress-num {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-gray-200 text-xs;
+}
+
+.signup-progress-title {
+    @apply hidden sm:inline;
+}
+
+.signup-progress li.is-current {
+    @apply text-black;
+}
+
+.signup-progress li.is-current .signup-progress-num {
+    @apply border-[#FFD300] bg-[#FFD300] text-black;
+}
+
+.signup-progress li.is-done .signup-progress-num {
+    @apply border-black bg-black text-[#FFD300];
+}
+
+.signup-step-desc {
+    @apply -mt-4 mb-6 text-sm text-gray-500;
+}
+
+.signup-fields {
+    @apply grid grid-cols-1 gap-5 sm:grid-cols-2;
+}
+
+.signup-field {
+    @apply flex flex-col gap-1.5;
+}
+
+.signup-field--wide {
+    @apply sm:col-span-2;
+}
+
+.signup-label {
+    @apply text-sm font-semibold text-gray-800;
+}
+
+.signup-required {
+    @apply text-red-500;
+}
+
+.signup-input {
+    @apply w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-base text-black transition focus:border-[#FFD300] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#FFD300]/40;
+}
+
+.signup-input[aria-invalid='true'] {
+    @apply border-red-400;
+}
+
+.signup-radio-group {
+    @apply flex flex-wrap gap-2;
+}
+
+.signup-radio {
+    @apply cursor-pointer rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:border-[#FFD300];
+}
+
+.signup-radio input {
+    @apply sr-only;
+}
+
+.signup-radio.is-selected {
+    @apply border-black bg-black text-[#FFD300];
+}
+
+.signup-checkbox,
+.signup-consent {
+    @apply mt-6 flex items-start gap-3 text-sm text-gray-600 leading-relaxed;
+}
+
+.signup-consent input,
+.signup-checkbox input {
+    @apply mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-black focus:ring-[#FFD300];
+}
+
+.signup-consent a {
+    @apply font-semibold underline decoration-[#FFD300] underline-offset-2;
+}
+
+.signup-error {
+    @apply mt-1 text-xs font-medium text-red-600;
+}
+
+.signup-form-error {
+    @apply mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700;
+}
+
+.signup-actions {
+    @apply mt-8 flex items-center justify-between gap-4;
+}
+
+.signup-btn-back {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-gray-600 hover:text-black;
+}
+
+.signup-btn-next {
+    @apply ml-auto inline-flex items-center gap-2 rounded-full bg-[#1b1b1b] px-8 py-3.5 text-sm font-bold text-[#FFD300] transition hover:bg-[#FFD300] hover:text-black disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+.signup-success {
+    @apply flex flex-col items-center py-8 text-center;
+}
+
+.signup-success-icon {
+    @apply mb-4 text-green-500;
+}
+
+.signup-success h3 {
+    @apply text-2xl font-black text-black;
+}
+
+.signup-success p {
+    @apply mt-2 max-w-md text-gray-600;
+}

@@ -20,6 +20,8 @@ export default function ResponsiveTable({
 }) {
     const [menuOpen, setMenuOpen] = useState(null);
     const [detailItem, setDetailItem] = useState(null);
+    // Columns flagged `detailOnly` appear in the detail modal but not the grid.
+    const tableColumns = columns.filter((col) => !col.detailOnly);
     const [searchQuery, setSearchQuery] = useState('');
 
     const toggleMenu = (id) => {
@@ -92,7 +94,7 @@ export default function ResponsiveTable({
                                     />
                                 </th>
                             )}
-                            {columns.map((col) => (
+                            {tableColumns.map((col) => (
                                 <th key={col.key} className="responsive-table__head-cell">
                                     {col.label}
                                 </th>
@@ -115,7 +117,7 @@ export default function ResponsiveTable({
                                         />
                                     </td>
                                 )}
-                                {columns.map((col) => (
+                                {tableColumns.map((col) => (
                                     <td key={col.key} className="responsive-table__cell">
                                         {col.render ? col.render(item) : item[col.key]}
                                     </td>
@@ -203,7 +205,7 @@ export default function ResponsiveTable({
                                 )}
                             </div>
                         </div>
-                        {columns.slice(0, 2).map((col) => (
+                        {tableColumns.slice(0, 2).map((col) => (
                             <div key={col.key} className="responsive-table__card-field">
                                 <span className="responsive-table__card-label">{col.label}</span>
                                 <span className="responsive-table__card-value">

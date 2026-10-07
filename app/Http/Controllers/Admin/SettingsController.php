@@ -47,6 +47,8 @@ class SettingsController extends Controller
             'contact_enquiry_heading' => 'sometimes|string|max:255',
             'contact_enquiry_body' => 'sometimes|string|max:5000',
             'billing_enabled' => 'sometimes|in:auto,enabled,disabled',
+            'signup_alert_emails' => 'sometimes|nullable|string|max:500',
+            'signup_alert_webhook_url' => 'sometimes|nullable|url|max:500',
         ];
 
         $types = [

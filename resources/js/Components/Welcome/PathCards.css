@@ -1,0 +1,45 @@
+@reference "tailwindcss";
+
+.path-cards-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto;
+}
+
+.path-card {
+    @apply flex flex-col overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:border-[#FFD300];
+}
+
+.path-card-image-wrap {
+    @apply aspect-[16/9] overflow-hidden bg-gray-100;
+}
+
+.path-card-image-wrap img {
+    @apply h-full w-full object-cover transition duration-500;
+}
+
+.path-card-body {
+    @apply flex flex-1 flex-col p-8;
+}
+
+.path-card-label {
+    @apply text-xs font-bold uppercase tracking-widest text-gray-500;
+}
+
+.path-card-title {
+    @apply mt-2 text-2xl font-black text-black;
+}
+
+.path-card-desc {
+    @apply mt-3 flex-1 text-gray-600 leading-relaxed;
+}
+
+.path-card-cta {
+    @apply mt-6 inline-flex items-center gap-2 self-start rounded-full bg-[#1b1b1b] px-6 py-3 text-sm font-bold text-[#FFD300] transition;
+}
+
+.path-card:hover .path-card-image-wrap img {
+    @apply scale-105;
+}
+
+.path-card:hover .path-card-cta {
+    @apply bg-[#FFD300] text-black;
+}

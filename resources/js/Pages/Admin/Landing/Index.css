@@ -55,3 +55,23 @@
 .landing-cms__footer-text {
     @apply text-[10px] font-bold text-black/30 uppercase tracking-widest;
 }
+
+.landing-cms__pages {
+    @apply mb-6 grid grid-cols-2 gap-2 lg:grid-cols-4;
+}
+
+.landing-cms__page-tab {
+    @apply flex flex-col items-start rounded-xl border border-black/10 bg-white px-4 py-3 text-left text-black transition hover:border-[#FFD300];
+}
+
+.landing-cms__page-tab--active {
+    @apply border-[#FFD300] bg-[#FFD300]/10;
+}
+
+.landing-cms__page-tab-name {
+    @apply text-sm font-semibold;
+}
+
+.landing-cms__page-tab-url {
+    @apply text-xs text-black/50;
+}

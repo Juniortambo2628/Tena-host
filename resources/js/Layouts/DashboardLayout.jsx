@@ -49,9 +49,9 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
         { name: 'Overview', icon: LayoutDashboard, route: 'admin.dashboard' },
         { name: 'Hosts', icon: Building2, route: 'admin.hosts.index' },
         { name: 'Users', icon: Users, route: 'admin.users.index' },
-        { name: 'Registrations', icon: AlignLeft, route: 'admin.registrations.index' },
+        { name: 'Sign-ups', icon: AlignLeft, route: 'admin.registrations.index' },
         { name: 'Payments', icon: CreditCard, route: 'admin.payments.index' },
-        { name: 'Landing Page', icon: Globe, route: 'admin.landing.index' },
+        { name: 'Public Pages', icon: Globe, route: 'admin.landing.index' },
         { name: 'Policies', icon: FileText, route: 'admin.policies.index' },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
         { name: 'WiFi Portal', icon: Wifi, route: 'admin.wifi.edit' },
@@ -492,7 +492,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                                                 <>
                                                                     <CommandItem icon={<Building2 size={14} />} label="Manage Hosts" onClick={() => { setIsSearchOpen(false); router.get(route('admin.hosts.index')); }} />
                                                                     <CommandItem icon={<Users size={14} />} label="Manage Users" onClick={() => { setIsSearchOpen(false); router.get(route('admin.users.index')); }} />
-                                                                    <CommandItem icon={<Globe size={14} />} label="Landing Page" onClick={() => { setIsSearchOpen(false); router.get(route('admin.landing.index')); }} />
+                                                                    <CommandItem icon={<Globe size={14} />} label="Public Pages" onClick={() => { setIsSearchOpen(false); router.get(route('admin.landing.index')); }} />
                                                                 </>
                                                             )}
                                                             {userRole === 'host' && (

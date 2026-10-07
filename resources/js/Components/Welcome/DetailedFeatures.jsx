@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { SectionWrapper, TwoColumn } from './layouts';
-import { getContent, getMedia, extractJsonItems } from '@/lib/cms';
+import { getContent, getMedia, extractJsonItems, comingSoonBadge, stripHtml } from '@/lib/cms';
+import { usePublic } from '@/Components/Public/PublicContext';
+import CtaLink from '@/Components/Public/CtaLink';
 import { SkeletonTwoColumn } from './Skeleton';
 import './DetailedFeatures.css';
 
-const defaultSections = [
-    { id: 'data-collection', label: 'Guest Data Collection', heading: 'Maximize on Collecting Information from Not Only the Booker but Every Guest', description: 'Transform your WiFi into a powerful data collection tool. Capture contact details from every guest who connects, not just the person who made the booking.', image: '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg', bg: 'white', features: [{ icon: 'fas fa-wifi', title: 'Branded WiFi Splash Pages', desc: 'Customize your WiFi login page with your property branding' }, { icon: 'fas fa-envelope', title: 'Automatically Verified Emails', desc: 'Collect verified email addresses through our integrated verification' }, { icon: 'fas fa-shield-alt', title: 'GDPR Compliant Collection', desc: 'Ensure guest agreement to terms and conditions' }] },
-    { id: 'email-marketing', label: 'Tena Email Marketing', heading: 'Send Pre-Built Emails That Drive Bookings in Seconds', description: 'Streamline your email marketing with our pre-designed templates and automated campaigns.', image: '/legacy/assets/Tena-Landing/Tena-Features-1.jpg', bg: 'gray', reverse: true, features: [{ icon: 'fas fa-mouse-pointer', title: 'Create with a Click', desc: 'Use pre-generated content blocks to build professional emails' }, { icon: 'fas fa-plug', title: 'PMS Integration', desc: 'Sync property details and guest data automatically' }, { icon: 'fas fa-user-plus', title: 'Pre-Arrival Data Collection', desc: 'Collect guest info through custom landing pages' }] },
-    { id: 'guest-homepage', label: 'Guest Homepage', heading: 'Provide Upsell & Rental Information from One Dynamic Page', description: 'Create a centralized hub for your guests with all rental information, upselling opportunities, and property resources.', image: '/legacy/assets/Tena-Landing/Tena-Portrait-1.jpg', bg: 'white', features: [{ icon: 'fas fa-shopping-cart', title: 'Upsell Amenities', desc: 'Generate additional income through integrated partners' }, { icon: 'fas fa-key', title: 'Property Information', desc: 'Easy access to guidebooks and contact info' }, { icon: 'fas fa-comments', title: 'Meet Guests', desc: 'Engage guests via multiple communication channels' }] },
-    { id: 'sms-marketing', label: 'Tena SMS Marketing', heading: 'Engage Guests With Text Marketing & Review Screening', description: 'Leverage the power of SMS marketing with high open rates to drive bookings, collect reviews, and increase revenue.', image: '/legacy/assets/Tena-Landing/Tena-Welcome-Divine-1.jpg', bg: 'gray', reverse: true, features: [{ icon: 'fas fa-star', title: 'Rate & Review Campaigns', desc: 'Automate review collection and screen for 5-star reviews' }, { icon: 'fas fa-wifi', title: 'WiFi Welcome Messages', desc: 'Send personalized welcome texts' }, { icon: 'fas fa-comments', title: 'Group Messages', desc: 'Send targeted marketing messages to past guests' }] },
-    { id: 'wifi-monitoring', label: 'WiFi Monitoring & Protection', heading: 'Reduce WiFi Issues & Protect Your Property', description: 'Deploy enterprise-grade WiFi 6 mesh networks. Ensure reliable connectivity while protecting your investment.', image: '/legacy/assets/Tena-Landing/Clients-view.jpg', bg: 'white', features: [{ icon: 'fas fa-plug', title: 'Plug & Play Set-Up', desc: 'Arrives ready to plug into your router' }, { icon: 'fas fa-wifi', title: 'Remote Outage Alerts', desc: 'Monitor networks from one screen' }, { icon: 'fas fa-user-shield', title: 'Occupancy Alerting', desc: 'Get alerted if guest count exceeds booking' }] },
+// Fallback images when a feature block has no upload yet.
+const DEFAULT_IMAGES = [
+    '/legacy/assets/Tena-Landing/Branded-Splash-Page.jpg',
+    '/legacy/assets/Tena-Landing/Tena-Portrait-1.jpg',
+    '/legacy/assets/Tena-Landing/Tena-Features-1.jpg',
+    '/legacy/assets/Tena-Landing/Clients-view.jpg',
 ];
 
 function FeatureImage({ src, alt, defaultSrc }) {
@@ -30,16 +32,14 @@ function FeatureImage({ src, alt, defaultSrc }) {
     );
 }
 
-export default function DetailedFeatures({ onOpenWaitlist, section }) {
+export default function DetailedFeatures({ section }) {
+    const { site } = usePublic();
+
     if (!section) {
         return (
-            <div className="detailed-features-wrapper">
-                {defaultSections.map((s) => (
-                    <SectionWrapper key={s.id} id={s.id} bg={s.bg} padding="lg">
-                        <SkeletonTwoColumn />
-                    </SectionWrapper>
-                ))}
-            </div>
+            <SectionWrapper bg="white" padding="lg">
+                <SkeletonTwoColumn />
+            </SectionWrapper>
         );
     }
 
@@ -48,7 +48,12 @@ export default function DetailedFeatures({ onOpenWaitlist, section }) {
 
     const sections = [];
     for (let i = 0; i < sectionCount; i++) {
-        const features = extractJsonItems(section, `sections.${i}.features`);
+        // Rows tied to a feature key get a "Coming soon" badge until that
+        // feature is marked live under Site-wide -> Feature status.
+        const features = extractJsonItems(section, `sections.${i}.features`).map((f) => ({
+            ...f,
+            badge: comingSoonBadge(site, f.feature),
+        }));
         sections.push({
             id: `detail-${i}`,
             label: getContent(section, `sections.${i}.label`, ''),
@@ -61,23 +66,21 @@ export default function DetailedFeatures({ onOpenWaitlist, section }) {
         });
     }
 
-    const displaySections = sections.length > 0 ? sections : defaultSections;
+    const ctaText = stripHtml(getContent(section, 'cta_text', 'Get started'));
 
     return (
         <div className="detailed-features-wrapper">
-            {displaySections.map((s, i) => (
+            {sections.map((s, i) => (
                 <SectionWrapper key={s.id} id={s.id} bg={s.bg} padding="lg">
                     <TwoColumn
                         reverse={s.reverse}
                         label={s.label}
                         heading={s.heading}
                         description={s.description}
-                        image={<FeatureImage src={s.image} alt={s.label} defaultSrc={defaultSections[i]?.image} />}
+                        image={<FeatureImage src={s.image} alt={s.label} defaultSrc={DEFAULT_IMAGES[i % DEFAULT_IMAGES.length]} />}
                         features={s.features}
                         cta={
-                            <button onClick={onOpenWaitlist} className="btn-primary">
-                                Get Started Today
-                            </button>
+                            <CtaLink className="btn-primary">{ctaText}</CtaLink>
                         }
                     />
                 </SectionWrapper>
