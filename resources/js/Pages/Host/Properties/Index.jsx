@@ -19,7 +19,7 @@ import { T } from '@/Components/Dashboard/Terms';
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview);
 
-export default function PropertyIndex({ properties }) {
+export default function PropertyIndex({ properties, stats: live = {} }) {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
 
@@ -82,14 +82,15 @@ export default function PropertyIndex({ properties }) {
     const breadcrumbs = [{ label: 'WiFi Access' }];
 
     const actions = [
-        { label: 'Export Data', icon: <Download size={16} /> },
+        { label: 'Export Data', icon: <Download size={16} />, onClick: () => { window.location.href = route('host.properties.export'); } },
         { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: openCreateModal },
     ];
 
     const stats = [
         { label: 'Active Units', value: properties.length },
-        { label: 'Avg Occupancy', value: '14%', trend: -2 },
-        { label: 'WiFi Availability', value: '99.9%' },
+        // From PMS bookings; "—" until a PMS is connected.
+        { label: 'Occupancy (30 days)', value: live.occupancy == null ? '—' : `${live.occupancy}%` },
+        { label: 'Access Points Online', value: live.aps_total ? `${live.aps_online} / ${live.aps_total}` : '—' },
     ];
 
     const modalTabs = [
@@ -243,8 +244,8 @@ export default function PropertyIndex({ properties }) {
                                     <span className="host-properties-index-detail-value">{property.wifi_ssid || 'Unset'}</span>
                                 </div>
                                 <div className="host-properties-index-detail-row">
-                                    <span className="host-properties-index-detail-label">Occupancy</span>
-                                    <span className="host-properties-index-detail-value">{property.occupancy_threshold}% Max</span>
+                                    <span className="host-properties-index-detail-label">Guest limit</span>
+                                    <span className="host-properties-index-detail-value">{property.occupancy_threshold} people</span>
                                 </div>
                             </div>
                         </div>

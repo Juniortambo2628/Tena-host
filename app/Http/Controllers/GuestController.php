@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guest;
+use App\Models\Order;
+use App\Support\Phone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -62,6 +65,7 @@ class GuestController extends Controller
 
         return Inertia::render('Host/Guests/Show', [
             'guest' => $guest->load('property:id,name,address'),
+            'activity' => static::activity($guest),
         ]);
     }
 
@@ -76,12 +80,50 @@ class GuestController extends Controller
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'sometimes|nullable|string|max:20',
+            'notes' => 'sometimes|nullable|string|max:5000',
         ]);
+
+        if (array_key_exists('phone', $validated)) {
+            $validated['phone'] = Phone::toE164($validated['phone']);
+        }
 
         $guest->update($validated);
 
         return redirect()->back()->with('success', 'Guest updated successfully.');
+    }
+
+    /**
+     * What we know happened with this guest, newest first.
+     *
+     * @return list<array{at: string, label: string, detail: ?string}>
+     */
+    protected static function activity(Guest $guest): array
+    {
+        $events = collect([
+            [$guest->created_at, 'First seen', 'Added via '.($guest->source ?: 'WiFi')],
+            [$guest->consented_at, 'Agreed to be contacted', $guest->marketing_opt_in ? 'Opted in to offers' : 'Visit messages only'],
+            [$guest->check_in, 'Booking: check-in', null],
+            [$guest->check_out, 'Booking: check-out', null],
+            [$guest->last_connected, 'Last connected to the WiFi', $guest->total_visits.' visit'.($guest->total_visits === 1 ? '' : 's').' in total'],
+            [$guest->review_requested_at, 'Review request sent', $guest->review_clicked_at ? 'Opened the review link' : null],
+        ]);
+
+        $guest->campaignRecipients()->with('campaign:id,name,type')->get()->each(fn ($r) => $events->push([
+            $r->created_at,
+            'Campaign: '.($r->campaign?->name ?? 'deleted'),
+            ucfirst((string) $r->campaign?->type).($r->clicked_at ? ' · clicked' : ($r->opened_at ? ' · opened' : '')),
+        ]));
+
+        Order::with('amenity:id,name')->where('guest_id', $guest->id)->get()->each(fn (Order $o) => $events->push([
+            $o->created_at,
+            'Ordered '.($o->amenity?->name ?? 'an extra'),
+            'KES '.number_format((float) $o->total).' · '.str_replace('_', ' ', $o->payment_status),
+        ]));
+
+        return $events->filter(fn ($e) => $e[0])
+            ->map(fn ($e) => ['at' => Carbon::parse($e[0])->toIso8601String(), 'label' => $e[1], 'detail' => $e[2]])
+            ->sortByDesc('at')->values()->all();
     }
 
     /**

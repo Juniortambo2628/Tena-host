@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Services\PropertyStats;
 use App\Services\ReviewRequestService;
 use App\Traits\HasImageUpload;
 use Illuminate\Http\Request;
@@ -13,13 +14,31 @@ class PropertyController extends Controller
 {
     use HasImageUpload;
 
-    public function index()
+    public function index(PropertyStats $stats)
     {
         $properties = Auth::user()->properties()->withCount(['guests', 'accessPoints'])->get();
 
         return Inertia::render('Host/Properties/Index', [
             'properties' => $properties,
+            'stats' => $stats->forHost(Auth::user()),
         ]);
+    }
+
+    /**
+     * Download the host's properties as CSV.
+     */
+    public function export()
+    {
+        $properties = Auth::user()->properties()->withCount(['guests', 'accessPoints'])->orderBy('name')->get();
+
+        return response()->streamDownload(function () use ($properties) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Name', 'Address', 'WiFi SSID', 'Guests', 'Access points', 'Created']);
+            foreach ($properties as $p) {
+                fputcsv($out, [$p->name, $p->address, $p->wifi_ssid, $p->guests_count, $p->access_points_count, $p->created_at?->toDateString()]);
+            }
+            fclose($out);
+        }, 'properties-'.now()->format('Y-m-d').'.csv', ['Content-Type' => 'text/csv']);
     }
 
     public function show(Property $property)

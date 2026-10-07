@@ -20,12 +20,11 @@ import {
     Trash2,
     Pause,
     Zap,
-    ArrowUpRight,
     Search
 } from 'lucide-react';
 import './Index.css';
 
-export default function MarketingIndex({ campaigns, stats }) {
+export default function MarketingIndex({ campaigns, stats, insights = [], triggers = [] }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedIds, setSelectedIds] = useState([]);
 
@@ -46,9 +45,9 @@ export default function MarketingIndex({ campaigns, stats }) {
 
     const heroStats = [
         { label: 'Total Messages', value: stats.totalSent.toLocaleString() },
-        { label: 'Avg. Open Rate', value: stats.avgOpenRate, trend: 12 },
+        { label: 'Avg. Open Rate', value: stats.avgOpenRate },
         { label: 'Total Clicks', value: stats.clicks.toLocaleString() },
-        { label: 'ROI Generated', value: stats.revenue, trend: 8.5 },
+        { label: 'Reachable Guests', value: (stats.reachable ?? 0).toLocaleString() },
     ];
 
     return (
@@ -194,35 +193,17 @@ export default function MarketingIndex({ campaigns, stats }) {
                         <div className="host-marketing-index-ai-content">
                             <div className="host-marketing-index-ai-header">
                                 <Zap size={18} className="text-[#FFD300]" />
-                                <h3 className="host-marketing-index-ai-title">AI Optimizer</h3>
+                                <h3 className="host-marketing-index-ai-title">From your data</h3>
                             </div>
-                            <h3 className="host-marketing-index-ai-heading">Growth Suggestions</h3>
+                            <h3 className="host-marketing-index-ai-heading">Suggestions</h3>
 
                             <div className="host-marketing-index-suggestions">
-                                <SuggestionItem
-                                    text='Switch "Review Request" to SMS'
-                                    lift="+24%"
-                                />
-                                <SuggestionItem
-                                    text="Adjust welcome email to 10 AM"
-                                    lift="+12%"
-                                />
-                                <SuggestionItem
-                                    text="Target 'Business' segment for midweek"
-                                    lift="+18%"
-                                />
+                                {insights.length === 0 ? (
+                                    <p className="host-marketing-index-suggestion-text">Nothing to fix right now. Keep your campaigns running.</p>
+                                ) : insights.map((tip) => (
+                                    <SuggestionItem key={tip.text} {...tip} />
+                                ))}
                             </div>
-
-                            <PillButton
-                                variant="primary"
-                                className="w-full py-4 text-xs"
-                                onClick={() => notify.info('Applying all campaign optimizations...')}
-                            >
-                                <div className="flex items-center justify-center gap-2">
-                                    Apply All Optimizations
-                                    <ArrowUpRight size={14} />
-                                </div>
-                            </PillButton>
                         </div>
                     </GlassCard>
 
@@ -232,9 +213,7 @@ export default function MarketingIndex({ campaigns, stats }) {
                             Automation Triggers
                         </h4>
                         <div className="host-marketing-index-automation-list">
-                            <TriggerItem title="Guest Connects to WiFi" status="Enabled" />
-                            <TriggerItem title="1 Hour Before Checkout" status="Enabled" />
-                            <TriggerItem title="24 Hours Post Stay" status="Disabled" />
+                            {triggers.map((trigger) => <TriggerItem key={trigger.title} {...trigger} />)}
                         </div>
                     </GlassCard>
                 </div>
@@ -243,25 +222,27 @@ export default function MarketingIndex({ campaigns, stats }) {
     );
 }
 
-function TriggerItem({ title, status }) {
+// A trigger is on when at least one active campaign uses it.
+function TriggerItem({ title, active }) {
     return (
-        <div className="host-marketing-index-trigger">
+        <Link href={route('host.marketing.builder')} className="host-marketing-index-trigger">
             <span className="host-marketing-index-trigger-label">{title}</span>
-            <div className="host-marketing-index-trigger-toggle-wrap">
-                <div className={`host-marketing-index-trigger-status ${status === 'Enabled' ? 'host-marketing-index-trigger-status-enabled' : 'host-marketing-index-trigger-status-disabled'}`}>{status}</div>
-                <button className={`host-marketing-index-trigger-toggle ${status === 'Enabled' ? 'host-marketing-index-trigger-toggle-on' : 'host-marketing-index-trigger-toggle-off'}`}>
-                    <div className={`host-marketing-index-trigger-knob ${status === 'Enabled' ? 'host-marketing-index-trigger-knob-on' : 'host-marketing-index-trigger-knob-off'}`} />
-                </button>
+            <div className={`host-marketing-index-trigger-status ${active ? 'host-marketing-index-trigger-status-enabled' : 'host-marketing-index-trigger-status-disabled'}`}>
+                {active ? `${active} active` : 'Set up'}
             </div>
-        </div>
+        </Link>
     );
 }
 
-function SuggestionItem({ text, lift }) {
-    return (
-        <div className="host-marketing-index-suggestion">
+function SuggestionItem({ text, detail, href }) {
+    const body = (
+        <>
             <p className="host-marketing-index-suggestion-text">{text}</p>
-            <span className="host-marketing-index-suggestion-lift">{lift}</span>
-        </div>
+            <p className="text-xs text-black/50 mt-1">{detail}</p>
+        </>
     );
+
+    return href
+        ? <Link href={href} className="host-marketing-index-suggestion">{body}</Link>
+        : <div className="host-marketing-index-suggestion">{body}</div>;
 }

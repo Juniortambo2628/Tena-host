@@ -171,6 +171,7 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('/dashboard', [HostDashboardController::class, 'index'])->name('dashboard');
 
         // Properties
+        Route::get('properties/export', [PropertyController::class, 'export'])->name('properties.export');
         Route::resource('properties', PropertyController::class)->except(['create']);
 
         // Access Points
@@ -203,6 +204,7 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         // Marketing
         Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
         Route::get('/marketing/create', [MarketingController::class, 'create'])->name('marketing.builder');
+        Route::get('/marketing/estimate', [MarketingController::class, 'estimate'])->name('marketing.estimate');
         Route::post('/marketing', [MarketingController::class, 'store'])->name('marketing.store');
         Route::get('/marketing/{id}/edit', [MarketingController::class, 'edit'])->name('marketing.edit');
         Route::put('/marketing/{id}', [MarketingController::class, 'update'])->name('marketing.update');

@@ -31,6 +31,7 @@ class Guest extends Model
         'review_clicked_at',
         'birthday',
         'birthday_sent_year',
+        'notes',
         'external_id',
         'check_in',
         'check_out',
