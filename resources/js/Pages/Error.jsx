@@ -54,7 +54,7 @@ export default function ErrorPage({ status }) {
 
                 <div className="mt-12 pt-8 border-t border-gray-100">
                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold">
-                        Tena — Built by Superhosts for Superhosts
+                        TenaFi — Africa’s guest relationship platform
                     </p>
                 </div>
             </div>

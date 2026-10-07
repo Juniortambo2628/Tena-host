@@ -36,7 +36,7 @@ export default function PrivacyPolicyModal({ isOpen, onClose }) {
                     <PolicyPoint
                         icon={<Server size={18} />}
                         title="Authorized Access"
-                        content="Access to data is strictly limited to authorized Tena personnel only when necessary for technical support or system maintenance. All access is logged and audited for security."
+                        content="Access to data is strictly limited to authorized TenaFi personnel only when necessary for technical support or system maintenance. All access is logged and audited for security."
                     />
                 </div>
 

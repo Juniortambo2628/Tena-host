@@ -18,6 +18,7 @@ import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
 import AuthHero from '@/Components/Auth/AuthHero';
 import './Login.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -56,11 +57,7 @@ export default function Login({ status, canResetPassword }) {
                 <div className="login-left-inner">
                     {/* Logo & Header */}
                     <div className="login-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="login-logo-img"
-                        />
+                        <BrandLogo className="login-logo-img" />
                         <div className="login-title-area">
                             <h1 className="login-title">Sign in</h1>
                             <p className="login-subtitle">Enter your credentials to manage your empire.</p>

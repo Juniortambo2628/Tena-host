@@ -20,9 +20,9 @@ export const PaymentReceipt = ({
     transactionId = "TXN_12345678",
     primaryColor = "#000000",
     accentColor = "#FFD300",
-    businessName = "Tena",
+    businessName = 'TenaFi',
     businessAddress = "Nairobi, Kenya",
-    logoUrl = "/legacy/assets/Tena-logo-square.jpg",
+    logoUrl = '/brand/tenafi-logo.png',
     heading,
     body
 }) => {

@@ -2,9 +2,9 @@
     $primaryColor = \App\Models\Setting::getValue('email_primary_color', '#000000');
     $accentColor = \App\Models\Setting::getValue('email_accent_color', '#FFD300');
     $headerBgColor = '#ffdb00';
-    $businessName = \App\Models\Setting::getValue('site_name', 'Tena');
+    $businessName = \App\Support\Brand::name();
     $businessAddress = \App\Models\Setting::getValue('business_address', 'Nairobi, Kenya');
-    $logoUrl = \App\Models\Setting::getValue('logo_url', '');
+    $logoUrl = \App\Support\Brand::emailLogoUrl();
 
     $baseUrl = config('app.url', 'https://tena.host');
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {

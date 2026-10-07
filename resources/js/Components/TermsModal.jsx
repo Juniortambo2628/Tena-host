@@ -26,7 +26,7 @@ export default function TermsModal({ isOpen, onClose }) {
                     <PolicySection
                         icon={<ShieldCheck size={18} />}
                         title="User Responsibilities"
-                        content="As a Tena host, you are responsible for maintaining the accuracy of your property data and guest communications. Dashboards must be used in compliance with local laws."
+                        content="As a TenaFi host, you are responsible for maintaining the accuracy of your property data and guest communications. Dashboards must be used in compliance with local laws."
                     />
 
                     <PolicySection
@@ -44,7 +44,7 @@ export default function TermsModal({ isOpen, onClose }) {
 
                 <div className="terms-modal__footer">
                     <p className="terms-modal__footer-text">
-                        By using Tena, you agree to our full Terms and Conditions. This summary is intended to provide clarity on our core pillars of operation.
+                        By using TenaFi, you agree to our full Terms and Conditions. This summary is intended to provide clarity on our core pillars of operation.
                     </p>
                 </div>
             </div>

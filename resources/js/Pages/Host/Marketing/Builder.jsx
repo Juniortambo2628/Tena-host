@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import './Builder.css';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
+import BrandLogo from '@/Components/BrandLogo';
 
 // WhatsApp falls back to SMS when it can't be delivered (see Messenger).
 const CHANNELS = [
@@ -197,7 +198,7 @@ export default function MarketingBuilder({ campaign, properties }) {
                                         {data.type === 'email' ? (
                                             <>
                                                 <div className="host-builder-email-header">
-                                                    <img src="/legacy/assets/Tena-logo-square.jpg" className="w-16 h-16 rounded-2xl" />
+                                                    <BrandLogo className="w-16 h-16 rounded-2xl" />
                                                 </div>
                                                 <div className="host-builder-email-body">
                                                     <h2 className="host-builder-email-heading">

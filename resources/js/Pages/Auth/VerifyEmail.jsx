@@ -4,6 +4,7 @@ import { ChevronLeft, MailCheck } from 'lucide-react';
 import AuthHero from '@/Components/Auth/AuthHero';
 import PillButton from '@/Components/Dashboard/PillButton';
 import './VerifyEmail.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function VerifyEmail({ status }) {
     const { post, processing } = useForm({});
@@ -25,11 +26,7 @@ export default function VerifyEmail({ status }) {
             <div className="verify-left">
                 <div className="verify-left-inner">
                     <div className="verify-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="verify-logo-img"
-                        />
+                        <BrandLogo className="verify-logo-img" />
                     </div>
 
                     <div className="verify-icon-wrapper">

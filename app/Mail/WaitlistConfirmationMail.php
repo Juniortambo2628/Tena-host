@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -33,13 +34,13 @@ class WaitlistConfirmationMail extends Mailable
             '{{Units}}' => $this->units,
             '{{Primary Platform}}' => $this->primaryPlatform,
             '{{Biggest Challenge}}' => $this->biggestChallenge,
-            '{{Business Name}}' => Setting::getValue('site_name', 'Tena'),
+            '{{Business Name}}' => Brand::name(),
             '{{Business Address}}' => Setting::getValue('business_address', 'Nairobi, Kenya'),
         ];
 
         return new Envelope(
             subject: $this->resolveVariables(
-                Setting::getValue('waitlist_confirmation_subject', "You're on the Tena waitlist!"),
+                Setting::getValue('waitlist_confirmation_subject', "You're on the TenaFi waitlist!"),
                 $replacements
             ),
         );
@@ -47,7 +48,7 @@ class WaitlistConfirmationMail extends Mailable
 
     public function content(): Content
     {
-        $businessName = Setting::getValue('site_name', 'Tena');
+        $businessName = Brand::name();
         $businessAddress = Setting::getValue('business_address', 'Nairobi, Kenya');
 
         $replacements = [

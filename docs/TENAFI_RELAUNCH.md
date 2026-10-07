@@ -138,8 +138,8 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
   - `WHATSAPP_TEMPLATE`: a Meta-approved template whose body is just `{{1}}`. Business-started WhatsApp messages need one.
 - Campaigns only reach WiFi guests who ticked "Send me offers". Guests added by hand or by PMS sync have no consent record and are included, so the host is responsible for those.
 
-- Upload TenaFi brand assets: logo, og:image, and the product mockups above.
-  Most images in `/legacy/assets` still show the old "Tena" wordmark.
+- The app now uses a TenaFi wordmark (`public/brand/`, built from Glen's yellow logo pill) via `App\Support\Brand`. Admin → Settings → site name and logo override it everywhere: dashboard, auth pages, guest portal, captive portal, emails and favicon. Upload the official logo there when it's final, plus the og:image and the product mockups above.
+- The seeded Privacy, Terms and DPA documents still say "Tena Host" and use tena.host addresses. Replace them in Admin → Policies with the TenaFi versions.
 - Publish the Privacy and Terms policies in Admin → Policies. Unpublished ones return 404.
 - Confirm PMS sync works in production, or set it back to "coming soon".
 - `public/index.php` points at the production `tena-core` layout. Confirm it matches the tena-fi.com host.

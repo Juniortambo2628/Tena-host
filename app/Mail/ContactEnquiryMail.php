@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
@@ -23,7 +24,7 @@ class ContactEnquiryMail extends Mailable
 
     public function envelope(): Envelope
     {
-        $businessName = Setting::getValue('site_name', 'Tena');
+        $businessName = Brand::name();
 
         return new Envelope(
             subject: '[Contact] '.$this->subjectLine,
@@ -42,7 +43,7 @@ class ContactEnquiryMail extends Mailable
             '{{Email}}' => $this->senderEmail,
             '{{Subject}}' => $this->subjectLine,
             '{{Message}}' => nl2br(e($this->messageBody)),
-            '{{Business Name}}' => Setting::getValue('site_name', 'Tena'),
+            '{{Business Name}}' => Brand::name(),
         ];
 
         $customHeading = Setting::getValue('contact_enquiry_heading', 'New contact enquiry');

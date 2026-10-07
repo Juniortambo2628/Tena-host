@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Lock, ArrowRight, Eye, EyeOff, ChevronLeft } from 'lucide-react';
 import AuthHero from '@/Components/Auth/AuthHero';
 import './ResetPassword.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 /**
  * Also the invite page (InvitationController): with `invitation`, the
@@ -44,11 +45,7 @@ export default function ResetPassword({ token, email, invitation = null }) {
                 <div className="reset-left-inner">
                     {/* Logo & Header */}
                     <div className="reset-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="reset-logo-img"
-                        />
+                        <BrandLogo className="reset-logo-img" />
                         <div className="reset-title-area">
                             <h1 className="reset-title">{invitation ? `Welcome, ${invitation.name}` : 'New Password'}</h1>
                             <p className="reset-subtitle">

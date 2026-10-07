@@ -30,6 +30,7 @@ import { Menu, Transition, Dialog } from '@headlessui/react';
 import { safeRoute, hasRoute } from '@/lib/route';
 import './DashboardLayout.css';
 import { useTerms } from '@/Components/Dashboard/Terms';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function DashboardLayout({ children, title, bgImage = "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=2000&q=80" }) {
     const t = useTerms();
@@ -159,11 +160,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
             <aside className={`dashboard-layout__sidebar ${isSidebarOpen ? 'dashboard-layout__sidebar--open' : 'dashboard-layout__sidebar--closed'}`}>
                 <div className="dashboard-layout__brand">
                     <Link href="/" className="dashboard-layout__brand-link">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="TENA Logo"
-                            className="dashboard-layout__logo"
-                        />
+                        <BrandLogo className="dashboard-layout__logo" />
                     </Link>
                 </div>
 
@@ -519,7 +516,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                         </div>
                                         <div className="dashboard-layout__search-footer-powered">
                                             <span className="dashboard-layout__search-footer-label">Powered by</span>
-                                            <span className="dashboard-layout__search-footer-brand">TENA SEARCH</span>
+                                            <span className="dashboard-layout__search-footer-brand">TenaFi search</span>
                                         </div>
                                     </div>
                                 </Dialog.Panel>

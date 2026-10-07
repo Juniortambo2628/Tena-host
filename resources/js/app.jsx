@@ -6,7 +6,8 @@ import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ToastProvider, notify } from '@/Components/Toast';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Tena';
+// APP_NAME is often left as Laravel's default; fall back to the product name.
+const appName = [undefined, '', 'Laravel'].includes(import.meta.env.VITE_APP_NAME) ? 'TenaFi' : import.meta.env.VITE_APP_NAME;
 
 createInertiaApp({
     // Public pages pass full CMS titles ("TenaFi | ..."); don't suffix those.

@@ -15,6 +15,7 @@ import CookiesConsent from '@/Components/CookiesConsent';
 import TermsModal from '@/Components/TermsModal';
 import AuthHero from '@/Components/Auth/AuthHero';
 import './Register.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -55,11 +56,7 @@ export default function Register() {
                 <div className="register-left-inner">
                     {/* Logo & Header */}
                     <div className="register-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="register-logo-img"
-                        />
+                        <BrandLogo className="register-logo-img" />
                         <div className="register-title-area">
                             <h1 className="register-title">Join the empire</h1>
                             <p className="register-subtitle">Create your account to start managing your property with ease.</p>

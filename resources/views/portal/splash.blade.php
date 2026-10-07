@@ -85,7 +85,7 @@
             </button>
         </form>
 
-        <p class="fine">Powered by TenaFi</p>
+        <p class="fine">Powered by {{ \App\Support\Brand::name() }}</p>
     </main>
 </body>
 </html>

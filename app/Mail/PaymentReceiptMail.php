@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\MpesaTransaction;
 use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -21,7 +22,7 @@ class PaymentReceiptMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Payment Receipt - '.Setting::getValue('site_name', 'Tena Host'),
+            subject: 'Payment Receipt - '.Brand::name(),
         );
     }
 
@@ -32,8 +33,8 @@ class PaymentReceiptMail extends Mailable
             with: [
                 'primary_color' => Setting::getValue('email_primary_color', '#000000'),
                 'accent_color' => Setting::getValue('email_accent_color', '#FFD300'),
-                'site_name' => Setting::getValue('site_name', 'Tena Host'),
-                'logo_url' => Setting::getValue('logo_url', '/legacy/assets/Tena-logo-square.jpg'),
+                'site_name' => Brand::name(),
+                'logo_url' => Brand::emailLogoUrl(),
                 'business_address' => Setting::getValue('business_address', 'Nairobi, Kenya'),
                 'user_name' => $this->transaction->user->name ?? 'Valued Customer',
                 'amount' => $this->transaction->Amount,

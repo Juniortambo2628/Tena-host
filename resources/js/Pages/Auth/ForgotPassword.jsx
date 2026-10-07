@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Mail, ArrowRight, ChevronLeft } from 'lucide-react';
 import AuthHero from '@/Components/Auth/AuthHero';
 import './ForgotPassword.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -33,11 +34,7 @@ export default function ForgotPassword({ status }) {
                 <div className="forgot-left-inner">
                     {/* Logo & Header */}
                     <div className="forgot-logo-section">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena Logo"
-                            className="forgot-logo-img"
-                        />
+                        <BrandLogo className="forgot-logo-img" />
                         <div className="forgot-title-area">
                             <h1 className="forgot-title">Recover Access</h1>
                             <p className="forgot-subtitle">

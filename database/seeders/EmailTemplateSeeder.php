@@ -13,7 +13,7 @@ class EmailTemplateSeeder extends Seeder
             // ── Waitlist Confirmation Email ──
             [
                 'key' => 'waitlist_confirmation_subject',
-                'value' => "You're on the Tena waitlist!",
+                'value' => "You're on the TenaFi waitlist!",
                 'group' => 'email_templates',
                 'type' => 'string',
             ],
@@ -33,13 +33,13 @@ class EmailTemplateSeeder extends Seeder
             // ── Waitlist Welcome / Follow-up Email ──
             [
                 'key' => 'waitlist_welcome_subject',
-                'value' => 'Welcome to the Tena Family!',
+                'value' => 'Welcome to the TenaFi family!',
                 'group' => 'email_templates',
                 'type' => 'string',
             ],
             [
                 'key' => 'waitlist_welcome_heading',
-                'value' => 'Welcome to the Tena Family!',
+                'value' => 'Welcome to the TenaFi family!',
                 'group' => 'email_templates',
                 'type' => 'string',
             ],
@@ -79,7 +79,7 @@ class EmailTemplateSeeder extends Seeder
             ],
             [
                 'key' => 'site_name',
-                'value' => 'Tena',
+                'value' => 'TenaFi',
                 'group' => 'branding',
                 'type' => 'string',
             ],
@@ -91,7 +91,7 @@ class EmailTemplateSeeder extends Seeder
             ],
             [
                 'key' => 'logo_url',
-                'value' => '/legacy/assets/Tena-logo-square.jpg',
+                'value' => '/brand/tenafi-logo.svg',
                 'group' => 'branding',
                 'type' => 'string',
             ],

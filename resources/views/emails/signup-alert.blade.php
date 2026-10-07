@@ -1,7 +1,7 @@
 @php
     $primaryColor = \App\Models\Setting::getValue('email_primary_color', '#000000');
     $accentColor = \App\Models\Setting::getValue('email_accent_color', '#FFD300');
-    $businessName = \App\Models\Setting::getValue('site_name', 'TenaFi');
+    $businessName = \App\Support\Brand::name();
 @endphp
 <!DOCTYPE html>
 <html lang="en">

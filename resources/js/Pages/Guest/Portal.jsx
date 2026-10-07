@@ -11,6 +11,7 @@ import {
     ArrowRight
 } from 'lucide-react';
 import './Portal.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function GuestPortal({ property, amenities, guidebook_link }) {
     const { post, processing } = useForm();
@@ -32,10 +33,7 @@ export default function GuestPortal({ property, amenities, guidebook_link }) {
 
                 <div className="guest-portal-logo-overlay">
                     <div className="guest-portal-logo-box">
-                        <img
-                            src="/legacy/assets/Tena-logo-square.jpg"
-                            alt="Tena"
-                        />
+                        <BrandLogo />
                     </div>
                 </div>
             </div>
@@ -55,11 +53,11 @@ export default function GuestPortal({ property, amenities, guidebook_link }) {
                         </div>
                         <div className="guest-portal-wifi-info">
                             <p className="guest-portal-wifi-label">WiFi Access</p>
-                            <p className="guest-portal-wifi-name">{property.access_points?.[0]?.ssid || 'Tena-Secure-WiFi'}</p>
+                            <p className="guest-portal-wifi-name">{property.access_points?.[0]?.ssid || property.wifi_ssid || 'Guest WiFi'}</p>
                         </div>
                         <button
                             onClick={() => {
-                                navigator.clipboard.writeText(property.access_points?.[0]?.ssid || property.wifi_ssid || 'Tena-Secure-WiFi');
+                                navigator.clipboard.writeText(property.access_points?.[0]?.ssid || property.wifi_ssid || 'Guest WiFi');
                                 notify.success('WiFi network name copied to clipboard!');
                             }}
                             className="guest-portal-wifi-connect"
@@ -139,8 +137,7 @@ export default function GuestPortal({ property, amenities, guidebook_link }) {
                         <span className="guest-portal-footer-label">Secure Connection Powered by</span>
                     </div>
                     <div className="guest-portal-footer-brand">
-                        <img src="/legacy/assets/Tena-logo-square.jpg" alt="Tena" />
-                        <span className="guest-portal-footer-brand-name">TENA</span>
+                        <BrandLogo />
                     </div>
                 </div>
             </div>

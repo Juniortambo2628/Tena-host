@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\Notification;
+use App\Support\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
@@ -55,11 +56,12 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'info' => fn () => $request->session()->get('info'),
             ],
+            'brand' => fn () => Brand::toArray(),
             'seo' => [
-                'siteName' => config('app.name', 'Tena'),
+                'siteName' => Brand::name(),
                 'url' => $request->url(),
                 'description' => 'Smart WiFi management for modern hospitality — capture guest data, drive direct bookings, and build lasting relationships.',
-                'ogImage' => asset('legacy/assets/Tena-logo-square.jpg'),
+                'ogImage' => Brand::emailLogoUrl(),
             ],
         ];
     }

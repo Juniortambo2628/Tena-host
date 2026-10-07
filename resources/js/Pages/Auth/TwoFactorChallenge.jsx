@@ -3,6 +3,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Shield, ArrowRight, ChevronLeft } from 'lucide-react';
 import './TwoFactorChallenge.css';
+import BrandLogo from '@/Components/BrandLogo';
 
 export default function TwoFactorChallenge({ email }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -16,7 +17,7 @@ export default function TwoFactorChallenge({ email }) {
 
     return (
         <div className="twofa-root">
-            <Head title="Two-Factor Authentication | Tena" />
+            <Head title="Two-Factor Authentication" />
 
             {/* Return to Login */}
             <Link
@@ -97,7 +98,7 @@ export default function TwoFactorChallenge({ email }) {
                     <div className="twofa-right-gradient" />
 
                     <div className="twofa-right-bottom">
-                        <img src="/legacy/assets/Tena-logo-square.jpg" className="twofa-right-logo" />
+                        <BrandLogo className="twofa-right-logo" />
                         <h2 className="twofa-right-title">Extra secure.</h2>
                         <p className="twofa-right-desc">
                             Two-factor authentication adds an extra layer of protection to ensure only you can access your account.

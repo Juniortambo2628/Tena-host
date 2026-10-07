@@ -6,6 +6,7 @@ use App\Models\AccessPoint;
 use App\Models\Property;
 use App\Services\GuestCaptureService;
 use App\Services\Unifi\UnifiService;
+use App\Support\Brand;
 use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -148,7 +149,7 @@ class WifiPortalController extends Controller
         }
 
         $deviceMac = ! empty($params['id']) ? $this->unifi->normalizeMac($params['id']) : null;
-        $propertyName = $property?->name ?? 'TenaFi';
+        $propertyName = $property?->name ?? Brand::name();
 
         return [
             'params' => $params,

@@ -9,7 +9,7 @@
 }
 
 .guidebook-logo {
-    @apply w-20 h-20 rounded-2xl shadow-xl mb-4;
+    @apply h-14 w-auto rounded-2xl shadow-xl mb-4;
 }
 
 .guidebook-label {
