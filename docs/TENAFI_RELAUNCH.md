@@ -115,6 +115,7 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 8. Analytics: **done**.
    Events: `path_card_hosts`, `path_card_business`, `join_click`, `signup_step_1`, `signup_step_2`, `signup_submit`, `signup_success`.
    They are counted daily in `analytics` and pushed to `window.dataLayer` for GA4/GTM.
+   Admin → Overview → Signups charts a 30-day funnel per audience from these events: path card clicks, Join, step 1 and step 2 done, then sign-ups saved, accounts created and paying (`FunnelReport`). It also charts monthly sign-ups by type. Active plans are under Revenue.
 9. Privacy Policy and Terms linked in the footers: **done** (`/privacy`, `/terms`)
 
 ## Differences from the static handoff
