@@ -6,6 +6,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Loader2, Star } from 'lucide-react';
+import { T } from '@/Components/Dashboard/Terms';
 
 export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {} }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -48,7 +49,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                 <GlassCard padding="p-8">
                     <form onSubmit={submit} className="host-properties-edit-form">
                         <div>
-                            <label className="host-properties-edit-label">Property Name</label>
+                            <label className="host-properties-edit-label"><T>Property Name</T></label>
                             <input
                                 type="text"
                                 className="host-properties-edit-input"

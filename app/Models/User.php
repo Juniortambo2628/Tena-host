@@ -24,6 +24,12 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
      *
      * @var list<string>
      */
+    public const ACCOUNT_HOST = 'host';
+
+    public const ACCOUNT_BUSINESS = 'business';
+
+    public const ACCOUNT_TYPES = [self::ACCOUNT_HOST, self::ACCOUNT_BUSINESS];
+
     protected $fillable = [
         'username',
         'first_name',
@@ -38,6 +44,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
         'last_login',
+        'account_type',
         'billing_plan',
         'billing_units',
         'billing_extra_devices',
@@ -69,6 +76,11 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     /**
      * Get the properties owned by the user (Superhost).
      */
+    public function isBusiness(): bool
+    {
+        return $this->account_type === self::ACCOUNT_BUSINESS;
+    }
+
     public function properties(): HasMany
     {
         return $this->hasMany(Property::class);

@@ -99,6 +99,16 @@ class ReviewRequestTest extends TestCase
         Http::assertSent(fn (Request $r) => str_starts_with($r['text']['body'], 'Asante Wanjiru! http'));
     }
 
+    public function test_business_customers_get_the_visit_wording(): void
+    {
+        $this->property->host->update(['account_type' => 'business']);
+        $this->guest();
+
+        $this->artisan('reviews:send');
+
+        Http::assertSent(fn (Request $r) => str_starts_with($r['text']['body'], 'Hi Wanjiru, thanks for visiting Sunset Villa today!'));
+    }
+
     public function test_review_link_counts_the_click_and_redirects(): void
     {
         $guest = $this->guest();

@@ -29,8 +29,10 @@ import {
 import { Menu, Transition, Dialog } from '@headlessui/react';
 import { safeRoute, hasRoute } from '@/lib/route';
 import './DashboardLayout.css';
+import { useTerms } from '@/Components/Dashboard/Terms';
 
 export default function DashboardLayout({ children, title, bgImage = "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=2000&q=80" }) {
+    const t = useTerms();
     const { auth } = usePage().props;
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const userRole = auth.user.role || 'host';
@@ -179,7 +181,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                                     }`}
                             >
                                 <item.icon size={20} className={`dashboard-layout__nav-icon ${isActive ? 'dashboard-layout__nav-icon--active' : 'dashboard-layout__nav-icon--inactive'}`} />
-                                <span className="dashboard-layout__nav-label">{item.name}</span>
+                                <span className="dashboard-layout__nav-label">{t(item.name)}</span>
                                 {isActive && <div className="dashboard-layout__nav-indicator" />}
                             </Link>
                         );
@@ -193,7 +195,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                         </div>
                         <div>
                             <p className="dashboard-layout__user-name">{auth.user.first_name} {auth.user.last_name}</p>
-                            <p className="dashboard-layout__user-role">{auth.user.role}</p>
+                            <p className="dashboard-layout__user-role">{auth.user.account_type === 'business' && auth.user.role === 'host' ? 'business' : auth.user.role}</p>
                         </div>
                     </div>
                 </div>

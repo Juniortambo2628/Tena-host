@@ -37,7 +37,7 @@ class PropertyController extends Controller
 
         return Inertia::render('Host/Properties/Edit', [
             'property' => $property,
-            'reviewDefaults' => ['message' => ReviewRequestService::DEFAULT_MESSAGE],
+            'reviewDefaults' => ['message' => ReviewRequestService::defaultMessage($property)],
             'reviewStats' => [
                 'requested' => $property->guests()->whereNotNull('review_requested_at')->count(),
                 'clicked' => $property->guests()->whereNotNull('review_clicked_at')->count(),

@@ -6,6 +6,7 @@ import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import { Pencil, Send, Sparkles } from 'lucide-react';
+import { T } from '@/Components/Dashboard/Terms';
 
 export default function GuestShow({ guest }) {
     const breadcrumbs = [
@@ -60,7 +61,7 @@ export default function GuestShow({ guest }) {
                                 {guest.consent_text && <p className="host-guests-show-address-note">“{guest.consent_text}”</p>}
                             </div>
                             <div>
-                                <label className="host-guests-show-label">Associated Property</label>
+                                <label className="host-guests-show-label"><T>Associated Property</T></label>
                                 <p className="host-guests-show-value">{guest.property?.name}</p>
                                 <p className="host-guests-show-address-note">{guest.property?.address}</p>
                             </div>
@@ -92,7 +93,7 @@ export default function GuestShow({ guest }) {
                                 <thead>
                                     <tr className="host-guests-visit-header">
                                         <th className="host-guests-visit-header-cell">Date</th>
-                                        <th className="host-guests-visit-header-cell">Property</th>
+                                        <th className="host-guests-visit-header-cell"><T>Property</T></th>
                                         <th className="host-guests-visit-header-cell">Device</th>
                                         <th className="host-guests-visit-header-cell">Status</th>
                                     </tr>

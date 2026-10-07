@@ -14,6 +14,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import { T } from '@/Components/Dashboard/Terms';
 
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview);
@@ -97,7 +98,7 @@ export default function PropertyIndex({ properties }) {
             content: (
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Property Name</label>
+                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property Name</T></label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -282,7 +283,7 @@ export default function PropertyIndex({ properties }) {
                          <Plus size={32}></Plus>
                     </div>
                     <div className="text-center">
-                        <span className="host-properties-index-add-title">Add New Property</span>
+                        <span className="host-properties-index-add-title"><T>Add New Property</T></span>
                         <span className="host-properties-index-add-subtitle">Start onboarding</span>
                     </div>
                 </button>

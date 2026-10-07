@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import PillButton from './PillButton';
+import { useTerms } from './Terms';
 import './DashboardHero.css';
 
 export default function DashboardHero({
@@ -10,6 +11,8 @@ export default function DashboardHero({
     stats = [],
     rootRoute = 'host.dashboard',
 }) {
+    const t = useTerms();
+
     return (
         <div className="dashboard-hero">
             {/* Top Row: Breadcrumbs & Title */}
@@ -21,14 +24,14 @@ export default function DashboardHero({
                             <React.Fragment key={idx}>
                                 <span className="dashboard-hero__breadcrumb-separator">/</span>
                                 {crumb.href ? (
-                                    <Link href={crumb.href} className="dashboard-hero__breadcrumb-link">{crumb.label}</Link>
+                                    <Link href={crumb.href} className="dashboard-hero__breadcrumb-link">{t(crumb.label)}</Link>
                                 ) : (
-                                    <span className="dashboard-hero__breadcrumb-current">{crumb.label}</span>
+                                    <span className="dashboard-hero__breadcrumb-current">{t(crumb.label)}</span>
                                 )}
                             </React.Fragment>
                         ))}
                     </nav>
-                    <h1 className="dashboard-hero__title">{title}</h1>
+                    <h1 className="dashboard-hero__title">{t(title)}</h1>
                 </div>
 
                 {/* Page Actions */}
@@ -41,7 +44,7 @@ export default function DashboardHero({
                             icon={action.icon}
                             className={action.className}
                         >
-                            {action.label}
+                            {t(action.label)}
                         </PillButton>
                     ))}
                 </div>
@@ -52,7 +55,7 @@ export default function DashboardHero({
                 <div className="dashboard-hero__stats">
                     {stats.map((stat, idx) => (
                         <div key={idx} className="dashboard-hero__stat">
-                            <span className="dashboard-hero__stat-label">{stat.label}</span>
+                            <span className="dashboard-hero__stat-label">{t(stat.label)}</span>
                             <div className="dashboard-hero__stat-row">
                                 <span className="dashboard-hero__stat-value">{stat.value}</span>
                                 {stat.trend && (

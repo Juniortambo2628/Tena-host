@@ -63,6 +63,31 @@ class SignupConversionTest extends TestCase
         Http::assertSent(fn (Request $r) => str_contains($r['text']['body'], '/invitation/'.$user->id.'?expires='));
     }
 
+    public function test_business_signup_becomes_a_business_account(): void
+    {
+        ['user' => $user] = app(SignupConversionService::class)->convert(
+            $this->signup(['type' => 'business', 'business_name' => 'Kahawa House', 'units' => null, 'answers' => ['plan' => 'basic', 'locations' => '2 to 5']]),
+            ['whatsapp'],
+        );
+
+        $this->assertTrue($user->isBusiness());
+        $this->assertSame('host', $user->role);
+        $this->assertSame(2, $user->billing_units);
+        $this->assertSame('Kahawa House', $user->properties()->sole()->name);
+    }
+
+    public function test_admin_can_create_a_business_owner(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->post(route('admin.users.store'), [
+            'first_name' => 'Brian', 'last_name' => 'Otieno', 'email' => 'brian@kahawa.test', 'role' => 'business',
+        ])->assertSessionHasNoErrors();
+
+        $user = User::where('email', 'brian@kahawa.test')->sole();
+        $this->assertSame(['host', 'business'], [$user->role, $user->account_type]);
+    }
+
     public function test_converting_again_resends_without_duplicating(): void
     {
         $signup = $this->signup(['email' => 'amina@example.com']);

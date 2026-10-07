@@ -22,6 +22,13 @@ class ReviewRequestService
 {
     public const DEFAULT_MESSAGE = 'Hi {guest_name}, thank you for staying at {property_name}! If you have a minute, a review would mean a lot to us: {review_link}';
 
+    public const DEFAULT_BUSINESS_MESSAGE = 'Hi {guest_name}, thanks for visiting {property_name} today! How did we do? It takes 30 seconds to share your experience on Google: {review_link}';
+
+    public static function defaultMessage(Property $property): string
+    {
+        return $property->host?->isBusiness() ? self::DEFAULT_BUSINESS_MESSAGE : self::DEFAULT_MESSAGE;
+    }
+
     private const CHECKOUT_HOUR = 11;
 
     private const LOOKBACK_DAYS = 7;
@@ -75,7 +82,7 @@ class ReviewRequestService
     public function send(Guest $guest): bool
     {
         $property = $guest->property;
-        $message = strtr($property->review_message ?: self::DEFAULT_MESSAGE, [
+        $message = strtr($property->review_message ?: self::defaultMessage($property), [
             '{review_link}' => $this->link($guest),
         ]);
 

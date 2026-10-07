@@ -34,9 +34,25 @@ export default function Index({ hosts, stats }) {
                     </div>
                     <div className="flex flex-col">
                         <span className="font-black text-sm">{info.getValue()}</span>
-                        <span className="text-[10px] text-black/40 font-bold leading-none mt-1">{info.row.original.email}</span>
+                        <span className="text-[10px] text-black/40 font-bold leading-none mt-1">{info.row.original.email || info.row.original.phone_number}</span>
                     </div>
                 </div>
+            )
+        },
+        {
+            header: 'Type',
+            accessorKey: 'account_type',
+            cell: info => (
+                <span className="text-xs font-black">{info.getValue() === 'business' ? 'Business' : 'Host'}</span>
+            )
+        },
+        {
+            header: 'Plan',
+            accessorKey: 'billing_plan',
+            cell: info => (
+                <span className="text-xs font-bold text-black/60">
+                    {info.getValue() ? `${info.getValue()[0].toUpperCase()}${info.getValue().slice(1)} · ${info.row.original.billing_units}` : '—'}
+                </span>
             )
         },
         {

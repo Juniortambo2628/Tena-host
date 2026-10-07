@@ -11,8 +11,10 @@ import TabbedModal from '@/Components/Dashboard/TabbedModal';
 import BulkActions from '@/Components/Dashboard/BulkActions';
 import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { Plus, Edit2, Trash2, Loader2, Search } from 'lucide-react';
+import { T, useTerms } from '@/Components/Dashboard/Terms';
 
 export default function GuestIndex({ guests, filters, properties }) {
+    const t = useTerms();
     const [showModal, setShowModal] = useState(false);
     const [editingGuest, setEditingGuest] = useState(null);
     const [selectedIds, setSelectedIds] = useState([]);
@@ -135,13 +137,13 @@ export default function GuestIndex({ guests, filters, properties }) {
                     </div>
                     {!editingGuest && (
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Property</label>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
                             <select
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.property_id}
                                 onChange={e => setData('property_id', e.target.value)}
                             >
-                                <option value="">Select property...</option>
+                                <option value="">{t('Select property...')}</option>
                                 {properties.map(p => (
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
@@ -176,7 +178,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                             type="text"
                             value={searchQuery}
                             onChange={(e) => handleSearch(e.target.value)}
-                            placeholder="Search guests..."
+                            placeholder={t('Search guests...')}
                             className="bg-transparent border-none p-0 text-sm font-bold placeholder:text-black/30 focus:ring-0 w-full"
                         />
                     </div>
@@ -200,9 +202,9 @@ export default function GuestIndex({ guests, filters, properties }) {
                                         className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
                                     />
                                 </th>
-                                <th className="host-guests-table-header-cell">Guest</th>
+                                <th className="host-guests-table-header-cell"><T>Guest</T></th>
                                 <th className="host-guests-table-header-cell">Contact</th>
-                                <th className="host-guests-table-header-cell">Property</th>
+                                <th className="host-guests-table-header-cell"><T>Property</T></th>
                                 <th className="host-guests-table-header-cell">Activity</th>
                                 <th className="host-guests-table-header-cell">Actions</th>
                             </tr>
@@ -280,7 +282,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                             ) : (
                                 <tr>
                                     <td colSpan="6" className="host-guests-empty">
-                                        No guests found
+                                        <T>No guests found</T>
                                     </td>
                                 </tr>
                             )}

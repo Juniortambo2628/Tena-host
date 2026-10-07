@@ -42,7 +42,7 @@ class Property extends Model
     ];
 
     protected $with = [
-        'host:id,first_name,last_name,email,phone_number',
+        'host:id,first_name,last_name,email,phone_number,account_type',
     ];
 
     /**

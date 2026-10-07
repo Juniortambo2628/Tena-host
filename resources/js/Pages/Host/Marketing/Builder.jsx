@@ -19,6 +19,7 @@ import {
     ArrowLeft
 } from 'lucide-react';
 import './Builder.css';
+import { T, useTerms } from '@/Components/Dashboard/Terms';
 
 // WhatsApp falls back to SMS when it can't be delivered (see Messenger).
 const CHANNELS = [
@@ -28,6 +29,7 @@ const CHANNELS = [
 ];
 
 export default function MarketingBuilder({ campaign, properties }) {
+    const t = useTerms();
     const isEditing = !!campaign;
 
     const { data, setData, post, put, processing } = useForm({
@@ -239,21 +241,21 @@ export default function MarketingBuilder({ campaign, properties }) {
                                                     onChange={e => setData('target_audience', e.target.value)}
                                                     className="host-builder-audience-select"
                                                 >
-                                                    <option value="all_guests">All Guests</option>
-                                                    <option value="new_guests">New Guests (First Visit)</option>
-                                                    <option value="returning_guests">Returning Guests</option>
-                                                    <option value="vip_guests">VIP Guests</option>
+                                                    <option value="all_guests">{t('All Guests')}</option>
+                                                    <option value="new_guests">{t('New Guests (First Visit)')}</option>
+                                                    <option value="returning_guests">{t('Returning Guests')}</option>
+                                                    <option value="vip_guests">{t('VIP Guests')}</option>
                                                 </select>
                                             </div>
 
                                             <div>
-                                                <label className="host-builder-audience-label">Property</label>
+                                                <label className="host-builder-audience-label"><T>Property</T></label>
                                                 <select
                                                     value={data.audience_property_id || 'all'}
                                                     onChange={e => setData('audience_property_id', e.target.value === 'all' ? null : e.target.value)}
                                                     className="host-builder-audience-select"
                                                 >
-                                                    <option value="all">All Properties</option>
+                                                    <option value="all">{t('All Properties')}</option>
                                                     {properties?.map(p => (
                                                         <option key={p.id} value={p.id}>{p.name}</option>
                                                     ))}
@@ -282,7 +284,7 @@ export default function MarketingBuilder({ campaign, properties }) {
 
                                             <div className="host-builder-audience-estimate">
                                                 <p className="host-builder-audience-estimate-label">Estimated Reach</p>
-                                                <p className="host-builder-audience-estimate-value">~150 guests</p>
+                                                <p className="host-builder-audience-estimate-value"><T>~150 guests</T></p>
                                                 <p className="host-builder-audience-estimate-note">Based on current filters</p>
                                             </div>
                                         </div>
