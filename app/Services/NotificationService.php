@@ -152,9 +152,11 @@ class NotificationService
             'campaign_completed' => 'user',
             'order_placed' => 'user',
             'system_alert' => 'system',
-            'outage_alert' => 'property',
-            'outage_resolved' => 'property',
-            'occupancy_alert' => 'property',
+            // Property alerts are urgent: they file under system (the
+            // category column is an enum).
+            'outage_alert' => 'system',
+            'outage_resolved' => 'system',
+            'occupancy_alert' => 'system',
         ];
 
         return $map[$type] ?? 'system';
