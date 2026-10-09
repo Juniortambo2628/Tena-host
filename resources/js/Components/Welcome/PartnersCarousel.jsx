@@ -1,16 +1,7 @@
 import React from 'react';
-import { getContent, getMedia, extractItems, getText } from '@/lib/cms';
+import { getMedia, extractItems, getText } from '@/lib/cms';
 import { SectionWrapper } from './layouts';
 import './PartnersCarousel.css';
-
-const defaultPartners = [
-    { name: 'Stay Awhile Rentals', url: 'https://stayawhilerentals.com' },
-    { name: 'Airbnb', url: '#' },
-    { name: 'Booking.com', url: '#' },
-    { name: 'Vrbo', url: '#' },
-    { name: 'Expedia', url: '#' },
-    { name: 'Hostaway', url: '#' },
-];
 
 export default function PartnersCarousel({ section }) {
     if (!section) return null;
@@ -18,11 +9,13 @@ export default function PartnersCarousel({ section }) {
     const title = getText(section, 'title', 'Trusted by hosts and partners across Africa');
     const subtitle = getText(section, 'subtitle', '');
 
+    // Only businesses entered in the CMS; never placeholder brands.
     const cmsPartners = extractItems(section, 'partners', ['name', 'url']);
-    const partners = (cmsPartners.length > 0 ? cmsPartners : defaultPartners).map((partner, i) => ({
+    const partners = cmsPartners.map((partner, i) => ({
         ...partner,
-        logo: getMedia(section, `partner_${i}_logo`, '/legacy/assets/Tena-logo-square.jpg'),
-    }));
+        // Logo or photo uploaded in Admin → Public Pages → Media (slot i matches row i).
+        logo: getMedia(section, `partner_${i}_logo`, ''),
+    })).filter((p) => p.name);
 
     if (partners.length === 0) return null;
 
@@ -43,35 +36,24 @@ export default function PartnersCarousel({ section }) {
                 style={{ '--partners-count': partners.length }}
             >
                 <ul className="partners-track">
-                    {loop.map((partner, i) => (
-                        <li key={`${partner.name}-${i}`} className="partners-item">
-                            {partner.url && partner.url !== '#' ? (
-                                <a
-                                    href={partner.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                    {loop.map((partner, i) => {
+                        const linked = partner.url && partner.url !== '#';
+                        const Tile = linked ? 'a' : 'span';
+                        return (
+                            <li key={`${partner.name}-${i}`} className="partners-item" aria-hidden={i >= partners.length || undefined}>
+                                <Tile
+                                    {...(linked ? { href: partner.url, target: '_blank', rel: 'noopener noreferrer' } : {})}
                                     className="partners-link"
-                                    aria-label={partner.name}
+                                    tabIndex={i >= partners.length ? -1 : undefined}
                                 >
-                                    <img
-                                        src={partner.logo}
-                                        alt={partner.name}
-                                        className="partners-logo"
-                                        loading="lazy"
-                                    />
-                                </a>
-                            ) : (
-                                <span className="partners-link" aria-label={partner.name}>
-                                    <img
-                                        src={partner.logo}
-                                        alt={partner.name}
-                                        className="partners-logo"
-                                        loading="lazy"
-                                    />
-                                </span>
-                            )}
-                        </li>
-                    ))}
+                                    {partner.logo
+                                        ? <img src={partner.logo} alt="" className="partners-logo" loading="lazy" />
+                                        : <span className="partners-logo partners-logo--text" aria-hidden="true">{partner.name.charAt(0)}</span>}
+                                    <span className="partners-name">{partner.name}</span>
+                                </Tile>
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
         </SectionWrapper>

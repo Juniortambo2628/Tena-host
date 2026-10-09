@@ -73,7 +73,7 @@ it('renders each public page from its own CMS sections', function (string $url, 
             ->has('seo.title')
         );
 })->with([
-    'main' => ['/', 'home', ['seo', 'hero', 'path_cards', 'comparison__problem', 'how_it_works', 'cta_banner__founding']],
+    'main' => ['/', 'home', ['seo', 'hero', 'path_cards', 'partners', 'comparison__problem', 'how_it_works', 'cta_banner__founding']],
     'hosts' => ['/hosts', 'hosts', ['seo', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'stats__commission', 'comparison__party', 'detailed_features', 'features__protect', 'credibility', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
     'business' => ['/business', 'business', ['seo', 'hero', 'features__why', 'comparison__qr', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
 ]);
@@ -402,4 +402,14 @@ it('lists every public page in the sitemap', function () {
         ->assertSee(url('/hosts'), false)
         ->assertSee(url('/business'), false)
         ->assertSee(url('/privacy'), false);
+});
+
+it('sends the founding buttons to the top of the host and business pages', function () {
+
+    $hrefs = \App\Models\LandingContent::query()
+        ->whereHas('section', fn ($q) => $q->where('section_key', 'cta_banner__founding'))
+        ->where('content_key', 'like', '%href')
+        ->pluck('value')->all();
+
+    expect($hrefs)->toContain('/hosts', '/business')->not->toContain('/business#signup');
 });

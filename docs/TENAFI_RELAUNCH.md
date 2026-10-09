@@ -131,6 +131,8 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 
 ## Still needed before launch
 
+- Trusted by strip (main landing page): upload each business's photo or logo under Admin → Public Pages → Main landing page → Trusted by → Media (one slot per row). Add rows in the Partners tab until there are at least 10 businesses. A row without a photo shows its initial on a yellow tile.
+
 - Fill in TenaFi's paybill under Admin → M-Pesa: paybill or till number, Daraja consumer key and secret, Lipa na M-Pesa passkey, Production, and the fee on extras. The same paybill takes host subscriptions. The M-Pesa callback URLs (shown on that page) are now exempt from CSRF; before this, Safaricom's subscription callbacks would have been rejected.
 
 - Billing switches on automatically once M-Pesa (`MPESA_CONSUMER_KEY`) or Paystack keys are set (Admin → Settings → billing "auto"). Prices live in `config/billing.php`; keep them in step with the CMS pricing sections. The Paystack account must accept KES.
