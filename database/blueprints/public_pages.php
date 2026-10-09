@@ -172,6 +172,22 @@ return [
                 'card_1_image' => $img('Clients-view.jpg'),
             ],
         ],
+        'partners' => [
+            'title' => 'Trusted by',
+            'bg' => 'white',
+            'content' => [
+                'title' => 'Trusted by hosts and businesses in Kenya',
+                'subtitle' => '',
+                // Upload each logo or photo under Media (one slot per row).
+                'partners' => [
+                    ['name' => 'Halo Studios', 'url' => ''],
+                    ['name' => 'Zero Sips', 'url' => ''],
+                    ['name' => 'Georgio Lani Pharmacy', 'url' => ''],
+                    ['name' => 'Stay Awhile Rentals', 'url' => 'https://stayawhilerentals.com'],
+                    ['name' => 'Luxury Hideaway', 'url' => ''],
+                ],
+            ],
+        ],
         'comparison__problem' => [
             'title' => 'The problem',
             'content' => [
@@ -209,8 +225,8 @@ return [
                 'body' => 'TenaFi was born inside Stay Awhile Rentals: 1,400+ reservations, 5,000+ guest nights and 800+ reviews. We built the tool we needed. Now our Founding 20 (10 rentals and 10 businesses) get it from December 2026, with the first two months free.',
                 'note' => '',
                 'buttons' => [
-                    ['label' => 'I run short-term rentals', 'href' => '/hosts#join'],
-                    ['label' => 'I own a business', 'href' => '/business#signup'],
+                    ['label' => 'I run short-term rentals', 'href' => '/hosts'],
+                    ['label' => 'I own a business', 'href' => '/business'],
                 ],
             ],
         ],
