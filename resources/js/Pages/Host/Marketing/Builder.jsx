@@ -216,7 +216,7 @@ export default function MarketingBuilder({ campaign, properties }) {
                                         {data.type === 'email' ? (
                                             <>
                                                 <div className="host-builder-email-header">
-                                                    <BrandLogo className="w-16 h-16 rounded-2xl" />
+                                                    <BrandLogo variant="favicon" className="w-16 h-16 rounded-2xl" />
                                                 </div>
                                                 <div className="host-builder-email-body">
                                                     <h2 className="host-builder-email-heading">

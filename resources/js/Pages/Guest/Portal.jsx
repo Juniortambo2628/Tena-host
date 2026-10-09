@@ -61,7 +61,7 @@ export default function GuestPortal({ property, amenities, guidebook_link, order
 
                 <div className="guest-portal-logo-overlay">
                     <div className="guest-portal-logo-box">
-                        <BrandLogo />
+                        <BrandLogo variant="favicon" />
                     </div>
                 </div>
             </div>

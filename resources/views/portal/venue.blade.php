@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $property->name }}</title>
+    @include('partials.favicon')
     @include('portal.partials.styles')
     <style>
         .card { text-align: left; }

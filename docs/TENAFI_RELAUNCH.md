@@ -129,6 +129,11 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
   They are switched off, not deleted (Admin → Public Pages → Short-term rental operators).
 - The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
 
+## Branding and editable lists
+
+- Logos live in one place: Admin → Settings → Branding → Logos (`App\Support\Brand::LOGOS`). Four slots: official logo (emails, link previews), header logo (light backgrounds: website header, sign-in, dashboards), footer logo (dark backgrounds), favicon. Uploading one updates every page, the WiFi portal and all emails; "Use default" goes back to the files in `public/brand/`. The CMS header no longer has its own logo slot.
+- Any list in Admin → Public Pages (FAQs, Trusted by, steps, plans...) has "Add" and "Remove" in its list tab. Removing a row renumbers the rows after it and their photos.
+
 ## Still needed before launch
 
 - Trusted by strip (main landing page): upload each business's photo or logo under Admin → Public Pages → Main landing page → Trusted by → Media (one slot per row). Add rows in the Partners tab until there are at least 10 businesses. A row without a photo shows its initial on a yellow tile.

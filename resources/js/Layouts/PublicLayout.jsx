@@ -23,7 +23,6 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
     const header = site.header;
     const footer = site.footer;
     const brand = useBrand();
-    const logo = getMedia(header, 'logo', brand.logo);
     const siteName = seo.site_name || 'TenaFi';
 
     // In-page anchors (#how-it-works) only exist on section pages; elsewhere
@@ -47,7 +46,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                         <div className="welcome-nav-inner">
                             <div className="welcome-nav-logo">
                                 <Link href="/">
-                                    <img src={logo} alt={`${siteName} logo`} />
+                                    <img src={brand.header} alt={`${siteName} logo`} />
                                 </Link>
                             </div>
                             <NavMenu links={navLinks} resolveHref={resolveHref} open={menuOpen} onNavigate={() => setMenuOpen(false)} />
@@ -84,7 +83,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                         <div className="welcome-footer-grid">
                             <div className="welcome-footer-brand">
                                 <Link href="/" className="welcome-footer-brand-link">
-                                    <img src={logo} alt={`${siteName} logo`} />
+                                    <img src={brand.footer} alt={`${siteName} logo`} />
                                 </Link>
                                 <p className="welcome-footer-brand-desc">
                                     {stripHtml(getContent(footer, 'description', "Africa's guest relationship platform."))}

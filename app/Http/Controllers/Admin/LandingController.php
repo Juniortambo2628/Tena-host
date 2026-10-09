@@ -9,7 +9,9 @@ use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class LandingController extends Controller
@@ -159,6 +161,49 @@ class LandingController extends Controller
         LandingSection::clearCache();
 
         return back();
+    }
+
+    /**
+     * Remove one row of a repeatable list (FAQs, partners, ...) and close
+     * the gap: later rows and their per-row media slots (partner_3_logo for
+     * partners.3) move up one, so nothing ends up on the wrong row.
+     */
+    public function destroyItem(LandingSection $section, string $array, int $index)
+    {
+        $rowMedia = '/^'.preg_quote(Str::singular($array), '/').'_(\\d+)_(.+)$/';
+
+        DB::transaction(function () use ($section, $array, $index, $rowMedia) {
+            foreach ($section->contents()->where('content_key', 'like', "{$array}.%")->get() as $content) {
+                if (! preg_match('/^'.preg_quote($array, '/').'\\.(\\d+)\\.(.+)$/', $content->content_key, $m)) {
+                    continue;
+                }
+                if ((int) $m[1] === $index) {
+                    $content->delete();
+                } elseif ((int) $m[1] > $index) {
+                    $content->update(['content_key' => "{$array}.".($m[1] - 1).".{$m[2]}"]);
+                }
+            }
+
+            foreach (LandingMedia::where('section_id', $section->id)->orderBy('media_key')->get() as $media) {
+                if (! preg_match($rowMedia, $media->media_key, $m)) {
+                    continue;
+                }
+                if ((int) $m[1] === $index) {
+                    $this->mediaService->delete($media);
+                } elseif ((int) $m[1] > $index) {
+                    $media->update(['media_key' => Str::singular($array).'_'.($m[1] - 1)."_{$m[2]}"]);
+                }
+            }
+        });
+
+        LandingSection::clearCache();
+
+        $section->load('contents', 'media');
+
+        return response()->json([
+            'content' => $section->contents->pluck('value', 'content_key'),
+            'media' => $section->media->keyBy('media_key'),
+        ]);
     }
 
     /**

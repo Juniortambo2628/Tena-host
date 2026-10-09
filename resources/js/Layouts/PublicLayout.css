@@ -39,7 +39,7 @@
 }
 
 .welcome-nav-logo img {
-    @apply h-12 w-12 rounded-xl;
+    @apply h-10 w-auto;
 }
 
 .welcome-nav-link {
@@ -174,7 +174,7 @@
 }
 
 .welcome-footer-brand-link img {
-    @apply h-12 w-12 rounded-xl;
+    @apply h-10 w-auto;
 }
 
 .welcome-footer-brand-desc {

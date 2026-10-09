@@ -109,7 +109,7 @@
 }
 
 .twofa-right-logo {
-    @apply h-14 w-auto rounded-2xl opacity-80;
+    @apply h-14 w-auto opacity-80;
 }
 
 .twofa-right-title {

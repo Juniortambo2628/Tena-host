@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { router } from '@inertiajs/react';
 import { Dialog, Transition } from '@headlessui/react';
+import { Plus, Trash2 } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import ContentField from './ContentField';
 import MediaUploader from './MediaUploader';
@@ -54,11 +55,24 @@ function detectFieldType(key, value) {
     if (lowerKey === 'media_type') return 'select';
     if (lowerKey === 'description' || lowerKey === 'text' || lowerKey === 'body') return 'richtext';
     if (lowerKey === 'subtitle') return 'richtext';
+    if (lowerKey === 'answer') return 'textarea';
     if (typeof value === 'string' && value.startsWith('[')) return 'json_array';
     if (typeof value === 'string' && value.includes('<')) return 'html';
     if (typeof value === 'string' && value.length > 120) return 'textarea';
     return 'text';
 }
+
+const stripTags = (html) => (html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+
+// Within a list row, the field that names the row comes first (Question before Answer).
+const LEAD_FIELDS = ['question', 'name', 'title', 'label', 'step'];
+const fieldRank = (field) => (LEAD_FIELDS.includes(field) ? LEAD_FIELDS.indexOf(field) : LEAD_FIELDS.length);
+
+const singularLabel = (arrName) => {
+    const words = arrName.replace(/_/g, ' ');
+    if (words === 'items') return 'item';
+    return words.endsWith('s') ? words.slice(0, -1) : words;
+};
 
 function getTabLabel(tabId) {
     if (tabId === 'content') return 'Content';
@@ -224,6 +238,14 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         [section.section_key, localContent],
     );
 
+    // A row added in a list tab gets its media slot (e.g. partner_5_logo) straight away.
+    useEffect(() => {
+        setLocalMedia((prev) => {
+            const missing = expectedMediaSlots.filter((slot) => !(slot.key in prev));
+            return missing.length ? { ...prev, ...Object.fromEntries(missing.map((slot) => [slot.key, null])) } : prev;
+        });
+    }, [expectedMediaSlots]);
+
     const suggestedMediaKeys = useMemo(() => {
         const existing = new Set(Object.keys(localMedia));
         return expectedMediaSlots.filter((slot) => !existing.has(slot.key));
@@ -248,22 +270,70 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         </div>
     );
 
+    // Repeatable lists (FAQs, partners, steps...): a new row copies the
+    // fields of the last one, blank, and is stored on Save.
+    const handleAddItem = (arrName) => {
+        const rows = arrays[arrName] || {};
+        const last = rows[Math.max(...Object.keys(rows).map(Number))] || {};
+        const next = Object.keys(rows).length;
+        setLocalContent((prev) => ({
+            ...prev,
+            ...Object.fromEntries(Object.keys(last).map((field) => [`${arrName}.${next}.${field}`, ''])),
+        }));
+        setHasChanges(true);
+    };
+
+    // Removing a row renumbers later rows (and their media) on the server.
+    const handleRemoveItem = (arrName, idx, name) => {
+        if (hasChanges) {
+            notify.error('Save your changes first, then remove the item');
+            return;
+        }
+        if (!window.confirm(`Remove "${name}"? This cannot be undone.`)) return;
+
+        window.axios.delete(route('admin.landing.items.destroy', { section: section.id, array: arrName, index: idx }))
+            .then(({ data }) => {
+                setLocalContent(data.content || {});
+                setLocalMedia(() => {
+                    const next = { ...(data.media || {}) };
+                    for (const slot of getExpectedMediaSlots(section.section_key, Object.keys(data.content || {}))) {
+                        if (!(slot.key in next)) next[slot.key] = null;
+                    }
+                    return next;
+                });
+                notify.success('Item removed');
+                if (onUpdate) onUpdate();
+            })
+            .catch(() => notify.error('Failed to remove item'));
+    };
+
     const renderArrayTab = (arrName) => {
         const items = arrays[arrName] || {};
+        const count = Object.keys(items).length;
         return (
             <div className="editor-tab__content">
                 <h3 className="editor-tab__heading">{arrName.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</h3>
                 <div className="editor-tab__items">
                     {Object.entries(items).map(([idx, fields]) => {
-                        const displayName = fields.title?.value || fields.label?.value || fields.step?.value || `Item ${Number(idx) + 1}`;
+                        const displayName = stripTags(fields.title?.value || fields.question?.value || fields.name?.value || fields.label?.value || fields.step?.value) || `Item ${Number(idx) + 1}`;
                         return (
                             <div key={`${arrName}-${idx}`} className="editor-tab__item">
                                 <div className="editor-tab__item-header">
                                     <span className="editor-tab__item-number">{Number(idx) + 1}</span>
                                     <span className="editor-tab__item-title">{displayName}</span>
+                                    {count > 1 && (
+                                        <button
+                                            type="button"
+                                            className="editor-tab__item-remove"
+                                            onClick={() => handleRemoveItem(arrName, Number(idx), displayName)}
+                                            aria-label={`Remove ${displayName}`}
+                                        >
+                                            <Trash2 size={14} /> Remove
+                                        </button>
+                                    )}
                                 </div>
                                 <div className="editor-tab__item-fields">
-                                    {Object.entries(fields).map(([field, { key, value }]) => {
+                                    {Object.entries(fields).sort(([a], [b]) => fieldRank(a) - fieldRank(b)).map(([field, { key, value }]) => {
                                         const fieldType = detectFieldType(field, value);
                                         if (fieldType === 'json_array') {
                                             return (
@@ -292,6 +362,9 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                         );
                     })}
                 </div>
+                <button type="button" className="editor-tab__item-add" onClick={() => handleAddItem(arrName)}>
+                    <Plus size={16} /> Add {singularLabel(arrName)}
+                </button>
             </div>
         );
     };

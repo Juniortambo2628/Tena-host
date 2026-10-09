@@ -21,7 +21,7 @@
 }
 
 .login-logo-img {
-    @apply h-12 w-auto rounded-2xl shadow-xl shadow-black/5;
+    @apply h-12 w-auto;
 }
 
 .login-title-area {

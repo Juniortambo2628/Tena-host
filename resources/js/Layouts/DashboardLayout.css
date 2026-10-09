@@ -31,7 +31,7 @@
 }
 
 .dashboard-layout__logo {
-    @apply h-14 w-auto rounded-2xl shadow-lg;
+    @apply h-12 w-auto;
 }
 
 .dashboard-layout__brand-text {

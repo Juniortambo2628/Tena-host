@@ -380,7 +380,7 @@ it('renders social tags server-side from the CMS', function () {
     $html = $this->get('/business')->getContent();
 
     expect($html)->toContain('<meta property="og:title" content="TenaFi for business owners: turn your WiFi into more Google reviews">')
-        ->toContain('<meta property="og:image" content="'.url('/legacy/assets/Tena-logo-square.jpg').'">')
+        ->toContain('<meta property="og:image" content="'.url('/brand/tenafi-logo.png').'">')
         ->toContain('<link rel="canonical" href="'.url('/business').'">');
 });
 
@@ -406,10 +406,27 @@ it('lists every public page in the sitemap', function () {
 
 it('sends the founding buttons to the top of the host and business pages', function () {
 
-    $hrefs = \App\Models\LandingContent::query()
+    $hrefs = LandingContent::query()
         ->whereHas('section', fn ($q) => $q->where('section_key', 'cta_banner__founding'))
         ->where('content_key', 'like', '%href')
         ->pluck('value')->all();
 
     expect($hrefs)->toContain('/hosts', '/business')->not->toContain('/business#signup');
+});
+
+it('lets admins remove a list item and renumbers later rows and their media', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $section = LandingSection::whereHas('page', fn ($q) => $q->where('slug', 'home'))->where('section_key', 'partners')->firstOrFail();
+    $section->media()->create(['media_key' => 'partner_2_logo', 'original_path' => '/storage/georgio.png', 'mime_type' => 'image/png', 'file_size' => 1, 'sort_order' => 0]);
+
+    $this->actingAs($admin)
+        ->deleteJson(route('admin.landing.items.destroy', [$section, 'partners', 1]))
+        ->assertOk()
+        ->assertJsonPath('content', fn ($content) => $content['partners.1.name'] === 'Georgio Lani Pharmacy'
+            && $content['partners.3.name'] === 'Luxury Hideaway'
+            && ! isset($content['partners.4.name']))
+        ->assertJsonPath('media.partner_1_logo.original_path', '/storage/georgio.png');
+
+    $this->get('/')->assertInertia(fn ($page) => $page->where('sections', fn ($sections) => collect($sections)
+        ->firstWhere('section_key', 'partners')['content']['partners.0.name'] === 'Halo Studios'));
 });

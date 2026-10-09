@@ -22,7 +22,7 @@ export const ContactEnquiryEmail = ({
             <Body style={main}>
                 <Container style={container}>
                     <Section style={header}>
-                        <Img src={logoUrl} width="42" height="42" alt={businessName} style={logo} />
+                        <Img src={logoUrl} height="42" alt={businessName} style={logo} />
                     </Section>
                     <Section style={content}>
                         <Heading style={h1}>{heading || 'New contact enquiry'}</Heading>
@@ -57,7 +57,7 @@ const main = {
 };
 const container = { margin: '0 auto', padding: '20px 0 48px', width: '580px' };
 const header = { padding: '32px 0' };
-const logo = { borderRadius: '12px' };
+const logo = { borderRadius: '8px', width: 'auto' };
 const content = { padding: '0 20px' };
 const h1 = { color: '#000000', fontSize: '24px', fontWeight: '900', lineHeight: '1.2', margin: '20px 0 12px' };
 const text = { color: '#444444', fontSize: '15px', lineHeight: '1.7', margin: '12px 0' };
