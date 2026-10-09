@@ -1,7 +1,7 @@
 @php
     $primaryColor = \App\Models\Setting::getValue('email_primary_color', '#000000');
     $accentColor = \App\Models\Setting::getValue('email_accent_color', '#FFD300');
-    $headerBgColor = '#ffdb00';
+    $headerBgColor = \App\Support\Brand::YELLOW;
     $businessName = \App\Support\Brand::name();
     $businessAddress = \App\Models\Setting::getValue('business_address', 'Nairobi, Kenya');
     $logoUrl = \App\Support\Brand::emailLogoUrl();

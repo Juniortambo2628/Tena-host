@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Support\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -14,6 +15,13 @@ class SettingsController extends Controller
     {
         return Inertia::render('Admin/Settings/Index', [
             'settings' => Setting::all()->groupBy('group'),
+            'logos' => collect(Brand::LOGOS)->map(fn ($logo, $key) => [
+                'key' => $key,
+                'label' => $logo[0],
+                'hint' => $logo[2],
+                'url' => Brand::asset($key),
+                'custom' => (bool) Setting::getValue($key),
+            ])->values(),
         ]);
     }
 
@@ -30,7 +38,6 @@ class SettingsController extends Controller
             'email_primary_color' => 'sometimes|string|max:7',
             'email_accent_color' => 'sometimes|string|max:7',
             'business_address' => 'sometimes|string|max:500',
-            'logo_url' => 'sometimes|string|max:500',
             'welcome_email_heading' => 'sometimes|string|max:255',
             'welcome_email_body' => 'sometimes|string|max:5000',
             'welcome_email_subject' => 'sometimes|string|max:255',

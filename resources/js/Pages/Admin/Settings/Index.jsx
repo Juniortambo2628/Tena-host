@@ -12,7 +12,7 @@ import { notify } from '@/Components/Toast';
 import { safeRoute, hasRoute } from '@/lib/route';
 import EmailTemplateEditor from '@/Components/Admin/EmailTemplateEditor';
 import './Index.css';
-import { LOGO_PATH } from '@/constants';
+import BrandAssets from '@/Components/Admin/BrandAssets';
 
 function debounce(func, wait) {
     let timeout;
@@ -123,7 +123,7 @@ const EMAIL_TEMPLATES = [
     },
 ];
 
-export default function Index({ settings }) {
+export default function Index({ settings, logos = [] }) {
     const [activeTab, setActiveTab] = useState('general');
     const [autoSaveStatus, setAutoSaveStatus] = useState('idle');
     const [testEmail, setTestEmail] = useState('');
@@ -146,7 +146,6 @@ export default function Index({ settings }) {
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || '#FFD300',
             business_address: flattened.business_address || 'Nairobi, Kenya',
-            logo_url: flattened.logo_url || LOGO_PATH,
             welcome_email_heading: flattened.welcome_email_heading || '',
             welcome_email_body: flattened.welcome_email_body || '',
             welcome_email_subject: flattened.welcome_email_subject || '',
@@ -190,7 +189,7 @@ export default function Index({ settings }) {
 
     const tabs = [
         { id: 'general', name: 'General', icon: <Settings size={16} /> },
-        { id: 'branding', name: 'Email Branding', icon: <Mail size={16} /> },
+        { id: 'branding', name: 'Branding', icon: <Mail size={16} /> },
         { id: 'billing', name: 'Billing', icon: <Shield size={16} /> },
         { id: 'policies', name: 'Policies & Terms', icon: <Globe size={16} /> },
     ];
@@ -358,6 +357,8 @@ export default function Index({ settings }) {
 
                         {activeTab === 'branding' && (
                             <div className="space-y-6">
+                                <BrandAssets logos={logos} />
+
                                 {/* Visual Theme */}
                                 <GlassCard padding="p-6">
                                     <div className="space-y-4">
@@ -365,7 +366,7 @@ export default function Index({ settings }) {
                                             <div className="settings-page__card-icon"><Palette size={20} /></div>
                                             <div>
                                                 <h3 className="settings-page__card-title">Visual Theme</h3>
-                                                <p className="settings-page__card-subtitle">Colors and logo</p>
+                                                <p className="settings-page__card-subtitle">Email colors</p>
                                             </div>
                                         </div>
 
@@ -402,13 +403,6 @@ export default function Index({ settings }) {
                                                 </div>
                                             </FormField>
                                         </PageGrid>
-
-                                        <FormField label="Logo URL">
-                                            <TextInput
-                                                value={data.settings.logo_url}
-                                                onChange={(e) => updateSetting('logo_url', e.target.value)}
-                                            />
-                                        </FormField>
                                     </div>
                                 </GlassCard>
 

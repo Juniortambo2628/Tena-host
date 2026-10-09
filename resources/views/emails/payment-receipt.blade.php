@@ -4,7 +4,7 @@
     if ($logoUrl && !str_starts_with($logoUrl, 'http')) {
         $logoUrl = $baseUrl . '/' . ltrim($logoUrl, '/');
     }
-    $headerBgColor = '#ffdb00';
+    $headerBgColor = \App\Support\Brand::YELLOW;
 @endphp
 <!DOCTYPE html>
 <html>

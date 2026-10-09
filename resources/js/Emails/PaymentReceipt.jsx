@@ -46,7 +46,6 @@ export const PaymentReceipt = ({
                     <Section style={header}>
                         <Img
                             src={logoUrl}
-                            width="42"
                             height="42"
                             alt={businessName}
                             style={logo}
@@ -122,9 +121,7 @@ const header = {
     marginBottom: '32px',
 };
 
-const logo = {
-    borderRadius: '12px',
-};
+const logo = { borderRadius: '8px', width: 'auto' };
 
 const content = {
     padding: '0',

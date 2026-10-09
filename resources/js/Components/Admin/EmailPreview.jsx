@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Laptop, Smartphone, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useBrand } from '@/Components/BrandLogo';
 import './EmailPreview.css';
 
 const emailComponents = {
@@ -35,6 +36,7 @@ function resolveHeading(settings, template) {
 }
 
 export default function EmailPreview({ settings }) {
+    const brand = useBrand();
     const [viewMode, setViewMode] = useState('desktop');
     const [activeTemplate, setActiveTemplate] = useState('welcome');
     const iframeRef = useRef(null);
@@ -53,7 +55,7 @@ export default function EmailPreview({ settings }) {
         accentColor: settings.email_accent_color || '#FFD300',
         businessName: settings.site_name || 'TenaFi',
         businessAddress: settings.business_address || 'Nairobi, Kenya',
-        logoUrl: settings.logo_url || '/brand/tenafi-logo.png',
+        logoUrl: brand.logo,
         heading: resolveHeading(settings, activeTemplate),
         body: resolveBody(settings, activeTemplate),
         name: "Empire Builder",
@@ -75,7 +77,7 @@ export default function EmailPreview({ settings }) {
         subjectLine: "Interested in TenaFi for my listings",
         messageBody: "Hi team, I'd love to know more about the founding host program and pricing. Thanks!",
     }), [settings.email_primary_color, settings.email_accent_color, settings.site_name,
-        settings.business_address, settings.logo_url, settings.welcome_email_heading,
+        settings.business_address, brand.logo, settings.welcome_email_heading,
         settings.welcome_email_body, settings.receipt_email_heading, settings.receipt_email_body,
         settings.waitlist_confirmation_heading, settings.waitlist_confirmation_body,
         settings.waitlist_welcome_heading, settings.waitlist_welcome_body,

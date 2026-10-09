@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="robots" content="noindex">
     <title>{{ $propertyName }} WiFi</title>
+    @include('partials.favicon')
     @include('portal.partials.styles')
 </head>
 <body>

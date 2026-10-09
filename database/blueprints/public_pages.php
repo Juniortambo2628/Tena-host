@@ -76,7 +76,7 @@ return [
                 'meta_title' => "TenaFi | Africa\u{2019}s guest relationship platform",
                 'meta_description' => 'Turn your existing WiFi into growth: higher occupancy for short-term rentals and more Google reviews for local businesses, all managed for you.',
             ],
-            'media' => ['og_image' => '/legacy/assets/Tena-logo-square.jpg'],
+            'media' => ['og_image' => '/brand/tenafi-logo.png'],
         ],
         'header' => [
             'title' => 'Header & navigation (default)',
@@ -90,7 +90,6 @@ return [
                     ['label' => 'How it works', 'href' => '/#how'],
                 ],
             ],
-            'media' => ['logo' => '/legacy/assets/Tena-logo-square.jpg'],
         ],
         'footer' => [
             'title' => 'Footer',

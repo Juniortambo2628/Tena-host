@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccessPointController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\EmailImageController;
 use App\Http\Controllers\Admin\HostController;
 use App\Http\Controllers\Admin\LandingController;
@@ -110,6 +111,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/branding/{key}', [BrandingController::class, 'upload'])->name('branding.upload');
+    Route::delete('/branding/{key}', [BrandingController::class, 'reset'])->name('branding.reset');
 
     // WiFi captive portal (UniFi) settings
     Route::get('/wifi', [UnifiSettingsController::class, 'edit'])->name('wifi.edit');
@@ -148,6 +151,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/landing/content', [LandingController::class, 'storeContent'])->name('landing.content.store');
     Route::put('/landing/content', [LandingController::class, 'updateContent'])->name('landing.content.update');
     Route::delete('/landing/content/{content}', [LandingController::class, 'destroyContent'])->name('landing.content.destroy');
+    Route::delete('/landing/sections/{section}/items/{array}/{index}', [LandingController::class, 'destroyItem'])->whereNumber('index')->where('array', '[a-z_]+')->name('landing.items.destroy');
     Route::post('/landing/sections/{section}/media', [LandingController::class, 'uploadMedia'])->name('landing.media.upload');
     Route::post('/landing/sections/{section}/media/assign', [LandingController::class, 'assignMedia'])->name('landing.media.assign');
     Route::get('/landing/media/all', [LandingController::class, 'listMedia'])->name('landing.media.list');

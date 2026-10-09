@@ -26,7 +26,7 @@ export const WaitlistConfirmationEmail = ({
             <Body style={main}>
                 <Container style={container}>
                     <Section style={header}>
-                        <Img src={logoUrl} width="42" height="42" alt={businessName} style={logo} />
+                        <Img src={logoUrl} height="42" alt={businessName} style={logo} />
                     </Section>
                     <Section style={content}>
                         <Heading style={h1}>{heading || "You're on the list!"}</Heading>
@@ -84,9 +84,7 @@ const header = {
     padding: '32px 0',
 };
 
-const logo = {
-    borderRadius: '12px',
-};
+const logo = { borderRadius: '8px', width: 'auto' };
 
 const content = {
     padding: '0 20px',

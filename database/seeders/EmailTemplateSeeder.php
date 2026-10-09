@@ -89,12 +89,6 @@ class EmailTemplateSeeder extends Seeder
                 'group' => 'branding',
                 'type' => 'string',
             ],
-            [
-                'key' => 'logo_url',
-                'value' => '/brand/tenafi-logo.svg',
-                'group' => 'branding',
-                'type' => 'string',
-            ],
         ];
 
         foreach ($templates as $template) {

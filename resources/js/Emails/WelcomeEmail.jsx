@@ -38,7 +38,6 @@ export const WelcomeEmail = ({
                     <Section style={header}>
                         <Img
                             src={logoUrl}
-                            width="42"
                             height="42"
                             alt={businessName}
                             style={logo}
@@ -101,9 +100,7 @@ const header = {
     padding: '32px 0',
 };
 
-const logo = {
-    borderRadius: '12px',
-};
+const logo = { borderRadius: '8px', width: 'auto' };
 
 const content = {
     padding: '0 20px',

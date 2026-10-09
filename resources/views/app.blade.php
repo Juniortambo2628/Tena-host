@@ -38,9 +38,7 @@
         @endif
 
         {{-- Favicon --}}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-        <link rel="icon" type="image/svg+xml" href="{{ asset('brand/tenafi-icon.svg') }}">
-        <link rel="apple-touch-icon" href="{{ asset('brand/tenafi-icon.png') }}">
+        @include('partials.favicon')
 
         {{-- Fonts --}}
         <link rel="preconnect" href="https://fonts.bunny.net">

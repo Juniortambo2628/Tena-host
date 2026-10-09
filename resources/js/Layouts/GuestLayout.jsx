@@ -1,4 +1,4 @@
-import ApplicationLogo from '@/Components/ApplicationLogo';
+import BrandLogo from '@/Components/BrandLogo';
 import { Link } from '@inertiajs/react';
 import './GuestLayout.css';
 
@@ -8,7 +8,7 @@ export default function Guest({ children }) {
         <div className="guest-layout">
             <div>
                 <Link href="/">
-                    <ApplicationLogo className="guest-logo" />
+                    <BrandLogo className="guest-logo" />
                 </Link>
             </div>
 

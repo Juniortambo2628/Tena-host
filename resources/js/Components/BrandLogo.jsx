@@ -1,14 +1,18 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
-import { LOGO_PATH } from '@/constants';
+import { BRAND_DEFAULTS } from '@/constants';
 
+/** Logos from Admin → Settings → Branding (App\Support\Brand). */
 export const useBrand = () => {
-    const { brand } = usePage().props;
-    return { name: brand?.name || 'TenaFi', logo: brand?.logo || LOGO_PATH };
+    const { brand = {} } = usePage().props;
+    return { ...BRAND_DEFAULTS, ...Object.fromEntries(Object.entries(brand).filter(([, v]) => v)) };
 };
 
-/** The product logo from Admin → Settings (App\Support\Brand). */
-export default function BrandLogo({ className = '', ...props }) {
-    const { name, logo } = useBrand();
-    return <img src={logo} alt={name} className={className} {...props} />;
+/**
+ * variant: header (light backgrounds, the default), footer (dark
+ * backgrounds), logo (the official yellow logo) or favicon (square icon).
+ */
+export default function BrandLogo({ variant = 'header', className = '', ...props }) {
+    const brand = useBrand();
+    return <img src={brand[variant]} alt={brand.name} className={className} {...props} />;
 }
