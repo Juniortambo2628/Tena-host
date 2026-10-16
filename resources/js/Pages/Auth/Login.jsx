@@ -177,9 +177,6 @@ export default function Login({ status, canResetPassword }) {
                             <SocialBtn icon={<Twitter size={20} />} label="Twitter" />
                         </div>
                         <div className="login-bottom">
-                            <p className="login-bottom-text">
-                                Don't have an account? <Link href={route('register')} className="login-bottom-link">Sign up</Link>
-                            </p>
                             <button
                                 onClick={toggleTerms}
                                 className="login-terms-btn"

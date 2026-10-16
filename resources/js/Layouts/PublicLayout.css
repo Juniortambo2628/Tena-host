@@ -145,10 +145,6 @@
     @apply flex items-center space-x-4;
 }
 
-.welcome-login-btn {
-    @apply text-sm font-bold tracking-wide px-6 py-2 border-2 border-black rounded-none bg-transparent text-black hover:bg-black hover:text-white transition-all;
-}
-
 .welcome-join-btn {
     @apply text-sm font-bold tracking-wide px-6 py-2.5 bg-[#FFD300] text-black rounded-xl shadow-lg shadow-[#FFD300]/20 hover:scale-[1.05] active:scale-[0.98] transition-all;
 }

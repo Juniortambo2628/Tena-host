@@ -43,7 +43,7 @@ const FIELD_OPTIONS = {
     highlight: YES_NO,
 };
 
-const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'login_label', 'join_label']);
+const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'join_label']);
 
 function detectFieldType(key, value) {
     const lowerKey = key.toLowerCase();

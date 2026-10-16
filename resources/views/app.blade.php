@@ -17,7 +17,8 @@
         <title inertia>{{ $metaTitle }}</title>
         <meta name="description" content="{{ $metaDescription }}">
         <meta name="author" content="{{ $siteName }}">
-        <meta name="robots" content="index, follow">
+        {{-- Only public CMS pages (which pass `seo`) are indexed; sign-in, dashboards and portals stay out of search. --}}
+        <meta name="robots" content="{{ empty($seo) ? 'noindex, nofollow' : 'index, follow' }}">
         <meta name="theme-color" content="#FFD300">
 
         <meta property="og:type" content="website">
