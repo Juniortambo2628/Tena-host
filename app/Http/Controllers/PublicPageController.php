@@ -69,6 +69,7 @@ class PublicPageController extends Controller
             'site_name' => Arr::get($siteSeo, 'content.site_name', 'TenaFi'),
             'image' => $image ? url($image) : null,
             'url' => url($path),
+            'index' => true,
         ];
     }
 }
