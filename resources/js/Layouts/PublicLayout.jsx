@@ -32,7 +32,6 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
     const footerLinks = extractItems(footer, 'links', ['label', 'href']);
     const resolvedJoin = resolveHref(joinHref);
 
-    const loginUrl = getContent(header, 'login_url', '/login');
     const contactEmail = stripHtml(getContent(footer, 'contact_email', ''));
     const whatsapp = stripHtml(getContent(footer, 'whatsapp', ''));
 
@@ -50,16 +49,15 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                 </Link>
                             </div>
                             <NavMenu links={navLinks} resolveHref={resolveHref} open={menuOpen} onNavigate={() => setMenuOpen(false)} />
+                            {/* No public sign-in link: TenaFi is fully managed, so the
+                                header only sells Book Now. Staff use /login directly. */}
                             <div className="welcome-nav-actions">
-                                <a href={loginUrl} className="welcome-login-btn">
-                                    {titleCase(getContent(header, 'login_label', 'Login'))}
-                                </a>
                                 <a
                                     href={resolvedJoin}
                                     className="welcome-join-btn"
                                     onClick={() => track('join_click', page?.slug)}
                                 >
-                                    {titleCase(getContent(header, 'join_label', 'Join'))}
+                                    {titleCase(getContent(header, 'join_label', 'Book Now'))}
                                 </a>
                                 <button
                                     type="button"

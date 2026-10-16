@@ -93,6 +93,22 @@ it('shows the same header links on every page, with megamenus built from each pa
     );
 })->with(['/', '/hosts', '/business']);
 
+it('keeps sign-in off the public site and leads with Book Now', function (string $url) {
+    $this->get($url)
+        ->assertSee('content="index, follow"', false)
+        ->assertInertia(fn ($page) => $page
+            ->where('site.header.content', fn ($c) => ! isset($c['login_url']) && ! isset($c['login_label']) && $c['join_label'] === 'Book Now')
+        );
+})->with(['/', '/hosts', '/business']);
+
+it('still lets staff sign in privately, without indexing or advertising the page', function () {
+    $this->get('/login')
+        ->assertOk()
+        ->assertSee('content="noindex, nofollow"', false);
+
+    $this->get('/sitemap.xml')->assertDontSee(url('/login'), false);
+});
+
 it('clears every page cache on a CMS write, even when some are cold', function () {
     LandingPage::publicSections('hosts'); // only the second page is warm
     LandingSection::clearCache();

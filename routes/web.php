@@ -60,8 +60,7 @@ foreach (config('public_pages.redirects') as $from => $to) {
 Route::get('/sitemap.xml', function () {
     $paths = LandingPage::where('is_routable', true)->where('is_active', true)->orderBy('sort_order')->get()
         ->map->path()
-        ->merge(array_map(fn ($path) => "/{$path}", array_keys(config('public_pages.policies'))))
-        ->push('/login');
+        ->merge(array_map(fn ($path) => "/{$path}", array_keys(config('public_pages.policies'))));
 
     $xml = '<?xml version="1.0" encoding="UTF-8"?>';
     $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';

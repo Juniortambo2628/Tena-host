@@ -160,14 +160,6 @@
     @apply flex flex-col items-center gap-4;
 }
 
-.login-bottom-text {
-    @apply text-center text-[10px] font-semibold text-black/30;
-}
-
-.login-bottom-link {
-    @apply text-black hover:text-[#FFD300] transition-colors ml-1;
-}
-
 .login-terms-btn {
     @apply flex items-center gap-2 text-[8px] font-semibold uppercase tracking-[0.2em] text-black/20 hover:text-black transition-colors;
 }

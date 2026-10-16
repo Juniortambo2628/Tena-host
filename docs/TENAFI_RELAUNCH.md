@@ -44,6 +44,9 @@ The megamenu is built from the sections themselves: any section with an `anchor`
 Its description is the optional `menu_description`, falling back to the section title.
 Renaming, hiding or reordering a section updates the menu automatically, so there is no separate menu to maintain.
 
+The header has no Login button (Glen, Oct 16). TenaFi is fully managed, so customers get no dashboard at launch, and the only header button is **Book Now** (Site-wide → Header → `join_label`).
+Admins and team members sign in by going to `/login` directly. That page is left out of the sitemap, is marked `noindex`, and no longer links to self-sign-up.
+
 ### Editing conventions
 
 - **Multi-line fields** (comparison points, plan features, next steps) hold one item per line.
