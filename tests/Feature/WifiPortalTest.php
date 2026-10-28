@@ -46,6 +46,7 @@ class WifiPortalTest extends TestCase
 
     public function test_connect_authorizes_guest_and_redirects_to_original_url(): void
     {
+        $this->knownAp();
         $this->mock(UnifiService::class, function ($mock) {
             $mock->shouldReceive('authorizeGuest')
                 ->once()
@@ -54,9 +55,7 @@ class WifiPortalTest extends TestCase
             $mock->shouldReceive('normalizeMac')->andReturnUsing(fn ($m) => strtolower($m));
         });
 
-        $response = $this->post('/portal/connect', [
-            'id' => 'aa:bb:cc:dd:ee:ff',
-            'ap' => '11:22:33:44:55:66',
+        $response = $this->connectAsGuest([
             'url' => 'http://neverssl.com',
         ]);
 
@@ -65,14 +64,13 @@ class WifiPortalTest extends TestCase
 
     public function test_connect_shows_connected_page_when_no_original_url(): void
     {
+        $this->knownAp();
         $this->mock(UnifiService::class, function ($mock) {
             $mock->shouldReceive('authorizeGuest')->once()->andReturnTrue();
             $mock->shouldReceive('normalizeMac')->andReturnUsing(fn ($m) => strtolower($m));
         });
 
-        $response = $this->post('/portal/connect', [
-            'id' => 'aa:bb:cc:dd:ee:ff',
-        ]);
+        $response = $this->connectAsGuest();
 
         $response->assertOk();
         $response->assertSee("You're connected", false);
@@ -80,17 +78,16 @@ class WifiPortalTest extends TestCase
 
     public function test_connect_returns_to_splash_with_error_on_failure(): void
     {
+        $this->knownAp();
         $this->mock(UnifiService::class, function ($mock) {
             $mock->shouldReceive('authorizeGuest')->once()->andReturnFalse();
             $mock->shouldReceive('normalizeMac')->andReturnUsing(fn ($m) => strtolower($m));
         });
 
-        $response = $this->post('/portal/connect', [
-            'id' => 'aa:bb:cc:dd:ee:ff',
-        ]);
-
-        $response->assertRedirect();
-        $this->assertStringContainsString('error=', $response->headers->get('Location'));
+        $this->connectAsGuest()->assertStatus(503)
+            ->assertSee('We could not connect you')
+            ->assertSee('value="Wanjiru"', false);
+        $this->assertSame(0, Guest::count());
     }
 
     public function test_connect_requires_client_mac(): void
@@ -224,13 +221,59 @@ class WifiPortalTest extends TestCase
         $this->assertSame(0, Guest::count());
     }
 
-    public function test_unknown_ap_connects_without_capturing(): void
+    public function test_unknown_ap_cannot_authorize_or_capture(): void
     {
-        $this->mockUnifi();
+        $this->mockUnifi(0);
 
-        $this->post('/portal/connect', ['id' => 'aa:bb:cc:dd:ee:ff', 'ap' => '99:99:99:99:99:99'])->assertOk();
+        $this->post('/portal/connect', ['id' => 'aa:bb:cc:dd:ee:ff', 'ap' => '99:99:99:99:99:99'])->assertStatus(422);
 
         $this->assertSame(0, Guest::count());
+    }
+
+    public function test_templates_use_saved_property_branding_and_correct_upload_urls(): void
+    {
+        $property = $this->knownAp();
+        foreach (['classic', 'retreat', 'bold'] as $template) {
+            $property->update([
+                'branding_json' => ['template' => $template, 'heading' => 'Stay a little longer', 'accent' => '#123456'],
+                'logo_path' => '/storage/properties/logo.png',
+                'splash_image_path' => '/storage/properties/splash.jpg',
+            ]);
+            $this->get('/portal?ap=11:22:33:44:55:66&id=aa:bb:cc:dd:ee:ff')
+                ->assertOk()->assertSee('splash--'.$template)
+                ->assertSee('Stay a little longer')->assertSee('#123456')
+                ->assertSee('/storage/properties/logo.png')
+                ->assertSee('/storage/properties/splash.jpg')
+                ->assertDontSee('/storage/storage/');
+        }
+    }
+
+    public function test_preview_is_owner_only_and_cannot_connect(): void
+    {
+        $property = $this->knownAp();
+        $this->mockUnifi(0);
+        $url = route('host.properties.splash-preview', $property);
+        $this->actingAs($property->host)->get($url.'?template=retreat')
+            ->assertOk()->assertSee('splash--retreat')->assertSee('Preview only')->assertSee('disabled');
+        $other = User::factory()->create(['role' => 'host']);
+        $this->actingAs($other)->get($url)->assertForbidden();
+        $this->assertSame(0, Guest::count());
+    }
+
+    public function test_failed_reconnect_does_not_increment_visits(): void
+    {
+        $property = $this->knownAp();
+        $guest = Guest::factory()->create([
+            'property_id' => $property->id, 'device_mac' => 'aa:bb:cc:dd:ee:ff',
+            'total_visits' => 1, 'last_connected' => now()->subDay(),
+        ]);
+        $this->mock(UnifiService::class, function ($mock) {
+            $mock->shouldReceive('authorizeGuest')->once()->andReturnFalse();
+            $mock->shouldReceive('normalizeMac')->andReturnUsing(fn ($m) => strtolower($m));
+        });
+        $this->connectAsGuest()->assertStatus(503)->assertSee('We could not connect you');
+        $this->assertSame(1, $guest->fresh()->total_visits);
+        $this->assertTrue($guest->fresh()->last_connected->isYesterday());
     }
 
     protected function tearDown(): void

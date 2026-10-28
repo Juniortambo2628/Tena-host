@@ -4,8 +4,9 @@ import {
     BarChart, Bar,
     LineChart, Line,
     PieChart, Pie, Cell,
-    XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+    XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import ResponsiveContainer from './MeasuredChart';
 
 const DEFAULT_COLORS = ['#10B981', '#FFD300', '#3B82F6', '#EF4444', '#8B5CF6', '#EC4899'];
 

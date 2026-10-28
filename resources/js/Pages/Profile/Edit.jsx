@@ -17,6 +17,7 @@ export default function Edit({
     userEmail,
     avatarUrl,
     phoneNumber,
+    passkeys = [],
 }) {
     return (
         <PageShell
@@ -50,7 +51,7 @@ export default function Edit({
                 </GlassCard>
 
                 <GlassCard>
-                    <PasskeyManagementForm className="max-w-xl" />
+                    <PasskeyManagementForm className="max-w-xl" passkeys={passkeys} />
                 </GlassCard>
 
                 <GlassCard>

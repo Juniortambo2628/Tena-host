@@ -156,7 +156,7 @@ class UnifiService
 
         $response = $this->client()->post($this->apiPath('cmd/stamgr'), $payload);
 
-        if (! $response->successful()) {
+        if (! $response->successful() || $response->json('meta.rc') !== 'ok') {
             Log::warning('UniFi authorize-guest failed', [
                 'status' => $response->status(),
                 'body' => $response->body(),

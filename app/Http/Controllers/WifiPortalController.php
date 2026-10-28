@@ -8,6 +8,7 @@ use App\Services\GuestCaptureService;
 use App\Services\Unifi\UnifiService;
 use App\Support\Brand;
 use App\Support\Phone;
+use App\Support\SplashDesign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -44,20 +45,46 @@ class WifiPortalController extends Controller
         ]);
     }
 
+    public function preview(Request $request, Property $property)
+    {
+        $this->authorize('update', $property);
+        $data = $request->validate(['template' => 'nullable|in:'.implode(',', SplashDesign::TEMPLATES)]);
+
+        return view('portal.splash', array_replace($this->context(new Request), [
+            'property' => $property,
+            'propertyName' => $property->name,
+            'logoUrl' => SplashDesign::imageUrl($property->logo_path),
+            'splashImageUrl' => SplashDesign::imageUrl($property->splash_image_path),
+            'design' => SplashDesign::forProperty($property, $data['template'] ?? null),
+            'consentText' => static::consentText($property->name),
+            'isBusiness' => (bool) $property->host?->isBusiness(),
+            'preview' => true,
+            'canConnect' => false,
+        ]));
+    }
+
     /**
      * Authorize the device against the UniFi controller and send it on its way.
      */
     public function connect(Request $request)
     {
         $data = $request->validate([
-            'id' => 'required|string|max:64',   // client MAC
-            'ap' => 'nullable|string|max:64',    // AP MAC
+            'id' => ['required', 'string', 'regex:/^(?:[0-9a-fA-F]{12}|(?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})$/'],
+            'ap' => ['required', 'string', 'regex:/^(?:[0-9a-fA-F]{12}|(?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})$/'],
             't' => 'nullable|string|max:32',
             'ssid' => 'nullable|string|max:64',
             'url' => 'nullable|string|max:2048', // original destination
         ]);
 
         $context = $this->context($request);
+
+        if (! $context['property']) {
+            return response()->view('portal.splash', $context + [
+                'error' => 'This access point is not linked to a property yet. Please ask your host to register it.',
+            ], 422);
+        }
+
+        $guestData = null;
 
         if ($context['property'] && ! $context['returningGuest']) {
             $request->merge(['phone' => Phone::toE164($request->input('phone'))]);
@@ -86,14 +113,7 @@ class WifiPortalController extends Controller
                 ], 422);
             }
 
-            $this->guests->capture(
-                $context['property'],
-                $validator->validated(),
-                $context['consentText'],
-                $context['deviceMac'],
-            );
-        } elseif ($context['returningGuest']) {
-            $this->guests->recordVisit($context['returningGuest'], $context['deviceMac']);
+            $guestData = $validator->validated();
         }
 
         try {
@@ -110,9 +130,17 @@ class WifiPortalController extends Controller
         }
 
         if (! $authorized) {
-            return redirect()->route('portal.show', $this->passthrough($data) + [
+            return response()->view('portal.splash', $context + [
                 'error' => 'We could not connect you to the WiFi. Please try again.',
-            ]);
+                'old' => $request->only('first_name', 'phone', 'email', 'consent', 'marketing_opt_in', 'birthday_month', 'birthday_day'),
+            ], 503);
+        }
+
+        // A failed controller request must not create a guest or a successful visit.
+        if ($guestData !== null) {
+            $this->guests->capture($context['property'], $guestData, $context['consentText'], $context['deviceMac']);
+        } elseif ($context['returningGuest']) {
+            $this->guests->recordVisit($context['returningGuest'], $context['deviceMac']);
         }
 
         // Best-effort: mark the AP as recently seen.
@@ -162,7 +190,10 @@ class WifiPortalController extends Controller
             'params' => $params,
             'property' => $property,
             'propertyName' => $propertyName,
-            'logoUrl' => $property?->logo_path ? asset('storage/'.ltrim($property->logo_path, '/')) : null,
+            'logoUrl' => SplashDesign::imageUrl($property?->logo_path),
+            'splashImageUrl' => SplashDesign::imageUrl($property?->splash_image_path),
+            'design' => SplashDesign::forProperty($property),
+            'canConnect' => $property && is_string($params['id']) && (bool) preg_match('/^(?:[0-9a-fA-F]{12}|(?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})$/', $params['id']),
             'deviceMac' => $deviceMac,
             'returningGuest' => $property ? $this->guests->findReturning($property, $deviceMac) : null,
             'consentText' => static::consentText($propertyName),

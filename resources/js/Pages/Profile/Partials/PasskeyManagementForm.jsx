@@ -1,32 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Passkeys } from '@laravel/passkeys';
 import { router } from '@inertiajs/react';
 import { Key, Trash2, Plus, Shield } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import './PasskeyManagementForm.css';
+import { csrfHeaders } from '@/Support/csrf';
 
-export default function PasskeyManagementForm({ className = '' }) {
-    const [passkeys, setPasskeys] = useState([]);
-    const [loading, setLoading] = useState(true);
+export default function PasskeyManagementForm({ className = '', passkeys = [] }) {
     const [registering, setRegistering] = useState(false);
-
-    const loadPasskeys = async () => {
-        try {
-            const response = await fetch(route('passkey.registration-options'));
-            if (response.ok) {
-                const data = await response.json();
-                setPasskeys(data.passkeys || []);
-            }
-        } catch (e) {
-            console.error('Failed to load passkeys', e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        loadPasskeys();
-    }, []);
 
     const registerPasskey = async () => {
         setRegistering(true);
@@ -37,12 +18,9 @@ export default function PasskeyManagementForm({ className = '' }) {
                 return;
             }
 
-            const result = await Passkeys.register({ name });
-
-            if (result && result.credential) {
-                notify.success('Passkey registered successfully.');
-                loadPasskeys();
-            }
+            await Passkeys.register({ name });
+            notify.success('Passkey registered successfully.');
+            router.reload({ only: ['passkeys'] });
         } catch (e) {
             console.error('Passkey registration error:', e);
             notify.error(e?.message || 'Failed to register passkey.');
@@ -55,11 +33,10 @@ export default function PasskeyManagementForm({ className = '' }) {
         if (!confirm('Delete this passkey? This cannot be undone.')) return;
 
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             const response = await fetch(route('passkey.destroy', { passkey: passkeyId }), {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': csrfToken,
+                    ...csrfHeaders(),
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
                 },
@@ -67,7 +44,7 @@ export default function PasskeyManagementForm({ className = '' }) {
 
             if (response.ok) {
                 notify.success('Passkey deleted.');
-                loadPasskeys();
+                router.reload({ only: ['passkeys'] });
             } else {
                 notify.error('Failed to delete passkey.');
             }
@@ -100,9 +77,7 @@ export default function PasskeyManagementForm({ className = '' }) {
                     </button>
                 </div>
 
-                {loading ? (
-                    <div className="passkey-loading">Loading passkeys...</div>
-                ) : passkeys.length === 0 ? (
+                {passkeys.length === 0 ? (
                     <div className="passkey-empty">
                         <Shield size={24} className="passkey-empty-icon" />
                         <p className="passkey-empty-text">No passkeys registered yet.</p>

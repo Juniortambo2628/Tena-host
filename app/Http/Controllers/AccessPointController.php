@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AccessPoint;
 use App\Models\Property;
+use App\Services\Unifi\UnifiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -38,10 +39,13 @@ class AccessPointController extends Controller
      */
     public function store(Request $request)
     {
+        if (is_string($request->input('mac_address'))) {
+            $request->merge(['mac_address' => app(UnifiService::class)->normalizeMac($request->input('mac_address'))]);
+        }
         $validated = $request->validate([
             'property_id' => 'required|exists:properties,id',
             'name' => 'required|string|max:255',
-            'mac_address' => 'required|string|max:255|unique:access_points,mac_address',
+            'mac_address' => 'required|mac_address|unique:access_points,mac_address',
             'status' => 'nullable|in:online,offline',
         ]);
 
@@ -72,9 +76,13 @@ class AccessPointController extends Controller
     {
         $this->authorize('update', $accessPoint);
 
+        if (is_string($request->input('mac_address'))) {
+            $request->merge(['mac_address' => app(UnifiService::class)->normalizeMac($request->input('mac_address'))]);
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'mac_address' => 'sometimes|string|max:255|unique:access_points,mac_address,'.$accessPoint->id,
+            'mac_address' => 'sometimes|mac_address|unique:access_points,mac_address,'.$accessPoint->id,
             'status' => 'sometimes|in:online,offline',
             'last_seen' => 'nullable|date',
             'connected_clients_count' => 'sometimes|integer|min:0',

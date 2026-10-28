@@ -14,13 +14,24 @@
     @include('partials.favicon')
     @include('portal.partials.styles')
 </head>
-<body>
+<body class="splash splash--{{ $design['template'] }}" style="--yellow: {{ $design['accent'] }}">
+    @if($splashImageUrl && $design['template'] === 'bold')
+        <img class="splash-backdrop" src="{{ $splashImageUrl }}" alt="">
+    @endif
     <main class="card">
+        @if(!empty($preview))
+            <p class="preview-notice">Design preview · Save changes before previewing new text or uploads. This page does not connect a device.</p>
+        @endif
+        @if($splashImageUrl && $design['template'] !== 'bold')
+            <img class="splash-cover" src="{{ $splashImageUrl }}" alt="{{ $propertyName }}">
+        @endif
         @if($logoUrl)
             <img class="logo-img" src="{{ $logoUrl }}" alt="{{ $propertyName }}">
         @else
             <div class="logo" aria-hidden="true">{{ mb_substr($propertyName, 0, 1) }}</div>
         @endif
+
+        <p class="splash-eyebrow">{{ $propertyName }} · Guest WiFi</p>
 
         @if(!empty($error))
             <div class="error" role="alert">{{ $error }}</div>
@@ -37,8 +48,8 @@
                 <h1>Welcome back, {{ $returningGuest->first_name }}!</h1>
                 <p class="sub">Tap below to get back online at {{ $propertyName }}.</p>
             @elseif($property)
-                <h1>Welcome to {{ $propertyName }}</h1>
-                <p class="sub">Connect to the WiFi and stay in touch.</p>
+                <h1>{{ $design['heading'] ?: 'Welcome to '.$propertyName }}</h1>
+                <p class="sub">{{ $design['message'] }}</p>
 
                 <label class="field">
                     <span>First name</span>
@@ -83,7 +94,7 @@
                 @endif
 
                 <label class="check">
-                    <input type="checkbox" name="consent" value="1" required>
+                    <input type="checkbox" name="consent" value="1" required @checked(!empty($old['consent']))>
                     <span>{{ $consentText }} <a href="{{ url('/privacy') }}" target="_blank" rel="noopener">Read it</a>.</span>
                 </label>
                 @if($fieldError('consent'))<small class="field-error">{{ $fieldError('consent') }}</small>@endif
@@ -98,12 +109,15 @@
                     @if(!empty($params['ssid']))
                         You're connecting to <strong>{{ $params['ssid'] }}</strong>.
                     @endif
-                    Tap below to get online.
+                    Please ask your host to link this access point to the property.
                 </p>
             @endif
 
-            <button type="submit" onclick="var b=this;setTimeout(function(){b.disabled=true;b.innerText='Connecting…';},40);">
-                Connect to WiFi
+            @if(!$canConnect && empty($preview) && $property)
+                <p class="error">Join the guest WiFi network to open this page with your device's connection details.</p>
+            @endif
+            <button type="submit" @disabled(!$canConnect) onclick="var b=this;setTimeout(function(){b.disabled=true;b.innerText='Connecting…';},40);">
+                {{ !empty($preview) ? 'Preview only' : ($design['button'] ?: 'Connect to WiFi') }}
             </button>
         </form>
 

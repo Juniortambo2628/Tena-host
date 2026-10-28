@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { notify } from '@/Components/Toast';
 import { Send, Mail } from 'lucide-react';
 import './ContactForm.css';
+import { csrfHeaders } from '@/Support/csrf';
 
 const initialState = { name: '', email: '', subject: '', message: '' };
 
@@ -20,13 +21,12 @@ export default function ContactForm() {
         setSubmitting(true);
 
         try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
             const response = await fetch('/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRF-TOKEN': csrfToken,
+                    ...csrfHeaders(),
                     Accept: 'application/json',
                 },
                 body: JSON.stringify(form),

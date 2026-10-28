@@ -7,6 +7,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Loader2, Star, Store } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
+import SplashEditor, { defaultSplashDesign } from '@/Components/Properties/SplashEditor';
 
 export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -15,6 +16,8 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         wifi_ssid: property.wifi_ssid || '',
         occupancy_threshold: property.occupancy_threshold || 20,
         splash_image: null,
+        logo: null,
+        branding_json: { ...defaultSplashDesign, ...property.branding_json },
         review_requests_enabled: !!property.review_requests_enabled,
         review_url: property.review_url || '',
         review_request_delay_hours: property.review_request_delay_hours || 24,
@@ -93,8 +96,9 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                             </div>
                         </div>
 
+                        <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={property.id} onLogoChange={file => setData('logo', file)} logoUrl={property.logo_path} />
                         <div>
-                            <label className="host-properties-edit-label">Splash Image</label>
+                            <label className="host-properties-edit-label">Splash Image (up to 2 MB)</label>
                             <input
                                 type="file"
                                 accept="image/*"

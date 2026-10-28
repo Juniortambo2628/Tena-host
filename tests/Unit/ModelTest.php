@@ -11,6 +11,7 @@ use App\Models\Registration;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -249,7 +250,7 @@ test('registration can be created with all fields', function () {
 });
 
 test('registration status defaults to active', function () {
-    $id = \Illuminate\Support\Facades\DB::table('registrations')->insertGetId([
+    $id = DB::table('registrations')->insertGetId([
         'email' => 'default@example.com',
         'first_name' => 'Test',
         'last_name' => 'User',
@@ -291,7 +292,7 @@ test('policy document can be created with all fields', function () {
 });
 
 test('policy document is unpublished by default', function () {
-    $id = \Illuminate\Support\Facades\DB::table('policy_documents')->insertGetId([
+    $id = DB::table('policy_documents')->insertGetId([
         'slug' => 'test-terms-of-service',
         'title' => 'Terms of Service',
         'content' => '<p>Terms content</p>',

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use App\Services\PropertyStats;
 use App\Services\ReviewRequestService;
+use App\Services\Unifi\UnifiService;
+use App\Support\SplashDesign;
 use App\Traits\HasImageUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +48,17 @@ class PropertyController extends Controller
         $this->authorize('view', $property);
 
         return Inertia::render('Host/Properties/Show', [
-            'property' => $property->loadCount(['guests', 'accessPoints']),
+            'property' => $property->loadCount(['guests', 'accessPoints'])->load('accessPoints'),
+            'wifi' => [
+                'controllerConfigured' => UnifiService::fromSettings()->isConfigured(),
+                'portalUrl' => route('portal.show'),
+                'guests' => $property->guests()->whereNotNull('device_mac')->count(),
+                'visits' => (int) $property->guests()->whereNotNull('device_mac')->sum('total_visits'),
+                'recentGuests' => $property->guests()->where('last_connected', '>=', now()->subDay())->count(),
+                'marketingOptIns' => $property->guests()->whereNotNull('device_mac')->where('marketing_opt_in', true)->count(),
+                'latestGuests' => $property->guests()->whereNotNull('device_mac')->latest('last_connected')->limit(10)
+                    ->get(['id', 'first_name', 'last_connected', 'total_visits', 'marketing_opt_in']),
+            ],
         ]);
     }
 
@@ -73,6 +85,10 @@ class PropertyController extends Controller
             $validated['splash_image_path'] = $this->storeImage($request->file('splash_image'), 'properties');
         }
 
+        if ($request->hasFile('logo')) {
+            $validated['logo_path'] = $this->storeImage($request->file('logo'), 'properties');
+        }
+
         Auth::user()->properties()->create($validated);
 
         return redirect()->back()->with('success', 'Property created successfully.');
@@ -90,6 +106,10 @@ class PropertyController extends Controller
                 $property->splash_image_path,
                 'properties'
             );
+        }
+
+        if ($request->hasFile('logo')) {
+            $validated['logo_path'] = $this->updateImage($request->file('logo'), $property->logo_path, 'properties');
         }
 
         $property->update($validated);
@@ -117,7 +137,13 @@ class PropertyController extends Controller
             'address' => 'nullable|string|max:255',
             'wifi_ssid' => 'nullable|string|max:255',
             'occupancy_threshold' => 'integer|min:1',
-            'branding_json' => 'nullable|array',
+            'branding_json' => 'nullable|array:template,accent,heading,message,button',
+            'branding_json.template' => 'required_with:branding_json|in:'.implode(',', SplashDesign::TEMPLATES),
+            'branding_json.accent' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'branding_json.heading' => 'nullable|string|max:100',
+            'branding_json.message' => 'nullable|string|max:240',
+            'branding_json.button' => 'nullable|string|max:40',
+            'logo' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
             'splash_image' => 'nullable|image|max:2048',
             'review_url' => 'nullable|url:https|max:500|required_if_accepted:review_requests_enabled',
             'review_requests_enabled' => 'sometimes|boolean',

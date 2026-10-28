@@ -15,6 +15,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { T } from '@/Components/Dashboard/Terms';
+import SplashEditor, { defaultSplashDesign } from '@/Components/Properties/SplashEditor';
 
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview);
@@ -23,12 +24,14 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
 
-    const { data, setData, post, patch, processing, errors, reset, clearErrors } = useForm({
+    const { data, setData, post, transform, processing, errors, reset, clearErrors } = useForm({
         name: '',
         address: '',
         wifi_ssid: '',
         splash_image_path: '',
         splash_image: null,
+        logo: null,
+        branding_json: { ...defaultSplashDesign },
         occupancy_threshold: 20,
     });
 
@@ -47,6 +50,8 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             wifi_ssid: property.wifi_ssid || '',
             splash_image_path: property.splash_image_path || '',
             splash_image: null,
+            logo: null,
+            branding_json: { ...defaultSplashDesign, ...property.branding_json },
             occupancy_threshold: property.occupancy_threshold || 20,
         });
         clearErrors();
@@ -56,8 +61,6 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
     const submit = (e) => {
         if (e) e.preventDefault();
 
-        // Use post with _method patch for file uploads in update
-        const method = editingProperty ? 'post' : 'post';
         const url = editingProperty ? route('host.properties.update', editingProperty.id) : route('host.properties.store');
 
         const options = {
@@ -68,15 +71,9 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             forceFormData: true,
         };
 
-        if (editingProperty) {
-            // Laravel handles files in POST but not always in PATCH
-            post(url, {
-                ...options,
-                data: { ...data, _method: 'patch' }
-            });
-        } else {
-            post(url, options);
-        }
+        // useForm.post doesn't accept replacement data in its options argument.
+        transform(values => editingProperty ? { ...values, _method: 'patch' } : values);
+        post(url, options);
     };
 
     const breadcrumbs = [{ label: 'WiFi Access' }];
@@ -146,14 +143,14 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                     value={data.occupancy_threshold}
                                     onChange={e => setData('occupancy_threshold', e.target.value)}
                                 />
-                                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-black/20">%</span>
+                                <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-black/20">guests</span>
                             </div>
                         </div>
                     </div>
                     <div className="p-6 bg-black/[0.02] rounded-[2rem] border border-black/5">
                         <p className="text-[10px] font-bold text-black/50 leading-relaxed">
                             <Info size={16} className="mr-2 inline"></Info>
-                            Guests will be notified if the network occupancy exceeds this threshold for stability.
+                            This is the number of recent WiFi guests that triggers an occupancy alert for the host. Set the same SSID on your UniFi controller, then register the access point under Access Points.
                         </p>
                     </div>
                 </div>
@@ -163,6 +160,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             label: 'Brand & Splash',
             content: (
                 <div className="space-y-6">
+                    <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={editingProperty?.id} onLogoChange={file => setData('logo', file)} logoUrl={editingProperty?.logo_path} />
                     <div>
                         <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Splash Background</label>
                         <div className="tena-filepond-wrapper">
@@ -225,7 +223,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                         <div className="host-properties-index-card-body">
                             <div className="host-properties-index-card-top">
                                 <Link
-                                    href={route('host.properties.index')}
+                                    href={route('host.properties.show', property.id)}
                                     className="w-14 h-14 rounded-2xl bg-[#FFD300]/10 flex items-center justify-center text-[#FFD300] shadow-sm hover:scale-110 transition-transform active:scale-95"
                                 >
                                      <Home size={24}></Home>
@@ -235,7 +233,8 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 </span>
                             </div>
 
-                            <h3 className="host-properties-index-card-title">{property.name}</h3>
+                            <h3 className="host-properties-index-card-title"><Link href={route('host.properties.show', property.id)}>{property.name}</Link></h3>
+                            <Link href={route('host.properties.show', property.id)} className="text-sm underline">WiFi setup &amp; guest activity</Link>
                             <p className="host-properties-index-card-address">{property.address || 'No address set'}</p>
 
                             <div className="host-properties-index-card-details">

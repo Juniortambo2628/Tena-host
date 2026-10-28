@@ -33,10 +33,11 @@ it('allows hosts to create an access point', function () {
     ]);
 
     $response->assertRedirect();
+    // Stored normalized so the captive-portal lookup (which normalizes) matches.
     $this->assertDatabaseHas('access_points', [
         'property_id' => $this->property->id,
         'name' => 'Lobby AP',
-        'mac_address' => 'AA:BB:CC:DD:EE:FF',
+        'mac_address' => 'aa:bb:cc:dd:ee:ff',
     ]);
 });
 

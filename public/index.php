@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
  * On the old cPanel layout this file is copied to ~/tena.host/ and the core
  * lives in ~/tena-core/ — those absolute paths are the fallback below.
  */
-
 define('LARAVEL_START', microtime(true));
 
 $vendor = __DIR__.'/../vendor/autoload.php';

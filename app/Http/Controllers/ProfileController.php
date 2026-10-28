@@ -47,6 +47,7 @@ class ProfileController extends Controller
             'userEmail' => $user->email,
             'avatarUrl' => $user->avatar_path ? \Storage::disk('public')->url($user->avatar_path) : null,
             'phoneNumber' => $user->phone_number,
+            'passkeys' => $user->passkeys()->get(['id', 'name', 'created_at']),
         ]);
     }
 

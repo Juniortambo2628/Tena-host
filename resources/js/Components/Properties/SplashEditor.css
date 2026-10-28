@@ -1,0 +1,19 @@
+.splash-editor { border: 0; padding: 0; display: grid; gap: 16px; min-width: 0; }
+.splash-editor legend { font-weight: 800; margin-bottom: 18px; }
+.splash-editor label { display: grid; gap: 8px; font-size: 13px; font-weight: 600; }
+.splash-editor input[type=text] { width: 100%; border: 1px solid #ddd; border-radius: 10px; padding: 12px; }
+.splash-editor p, .splash-editor small { font-size: 12px; font-weight: 400; }
+.splash-editor a { text-decoration: underline; font-size: 13px; }
+.splash-editor__templates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.splash-choice { padding: 12px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; }
+.splash-choice:has(input:checked) { border-color: #151515; background: #fffbdf; }
+.splash-choice__sample { display: grid; gap: 8px; padding: 14px 8px; background: #f1f1f1; border-radius: 8px; text-align: center; }
+.splash-choice__sample i { height: 18px; width: 18px; background: #ffd300; border-radius: 5px; margin: auto; }
+.splash-choice__sample b { font-size: 12px; }
+.splash-choice__sample em { font-size: 8px; background: #222; color: #fff; padding: 5px; border-radius: 4px; font-style: normal; }
+.splash-choice--retreat .splash-choice__sample { background: #e9ede6; font-family: Georgia, serif; }
+.splash-choice--retreat .splash-choice__sample i { width: 100%; background: #a4b49b; border-radius: 0; }
+.splash-choice--bold .splash-choice__sample { background: #181b22; color: white; }
+.splash-choice--bold .splash-choice__sample em { color: #ffd300; border: 1px solid #ffd300; }
+.splash-editor__logo { max-width: 140px; max-height: 64px; object-fit: contain; }
+@media (max-width: 480px) { .splash-editor__templates { grid-template-columns: 1fr; } }

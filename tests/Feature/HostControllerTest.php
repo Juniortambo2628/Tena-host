@@ -357,16 +357,17 @@ it('allows host to create an access point', function () {
     $response = $this->actingAs($this->host)->post(route('host.access-points.store'), [
         'property_id' => $this->property->id,
         'name' => 'Lobby AP',
-        'mac_address' => 'AA:BB:CC:DD:EE:FF',
+        'mac_address' => 'AA-BB-CC-DD-EE-FF',
         'status' => 'online',
     ]);
 
     $response->assertRedirect();
     $response->assertSessionHas('success');
+    // MACs are normalized to lowercase colon form so portal lookups match.
     $this->assertDatabaseHas('access_points', [
         'property_id' => $this->property->id,
         'name' => 'Lobby AP',
-        'mac_address' => 'AA:BB:CC:DD:EE:FF',
+        'mac_address' => 'aa:bb:cc:dd:ee:ff',
     ]);
 });
 

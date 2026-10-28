@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccessPoint;
 use App\Models\Campaign;
 use App\Models\Guest;
 use App\Models\Order;
@@ -32,7 +33,7 @@ class HostDashboardController extends Controller
         });
 
         $totalGuests = Guest::forHost($user)->count();
-        $onlineAPs = $properties->sum('access_points_count');
+        $onlineAPs = AccessPoint::forHost($user)->where('status', 'online')->count();
         $avgOccupancy = $properties->count() > 0 ? round($properties->avg('occupancy_rate')) : 0;
 
         $totalOrders = Order::forHost($user)->count();

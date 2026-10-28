@@ -1,4 +1,5 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import ResponsiveContainer from './MeasuredChart';
 
 export default function AreaChartInner({ data, dataKey = 'guests', color = '#FFD300', gradientId = 'colorValue' }) {
     return (

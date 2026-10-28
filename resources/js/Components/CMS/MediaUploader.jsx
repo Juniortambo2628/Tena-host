@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { Search } from 'lucide-react';
 import './MediaUploader.css';
+import { csrfHeaders } from '@/Support/csrf';
 
 export default function MediaUploader({
     sectionId,
@@ -37,34 +38,16 @@ export default function MediaUploader({
         setIsUploading(true);
         setUploadError('');
 
-        const getCsrfToken = () => {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith('XSRF-TOKEN=')) {
-                    return decodeURIComponent(cookie.substring('XSRF-TOKEN='.length));
-                }
-            }
-            return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-        };
-
-        const currentCsrfToken = getCsrfToken();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('media_key', mediaKey);
-        if (currentCsrfToken) {
-            formData.append('_token', currentCsrfToken);
-        }
 
         try {
             const headers = {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
+                ...csrfHeaders(),
             };
-            if (currentCsrfToken) {
-                headers['X-CSRF-TOKEN'] = currentCsrfToken;
-                headers['X-XSRF-TOKEN'] = currentCsrfToken;
-            }
 
             const res = await fetch(route('admin.landing.media.upload', { section: sectionId }), {
                 method: 'POST',

@@ -11,8 +11,8 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer
 } from 'recharts';
+import ResponsiveContainer from '@/Components/Dashboard/MeasuredChart';
 import {
     Mail,
     MessageSquare,
