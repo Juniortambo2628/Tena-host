@@ -3,32 +3,37 @@
 use Illuminate\Http\Request;
 
 /**
- * Tena.host Production Entry Point
+ * Tena.host entry point.
  *
- * Target Location: /home/zhpebukm/tena.host/api/index.php
- * Points to the backend core located at: /home/zhpebukm/tena-core/
+ * On the VPS (OKJT deploy-kit) the whole app, including public/, lives in
+ * private/tenafi/current/, so the standard relative paths resolve.
+ * On the old cPanel layout this file is copied to ~/tena.host/ and the core
+ * lives in ~/tena-core/ — those absolute paths are the fallback below.
  */
+
 define('LARAVEL_START', microtime(true));
 
+$vendor = __DIR__.'/../vendor/autoload.php';
+$bootstrap = __DIR__.'/../bootstrap/app.php';
+$maintenance = __DIR__.'/../storage/framework/maintenance.php';
+
+// Old cPanel layout fallback (~/tena.host/index.php -> ~/tena-core/)
+$cpanelCore = '/home/zhpebukm/tena-core';
+if (! file_exists($vendor) && file_exists($cpanelCore.'/vendor/autoload.php')) {
+    $vendor = $cpanelCore.'/vendor/autoload.php';
+    $bootstrap = $cpanelCore.'/bootstrap/app.php';
+    $maintenance = $cpanelCore.'/storage/framework/maintenance.php';
+}
+
 // Maintenance mode check
-if (file_exists($maintenance = '/home/zhpebukm/tena-core/storage/framework/maintenance.php')) {
-    require $maintenance;
-} elseif (file_exists($maintenance = __DIR__.'/../../tena-core/storage/framework/maintenance.php')) {
+if (file_exists($maintenance)) {
     require $maintenance;
 }
 
 // Register Composer autoloader
-if (file_exists('/home/zhpebukm/tena-core/vendor/autoload.php')) {
-    require '/home/zhpebukm/tena-core/vendor/autoload.php';
-} else {
-    require __DIR__.'/../../tena-core/vendor/autoload.php';
-}
+require $vendor;
 
 // Bootstrap Laravel
-if (file_exists('/home/zhpebukm/tena-core/bootstrap/app.php')) {
-    $app = require_once '/home/zhpebukm/tena-core/bootstrap/app.php';
-} else {
-    $app = require_once __DIR__.'/../../tena-core/bootstrap/app.php';
-}
+$app = require_once $bootstrap;
 
 $app->handleRequest(Request::capture());
