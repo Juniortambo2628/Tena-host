@@ -25,6 +25,7 @@ jobs:
       domain: tena-fi.com
       app_name: tenafi
       ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      node_version: '20'
       npm_flags: --legacy-peer-deps
       queue: true
       scheduler: true
