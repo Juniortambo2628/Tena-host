@@ -16,7 +16,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Parses the PROD_ENV secret with Laravel's own dotenv parser before anything
+  # ships, so a malformed line fails here (by line number and key, never value)
+  # instead of at "artisan migrate" on the server.
+  validate-env:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (vars.DEPLOY_ENABLED == 'true' && github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          sparse-checkout: scripts
+      - name: Check PROD_ENV parses
+        env:
+          PROD_ENV: ${{ secrets.PROD_ENV }}
+        run: |
+          [ -n "$PROD_ENV" ] || { echo "PROD_ENV secret is empty"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/dotenv" && cd "$RUNNER_TEMP/dotenv"
+          composer require -q --no-interaction vlucas/phpdotenv:5.6.4
+          printf '%s\n' "$PROD_ENV" > prod.env
+          php "$GITHUB_WORKSPACE/scripts/check-env.php" prod.env vendor/autoload.php
+
   deploy:
+    needs: validate-env
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (vars.DEPLOY_ENABLED == 'true' && github.event.workflow_run.conclusion == 'success')
