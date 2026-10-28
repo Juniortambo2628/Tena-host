@@ -1,0 +1,75 @@
+# ONE-OFF: export production data from the old cPanel host (tena-core) so it
+# can be imported into the Hestia VPS. Uses the pre-existing SSH_* secrets.
+# Run manually (workflow_dispatch); artifacts: db dump + uploads + .env.
+name: Export cPanel production data
+
+on:
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/key
+          chmod 600 ~/.ssh/key
+          ssh-keyscan -p "$SSH_PORT" "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          cat > ~/.ssh/config <<CFG
+          Host oldhost
+            HostName ${SSH_HOST}
+            Port ${SSH_PORT:-22}
+            User ${SSH_USER}
+            IdentityFile ~/.ssh/key
+            IdentitiesOnly yes
+            StrictHostKeyChecking accept-new
+          CFG
+
+      - name: Dump database and package uploads
+        run: |
+          set -e
+          # DB credentials from the live .env on the old server
+          ssh oldhost '
+            set -e
+            DB_USER=$(grep "^DB_USERNAME=" ~/tena-core/.env | cut -d= -f2- | tr -d "\r\"")
+            DB_PASS=$(grep "^DB_PASSWORD=" ~/tena-core/.env | cut -d= -f2- | tr -d "\r\"")
+            DB_NAME=$(grep "^DB_DATABASE=" ~/tena-core/.env | cut -d= -f2- | tr -d "\r\"")
+            mysqldump --single-transaction --routines --triggers \
+              -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" > /tmp/tena-prod.sql
+            ls -la /tmp/tena-prod.sql
+          '
+          scp oldhost:/tmp/tena-prod.sql ./tena-prod.sql
+          # Uploads: Laravel public disk + the legacy public/uploads dir
+          ssh oldhost '
+            set -e
+            cd ~
+            tar czf /tmp/tena-uploads.tar.gz \
+              -C tena-core/storage/app public 2>/dev/null || true
+            tar czf /tmp/tena-legacy-uploads.tar.gz tena.host/uploads 2>/dev/null || \
+              tar czf /tmp/tena-legacy-uploads.tar.gz -C tena.host uploads 2>/dev/null || true
+            ls -la /tmp/tena-uploads.tar.gz /tmp/tena-legacy-uploads.tar.gz 2>/dev/null || true
+          '
+          scp oldhost:/tmp/tena-uploads.tar.gz ./tena-uploads.tar.gz || true
+          scp oldhost:/tmp/tena-legacy-uploads.tar.gz ./tena-legacy-uploads.tar.gz || true
+          ssh oldhost "rm -f /tmp/tena-prod.sql /tmp/tena-uploads.tar.gz /tmp/tena-legacy-uploads.tar.gz"
+
+      - name: Fetch live .env (credentials for APP_KEY, mail, Paystack, M-Pesa)
+        run: ssh oldhost "cat ~/tena-core/.env" > ./tena-core.env
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tena-production-export
+          path: |
+            tena-prod.sql
+            tena-uploads.tar.gz
+            tena-legacy-uploads.tar.gz
+            tena-core.env
+          if-no-files-found: error
+          retention-days: 3
