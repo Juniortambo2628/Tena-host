@@ -112,7 +112,7 @@ export default function PolicyShow({ policy }) {
                     <div className="policy-show__content">
                         <span className="policy-show__section-label">Content</span>
                         <div
-                            className="policy-show__content-body"
+                            className="policy-show__content-body rich-text"
                             dangerouslySetInnerHTML={{ __html: policy.content }}
                         />
                     </div>

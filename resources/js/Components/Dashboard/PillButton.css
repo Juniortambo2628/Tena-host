@@ -3,21 +3,3 @@
 .pill-button__icon {
     @apply text-current opacity-80;
 }
-
-/* Pill links: the legacy Bootstrap sheet's unlayered `a` colour outranks the
-   layered .tena-btn-* text colours, so restate them for links. */
-a.tena-btn-primary,
-a.tena-btn-primary:hover,
-a.tena-btn-danger,
-a.tena-btn-danger:hover {
-    color: #fff;
-}
-
-a.tena-btn-secondary,
-a.tena-btn-secondary:hover,
-a.tena-btn-white,
-a.tena-btn-white:hover,
-a.tena-btn-ghost,
-a.tena-btn-ghost:hover {
-    color: #000;
-}

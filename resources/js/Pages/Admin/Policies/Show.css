@@ -63,27 +63,3 @@
 .policy-show__content-body {
     @apply text-sm text-black/70 leading-relaxed;
 }
-
-.policy-show__content-body h1,
-.policy-show__content-body h2,
-.policy-show__content-body h3,
-.policy-show__content-body h4 {
-    @apply font-semibold text-black mt-6 mb-3;
-}
-
-.policy-show__content-body p {
-    @apply mb-4;
-}
-
-.policy-show__content-body ul,
-.policy-show__content-body ol {
-    @apply ml-6 mb-4;
-}
-
-.policy-show__content-body li {
-    @apply mb-2;
-}
-
-.policy-show__content-body a {
-    @apply text-[#FFD300] underline;
-}

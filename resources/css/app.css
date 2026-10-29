@@ -1,4 +1,3 @@
-@import '../../legacy/css/bootstrap.min.css';
 @import "tailwindcss";
 
 @theme {
@@ -8,20 +7,9 @@
     --color-light: #f8f9fa;
 }
 
-/* Legacy Root Variables Compatibility */
-:root {
-    --bs-primary: #FFD300;
-    --bs-secondary: #ffb100;
-    --bs-white: #ffffff;
-    --bs-dark: #1b1b1b;
-    --bs-light: #f8f9fa;
-    --bs-primary-rgb: 255, 211, 0;
-    --bs-secondary-rgb: 255, 177, 0;
-}
-
 body {
     background-color: white;
-    color: var(--bs-dark);
+    color: var(--color-dark);
     overflow-x: hidden;
 }
 
@@ -116,7 +104,7 @@ html {
 /* ROI Calculator Styles */
 .roi-result {
     font-weight: 700;
-    color: var(--bs-primary);
+    color: var(--color-primary);
     transition: all 0.3s ease;
 }
 
@@ -157,7 +145,7 @@ html {
 
 .outlined-content {
     background: rgba(255, 255, 255, 0.9);
-    border: 2px solid var(--bs-primary);
+    border: 2px solid var(--color-primary);
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -197,6 +185,46 @@ html {
 }
 
 @layer components {
+    /* Rendered rich text (policies, CMS HTML). Preflight strips heading sizes,
+       margins and list markers, so content from the editor needs them back. */
+    .rich-text h1,
+    .rich-text h2 {
+        @apply text-2xl font-bold text-black mt-10 mb-4;
+    }
+
+    .rich-text h3 {
+        @apply text-lg font-semibold text-black mt-8 mb-3;
+    }
+
+    .rich-text h4 {
+        @apply font-semibold text-black mt-6 mb-2;
+    }
+
+    .rich-text p {
+        @apply mb-4;
+    }
+
+    .rich-text ul,
+    .rich-text ol {
+        @apply mb-4 pl-6;
+    }
+
+    .rich-text ul {
+        @apply list-disc;
+    }
+
+    .rich-text ol {
+        @apply list-decimal;
+    }
+
+    .rich-text li {
+        @apply mb-1;
+    }
+
+    .rich-text a {
+        @apply underline decoration-[#FFD300] underline-offset-2;
+    }
+
     .glass-effect {
         @apply bg-white/5 backdrop-blur-xl border border-white/10;
     }
@@ -237,7 +265,7 @@ html {
     }
 
     .tena-btn {
-        @apply flex items-center justify-center gap-2 rounded-[1rem] font-bold tracking-wide text-[10px] transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+        @apply flex items-center justify-center gap-2 rounded-[1rem] font-bold tracking-wide text-xs transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
         padding: 0.75rem 1.25rem;
     }
 
