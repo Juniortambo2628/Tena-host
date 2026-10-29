@@ -6,6 +6,7 @@ import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Users, Building2, TrendingUp, Activity, Eye, DollarSign, UserPlus, BarChart3, PieChart as PieIcon, LineChart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './Dashboard.css';
+import ViewSwitcher from '@/Components/Dashboard/ViewSwitcher';
 
 const VIEWS = [
     { id: 'overview', label: 'Overview', icon: <Activity size={14} /> },
@@ -49,19 +50,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                 rootRoute="admin.dashboard"
             />
 
-            {/* View Switcher */}
-            <div className="admin-view-switcher">
-                {VIEWS.map((view) => (
-                    <button
-                        key={view.id}
-                        onClick={() => setActiveView(view.id)}
-                        className={`admin-view-btn ${activeView === view.id ? 'admin-view-btn--active' : ''}`}
-                    >
-                        {view.icon}
-                        {view.label}
-                    </button>
-                ))}
-            </div>
+            <ViewSwitcher views={VIEWS} value={activeView} onChange={setActiveView} />
 
             <motion.div
                 variants={container}

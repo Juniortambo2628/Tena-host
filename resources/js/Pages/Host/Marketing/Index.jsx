@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
-import PillButton from '@/Components/Dashboard/PillButton';
-import BulkActions from '@/Components/Dashboard/BulkActions';
+import DataTable from '@/Components/Dashboard/DataTable';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
     Mail,
     MessageSquare,
@@ -12,30 +12,130 @@ import {
     Plus,
     BarChart3,
     Clock,
-    TrendingUp,
-    CheckCircle2,
-    AlertCircle,
     Edit2,
     Trash2,
     Pause,
     Zap,
-    Search
+    Megaphone,
 } from 'lucide-react';
 import './Index.css';
 
 export default function MarketingIndex({ campaigns, stats, insights = [], triggers = [] }) {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedIds, setSelectedIds] = useState([]);
+    const { confirm, ConfirmDialogEl } = useConfirm();
 
-    const filteredCampaigns = useMemo(() => {
-        if (!searchQuery.trim()) return campaigns;
-        const q = searchQuery.toLowerCase();
-        return campaigns.filter(c =>
-            c.name?.toLowerCase().includes(q) ||
-            c.type?.toLowerCase().includes(q) ||
-            c.status?.toLowerCase().includes(q)
-        );
-    }, [campaigns, searchQuery]);
+    const handleDelete = async (campaign) => {
+        const ok = await confirm({
+            title: 'Delete Campaign',
+            message: `Delete campaign "${campaign.name}"?`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
+        });
+        if (!ok) return;
+        router.delete(route('host.marketing.destroy', campaign.id), {
+            preserveScroll: true,
+            onSuccess: () => notify.success('Campaign deleted'),
+            onError: () => notify.error('Failed to delete campaign'),
+        });
+    };
+
+    const columns = [
+        {
+            header: 'Campaign',
+            accessorKey: 'name',
+            cell: ({ row: { original: campaign } }) => (
+                <div className="host-marketing-index-campaign-info">
+                    <span className="host-marketing-index-campaign-name">{campaign.name}</span>
+                    <span className="host-marketing-index-campaign-date">Last sent {campaign.last_sent}</span>
+                </div>
+            ),
+        },
+        {
+            header: 'Type',
+            accessorKey: 'type',
+            cell: ({ getValue }) => (
+                <div className="host-marketing-index-campaign-type">
+                    {getValue() === 'Email' ? <Mail size={14} className="text-[#FFD300]" /> : <MessageSquare size={14} className="text-green-500" />}
+                    <span className="host-marketing-index-campaign-type-label">{getValue()}</span>
+                </div>
+            ),
+        },
+        {
+            header: 'Status',
+            accessorKey: 'status',
+            cell: ({ getValue }) => (
+                <div className="host-marketing-index-campaign-type">
+                    <div className={`host-marketing-index-status-dot ${getValue() === 'Active' ? 'host-marketing-index-status-active' : 'host-marketing-index-status-inactive'}`}></div>
+                    <span className="host-marketing-index-status-label">{getValue()}</span>
+                </div>
+            ),
+        },
+        {
+            header: 'Performance',
+            accessorKey: 'performance',
+            cell: ({ getValue }) => <span className="host-marketing-index-performance">{getValue()}</span>,
+        },
+        {
+            header: 'Actions',
+            id: 'actions',
+            enableSorting: false,
+            cell: ({ row: { original: campaign } }) => (
+                <div className="host-marketing-index-actions">
+                    <Link
+                        href={route('host.marketing.analytics', campaign.id)}
+                        className="host-marketing-index-action-btn"
+                        title="View Analytics"
+                        aria-label="View analytics"
+                    >
+                        <BarChart3 size={14} className="host-marketing-index-action-icon" />
+                    </Link>
+                    <Link
+                        href={route('host.marketing.edit', campaign.id)}
+                        className="host-marketing-index-action-btn"
+                        title="Edit Campaign"
+                        aria-label="Edit campaign"
+                    >
+                        <Edit2 size={14} className="host-marketing-index-action-icon" />
+                    </Link>
+                    {campaign.status !== 'Active' && (
+                        <button
+                            onClick={() => router.post(route('host.marketing.activate', campaign.id), {}, {
+                                preserveScroll: true,
+                                onSuccess: () => notify.success('Campaign activated'),
+                                onError: () => notify.error('Failed to activate campaign'),
+                            })}
+                            className="host-marketing-index-action-btn-green"
+                            title="Activate & Send"
+                            aria-label="Activate and send"
+                        >
+                            <Play size={14} className="host-marketing-index-action-icon-green" />
+                        </button>
+                    )}
+                    {campaign.status === 'Active' && (
+                        <button
+                            onClick={() => router.post(route('host.marketing.pause', campaign.id), {}, {
+                                preserveScroll: true,
+                                onSuccess: () => notify.success('Campaign paused'),
+                                onError: () => notify.error('Failed to pause campaign'),
+                            })}
+                            className="host-marketing-index-action-btn"
+                            title="Pause Campaign"
+                            aria-label="Pause campaign"
+                        >
+                            <Pause size={14} className="host-marketing-index-action-icon-yellow" />
+                        </button>
+                    )}
+                    <button
+                        onClick={() => handleDelete(campaign)}
+                        className="host-marketing-index-action-btn-red"
+                        title="Delete"
+                        aria-label="Delete campaign"
+                    >
+                        <Trash2 size={14} className="host-marketing-index-action-icon-red" />
+                    </button>
+                </div>
+            ),
+        },
+    ];
     const breadcrumbs = [{ label: 'Marketing' }];
 
     const actions = [
@@ -64,122 +164,15 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
                 {/* Campaigns List */}
                 <div className="host-marketing-index-main">
                     <GlassCard padding="p-0 overflow-hidden">
-                        <div className="host-marketing-index-table-header">
-                            <h3 className="host-marketing-index-table-title">Active Campaigns</h3>
-                            <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-2 bg-black/5 px-3 py-2 rounded-xl">
-                                    <Search size={14} className="text-black/30" />
-                                    <input
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        placeholder="Search campaigns..."
-                                        className="bg-transparent border-none p-0 text-xs font-bold placeholder:text-black/30 focus:ring-0 w-40"
-                                    />
-                                </div>
-                                <button className="host-marketing-index-view-all">View All</button>
-                            </div>
-                        </div>
-
-                        <div className="host-marketing-index-table-wrapper">
-                            <table className="host-marketing-index-table">
-                                <thead>
-                                    <tr className="host-marketing-index-table-head-row">
-                                        <th className="host-marketing-index-table-th">Campaign</th>
-                                        <th className="host-marketing-index-table-th">Type</th>
-                                        <th className="host-marketing-index-table-th">Status</th>
-                                        <th className="host-marketing-index-table-th">Performance</th>
-                                        <th className="host-marketing-index-table-th">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="host-marketing-index-table-body">
-                                    {filteredCampaigns.map((campaign) => (
-                                        <tr key={campaign.id} className="host-marketing-index-table-row">
-                                            <td className="host-marketing-index-table-cell">
-                                                <div className="host-marketing-index-campaign-info">
-                                                    <span className="host-marketing-index-campaign-name">{campaign.name}</span>
-                                                    <span className="host-marketing-index-campaign-date">Last sent {campaign.last_sent}</span>
-                                                </div>
-                                            </td>
-                                            <td className="host-marketing-index-table-cell">
-                                                <div className="host-marketing-index-campaign-type">
-                                                    {campaign.type === 'Email' ? <Mail size={14} className="text-[#FFD300]" /> : <MessageSquare size={14} className="text-green-500" />}
-                                                    <span className="host-marketing-index-campaign-type-label">{campaign.type}</span>
-                                                </div>
-                                            </td>
-                                            <td className="host-marketing-index-table-cell">
-                                                <div className="host-marketing-index-campaign-type">
-                                                    <div className={`host-marketing-index-status-dot ${campaign.status === 'Active' ? 'host-marketing-index-status-active' : 'host-marketing-index-status-inactive'}`}></div>
-                                                    <span className="host-marketing-index-status-label">{campaign.status}</span>
-                                                </div>
-                                            </td>
-                                            <td className="host-marketing-index-performance">
-                                                {campaign.performance}
-                                            </td>
-                                            <td className="host-marketing-index-table-cell">
-                                                <div className="host-marketing-index-actions">
-                                                    <button
-                                                        onClick={() => router.get(route('host.marketing.analytics', campaign.id))}
-                                                        className="host-marketing-index-action-btn"
-                                                        title="View Analytics"
-                                                    >
-                                                        <BarChart3 size={14} className="host-marketing-index-action-icon" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => router.get(route('host.marketing.edit', campaign.id))}
-                                                        className="host-marketing-index-action-btn"
-                                                        title="Edit Campaign"
-                                                    >
-                                                        <Edit2 size={14} className="host-marketing-index-action-icon" />
-                                                    </button>
-                                                    {campaign.status !== 'Active' && (
-                                                        <button
-                                                            onClick={() => router.post(route('host.marketing.activate', campaign.id), {}, {
-                                                                preserveScroll: true,
-                                                                onSuccess: () => notify.success('Campaign activated'),
-                                                                onError: () => notify.error('Failed to activate campaign'),
-                                                            })}
-                                                            className="host-marketing-index-action-btn-green"
-                                                            title="Activate & Send"
-                                                        >
-                                                            <Play size={14} className="host-marketing-index-action-icon-green" />
-                                                        </button>
-                                                    )}
-                                                    {campaign.status === 'Active' && (
-                                                        <button
-                                                            onClick={() => router.post(route('host.marketing.pause', campaign.id), {}, {
-                                                                preserveScroll: true,
-                                                                onSuccess: () => notify.success('Campaign paused'),
-                                                                onError: () => notify.error('Failed to pause campaign'),
-                                                            })}
-                                                            className="host-marketing-index-action-btn"
-                                                            title="Pause Campaign"
-                                                        >
-                                                            <Pause size={14} className="host-marketing-index-action-icon-yellow" />
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => {
-                                                            if (confirm('Are you sure you want to delete ' + campaign.name + '?')) {
-                                                                router.delete(route('host.marketing.destroy', campaign.id), {
-                                                                    preserveScroll: true,
-                                                                    onSuccess: () => notify.success('Campaign deleted'),
-                                                                    onError: () => notify.error('Failed to delete campaign'),
-                                                                });
-                                                            }
-                                                        }}
-                                                        className="host-marketing-index-action-btn-red"
-                                                        title="Delete"
-                                                    >
-                                                        <Trash2 size={14} className="host-marketing-index-action-icon-red" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <DataTable
+                            title="Campaigns"
+                            data={campaigns}
+                            columns={columns}
+                            searchPlaceholder="Search campaigns..."
+                            emptyIcon={Megaphone}
+                            emptyMessage="No campaigns yet"
+                            emptyAction={{ label: 'Open Campaign Studio', icon: <Plus size={14} />, href: route('host.marketing.builder') }}
+                        />
                     </GlassCard>
                 </div>
 
@@ -217,6 +210,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
                     </GlassCard>
                 </div>
             </div>
+            {ConfirmDialogEl}
         </>
     );
 }

@@ -152,6 +152,7 @@ export default function OrderIndex({ orders, filters }) {
                     ))}
                 </div>
                 <DataTable
+                    emptyMessage="No orders yet"
                     data={orders.data || []}
                     columns={columns}
                     searchPlaceholder="Search orders..."

@@ -1,34 +1,11 @@
 @reference "tailwindcss";
 
-.glass-modal {
-    @apply fixed inset-0 z-[100] flex items-center justify-center p-4;
-}
-
-.glass-modal__overlay {
-    @apply absolute inset-0 bg-black/60 backdrop-blur-sm;
-}
-
-.glass-modal__panel {
-    @apply relative w-full bg-white/95 backdrop-blur-2xl border border-black/5 rounded-[3rem] shadow-2xl shadow-black/10 overflow-hidden;
-}
-
-.glass-modal__panel--sm { @apply max-w-sm; }
-.glass-modal__panel--md { @apply max-w-md; }
-.glass-modal__panel--lg { @apply max-w-lg; }
-.glass-modal__panel--xl { @apply max-w-xl; }
-.glass-modal__panel--2xl { @apply max-w-2xl; }
-.glass-modal__panel--3xl { @apply max-w-3xl; }
-.glass-modal__panel--4xl { @apply max-w-4xl; }
-.glass-modal__panel--5xl { @apply max-w-5xl; }
-.glass-modal__panel--6xl { @apply max-w-6xl; }
-.glass-modal__panel--7xl { @apply max-w-7xl; }
-
 .glass-modal__header {
-    @apply px-10 py-8 border-b border-black/5 flex justify-between items-center bg-white/50;
+    @apply px-6 py-5 sm:px-10 sm:py-8 border-b border-black/5 flex justify-between items-center bg-white/50;
 }
 
 .glass-modal__title {
-    @apply text-3xl font-bold text-black tracking-tight leading-none;
+    @apply text-2xl sm:text-3xl font-bold text-black tracking-tight leading-none;
 }
 
 .glass-modal__close {
@@ -36,7 +13,7 @@
 }
 
 .glass-modal__body {
-    @apply p-10 max-h-[80vh] overflow-y-auto bg-white/30 text-black;
+    @apply p-6 sm:p-10 max-h-[80vh] overflow-y-auto bg-white/30 text-black;
 }
 
 .glass-modal__body::-webkit-scrollbar {

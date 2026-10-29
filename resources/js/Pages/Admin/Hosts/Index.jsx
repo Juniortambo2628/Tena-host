@@ -157,11 +157,13 @@ export default function Index({ hosts, stats }) {
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No hosts found"
                     data={data}
                     columns={columns}
                     searchPlaceholder="Search hosts..."
                     serverPagination={hosts}
                     enableSelection
+                    selectedIds={selectedRows}
                     onSelectionChange={setSelectedRows}
                 />
             </GlassCard>

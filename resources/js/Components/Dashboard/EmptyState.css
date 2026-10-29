@@ -1,0 +1,29 @@
+@reference "tailwindcss";
+
+.empty-state {
+    @apply flex flex-col items-center justify-center text-center px-6 py-16;
+}
+
+.empty-state--compact {
+    @apply py-10;
+}
+
+.empty-state__icon {
+    @apply w-12 h-12 mb-4 rounded-2xl bg-black/5 text-black/30 flex items-center justify-center;
+}
+
+.empty-state--compact .empty-state__icon {
+    @apply w-10 h-10 mb-3;
+}
+
+.empty-state__message {
+    @apply text-sm font-semibold text-black/60;
+}
+
+.empty-state__hint {
+    @apply mt-1 max-w-sm text-xs text-black/40;
+}
+
+.empty-state__action {
+    @apply mt-5;
+}

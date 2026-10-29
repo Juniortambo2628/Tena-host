@@ -144,11 +144,13 @@ export default function Index({ users, stats }) {
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No users found"
                     data={data}
                     columns={columns}
                     searchPlaceholder="Search users..."
                     serverPagination={users}
                     enableSelection
+                    selectedIds={selectedRows}
                     onSelectionChange={setSelectedRows}
                 />
             </GlassCard>

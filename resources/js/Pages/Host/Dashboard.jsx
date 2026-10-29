@@ -9,6 +9,7 @@ import { Wifi, ShieldCheck, Plus, Activity, Users, DollarSign, BarChart3, Trendi
 import { motion } from 'framer-motion';
 import './Dashboard.css';
 import { T } from '@/Components/Dashboard/Terms';
+import ViewSwitcher from '@/Components/Dashboard/ViewSwitcher';
 
 const VIEWS = [
     { id: 'overview', label: 'Overview', icon: <Activity size={14} /> },
@@ -57,19 +58,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                 stats={heroStats}
             />
 
-            {/* View Switcher */}
-            <div className="host-view-switcher">
-                {VIEWS.map((view) => (
-                    <button
-                        key={view.id}
-                        onClick={() => setActiveView(view.id)}
-                        className={`host-view-btn ${activeView === view.id ? 'host-view-btn--active' : ''}`}
-                    >
-                        {view.icon}
-                        {view.label}
-                    </button>
-                ))}
-            </div>
+            <ViewSwitcher views={VIEWS} value={activeView} onChange={setActiveView} />
 
             <motion.div
                 variants={container}

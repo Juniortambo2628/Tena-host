@@ -5,8 +5,10 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Mail, Phone, Calendar, Building2, Trash2, Loader2 } from 'lucide-react';
 import './Show.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function HostShow({ host }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const { delete: destroy, processing } = useForm();
 
     const breadcrumbs = [
@@ -14,10 +16,14 @@ export default function HostShow({ host }) {
         { label: `${host.first_name} ${host.last_name}` },
     ];
 
-    const handleDelete = () => {
-        if (confirm(`Delete host "${host.first_name} ${host.last_name}"? All their properties will be orphaned.`)) {
-            destroy(route('admin.hosts.destroy', host.id));
-        }
+    const handleDelete = async () => {
+        const ok = await confirm({
+            title: 'Delete Host',
+            message: `Delete host "${host.first_name} ${host.last_name}"? All their properties will be orphaned.`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
+        });
+        if (ok) destroy(route('admin.hosts.destroy', host.id));
     };
 
     return (
@@ -85,6 +91,7 @@ export default function HostShow({ host }) {
                     </GlassCard>
                 </div>
             </div>
+            {ConfirmDialogEl}
         </>
     );
 }

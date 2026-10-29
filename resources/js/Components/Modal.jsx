@@ -22,11 +22,15 @@ export default function Modal({
         lg: 'tena-modal__panel--lg',
         xl: 'tena-modal__panel--xl',
         '2xl': 'tena-modal__panel--2xl',
+        '3xl': 'tena-modal__panel--3xl',
+        '4xl': 'tena-modal__panel--4xl',
+        '5xl': 'tena-modal__panel--5xl',
+        '6xl': 'tena-modal__panel--6xl',
+        '7xl': 'tena-modal__panel--7xl',
     }[maxWidth];
 
-    // Classes are namespaced: the legacy Bootstrap stylesheet in app.css hides
-    // any `.modal`, and Headless UI closes a dialog whose panel has no size.
-    // Its parts animate through their own `transition` prop (Headless UI v2).
+    // Headless UI closes a dialog whose panel has no size, so the panel always
+    // gets one. Its parts animate through their own `transition` prop (Headless UI v2).
     return (
         <Dialog open={show} onClose={close} className="tena-modal">
             <DialogBackdrop transition className="tena-modal__backdrop" />

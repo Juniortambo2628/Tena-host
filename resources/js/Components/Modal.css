@@ -1,7 +1,8 @@
 @reference "tailwindcss";
 
 .tena-modal {
-    @apply relative z-50;
+    /* Same layer as the search dialog and the cookie banner it can open from. */
+    @apply relative z-[100];
 }
 
 .tena-modal__backdrop {
@@ -17,7 +18,7 @@
 }
 
 .tena-modal__panel {
-    @apply relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full dark:bg-gray-800;
+    @apply relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full;
 }
 
 .tena-modal__panel--sm { @apply sm:max-w-sm; }
@@ -25,6 +26,11 @@
 .tena-modal__panel--lg { @apply sm:max-w-lg; }
 .tena-modal__panel--xl { @apply sm:max-w-xl; }
 .tena-modal__panel--2xl { @apply sm:max-w-2xl; }
+.tena-modal__panel--3xl { @apply sm:max-w-3xl; }
+.tena-modal__panel--4xl { @apply sm:max-w-4xl; }
+.tena-modal__panel--5xl { @apply sm:max-w-5xl; }
+.tena-modal__panel--6xl { @apply sm:max-w-6xl; }
+.tena-modal__panel--7xl { @apply sm:max-w-7xl; }
 
 .tena-modal__panel {
     @apply duration-300 ease-out data-[closed]:opacity-0 data-[closed]:translate-y-4 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95 data-[leave]:duration-200 data-[leave]:ease-in;

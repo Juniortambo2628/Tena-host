@@ -7,6 +7,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import { FormField, TextInput, Select, CheckboxField, FormActions } from '@/Components/Forms/FormPrimitives';
 import { Smartphone, AlertCircle, CheckCircle2, Wallet } from 'lucide-react';
 import { notify } from '@/Components/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 
 const kes = (n) => `KES ${Number(n || 0).toLocaleString('en-KE')}`;
 
@@ -15,6 +16,7 @@ const kes = (n) => `KES ${Number(n || 0).toLocaleString('en-KE')}`;
  * Secrets are write-only (blank keeps the stored value).
  */
 export default function Mpesa({ settings, configured, isPlaceholder, callbacks, payouts = [] }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const { data, setData, post, processing, errors } = useForm({
         env: settings.env || 'sandbox',
         account_type: settings.account_type || 'paybill',
@@ -32,8 +34,14 @@ export default function Mpesa({ settings, configured, isPlaceholder, callbacks, 
         onError: () => notify.error('Could not save settings. Check the fields.'),
     });
 
-    const settle = (payout) => {
-        if (!window.confirm(`Mark ${kes(payout.owed)} to ${payout.host} as paid out?`)) return;
+    const settle = async (payout) => {
+        const ok = await confirm({
+            title: 'Mark as Paid Out',
+            message: `Mark ${kes(payout.owed)} to ${payout.host} as paid out?`,
+            confirmLabel: 'Mark Paid',
+            variant: 'warning',
+        });
+        if (!ok) return;
         router.post(route('admin.mpesa.settle', payout.host_id), {}, { preserveScroll: true });
     };
 
@@ -186,6 +194,7 @@ export default function Mpesa({ settings, configured, isPlaceholder, callbacks, 
                     </form>
                 </MainColumn>
             </TwoColumnLayout>
+            {ConfirmDialogEl}
         </PageShell>
     );
 }

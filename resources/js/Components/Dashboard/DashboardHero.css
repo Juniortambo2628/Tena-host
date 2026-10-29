@@ -1,9 +1,9 @@
 @reference "tailwindcss";
 
 .dashboard-hero {
-    top: var(--dashboard-header-h, 0px);
-    /* Pinned only from md: on phones the stacked hero would cover half the screen. */
-    @apply relative md:sticky z-20 -mx-4 px-4 sm:-mx-8 sm:px-8 py-4 mb-6 bg-[#FDFCF7]/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+    /* Pinned only from md: on phones the stacked hero would cover half the screen.
+       The offset must follow it: on a relative element `top` would shift it over the content. */
+    @apply relative md:sticky md:top-(--dashboard-header-h) z-20 -mx-4 px-4 sm:-mx-8 sm:px-8 py-4 mb-6 bg-[#FDFCF7]/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
 }
 
 .dashboard-hero__header {

@@ -147,6 +147,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No access points yet"
                     data={accessPoints.data || []}
                     columns={columns}
                     searchPlaceholder="Search access points..."

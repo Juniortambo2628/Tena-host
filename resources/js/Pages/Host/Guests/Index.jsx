@@ -8,8 +8,8 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
 import BulkActions from '@/Components/Dashboard/BulkActions';
-import ServerPagination from '@/Components/Dashboard/ServerPagination';
-import { Plus, Edit2, Trash2, Loader2, Search } from 'lucide-react';
+import DataTable from '@/Components/Dashboard/DataTable';
+import { Plus, Edit2, Trash2, Users } from 'lucide-react';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
 
 // Inline: the legacy Bootstrap sheet's label rule outranks Tailwind's layered `flex`.
@@ -89,6 +89,69 @@ export default function GuestIndex({ guests, filters, properties }) {
             });
         }
     };
+
+    const columns = [
+        {
+            header: t('Guest'),
+            accessorKey: 'first_name',
+            cell: ({ row: { original: guest } }) => (
+                <div className="flex items-center gap-4">
+                    <div className="host-guests-avatar">
+                        {guest.first_name?.charAt(0) || 'G'}
+                    </div>
+                    <div className="flex flex-col">
+                        <Link href={route('host.guests.show', guest.id)} className="host-guests-name-link">
+                            {guest.first_name} {guest.last_name}
+                        </Link>
+                        <span className="host-guests-id-badge">ID: {guest.id}</span>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            header: 'Contact',
+            accessorKey: 'email',
+            cell: ({ row: { original: guest } }) => (
+                <div className="flex flex-col gap-1">
+                    <span className="host-guests-email">{guest.email || 'No email'}</span>
+                    <span className="host-guests-phone">{guest.phone || 'No phone'}</span>
+                </div>
+            ),
+        },
+        {
+            header: t('Property'),
+            id: 'property',
+            accessorFn: (guest) => guest.property?.name,
+            cell: ({ getValue }) => <span className="host-guests-property">{getValue() || 'Unknown'}</span>,
+        },
+        {
+            header: 'Activity',
+            accessorKey: 'total_visits',
+            cell: ({ row: { original: guest } }) => (
+                <div className="flex flex-col">
+                    <span className="host-guests-visits">{guest.total_visits} visits</span>
+                    <span className="host-guests-last-date">
+                        {guest.last_connected ? new Date(guest.last_connected).toLocaleDateString() : 'Never'}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            header: 'Actions',
+            id: 'actions',
+            enableSorting: false,
+            cell: ({ row: { original: guest } }) => (
+                <div className="host-guests-actions">
+                    <button onClick={() => openEditModal(guest)} className="host-guests-edit-btn" title="Edit" aria-label="Edit guest">
+                        <Edit2 size={14} />
+                    </button>
+                    <button onClick={() => handleDelete(guest)} className="host-guests-delete-btn" title="Delete" aria-label="Delete guest">
+                        <Trash2 size={14} />
+                    </button>
+                </div>
+            ),
+        },
+    ];
 
     const breadcrumbs = [{ label: 'Guests' }];
     const actions = [
@@ -193,127 +256,20 @@ export default function GuestIndex({ guests, filters, properties }) {
             />
 
             <GlassCard padding="p-0 overflow-hidden">
-                {/* Search Bar */}
-                <div className="px-6 py-4 border-b border-black/5">
-                    <div className="flex items-center gap-2 bg-black/5 px-4 py-2.5 rounded-xl w-72">
-                        <Search size={16} className="text-black/30" />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            placeholder={t('Search guests...')}
-                            className="bg-transparent border-none p-0 text-sm font-bold placeholder:text-black/30 focus:ring-0 w-full"
-                        />
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="host-guests-table-header">
-                                <th className="host-guests-table-header-cell w-10">
-                                    <input
-                                        type="checkbox"
-                                        checked={guests.data.length > 0 && selectedIds.length === guests.data.length}
-                                        onChange={() => {
-                                            if (selectedIds.length === guests.data.length) {
-                                                setSelectedIds([]);
-                                            } else {
-                                                setSelectedIds(guests.data.map(g => g.id));
-                                            }
-                                        }}
-                                        className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
-                                    />
-                                </th>
-                                <th className="host-guests-table-header-cell"><T>Guest</T></th>
-                                <th className="host-guests-table-header-cell">Contact</th>
-                                <th className="host-guests-table-header-cell"><T>Property</T></th>
-                                <th className="host-guests-table-header-cell">Activity</th>
-                                <th className="host-guests-table-header-cell">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-black/5">
-                            {guests.data.length > 0 ? (
-                                guests.data.map((guest) => (
-                                    <tr key={guest.id} className={`host-guests-table-row ${selectedIds.includes(guest.id) ? 'bg-[#FFD300]/5' : ''}`}>
-                                        <td className="host-guests-table-cell w-10">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedIds.includes(guest.id)}
-                                                onChange={() => {
-                                                    if (selectedIds.includes(guest.id)) {
-                                                        setSelectedIds(selectedIds.filter(id => id !== guest.id));
-                                                    } else {
-                                                        setSelectedIds([...selectedIds, guest.id]);
-                                                    }
-                                                }}
-                                                className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
-                                            />
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="flex items-center gap-4">
-                                                <div className="host-guests-avatar">
-                                                    {guest.first_name?.charAt(0) || 'G'}
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <Link href={route('host.guests.show', guest.id)} className="host-guests-name-link">
-                                                        {guest.first_name} {guest.last_name}
-                                                    </Link>
-                                                    <span className="host-guests-id-badge">ID: {guest.id}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="flex flex-col gap-1">
-                                                <span className="host-guests-email">{guest.email || 'No email'}</span>
-                                                <span className="host-guests-phone">{guest.phone || 'No phone'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <span className="host-guests-property">
-                                                {guest.property?.name || 'Unknown'}
-                                            </span>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="flex flex-col">
-                                                <span className="host-guests-visits">{guest.total_visits} visits</span>
-                                                <span className="host-guests-last-date">
-                                                    {guest.last_connected ? new Date(guest.last_connected).toLocaleDateString() : 'Never'}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="host-guests-actions">
-                                                <button
-                                                    onClick={() => openEditModal(guest)}
-                                                    className="host-guests-edit-btn"
-                                                    title="Edit"
-                                                >
-                                                    <Edit2 size={14} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(guest)}
-                                                    className="host-guests-delete-btn"
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="host-guests-empty">
-                                        <T>No guests found</T>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                <ServerPagination links={guests.links} className="justify-center mt-6" />
+                <DataTable
+                    data={guests.data}
+                    columns={columns}
+                    searchPlaceholder={t('Search guests...')}
+                    searchValue={searchQuery}
+                    onSearch={handleSearch}
+                    serverPagination={guests}
+                    enableSelection
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    emptyIcon={Users}
+                    emptyMessage={searchQuery ? 'No guests match your search' : 'No guests yet'}
+                    emptyAction={searchQuery ? null : { label: 'Add Guest', icon: <Plus size={14} />, onClick: openCreateModal }}
+                />
             </GlassCard>
 
             <BulkActions

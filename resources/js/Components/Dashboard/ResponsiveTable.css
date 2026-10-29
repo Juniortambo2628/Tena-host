@@ -82,7 +82,7 @@
 }
 
 .responsive-table__empty {
-    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+    @apply p-0;
 }
 
 .responsive-table__card {
@@ -155,10 +155,6 @@
 
 .responsive-table__card-value {
     @apply text-sm font-semibold;
-}
-
-.responsive-table__empty-mobile {
-    @apply py-12 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
 }
 
 .responsive-table__detail {

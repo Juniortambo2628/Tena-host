@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { MoreHorizontal, Eye, Edit3, Trash2, CheckCircle2, XCircle } from 'lucide-react';
 import GlassModal from '@/Components/GlassModal';
+import EmptyState from './EmptyState';
 import './ResponsiveTable.css';
 
 export default function ResponsiveTable({
@@ -142,7 +143,7 @@ export default function ResponsiveTable({
                         )) : (
                             <tr>
                                 <td colSpan={totalCols} className="responsive-table__empty">
-                                    {emptyMessage}
+                                    <EmptyState message={emptyMessage} />
                                 </td>
                             </tr>
                         )}
@@ -215,9 +216,7 @@ export default function ResponsiveTable({
                         ))}
                     </div>
                 )) : (
-                    <div className="responsive-table__empty-mobile">
-                        {emptyMessage}
-                    </div>
+                    <EmptyState message={emptyMessage} compact />
                 )}
             </div>
 

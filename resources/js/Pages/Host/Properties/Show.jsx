@@ -7,8 +7,10 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Wifi, Users, Radio, MapPin, ArrowLeft, Trash2 } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function PropertyShow({ property, wifi = {} }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     useEffect(() => {
         const timer = setInterval(() => {
             if (document.visibilityState === 'visible') router.reload({ only: ['property', 'wifi'] });
@@ -132,13 +134,18 @@ export default function PropertyShow({ property, wifi = {} }) {
                     <GlassCard padding="p-6">
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-4">Danger Zone</h4>
                         <button
-                            onClick={() => {
-                                if (confirm(`Delete "${property.name}"? This will remove all associated guests and data. This cannot be undone.`)) {
-                                    router.delete(route('host.properties.destroy', property.id), {
-                                        onSuccess: () => notify.success('Property deleted'),
-                                        onError: () => notify.error('Failed to delete property'),
-                                    });
-                                }
+                            onClick={async () => {
+                                const ok = await confirm({
+                                    title: 'Delete Property',
+                                    message: `Delete "${property.name}"? This will remove all associated guests and data. This cannot be undone.`,
+                                    confirmLabel: 'Delete',
+                                    variant: 'danger',
+                                });
+                                if (!ok) return;
+                                router.delete(route('host.properties.destroy', property.id), {
+                                    onSuccess: () => notify.success('Property deleted'),
+                                    onError: () => notify.error('Failed to delete property'),
+                                });
                             }}
                             className="w-full py-3 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                         >
@@ -148,6 +155,7 @@ export default function PropertyShow({ property, wifi = {} }) {
                     </GlassCard>
                 </div>
             </div>
+            {ConfirmDialogEl}
         </>
     );
 }

@@ -5,8 +5,10 @@ import { Key, Trash2, Plus, Shield } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 import './PasskeyManagementForm.css';
 import { csrfHeaders } from '@/Support/csrf';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function PasskeyManagementForm({ className = '', passkeys = [] }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const [registering, setRegistering] = useState(false);
 
     const registerPasskey = async () => {
@@ -30,7 +32,13 @@ export default function PasskeyManagementForm({ className = '', passkeys = [] })
     };
 
     const deletePasskey = async (passkeyId) => {
-        if (!confirm('Delete this passkey? This cannot be undone.')) return;
+        const ok = await confirm({
+            title: 'Delete Passkey',
+            message: 'Delete this passkey? This cannot be undone.',
+            confirmLabel: 'Delete',
+            variant: 'danger',
+        });
+        if (!ok) return;
 
         try {
             const response = await fetch(route('passkey.destroy', { passkey: passkeyId }), {
@@ -110,6 +118,7 @@ export default function PasskeyManagementForm({ className = '', passkeys = [] })
                     </div>
                 )}
             </div>
+            {ConfirmDialogEl}
         </section>
     );
 }

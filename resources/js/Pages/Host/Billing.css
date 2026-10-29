@@ -4,9 +4,6 @@
     @apply max-w-4xl mx-auto space-y-8;
 }
 
-.host-billing-heading {
-    @apply text-2xl font-bold text-black tracking-tight;
-}
 
 .host-billing-subheading {
     @apply text-gray-500 font-medium mt-2;

@@ -16,6 +16,7 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { T } from '@/Components/Dashboard/Terms';
 import SplashEditor from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+import { useConfirm } from '@/hooks/useConfirm';
 
 // The modal only picks the look; the Splash Studio owns the rest of branding_json.
 const quickDesign = (saved = {}) => ({ template: normalizeTemplate(saved?.template), accent: saved?.accent || '#FFD300' });
@@ -24,6 +25,7 @@ const quickDesign = (saved = {}) => ({ template: normalizeTemplate(saved?.templa
 registerPlugin(FilePondPluginImagePreview);
 
 export default function PropertyIndex({ properties, stats: live = {} }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
 
@@ -268,13 +270,18 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 Splash Studio
                             </PillButton>
                             <button
-                                onClick={() => {
-                                    if (confirm(`Delete "${property.name}"? This cannot be undone.`)) {
-                                        router.delete(route('host.properties.destroy', property.id), {
-                                            onSuccess: () => notify.success('Property deleted'),
-                                            onError: () => notify.error('Failed to delete property'),
-                                        });
-                                    }
+                                onClick={async () => {
+                                    const ok = await confirm({
+                                        title: 'Delete Property',
+                                        message: `Delete "${property.name}"? This cannot be undone.`,
+                                        confirmLabel: 'Delete',
+                                        variant: 'danger',
+                                    });
+                                    if (!ok) return;
+                                    router.delete(route('host.properties.destroy', property.id), {
+                                        onSuccess: () => notify.success('Property deleted'),
+                                        onError: () => notify.error('Failed to delete property'),
+                                    });
                                 }}
                                 className="w-14 h-14 bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl flex items-center justify-center text-black/20 hover:text-red-500 hover:bg-white transition-all active:scale-90"
                             >
@@ -309,6 +316,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 confirmLabel={editingProperty ? 'Update Property' : 'Create Property'}
                 processing={processing}
             />
+            {ConfirmDialogEl}
         </>
     );
 }

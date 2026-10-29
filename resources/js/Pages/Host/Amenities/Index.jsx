@@ -189,6 +189,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No amenities yet"
                     data={amenities.data || []}
                     columns={columns}
                     searchPlaceholder="Search amenities..."

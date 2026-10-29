@@ -6,6 +6,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Mail, Phone, Calendar, Shield, Trash2, Loader2, ChevronDown } from 'lucide-react';
 import './Show.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 const ROLES = [
     { value: 'admin', label: 'Admin' },
@@ -15,6 +16,7 @@ const ROLES = [
 ];
 
 export default function UserShow({ user }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const { delete: destroy, processing } = useForm();
     const [editingRole, setEditingRole] = useState(false);
     const [newRole, setNewRole] = useState(user.role);
@@ -147,6 +149,7 @@ export default function UserShow({ user }) {
                     </GlassCard>
                 </div>
             </div>
+            {ConfirmDialogEl}
         </>
     );
 }
