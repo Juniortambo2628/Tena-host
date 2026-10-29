@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, Link, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -174,7 +173,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
     ];
 
     return (
-        <DashboardLayout title="Amenities">
+        <>
             <Head title="Amenities" />
 
             <DashboardHero
@@ -208,6 +207,6 @@ export default function AmenityIndex({ amenities, filters, properties }) {
                 confirmLabel="Add Amenity"
                 processing={processing}
             />
-        </DashboardLayout>
+        </>
     );
 }

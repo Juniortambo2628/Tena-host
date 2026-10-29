@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -130,7 +129,7 @@ export default function Index({ users, stats }) {
     ];
 
     return (
-        <DashboardLayout title="User Management">
+        <>
             <Head title="Users" />
             <DashboardHero
                 title="User Management"
@@ -139,7 +138,7 @@ export default function Index({ users, stats }) {
                 rootRoute="admin.dashboard"
                 stats={summaryStats}
                 actions={[
-                    { label: 'Add User', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('admin.users.create')) },
+                    { label: 'Add User', variant: 'primary', icon: <Plus size={16} />, href: route('admin.users.create') },
                 ]}
             />
 
@@ -161,6 +160,6 @@ export default function Index({ users, stats }) {
                 actions={bulkActions}
             />
             {ConfirmDialogEl}
-        </DashboardLayout>
+        </>
     );
 }

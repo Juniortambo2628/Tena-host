@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -58,7 +57,7 @@ export default function UserShow({ user }) {
     };
 
     return (
-        <DashboardLayout title={`${user.first_name} ${user.last_name}`}>
+        <>
             <Head title={`${user.first_name} ${user.last_name}`} />
 
             <DashboardHero
@@ -66,7 +65,7 @@ export default function UserShow({ user }) {
                 breadcrumbs={breadcrumbs}
                 rootRoute="admin.dashboard"
                 actions={[
-                    { label: 'Back', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('admin.users.index')) },
+                    { label: 'Back', icon: <ArrowLeft size={16} />, href: route('admin.users.index') },
                 ]}
             />
 
@@ -148,6 +147,6 @@ export default function UserShow({ user }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

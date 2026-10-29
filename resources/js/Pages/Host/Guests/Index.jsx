@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -181,7 +180,7 @@ export default function GuestIndex({ guests, filters, properties }) {
     ];
 
     return (
-        <DashboardLayout title="Guests">
+        <>
             <Head title="Guest List" />
 
             <DashboardHero
@@ -361,6 +360,6 @@ export default function GuestIndex({ guests, filters, properties }) {
                 processing={processing}
             />
             {ConfirmDialogEl}
-        </DashboardLayout>
+        </>
     );
 }

@@ -1,9 +1,12 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
 import './PillButton.css';
 
 export default function PillButton({
     children,
     onClick,
+    // With href the pill is a link (prefetched on hover) instead of a button.
+    href,
     variant = 'primary',
     className = '',
     disabled = false,
@@ -23,16 +26,31 @@ export default function PillButton({
         danger: "tena-btn-danger",
     };
 
+    const classes = `${baseStyles} ${variants[variant]} ${className}`;
+    const content = (
+        <>
+            {icon && <span className="pill-button__icon">{icon}</span>}
+            {children}
+        </>
+    );
+
+    if (href) {
+        return (
+            <Link href={href} prefetch onClick={onClick} className={classes}>
+                {content}
+            </Link>
+        );
+    }
+
     return (
         <button
             type={type}
             onClick={onClick}
             disabled={disabled || processing}
             aria-busy={processing || undefined}
-            className={`${baseStyles} ${variants[variant]} ${className}`}
+            className={classes}
         >
-            {icon && <span className="pill-button__icon">{icon}</span>}
-            {children}
+            {content}
         </button>
     );
 }

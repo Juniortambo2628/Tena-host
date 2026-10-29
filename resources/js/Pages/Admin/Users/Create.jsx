@@ -1,6 +1,5 @@
 import React from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -42,7 +41,7 @@ export default function CreateUser() {
     ];
 
     return (
-        <DashboardLayout title="Create User">
+        <>
             <Head title="Create User" />
 
             <DashboardHero
@@ -50,7 +49,7 @@ export default function CreateUser() {
                 breadcrumbs={breadcrumbs}
                 rootRoute="admin.dashboard"
                 actions={[
-                    { label: 'Back', variant: 'secondary', icon: <ChevronLeft size={16} />, onClick: () => router.get(route('admin.users.index')) },
+                    { label: 'Back', variant: 'secondary', icon: <ChevronLeft size={16} />, href: route('admin.users.index') },
                 ]}
             />
 
@@ -129,6 +128,6 @@ export default function CreateUser() {
                     </form>
                 </GlassCard>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

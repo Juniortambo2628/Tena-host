@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -129,7 +128,7 @@ export default function OrderIndex({ orders, filters }) {
     ], []);
 
     return (
-        <DashboardLayout title="Orders">
+        <>
             <Head title="Orders" />
 
             <DashboardHero
@@ -159,6 +158,6 @@ export default function OrderIndex({ orders, filters }) {
                     serverPagination={orders}
                 />
             </GlassCard>
-        </DashboardLayout>
+        </>
     );
 }

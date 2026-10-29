@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, Link, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -132,7 +131,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
     ];
 
     return (
-        <DashboardLayout title="Access Points">
+        <>
             <Head title="Access Points" />
 
             <DashboardHero
@@ -166,6 +165,6 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                 confirmLabel="Add Access Point"
                 processing={processing}
             />
-        </DashboardLayout>
+        </>
     );
 }

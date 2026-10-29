@@ -1,5 +1,4 @@
 import React from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -28,7 +27,7 @@ export default function OrderShow({ order }) {
     };
 
     return (
-        <DashboardLayout title="Order Details">
+        <>
             <Head title={`Order #${order.id}`} />
 
             <DashboardHero
@@ -121,6 +120,6 @@ export default function OrderShow({ order }) {
                     </Link>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm } from '@inertiajs/react';
 import {
     Palette, Heart, House, Compass, Star, Gift, Building2, Plus, Trash2, ChevronUp, ChevronDown,
@@ -462,7 +461,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
     const index = steps.indexOf(current);
 
     return (
-        <DashboardLayout title={`Splash Studio · ${property.name}`}>
+        <>
             <Head title={`Splash Studio · ${property.name}`} />
             <DashboardHero
                 title="Splash Studio"
@@ -501,6 +500,6 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
 
                 <Preview propertyId={property.id} data={data} focusTab={current.tab} coverFile={data.splash_image} logoFile={data.logo} />
             </div>
-        </DashboardLayout>
+        </>
     );
 }

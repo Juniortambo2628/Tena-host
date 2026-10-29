@@ -40,6 +40,7 @@ export default function DashboardHero({
                         <PillButton
                             key={idx}
                             variant={action.variant || 'white'}
+                            href={action.href}
                             onClick={action.onClick}
                             icon={action.icon}
                             className={action.className}

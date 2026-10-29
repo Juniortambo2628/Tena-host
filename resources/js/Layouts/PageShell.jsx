@@ -1,8 +1,9 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import DashboardLayout from './DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 
+// The page heading for dashboard pages. DashboardLayout itself is the persistent
+// layout set in app.jsx, so it is not rendered here.
 const PageShell = React.memo(function PageShell({
     children,
     title,
@@ -11,11 +12,10 @@ const PageShell = React.memo(function PageShell({
     actions = [],
     stats = [],
     rootRoute = 'host.dashboard',
-    layoutTitle,
     hideHero = false,
 }) {
     return (
-        <DashboardLayout title={layoutTitle ?? title}>
+        <>
             <Head title={headTitle ?? title} />
             {! hideHero && (
                 <DashboardHero
@@ -27,7 +27,7 @@ const PageShell = React.memo(function PageShell({
                 />
             )}
             {children}
-        </DashboardLayout>
+        </>
     );
 });
 

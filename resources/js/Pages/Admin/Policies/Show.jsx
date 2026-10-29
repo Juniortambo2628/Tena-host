@@ -37,7 +37,7 @@ export default function PolicyShow({ policy }) {
             ]}
             rootRoute="admin.dashboard"
             actions={[
-                { label: 'Edit', onClick: () => router.visit(route('admin.policies.edit', policy.slug)), variant: 'black', icon: <Edit3 size={16} /> },
+                { label: 'Edit', href: route('admin.policies.edit', policy.slug), variant: 'black', icon: <Edit3 size={16} /> },
             ]}
         >
             <Head title={policy.title} />

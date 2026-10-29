@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './Show.css';
@@ -28,7 +27,7 @@ export default function PropertyShow({ property, wifi = {} }) {
     ];
 
     return (
-        <DashboardLayout title={property.name}>
+        <>
             <Head title={property.name} />
 
             <DashboardHero
@@ -36,9 +35,9 @@ export default function PropertyShow({ property, wifi = {} }) {
                 breadcrumbs={breadcrumbs}
                 stats={stats}
                 actions={[
-                    { label: 'Back', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('host.properties.index')) },
-                    { label: 'Edit', onClick: () => router.get(route('host.properties.edit', property.id)) },
-                    { label: 'Splash Studio', variant: 'primary', onClick: () => router.get(route('host.properties.splash', property.id)) },
+                    { label: 'Back', icon: <ArrowLeft size={16} />, href: route('host.properties.index') },
+                    { label: 'Edit', href: route('host.properties.edit', property.id) },
+                    { label: 'Splash Studio', variant: 'primary', href: route('host.properties.splash', property.id) },
                 ]}
             />
 
@@ -149,6 +148,6 @@ export default function PropertyShow({ property, wifi = {} }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

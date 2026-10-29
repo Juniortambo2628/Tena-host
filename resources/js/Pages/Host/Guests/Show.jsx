@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import './Show.css';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -52,7 +51,7 @@ export default function GuestShow({ guest, activity = [] }) {
     ];
 
     return (
-        <DashboardLayout title="Guest Profile">
+        <>
             <Head title={`Guest: ${name}`} />
 
             <DashboardHero
@@ -162,6 +161,6 @@ export default function GuestShow({ guest, activity = [] }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

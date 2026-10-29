@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
     LayoutDashboard,
     Users,
@@ -33,9 +32,12 @@ import './DashboardLayout.css';
 import { useTerms } from '@/Components/Dashboard/Terms';
 import BrandLogo from '@/Components/BrandLogo';
 
-export default function DashboardLayout({ children, title, bgImage = "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=2000&q=80" }) {
+// Mounted once as the persistent layout of every dashboard page (see app.jsx), so
+// the sidebar, header and search keep their state while only the page swaps.
+export default function DashboardLayout({ children }) {
     const t = useTerms();
     const { auth } = usePage().props;
+    const { component } = usePage();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const userRole = auth.user.role || 'host';
 
@@ -152,12 +154,6 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
 
     return (
         <div className="dashboard-layout">
-            {/* Background Image/Gradient Layer */}
-            <div
-                className="dashboard-layout__bg"
-                style={{ '--bg-image': `url('${bgImage}')` }}
-            />
-
             {/* Sidebar */}
             <aside className={`dashboard-layout__sidebar ${isSidebarOpen ? 'dashboard-layout__sidebar--open' : 'dashboard-layout__sidebar--closed'}`}>
                 <div className="dashboard-layout__brand">
@@ -174,6 +170,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                             <Link
                                 key={item.name}
                                 href={item.route ? safeRoute(item.route) : '#'}
+                                prefetch
                                 className={`dashboard-layout__nav-link group ${isActive
                                     ? 'dashboard-layout__nav-link--active'
                                     : 'dashboard-layout__nav-link--inactive'
@@ -203,8 +200,8 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
             {/* Main Content Area */}
             <main className="dashboard-layout__main">
                 <div className="dashboard-layout__content group">
-                    {/* Inner Content Scroller */}
-                    <div className="dashboard-layout__scroller custom-scrollbar">
+                    {/* Inner content scroller. scroll-region: the layout persists, so Inertia resets this on each visit. */}
+                    <div className="dashboard-layout__scroller custom-scrollbar" scroll-region="">
                         {/* Top Navbar Header */}
                         <header className="dashboard-layout__header">
                             <div className="dashboard-layout__header-left">
@@ -368,7 +365,7 @@ export default function DashboardLayout({ children, title, bgImage = "https://im
                         </header>
 
                         {/* Content Container */}
-                        <div className="dashboard-layout__page animate-fade-in">
+                        <div key={component} className="dashboard-layout__page animate-fade-in">
                             {children}
                         </div>
                     </div>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './Index.css';
@@ -206,7 +205,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
     ];
 
     return (
-        <DashboardLayout title="WiFi Access">
+        <>
             <Head title="Properties" />
 
             <DashboardHero
@@ -310,6 +309,6 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 confirmLabel={editingProperty ? 'Update Property' : 'Create Property'}
                 processing={processing}
             />
-        </DashboardLayout>
+        </>
     );
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import ChartCard from '@/Components/Dashboard/ChartCard';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -30,7 +29,7 @@ export default function Dashboard({ properties, stats, analytics }) {
     ];
 
     const actions = [
-        { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('host.properties.index')) },
+        { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, href: route('host.properties.index') },
     ];
 
     const breadcrumbs = [{ label: 'Overview' }];
@@ -48,7 +47,7 @@ export default function Dashboard({ properties, stats, analytics }) {
     const formatCurrency = (value) => `KES ${Number(value).toLocaleString()}`;
 
     return (
-        <DashboardLayout title="Overview">
+        <>
             <Head title="Host Dashboard" />
 
             <DashboardHero
@@ -310,6 +309,6 @@ export default function Dashboard({ properties, stats, analytics }) {
                     </div>
                 )}
             </motion.div>
-        </DashboardLayout>
+        </>
     );
 }

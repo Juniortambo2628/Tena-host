@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
+import { Head, Link } from '@inertiajs/react';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -34,11 +33,11 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
     ];
 
     const actions = [
-        { label: 'Edit Campaign', variant: 'white', icon: <BarChart3 size={16} />, onClick: () => router.get(route('host.marketing.edit', campaign.id)) },
+        { label: 'Edit Campaign', variant: 'white', icon: <BarChart3 size={16} />, href: route('host.marketing.edit', campaign.id) },
     ];
 
     return (
-        <DashboardLayout title="Campaign Analytics">
+        <>
             <Head title={`Analytics: ${campaign.name}`} />
 
             <div className="mb-6">
@@ -191,7 +190,7 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }
 

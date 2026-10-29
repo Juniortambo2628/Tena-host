@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -40,7 +39,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
     const breadcrumbs = [{ label: 'Marketing' }];
 
     const actions = [
-        { label: 'Open Campaign Studio', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('host.marketing.builder')) },
+        { label: 'Open Campaign Studio', variant: 'primary', icon: <Plus size={16} />, href: route('host.marketing.builder') },
     ];
 
     const heroStats = [
@@ -51,7 +50,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
     ];
 
     return (
-        <DashboardLayout title="Marketing">
+        <>
             <Head title="Marketing Builder" />
 
             <DashboardHero
@@ -218,7 +217,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }
 

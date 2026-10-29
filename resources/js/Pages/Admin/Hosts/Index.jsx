@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -146,7 +145,7 @@ export default function Index({ hosts, stats }) {
     ];
 
     return (
-        <DashboardLayout title="Hosts Management">
+        <>
             <Head title="Hosts" />
             <DashboardHero
                 title="Hosts Management"
@@ -174,6 +173,6 @@ export default function Index({ hosts, stats }) {
                 actions={bulkActions}
             />
             {ConfirmDialogEl}
-        </DashboardLayout>
+        </>
     );
 }

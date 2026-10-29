@@ -1,5 +1,4 @@
 import React from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link } from '@inertiajs/react';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -8,7 +7,7 @@ import './Dashboard.css';
 
 export default function StaffDashboard({ properties, recentGuests, pendingOrders, stats }) {
     return (
-        <DashboardLayout title="Staff Dashboard">
+        <>
             <Head title="Staff Dashboard" />
 
             <DashboardHero
@@ -123,6 +122,6 @@ export default function StaffDashboard({ properties, recentGuests, pendingOrders
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

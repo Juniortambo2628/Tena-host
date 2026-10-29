@@ -103,7 +103,7 @@ export default function PaymentIndex({ transactions, stats, filters }) {
                 { label: 'Failed', value: stats.failed },
             ]}
             actions={[
-                { label: 'Hosts', onClick: () => router.visit(route('admin.payments.hosts')), variant: 'secondary', icon: <Users size={16} /> },
+                { label: 'Hosts', href: route('admin.payments.hosts'), variant: 'secondary', icon: <Users size={16} /> },
             ]}
         >
             <Head title="Payments" />

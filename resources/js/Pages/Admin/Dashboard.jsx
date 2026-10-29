@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import ChartCard from '@/Components/Dashboard/ChartCard';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -40,7 +39,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
     const formatCurrency = (value) => `KES ${Number(value).toLocaleString()}`;
 
     return (
-        <DashboardLayout title="Admin Overview">
+        <>
             <Head title="Admin Dashboard" />
 
             <DashboardHero
@@ -336,6 +335,6 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                     </div>
                 )}
             </motion.div>
-        </DashboardLayout>
+        </>
     );
 }

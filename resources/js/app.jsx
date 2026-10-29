@@ -6,13 +6,25 @@ import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ToastProvider, notify } from '@/Components/Toast';
 
+// Pages in these folders share one persistent DashboardLayout, so navigating between
+// them swaps only the page. A page can opt out with `Page.layout = null`.
+const DASHBOARD_PAGES = /^(Host|Admin|Staff|Profile)\//;
+
 // APP_NAME is often left as Laravel's default; fall back to the product name.
 const appName = [undefined, '', 'Laravel'].includes(import.meta.env.VITE_APP_NAME) ? 'TenaFi' : import.meta.env.VITE_APP_NAME;
 
 createInertiaApp({
     // Public pages pass full CMS titles ("TenaFi | ..."); don't suffix those.
     title: (title) => (!title ? appName : title.includes(appName) ? title : `${title} - ${appName}`),
-    resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
+    resolve: async (name) => {
+        const page = await resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx'));
+        if (DASHBOARD_PAGES.test(name) && page.default.layout === undefined) {
+            // Loaded on demand so public pages don't download the dashboard shell.
+            const { default: DashboardLayout } = await import('./Layouts/DashboardLayout.jsx');
+            page.default.layout = (child) => <DashboardLayout>{child}</DashboardLayout>;
+        }
+        return page;
+    },
     setup({ el, App, props }) {
         if (import.meta.env.SSR) {
             hydrateRoot(el, <App {...props} />);
@@ -29,6 +41,13 @@ createInertiaApp({
     progress: {
         color: '#FFD300',
     },
+});
+
+// Sidebar links prefetch on hover; drop those cached pages once anything is saved.
+router.on('before', (event) => {
+    if (event.detail.visit.method !== 'get') {
+        router.flushAll();
+    }
 });
 
 router.on('error', (event) => {
