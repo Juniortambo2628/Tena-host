@@ -5,7 +5,13 @@
 }
 
 .dashboard-layout__sidebar {
-    @apply sticky top-0 h-screen z-10 w-72 flex-none flex flex-col transition-all duration-500 ease-in-out;
+    /* Below lg: an off-canvas drawer over the page. From lg: a column beside it. */
+    @apply fixed inset-y-0 left-0 z-[80] h-dvh w-72 flex flex-col bg-[#FDFCF7] shadow-2xl -translate-x-full transition-transform duration-300 ease-in-out
+           lg:sticky lg:top-0 lg:z-10 lg:h-screen lg:flex-none lg:translate-x-0 lg:bg-transparent lg:shadow-none lg:transition-all lg:duration-500;
+}
+
+.dashboard-layout__sidebar--drawer-open {
+    @apply translate-x-0;
 }
 
 .dashboard-layout__sidebar--open {
@@ -13,11 +19,20 @@
 }
 
 .dashboard-layout__sidebar--closed {
-    @apply -ml-72;
+    /* invisible: otherwise its blurred text shows through the translucent content panel. */
+    @apply lg:-ml-72 lg:invisible;
+}
+
+.dashboard-layout__backdrop {
+    @apply fixed inset-0 z-[75] bg-black/30 backdrop-blur-sm lg:hidden;
 }
 
 .dashboard-layout__brand {
-    @apply p-6 flex justify-center;
+    @apply relative p-6 flex justify-center;
+}
+
+.dashboard-layout__drawer-close {
+    @apply absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-2xl text-black/60 hover:bg-black/5 lg:hidden;
 }
 
 .dashboard-layout__brand-link {
@@ -89,11 +104,11 @@
 }
 
 .dashboard-layout__main {
-    @apply flex-1 flex flex-col min-w-0 p-4 relative z-10 transition-all duration-500;
+    @apply flex-1 flex flex-col min-w-0 p-2 sm:p-4 relative z-10 transition-all duration-500;
 }
 
 .dashboard-layout__content {
-    @apply flex-1 bg-white/40 backdrop-blur-2xl border border-white/40 rounded-[3rem] shadow-2xl flex flex-col overflow-hidden relative;
+    @apply flex-1 bg-white/40 backdrop-blur-2xl border border-white/40 rounded-3xl sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden relative;
 }
 
 .dashboard-layout__scroller {
@@ -106,7 +121,7 @@
 
 .dashboard-layout__header {
     min-height: var(--dashboard-header-h);
-    @apply px-8 py-4 flex justify-between items-center sticky top-0 z-[60] bg-[#FDFCF7]/60 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+    @apply px-4 sm:px-8 py-4 flex justify-between items-center sticky top-0 z-[60] bg-[#FDFCF7]/60 backdrop-blur-md border-b border-black/5 transition-all duration-300;
 }
 
 .dashboard-layout__header-left {
@@ -126,11 +141,16 @@
 }
 
 .dashboard-layout__header-actions {
-    @apply hidden md:flex items-center gap-8 mr-10;
+    @apply flex items-center gap-1 mr-2 sm:gap-8 sm:mr-10;
+}
+
+/* Phones show the header actions as icons only. */
+.dashboard-layout__action-label {
+    @apply hidden sm:inline;
 }
 
 .dashboard-layout__search-button {
-    @apply flex items-center gap-2 text-xs font-semibold text-black/40 hover:text-black transition-colors;
+    @apply flex items-center gap-2 max-sm:p-2.5 text-xs font-semibold text-black/40 hover:text-black transition-colors;
 }
 
 .dashboard-layout__menu {
@@ -138,7 +158,7 @@
 }
 
 .dashboard-layout__menu-button {
-    @apply flex items-center gap-2 text-xs font-semibold text-black/40 hover:text-black transition-colors;
+    @apply flex items-center gap-2 max-sm:p-2.5 text-xs font-semibold text-black/40 hover:text-black transition-colors;
 }
 
 .dashboard-layout__menu-icon-wrapper {
@@ -150,15 +170,15 @@
 }
 
 .dashboard-layout__menu-items {
-    @apply absolute right-0 mt-6 w-80 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50;
+    @apply absolute right-0 mt-6 w-80 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50 max-sm:fixed max-sm:inset-x-4 max-sm:top-20 max-sm:mt-0 max-sm:w-auto;
 }
 
 .dashboard-layout__menu-items--narrow {
-    @apply absolute right-0 mt-6 w-56 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50;
+    @apply absolute right-0 mt-6 w-56 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50 max-sm:fixed max-sm:inset-x-4 max-sm:top-20 max-sm:mt-0 max-sm:w-auto;
 }
 
 .dashboard-layout__menu-items--profile {
-    @apply absolute right-0 mt-6 w-64 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50;
+    @apply absolute right-0 mt-6 w-64 origin-top-right bg-white rounded-3xl shadow-2xl border border-black/5 overflow-hidden focus:outline-none z-50 max-sm:fixed max-sm:inset-x-4 max-sm:top-20 max-sm:mt-0 max-sm:w-auto;
 }
 
 .dashboard-layout__menu-header {
@@ -290,7 +310,7 @@
 }
 
 .dashboard-layout__page {
-    @apply px-8 pb-8 flex-1;
+    @apply px-4 sm:px-8 pb-8 flex-1;
 }
 
 .dashboard-layout__overlay-top {

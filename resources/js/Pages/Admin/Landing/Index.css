@@ -45,7 +45,7 @@
 }
 
 .landing-cms__section-editor {
-    @apply flex-1;
+    @apply flex-1 min-w-0;
 }
 
 .landing-cms__footer {

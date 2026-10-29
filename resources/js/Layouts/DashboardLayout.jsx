@@ -31,21 +31,26 @@ import { safeRoute, hasRoute } from '@/lib/route';
 import './DashboardLayout.css';
 import { useTerms } from '@/Components/Dashboard/Terms';
 import BrandLogo from '@/Components/BrandLogo';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 // Mounted once as the persistent layout of every dashboard page (see app.jsx), so
 // the sidebar, header and search keep their state while only the page swaps.
 export default function DashboardLayout({ children }) {
     const t = useTerms();
     const { auth } = usePage().props;
-    const { component } = usePage();
+    const { component, url } = usePage();
+    // Wide screens collapse the sidebar in place; narrower ones open it as a drawer.
+    const isWide = useMediaQuery('(min-width: 1024px)');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const sidebarRef = useRef(null);
     const userRole = auth.user.role || 'host';
 
     const hostNavItems = [
         { name: 'Dashboard', icon: LayoutDashboard, route: 'host.dashboard' },
-        { name: 'Guests', icon: Users, route: 'host.guests.index' },
-        { name: 'WiFi Access', icon: Wifi, route: 'host.properties.index' },
-        { name: 'Marketing', icon: Megaphone, route: 'host.marketing.index' },
+        { name: 'Guests', icon: Users, route: 'host.guests.index', match: ['host.guests.*'] },
+        { name: 'WiFi Access', icon: Wifi, route: 'host.properties.index', match: ['host.properties.*', 'host.access-points.*', 'host.amenities.*', 'host.orders.*'] },
+        { name: 'Marketing', icon: Megaphone, route: 'host.marketing.index', match: ['host.marketing.*'] },
         { name: 'Billing', icon: CreditCard, route: 'host.billing.index' },
         { name: 'Notifications', icon: Bell, route: 'profile.notifications' },
         { name: 'Settings', icon: Settings, route: 'profile.edit' },
@@ -53,17 +58,20 @@ export default function DashboardLayout({ children }) {
 
     const adminNavItems = [
         { name: 'Overview', icon: LayoutDashboard, route: 'admin.dashboard' },
-        { name: 'Hosts', icon: Building2, route: 'admin.hosts.index' },
-        { name: 'Users', icon: Users, route: 'admin.users.index' },
-        { name: 'Sign-ups', icon: AlignLeft, route: 'admin.registrations.index' },
-        { name: 'Payments', icon: CreditCard, route: 'admin.payments.index' },
-        { name: 'Public Pages', icon: Globe, route: 'admin.landing.index' },
-        { name: 'Policies', icon: FileText, route: 'admin.policies.index' },
+        { name: 'Hosts', icon: Building2, route: 'admin.hosts.index', match: ['admin.hosts.*'] },
+        { name: 'Users', icon: Users, route: 'admin.users.index', match: ['admin.users.*'] },
+        { name: 'Sign-ups', icon: AlignLeft, route: 'admin.registrations.index', match: ['admin.registrations.*'] },
+        { name: 'Payments', icon: CreditCard, route: 'admin.payments.index', match: ['admin.payments.*'] },
+        { name: 'Public Pages', icon: Globe, route: 'admin.landing.index', match: ['admin.landing.*'] },
+        { name: 'Policies', icon: FileText, route: 'admin.policies.index', match: ['admin.policies.*'] },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
         { name: 'WiFi Portal', icon: Wifi, route: 'admin.wifi.edit' },
         { name: 'M-Pesa', icon: Smartphone, route: 'admin.mpesa.edit' },
         { name: 'Settings', icon: Settings, route: 'admin.settings.index' },
     ];
+
+    // An item stays active on every page of its section (e.g. a guest's detail page under Guests).
+    const isItemActive = (item) => (item.match ?? [item.route]).some((name) => route().current(name));
 
     const staffNavItems = [
         { name: 'Overview', icon: LayoutDashboard, route: 'staff.dashboard' },
@@ -152,25 +160,60 @@ export default function DashboardLayout({ children }) {
 
     const notifications = auth.notifications || [];
 
+    const toggleNavigation = () => (isWide ? setIsSidebarOpen((open) => !open) : setIsDrawerOpen((open) => !open));
+    const isNavigationShown = isWide ? isSidebarOpen : isDrawerOpen;
+
+    // A hidden sidebar must not take keyboard focus (React 18 has no `inert` prop).
+    useEffect(() => {
+        if (sidebarRef.current) sidebarRef.current.inert = !isNavigationShown;
+    }, [isNavigationShown]);
+
+    // The drawer closes once a link inside it has navigated, on Escape, and when the screen widens.
+    useEffect(() => setIsDrawerOpen(false), [url, isWide]);
+    useEffect(() => {
+        if (!isDrawerOpen) return undefined;
+        const onKey = (e) => e.key === 'Escape' && setIsDrawerOpen(false);
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [isDrawerOpen]);
+
     return (
         <div className="dashboard-layout">
-            {/* Sidebar */}
-            <aside className={`dashboard-layout__sidebar ${isSidebarOpen ? 'dashboard-layout__sidebar--open' : 'dashboard-layout__sidebar--closed'}`}>
+            {/* Drawer backdrop (narrow screens only) */}
+            {isDrawerOpen && (
+                <div className="dashboard-layout__backdrop" onClick={() => setIsDrawerOpen(false)} aria-hidden="true" />
+            )}
+
+            {/* Sidebar: in-place column on wide screens, slide-in drawer below 1024px */}
+            <aside
+                id="dashboard-navigation"
+                className={`dashboard-layout__sidebar ${isSidebarOpen ? 'dashboard-layout__sidebar--open' : 'dashboard-layout__sidebar--closed'} ${isDrawerOpen ? 'dashboard-layout__sidebar--drawer-open' : ''}`}
+                ref={sidebarRef}
+            >
                 <div className="dashboard-layout__brand">
                     <Link href="/" className="dashboard-layout__brand-link">
                         <BrandLogo className="dashboard-layout__logo" />
                     </Link>
+                    <button
+                        type="button"
+                        onClick={() => setIsDrawerOpen(false)}
+                        className="dashboard-layout__drawer-close"
+                        aria-label="Close navigation"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
 
                 <nav className="dashboard-layout__nav custom-scrollbar">
                     {navItems.map((item) => {
                         if (item.route && !hasRoute(item.route)) return null;
-                        const isActive = item.route && route().current(item.route);
+                        const isActive = isItemActive(item);
                         return (
                             <Link
                                 key={item.name}
                                 href={item.route ? safeRoute(item.route) : '#'}
                                 prefetch
+                                aria-current={isActive ? 'page' : undefined}
                                 className={`dashboard-layout__nav-link group ${isActive
                                     ? 'dashboard-layout__nav-link--active'
                                     : 'dashboard-layout__nav-link--inactive'
@@ -207,12 +250,13 @@ export default function DashboardLayout({ children }) {
                             <div className="dashboard-layout__header-left">
                                 <button
                                     type="button"
-                                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                                    onClick={toggleNavigation}
                                     className="dashboard-layout__sidebar-toggle"
-                                    aria-label={isSidebarOpen ? 'Collapse navigation' : 'Expand navigation'}
-                                    aria-expanded={isSidebarOpen}
+                                    aria-label={isNavigationShown ? 'Hide navigation' : 'Show navigation'}
+                                    aria-expanded={isNavigationShown}
+                                    aria-controls="dashboard-navigation"
                                 >
-                                    {isSidebarOpen ? <AlignLeft size={20} className="dashboard-layout__sidebar-toggle-icon" /> : <AlignJustify size={20} className="dashboard-layout__sidebar-toggle-icon" />}
+                                    {isNavigationShown ? <AlignLeft size={20} className="dashboard-layout__sidebar-toggle-icon" /> : <AlignJustify size={20} className="dashboard-layout__sidebar-toggle-icon" />}
                                 </button>
                             </div>
 
@@ -222,19 +266,20 @@ export default function DashboardLayout({ children }) {
                                     <button
                                         onClick={() => setIsSearchOpen(true)}
                                         className="dashboard-layout__search-button"
+                                        aria-label="Search"
                                     >
                                         <Search size={14} />
-                                        Search
+                                        <span className="dashboard-layout__action-label">Search</span>
                                     </button>
 
                                     {/* Notifications Dropdown */}
                                     <Menu as="div" className="dashboard-layout__menu">
-                                        <Menu.Button className="dashboard-layout__menu-button">
+                                        <Menu.Button className="dashboard-layout__menu-button" aria-label="Notifications">
                                                 <div className="dashboard-layout__menu-icon-wrapper">
                                                 <Bell size={14} />
                                                 {notifications.some(n => !n.read_at) && <div className="dashboard-layout__menu-badge"></div>}
                                             </div>
-                                            Notifications
+                                            <span className="dashboard-layout__action-label">Notifications</span>
                                         </Menu.Button>
                                         <Transition
                                             as={React.Fragment}
@@ -278,9 +323,9 @@ export default function DashboardLayout({ children }) {
 
                                     {/* Help Dropdown */}
                                     <Menu as="div" className="dashboard-layout__menu">
-                                        <Menu.Button className="dashboard-layout__menu-button">
+                                        <Menu.Button className="dashboard-layout__menu-button" aria-label="Help">
                                             <HelpCircle size={14} />
-                                            Help
+                                            <span className="dashboard-layout__action-label">Help</span>
                                         </Menu.Button>
                                         <Transition
                                             as={React.Fragment}
