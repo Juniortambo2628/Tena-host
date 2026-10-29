@@ -91,7 +91,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
             content: (
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
                         <select
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.property_id}
@@ -101,10 +101,10 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                                 <option key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </select>
-                        {errors.property_id && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.property_id}</p>}
+                        {errors.property_id && <p className="text-red-500 text-xs mt-2 font-bold">{errors.property_id}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Name</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Name</label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -112,10 +112,10 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                             onChange={e => setData('name', e.target.value)}
                             placeholder="e.g. Lobby AP"
                         />
-                        {errors.name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.name}</p>}
+                        {errors.name && <p className="text-red-500 text-xs mt-2 font-bold">{errors.name}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">MAC Address</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">MAC Address</label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -123,7 +123,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                             onChange={e => setData('mac_address', e.target.value)}
                             placeholder="AA:BB:CC:DD:EE:FF"
                         />
-                        {errors.mac_address && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.mac_address}</p>}
+                        {errors.mac_address && <p className="text-red-500 text-xs mt-2 font-bold">{errors.mac_address}</p>}
                     </div>
                 </div>
             )

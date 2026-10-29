@@ -1,7 +1,7 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .guest-verify-page {
-    @apply min-h-screen bg-[#FDFCF7] flex items-center justify-center p-6;
+    @apply min-h-screen bg-canvas flex items-center justify-center p-6;
 }
 
 .guest-verify-container {
@@ -33,7 +33,7 @@
 }
 
 .guest-verify-label {
-    @apply block text-[10px] font-semibold text-black/40 mb-3 ml-1;
+    @apply block text-xs font-semibold text-black/40 mb-3 ml-1;
 }
 
 .guest-verify-input {
@@ -41,11 +41,11 @@
 }
 
 .guest-verify-error {
-    @apply text-red-500 text-[10px] mt-2 font-bold text-center;
+    @apply text-red-500 text-xs mt-2 font-bold text-center;
 }
 
 .guest-verify-submit {
-    @apply w-full py-4 bg-black text-[#FFD300] font-bold rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50;
+    @apply w-full py-4 bg-black text-primary font-bold rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50;
 }
 
 .guest-verify-back {
@@ -53,5 +53,5 @@
 }
 
 .guest-verify-back-link {
-    @apply text-[10px] font-semibold text-black/40 hover:text-black transition-colors;
+    @apply text-xs font-semibold text-black/40 hover:text-black transition-colors;
 }

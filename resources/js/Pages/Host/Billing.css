@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .host-billing-container {
     @apply max-w-4xl mx-auto space-y-8;
@@ -30,7 +30,7 @@
 }
 
 .host-billing-plan-badge {
-    @apply px-6 py-2 bg-black text-[#FFD300] font-semibold rounded-xl tracking-widest text-xs;
+    @apply px-6 py-2 bg-black text-primary font-semibold rounded-xl tracking-widest text-xs;
 }
 
 .host-billing-methods-grid {
@@ -54,7 +54,7 @@
 }
 
 .host-billing-tab-active-card {
-    @apply bg-black text-[#FFD300] shadow-lg;
+    @apply bg-black text-primary shadow-lg;
 }
 
 .host-billing-tab-active-mpesa {
@@ -82,11 +82,11 @@
 }
 
 .host-billing-submit-btn {
-    @apply w-full py-4 bg-black text-[#FFD300] rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
+    @apply w-full py-4 bg-black text-primary rounded-xl font-bold hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2;
 }
 
 .host-billing-secured-text {
-    @apply text-[10px] text-gray-400 text-center font-semibold uppercase tracking-widest;
+    @apply text-xs text-gray-400 text-center font-semibold uppercase tracking-widest;
 }
 
 .host-billing-field-label {
@@ -114,7 +114,7 @@
 }
 
 .host-billing-mpesa-text {
-    @apply text-[10px] text-gray-400 text-center font-semibold uppercase tracking-widest;
+    @apply text-xs text-gray-400 text-center font-semibold uppercase tracking-widest;
 }
 
 .host-billing-simulate-section {
@@ -166,11 +166,11 @@
 }
 
 .host-billing-tx-date {
-    @apply text-[10px] uppercase font-semibold tracking-widest text-black/40;
+    @apply text-xs uppercase font-semibold tracking-widest text-black/40;
 }
 
 .host-billing-tx-status-badge {
-    @apply text-[10px] font-semibold tracking-widest px-2 py-1 rounded-md;
+    @apply text-xs font-semibold tracking-widest px-2 py-1 rounded-md;
 }
 
 .host-billing-empty {
@@ -206,7 +206,7 @@
 }
 
 .host-billing-plan-option.is-selected .host-billing-plan-option-price {
-    @apply text-[#FFD300];
+    @apply text-primary;
 }
 
 .host-billing-plan-option-unit {

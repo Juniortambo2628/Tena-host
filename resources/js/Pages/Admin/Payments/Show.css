@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .payment-show {
     @apply space-y-6;
@@ -37,7 +37,7 @@
 }
 
 .payment-show__info-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .payment-show__info-value {
@@ -53,7 +53,7 @@
 }
 
 .payment-show__status-badge {
-    @apply inline-block px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply inline-block px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .payment-show__status--completed {

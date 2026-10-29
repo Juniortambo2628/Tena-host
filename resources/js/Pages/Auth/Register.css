@@ -1,11 +1,11 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .register-root {
-    @apply min-h-screen bg-white flex flex-col md:flex-row selection:bg-[#FFD300] selection:text-black;
+    @apply min-h-screen bg-white flex flex-col md:flex-row selection:bg-primary selection:text-black;
 }
 
 .register-back-link {
-    @apply absolute md:fixed top-6 md:top-8 left-8 z-50 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
+    @apply absolute md:fixed top-6 md:top-8 left-8 z-50 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
 }
 
 .register-left {
@@ -49,7 +49,7 @@
 }
 
 .register-label {
-    @apply text-[10px] font-semibold text-black/30 px-1;
+    @apply text-xs font-semibold text-black/30 px-1;
 }
 
 .register-input-group {
@@ -89,7 +89,7 @@
 }
 
 .register-error {
-    @apply text-[10px] font-semibold text-red-500 px-1;
+    @apply text-xs font-semibold text-red-500 px-1;
 }
 
 .register-submit {
@@ -105,15 +105,15 @@
 }
 
 .register-bottom-text {
-    @apply text-center text-[10px] font-semibold text-black/30;
+    @apply text-center text-xs font-semibold text-black/30;
 }
 
 .register-bottom-link {
-    @apply text-black hover:text-[#FFD300] transition-colors ml-1;
+    @apply text-black hover:text-primary transition-colors ml-1;
 }
 
 .register-terms-btn {
-    @apply flex items-center gap-2 text-[8px] font-semibold uppercase tracking-[0.2em] text-black/20 hover:text-black transition-colors;
+    @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-black/20 hover:text-black transition-colors;
 }
 
 .register-right {

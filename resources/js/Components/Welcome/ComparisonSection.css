@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .comparison-grid {
     @apply grid grid-cols-1 gap-6 md:grid-cols-2 max-w-5xl mx-auto;
@@ -9,11 +9,11 @@
 }
 
 .comparison-col--highlight {
-    @apply border-[#FFD300] bg-[#FFD300]/10 shadow-lg;
+    @apply border-primary bg-primary/10 shadow-lg;
 }
 
 .comparison-label {
-    @apply text-sm font-bold uppercase tracking-widest text-[#5B6170];
+    @apply text-sm font-bold uppercase tracking-widest text-muted;
 }
 
 .comparison-stat {
@@ -21,11 +21,11 @@
 }
 
 .comparison-stat-value {
-    @apply text-5xl font-black leading-none text-[#1E1E1E];
+    @apply text-5xl font-black leading-none text-dark;
 }
 
 .comparison-stat-label {
-    @apply text-sm text-[#5B6170];
+    @apply text-sm text-muted;
 }
 
 .comparison-points {
@@ -33,21 +33,21 @@
 }
 
 .comparison-points li {
-    @apply flex items-start gap-2 text-[#1E1E1E];
+    @apply flex items-start gap-2 text-dark;
 }
 
 .comparison-point-icon {
-    @apply mt-1 shrink-0 text-[#1E1E1E];
+    @apply mt-1 shrink-0 text-dark;
 }
 
 .comparison-text {
-    @apply text-[#1E1E1E] font-medium;
+    @apply text-dark font-medium;
 }
 
 .comparison-note {
-    @apply mt-10 text-center text-lg font-semibold text-[#1E1E1E] max-w-3xl mx-auto;
+    @apply mt-10 text-center text-lg font-semibold text-dark max-w-3xl mx-auto;
 }
 
 .comparison-sources {
-    @apply mt-6 text-center text-xs text-[#5B6170] max-w-3xl mx-auto;
+    @apply mt-6 text-center text-xs text-muted max-w-3xl mx-auto;
 }

@@ -165,38 +165,38 @@ export default function GuestIndex({ guests, filters, properties }) {
                 <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">First Name</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">First Name</label>
                             <input
                                 type="text"
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.first_name}
                                 onChange={e => setData('first_name', e.target.value)}
                             />
-                            {errors.first_name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.first_name}</p>}
+                            {errors.first_name && <p className="text-red-500 text-xs mt-2 font-bold">{errors.first_name}</p>}
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Last Name <span className="normal-case tracking-normal font-bold text-black/30">(optional)</span></label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Last Name <span className="normal-case tracking-normal font-bold text-black/30">(optional)</span></label>
                             <input
                                 type="text"
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.last_name}
                                 onChange={e => setData('last_name', e.target.value)}
                             />
-                            {errors.last_name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.last_name}</p>}
+                            {errors.last_name && <p className="text-red-500 text-xs mt-2 font-bold">{errors.last_name}</p>}
                         </div>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Email</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Email</label>
                         <input
                             type="email"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.email}
                             onChange={e => setData('email', e.target.value)}
                         />
-                        {errors.email && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.email}</p>}
+                        {errors.email && <p className="text-red-500 text-xs mt-2 font-bold">{errors.email}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Phone</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Phone</label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -205,12 +205,12 @@ export default function GuestIndex({ guests, filters, properties }) {
                             placeholder="0712 345 678"
                             inputMode="tel"
                         />
-                        {errors.phone && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.phone}</p>}
-                        <p className="text-[10px] text-black/40 mt-2 ml-1 font-bold">A phone number or an email is enough. Kenyan numbers can start with 0.</p>
+                        {errors.phone && <p className="text-red-500 text-xs mt-2 font-bold">{errors.phone}</p>}
+                        <p className="text-xs text-black/40 mt-2 ml-1 font-bold">A phone number or an email is enough. Kenyan numbers can start with 0.</p>
                     </div>
                     {!editingGuest && (
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
                             <select
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.property_id}
@@ -221,7 +221,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
                             </select>
-                            {errors.property_id && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.property_id}</p>}
+                            {errors.property_id && <p className="text-red-500 text-xs mt-2 font-bold">{errors.property_id}</p>}
                         </div>
                     )}
                     {!editingGuest && (
@@ -230,7 +230,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                                 <input type="checkbox" className="w-4 h-4 accent-black" style={{ marginTop: 2, flex: "none" }} checked={data.contact_consent} onChange={e => setData('contact_consent', e.target.checked)} />
                                 <span>The guest agreed to be contacted about their stay (e.g. a thank-you and a review request).</span>
                             </label>
-                            {errors.contact_consent && <p className="text-red-500 text-[10px] font-bold">{errors.contact_consent}</p>}
+                            {errors.contact_consent && <p className="text-red-500 text-xs font-bold">{errors.contact_consent}</p>}
                             <label className="text-xs font-bold leading-relaxed cursor-pointer" style={consentRow}>
                                 <input type="checkbox" className="w-4 h-4 accent-black" style={{ marginTop: 2, flex: "none" }} checked={data.marketing_opt_in} onChange={e => setData('marketing_opt_in', e.target.checked)} />
                                 <span>They also want offers and news. Only these guests receive campaigns.</span>

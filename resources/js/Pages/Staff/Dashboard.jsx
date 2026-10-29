@@ -41,7 +41,7 @@ export default function StaffDashboard({ properties, recentGuests, pendingOrders
                                             <td>
                                                 <div className="flex flex-col">
                                                     <span className="font-black text-sm">{property.name}</span>
-                                                    <span className="text-[10px] text-black/40 font-bold">{property.address || 'No address'}</span>
+                                                    <span className="text-xs text-black/40 font-bold">{property.address || 'No address'}</span>
                                                 </div>
                                             </td>
                                             <td>

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .cookies-consent {
     @apply fixed bottom-8 left-8 right-8 md:left-auto md:w-[420px] z-[100];
@@ -37,7 +37,7 @@
 }
 
 .cookies-consent__link {
-    @apply text-[10px] font-semibold text-black/30 hover:text-black transition-colors underline decoration-black/10 underline-offset-4;
+    @apply text-xs text-left whitespace-nowrap font-semibold text-black/30 hover:text-black transition-colors underline decoration-black/10 underline-offset-4;
 }
 
 .cookies-consent__close {
@@ -49,9 +49,9 @@
 }
 
 .cookies-consent__accept {
-    @apply flex-1 py-4 bg-black text-[#FFD300] rounded-2xl text-[10px] font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-black/10;
+    @apply flex-1 py-4 bg-black text-primary rounded-2xl text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-black/10;
 }
 
 .cookies-consent__decline {
-    @apply px-6 py-4 bg-black/5 text-black rounded-2xl text-[10px] font-bold hover:bg-black/10 transition-colors;
+    @apply px-6 py-4 bg-black/5 text-black rounded-2xl text-xs font-bold hover:bg-black/10 transition-colors;
 }

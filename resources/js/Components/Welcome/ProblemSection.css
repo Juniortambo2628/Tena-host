@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .problem-images-grid {
     @apply grid grid-cols-2 gap-4;
@@ -17,7 +17,7 @@
 }
 
 .problem-stat {
-    @apply mt-6 flex items-center gap-4 rounded-2xl border border-[#FFD300]/40 bg-[#FFD300]/10 p-5;
+    @apply mt-6 flex items-center gap-4 rounded-2xl border border-primary/40 bg-primary/10 p-5;
 }
 
 .problem-stat-value {

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .cms-icon-picker {
     @apply relative;
@@ -10,7 +10,7 @@
 
 .cms-icon-picker__trigger {
     @apply flex items-center gap-3 px-4 py-3 rounded-xl border border-black/10 bg-white cursor-pointer
-           hover:border-[#FFD300]/50 transition-all;
+           hover:border-primary/50 transition-all;
 }
 
 .cms-icon-picker__selected {
@@ -45,7 +45,7 @@
 
 .cms-icon-picker__search {
     @apply w-full pl-8 pr-4 py-2.5 rounded-xl border border-black/10 bg-gray-50 text-sm
-           focus:outline-none focus:ring-2 focus:ring-[#FFD300]/50 focus:border-[#FFD300];
+           focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
 }
 
 .cms-icon-picker__categories {
@@ -62,7 +62,7 @@
 }
 
 .cms-icon-picker__category-title {
-    @apply text-[10px] font-bold uppercase tracking-widest text-black/30 mb-2;
+    @apply text-xs font-bold uppercase tracking-widest text-black/30 mb-2;
 }
 
 .cms-icon-picker__grid {
@@ -71,11 +71,11 @@
 
 .cms-icon-picker__icon {
     @apply w-9 h-9 flex items-center justify-center rounded-lg text-sm text-black/50
-           hover:bg-[#FFD300]/10 hover:text-[#FFD300] transition-all cursor-pointer;
+           hover:bg-primary/10 hover:text-primary transition-all cursor-pointer;
 }
 
 .cms-icon-picker__icon--active {
-    @apply bg-[#FFD300] text-black shadow-md scale-110;
+    @apply bg-primary text-black shadow-md scale-110;
 }
 
 .cms-icon-picker__no-results {

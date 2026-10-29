@@ -77,7 +77,7 @@ export default function AccessPointShow({ accessPoint }) {
                             </div>
                             <div>
                                 <h4 className="text-sm font-black"><T>Property</T></h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Assigned location</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-black/40">Assigned location</p>
                             </div>
                         </div>
                         <p className="font-black text-lg">{accessPoint.property?.name || 'Unknown'}</p>

@@ -7,7 +7,7 @@ import { useConfirm } from '@/hooks/useConfirm';
 
 // Preview each logo on the surface it is made for.
 const SURFACE = {
-    logo_footer_url: 'bg-[#1b1b1b]',
+    logo_footer_url: 'bg-dark',
     favicon_url: 'bg-gray-100',
 };
 

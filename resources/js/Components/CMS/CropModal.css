@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .crop-overlay {
     @apply fixed inset-0 z-[100] flex items-center justify-center p-4;
@@ -113,7 +113,7 @@
 
 .crop-modal__save {
     @apply px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-black
-           bg-[#FFD300] rounded-xl hover:bg-[#e6be00] transition-all;
+           bg-primary rounded-xl hover:bg-[#e6be00] transition-all;
 }
 
 .crop-modal__save:disabled {

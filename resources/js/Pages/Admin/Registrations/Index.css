@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .registrations-page__table-wrapper {
     @apply overflow-x-auto;
@@ -13,7 +13,7 @@
 }
 
 .registrations-page__head-cell {
-    @apply px-8 py-4 text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply px-8 py-4 text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .registrations-page__body {
@@ -37,7 +37,7 @@
 }
 
 .registrations-page__property-type {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/50;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/50;
 }
 
 .registrations-page__property-count {
@@ -49,7 +49,7 @@
 }
 
 .registrations-page__status-badge {
-    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .registrations-page__status-badge--active {
@@ -93,7 +93,7 @@
 }
 
 .registrations-page__empty {
-    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-xs;
 }
 
 .registrations-page__pagination {
@@ -101,11 +101,11 @@
 }
 
 .registrations-page__page-link {
-    @apply px-4 py-2 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-colors;
+    @apply px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-widest transition-colors;
 }
 
 .registrations-page__page-link--active {
-    @apply bg-black text-[#FFD300];
+    @apply bg-black text-primary;
 }
 
 .registrations-page__page-link--inactive {
@@ -121,11 +121,11 @@
 }
 
 .registrations-page__tab {
-    @apply inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black/60 transition hover:border-[#FFD300];
+    @apply inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-black/60 transition hover:border-primary;
 }
 
 .registrations-page__tab--active {
-    @apply border-[#FFD300] bg-[#FFD300]/15 text-black;
+    @apply border-primary bg-primary/15 text-black;
 }
 
 .registrations-page__tab-count {

@@ -8,6 +8,7 @@ import { ArrowLeft, Loader2, Sparkles, Star, Store } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 import { TemplateThumb } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+import { BRAND_COLORS } from '@/constants';
 
 export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -94,7 +95,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                         </div>
 
                         <div className="host-properties-edit-splash">
-                            <TemplateThumb template={normalizeTemplate(property.branding_json?.template)} accent={property.branding_json?.accent || '#FFD300'} />
+                            <TemplateThumb template={normalizeTemplate(property.branding_json?.template)} accent={property.branding_json?.accent || BRAND_COLORS.primary} />
                             <div>
                                 <p className="host-properties-edit-section-title"><Sparkles size={14} /> Guest splash page</p>
                                 <p className="host-properties-edit-hint">

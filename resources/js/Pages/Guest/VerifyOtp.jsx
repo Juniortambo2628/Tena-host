@@ -21,7 +21,7 @@ export default function VerifyOtp({ email }) {
             <div className="guest-verify-container">
                 <div className="guest-verify-header">
                     <div className="guest-verify-icon">
-                        <Lock size={32} className="text-[#FFD300]" />
+                        <Lock size={32} className="text-primary" />
                     </div>
                     <h1 className="guest-verify-title">Verify Code</h1>
                     <p className="guest-verify-subtitle">Enter the 6-digit code sent to {email}.</p>

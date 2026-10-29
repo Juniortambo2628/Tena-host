@@ -1,8 +1,9 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
+import { BRAND_COLORS } from '@/constants';
 
 const Chart = lazy(() => import('./AreaChartInner'));
 
-export default function AreaChartCard({ data, dataKey = 'guests', color = '#FFD300', title, subtitle, gradientId = 'colorValue', className = '' }) {
+export default function AreaChartCard({ data, dataKey = 'guests', color = BRAND_COLORS.primary, title, subtitle, gradientId = 'colorValue', className = '' }) {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true); }, []);
 

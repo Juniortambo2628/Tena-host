@@ -33,7 +33,7 @@ export default function Index({ hosts, stats }) {
                     </div>
                     <div className="flex flex-col">
                         <span className="font-black text-sm">{info.getValue()}</span>
-                        <span className="text-[10px] text-black/40 font-bold leading-none mt-1">{info.row.original.email || info.row.original.phone_number}</span>
+                        <span className="text-xs text-black/40 font-bold leading-none mt-1">{info.row.original.email || info.row.original.phone_number}</span>
                     </div>
                 </div>
             )

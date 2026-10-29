@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .empty-state {
     @apply flex flex-col items-center justify-center text-center px-6 py-16;

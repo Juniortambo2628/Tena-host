@@ -1,6 +1,6 @@
 .splash-editor { display: grid; gap: 22px; min-width: 0; }
-.splash-editor__label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; color: rgba(0, 0, 0, .4); margin: 0 0 10px 4px; }
-.splash-editor__error { color: #dc2626; font-size: 11px; font-weight: 700; margin-top: 8px; }
+.splash-editor__label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; color: rgba(0, 0, 0, .4); margin: 0 0 10px 4px; }
+.splash-editor__error { color: #dc2626; font-size: 12px; font-weight: 700; margin-top: 8px; }
 .splash-editor__studio { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 20px; background: #fff8d6; font-size: 13px; line-height: 1.5; }
 .splash-editor__studio svg { flex: none; margin-top: 2px; }
 .splash-editor__studio a { font-weight: 800; text-decoration: underline; }
@@ -12,14 +12,14 @@
 .splash-template:hover { transform: translateY(-2px); }
 .splash-template input { position: absolute; opacity: 0; pointer-events: none; }
 .splash-template:has(input:checked) { background: #fff; box-shadow: 0 0 0 2px #151515, 0 14px 30px -16px rgba(0, 0, 0, .35); }
-.splash-template:has(input:focus-visible) { box-shadow: 0 0 0 3px #ffd300; }
+.splash-template:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--color-primary); }
 .splash-template__text { display: grid; gap: 2px; padding: 0 6px 6px; }
 .splash-template__text strong { font-size: 14px; font-weight: 800; }
 .splash-template__text small { font-size: 11.5px; line-height: 1.4; color: rgba(0, 0, 0, .55); }
-.splash-template__text em { font-style: normal; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(0, 0, 0, .35); }
+.splash-template__text em { font-style: normal; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(0, 0, 0, .35); }
 
 /* thumbnails: a tiny layout sketch per template */
-.splash-thumb { --thumb-accent: #ffd300; position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 15px; overflow: hidden; background: #f3efe9; }
+.splash-thumb { --thumb-accent: var(--color-primary); position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 15px; overflow: hidden; background: #f3efe9; }
 .splash-thumb i { position: absolute; display: block; }
 .splash-thumb b { display: block; border-radius: 3px; background: #fff; }
 .splash-thumb__photo { inset: 0 0 52% 0; background: linear-gradient(135deg, #b9a58a, #4b3f35); }
@@ -77,5 +77,5 @@
 .splash-accent { width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .1); transition: transform .15s, box-shadow .15s; }
 .splash-accent[aria-checked=true] { box-shadow: 0 0 0 3px #fff, 0 0 0 5px #151515; }
 .splash-accent:hover { transform: scale(1.08); }
-.splash-accent--custom { position: relative; overflow: hidden; background: conic-gradient(#ff5f5f, #ffd300, #4cc38a, #3fb5ff, #7b61ff, #ff5f8f, #ff5f5f); }
+.splash-accent--custom { position: relative; overflow: hidden; background: conic-gradient(#ff5f5f, var(--color-primary), #4cc38a, #3fb5ff, #7b61ff, #ff5f8f, #ff5f5f); }
 .splash-accent--custom input { position: absolute; inset: -8px; width: 60px; height: 60px; opacity: 0; cursor: pointer; }

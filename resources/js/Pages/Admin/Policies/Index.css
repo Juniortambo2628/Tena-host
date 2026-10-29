@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .policies-page__type-cell {
     @apply flex items-center gap-2;
@@ -9,7 +9,7 @@
 }
 
 .policies-page__type-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/50;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/50;
 }
 
 .policies-page__title {
@@ -21,7 +21,7 @@
 }
 
 .policies-page__status-badge {
-    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .policies-page__status-badge--published {

@@ -13,6 +13,7 @@ import { safeRoute, hasRoute } from '@/lib/route';
 import EmailTemplateEditor from '@/Components/Admin/EmailTemplateEditor';
 import './Index.css';
 import BrandAssets from '@/Components/Admin/BrandAssets';
+import { BRAND_COLORS } from '@/constants';
 
 function debounce(func, wait) {
     let timeout;
@@ -144,7 +145,7 @@ export default function Index({ settings, logos = [] }) {
             signup_alert_emails: flattened.signup_alert_emails || '',
             signup_alert_webhook_url: flattened.signup_alert_webhook_url || '',
             email_primary_color: flattened.email_primary_color || '#000000',
-            email_accent_color: flattened.email_accent_color || '#FFD300',
+            email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
             welcome_email_heading: flattened.welcome_email_heading || '',
             welcome_email_body: flattened.welcome_email_body || '',

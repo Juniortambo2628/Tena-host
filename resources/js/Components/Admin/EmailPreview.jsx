@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Laptop, Smartphone, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useBrand } from '@/Components/BrandLogo';
 import './EmailPreview.css';
+import { BRAND_COLORS } from '@/constants';
 
 const emailComponents = {
     welcome: () => import('@/Emails/WelcomeEmail'),
@@ -52,7 +53,7 @@ export default function EmailPreview({ settings }) {
 
     const emailProps = useMemo(() => ({
         primaryColor: settings.email_primary_color || '#000000',
-        accentColor: settings.email_accent_color || '#FFD300',
+        accentColor: settings.email_accent_color || BRAND_COLORS.primary,
         businessName: settings.site_name || 'TenaFi',
         businessAddress: settings.business_address || 'Nairobi, Kenya',
         logoUrl: brand.logo,

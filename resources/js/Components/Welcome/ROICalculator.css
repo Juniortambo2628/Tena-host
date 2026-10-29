@@ -1,7 +1,7 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .roi-card {
-    @apply bg-white/90 border-2 border-[#FFD300] rounded-[20px] p-8 shadow-xl max-w-5xl mx-auto;
+    @apply bg-white/90 border-2 border-primary rounded-[20px] p-8 shadow-xl max-w-5xl mx-auto;
 }
 
 .roi-layout {
@@ -17,7 +17,7 @@
 }
 
 .roi-range {
-    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#FFD300];
+    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary;
 }
 
 .roi-input-row {
@@ -26,7 +26,7 @@
 
 .roi-number-input {
     @apply block w-24 rounded-full border-gray-300 shadow-sm text-center;
-    border-color: #FFD300;
+    border-color: var(--color-primary);
     --tw-ring-color: rgba(255, 211, 0, 0.5);
 }
 
@@ -51,7 +51,7 @@
 }
 
 .roi-result-card {
-    @apply p-4 rounded-xl border border-[#FFD300]/20 bg-white shadow-sm transition-all duration-300;
+    @apply p-4 rounded-xl border border-primary/20 bg-white shadow-sm transition-all duration-300;
 }
 
 .roi-result-card-updating {
@@ -67,11 +67,11 @@
 }
 
 .roi-result-value {
-    @apply text-[#FFD300] font-bold text-2xl;
+    @apply text-primary font-bold text-2xl;
 }
 
 .roi-result-value-total {
-    @apply text-[#FFD300] font-bold text-4xl;
+    @apply text-primary font-bold text-4xl;
 }
 
 .roi-results-divider {

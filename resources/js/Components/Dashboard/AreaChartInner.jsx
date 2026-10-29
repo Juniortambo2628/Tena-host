@@ -1,7 +1,8 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import ResponsiveContainer from './MeasuredChart';
+import { BRAND_COLORS } from '@/constants';
 
-export default function AreaChartInner({ data, dataKey = 'guests', color = '#FFD300', gradientId = 'colorValue' }) {
+export default function AreaChartInner({ data, dataKey = 'guests', color = BRAND_COLORS.primary, gradientId = 'colorValue' }) {
     return (
         <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100}>
             <AreaChart data={data}>

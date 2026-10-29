@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-amenities-index {
     @apply space-y-8;
@@ -21,11 +21,11 @@
 }
 
 .host-amenities-amenity-desc {
-    @apply text-[10px] text-black/40 font-bold line-clamp-1;
+    @apply text-xs text-black/40 font-bold line-clamp-1;
 }
 
 .host-amenities-property {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/50;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/50;
 }
 
 .host-amenities-price {
@@ -33,15 +33,15 @@
 }
 
 .host-amenities-status-active {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest bg-green-100 text-green-700;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest bg-green-100 text-green-700;
 }
 
 .host-amenities-status-inactive {
-    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest bg-red-100 text-red-700;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest bg-red-100 text-red-700;
 }
 
 .host-amenities-view-link {
-    @apply p-2 hover:bg-black/5 rounded-lg text-black/40 hover:text-black transition-colors text-[10px] font-semibold uppercase tracking-widest;
+    @apply p-2 hover:bg-black/5 rounded-lg text-black/40 hover:text-black transition-colors text-xs font-semibold uppercase tracking-widest;
 }
 
 .host-amenities-modal-grid {

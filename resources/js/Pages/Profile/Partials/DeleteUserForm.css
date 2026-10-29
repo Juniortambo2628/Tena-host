@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .delete-form-section {
     @apply space-y-6;
@@ -9,7 +9,7 @@
 }
 
 .delete-form-title {
-    @apply text-[10px] font-semibold text-red-500 mb-2;
+    @apply text-xs font-semibold text-red-500 mb-2;
 }
 
 .delete-form-desc {
@@ -33,7 +33,7 @@
 }
 
 .delete-modal-label {
-    @apply block text-[10px] font-semibold text-black/30 ml-1;
+    @apply block text-xs font-semibold text-black/30 ml-1;
 }
 
 .delete-modal-input {

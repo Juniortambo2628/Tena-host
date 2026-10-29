@@ -74,12 +74,12 @@ export default function PropertyShow({ property, wifi = {} }) {
                             </div>
                             <div>
                                 <h3 className="font-black text-lg"><T>Property Details</T></h3>
-                                <p className="text-[10px] font-bold text-black/40 uppercase tracking-widest">Basic information</p>
+                                <p className="text-xs font-bold text-black/40 uppercase tracking-widest">Basic information</p>
                             </div>
                         </div>
                         <div className="host-properties-show-details">
                             <div className="host-properties-show-detail-row">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Address</span>
+                                <span className="text-xs font-black uppercase tracking-widest text-black/40">Address</span>
                                 <span className="text-sm font-bold">{property.address || 'Not set'}</span>
                             </div>
                             <div className="host-properties-show-detail-row">
@@ -88,7 +88,7 @@ export default function PropertyShow({ property, wifi = {} }) {
                             </div>
                             <div className="host-properties-show-detail-row">
                                 <span className="host-properties-show-detail-label">PMS Integration</span>
-                                <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                     {property.pms_integration_type || 'None'} — {property.pms_connection_status}
                                 </span>
                             </div>
@@ -102,7 +102,7 @@ export default function PropertyShow({ property, wifi = {} }) {
                                 <img src={property.splash_image_path} alt={property.name} className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                 <div className="absolute bottom-6 left-8 text-white">
-                                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">Splash Image</p>
+                                    <p className="text-xs font-black uppercase tracking-widest opacity-60 mb-1">Splash Image</p>
                                     <p className="text-lg font-black">{property.name}</p>
                                 </div>
                             </div>
@@ -112,19 +112,19 @@ export default function PropertyShow({ property, wifi = {} }) {
 
                 <div className="host-properties-show-sidebar">
                     <GlassCard padding="p-6">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-4">Quick Stats</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-black/40 mb-4">Quick Stats</h4>
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 p-4 bg-black/[0.02] rounded-2xl">
                                 <Users size={16} className="text-black/30" />
                                 <div className="flex-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-black/30"><T>Total Guests</T></p>
+                                    <p className="text-xs font-black uppercase tracking-widest text-black/30"><T>Total Guests</T></p>
                                     <p className="text-lg font-black">{property.guests_count}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 p-4 bg-black/[0.02] rounded-2xl">
                                 <Radio size={16} className="text-black/30" />
                                 <div className="flex-1">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-black/30">Access Points</p>
+                                    <p className="text-xs font-black uppercase tracking-widest text-black/30">Access Points</p>
                                     <p className="text-lg font-black">{property.access_points_count}</p>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@ export default function PropertyShow({ property, wifi = {} }) {
                     </GlassCard>
 
                     <GlassCard padding="p-6">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-4">Danger Zone</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-black/40 mb-4">Danger Zone</h4>
                         <button
                             onClick={async () => {
                                 const ok = await confirm({
@@ -147,7 +147,7 @@ export default function PropertyShow({ property, wifi = {} }) {
                                     onError: () => notify.error('Failed to delete property'),
                                 });
                             }}
-                            className="w-full py-3 bg-red-50 text-red-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-red-50 text-red-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
                         >
                             <Trash2 size={14} />
                             Delete Property

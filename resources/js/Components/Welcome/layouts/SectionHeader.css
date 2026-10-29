@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .section-header {
     @apply mb-16;
@@ -13,13 +13,13 @@
 }
 
 .section-header-badge {
-    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
+    @apply inline-block bg-dark text-primary font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
 }
 
 .section-header-title {
     font-family: system-ui, -apple-system, sans-serif;
     letter-spacing: -0.5px;
-    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-[#1b1b1b] leading-tight mb-4;
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-dark leading-tight mb-4;
 }
 
 .section-header-title--dark {
@@ -27,7 +27,7 @@
 }
 
 .section-header-highlight {
-    @apply text-[#FFD300];
+    @apply text-primary;
 }
 
 .section-header-subtitle {

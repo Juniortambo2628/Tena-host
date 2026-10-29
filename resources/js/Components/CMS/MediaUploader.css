@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .cms-uploader__input-hidden {
     @apply hidden;
@@ -10,7 +10,7 @@
 
 .cms-uploader__dropzone {
     @apply border-2 border-dashed border-gray-200 rounded-xl p-8 text-center cursor-pointer
-           hover:border-[#FFD300] hover:bg-[#FFD300]/5 transition-all duration-200;
+           hover:border-primary hover:bg-primary/5 transition-all duration-200;
 }
 
 .cms-uploader__dropzone-content {
@@ -26,7 +26,7 @@
 }
 
 .cms-uploader__dropzone-hint {
-    @apply text-[10px] text-black/25;
+    @apply text-xs text-black/25;
 }
 
 .cms-uploader__error {
@@ -38,7 +38,7 @@
 }
 
 .cms-uploader__spinner {
-    @apply w-4 h-4 border-2 border-[#FFD300] border-t-transparent rounded-full animate-spin;
+    @apply w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin;
 }
 
 .cms-media-card {
@@ -76,11 +76,11 @@
 }
 
 .cms-media-card__key {
-    @apply text-[10px] font-bold uppercase tracking-widest text-black/40 truncate;
+    @apply text-xs font-bold uppercase tracking-widest text-black/40 truncate;
 }
 
 .cms-media-card__dims {
-    @apply text-[10px] font-mono text-black/30;
+    @apply text-xs font-mono text-black/30;
 }
 
 /* Changer panel (inline below preview) */
@@ -102,7 +102,7 @@
 }
 
 .cms-media-slot__key {
-    @apply text-[10px] font-bold uppercase tracking-widest text-black/40;
+    @apply text-xs font-bold uppercase tracking-widest text-black/40;
 }
 
 .cms-media-slot__toggle {
@@ -110,7 +110,7 @@
 }
 
 .cms-media-slot__toggle-btn {
-    @apply px-3 py-1 text-[10px] font-semibold rounded-md transition-all
+    @apply px-3 py-1 text-xs font-semibold rounded-md transition-all
            text-black/40 hover:text-black/60;
 }
 
@@ -133,7 +133,7 @@
 
 .cms-library__search-input {
     @apply w-full pl-9 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl
-           focus:outline-none focus:border-[#FFD300] focus:ring-1 focus:ring-[#FFD300]/20
+           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20
            placeholder:text-gray-300 transition-all;
 }
 
@@ -143,7 +143,7 @@
 
 .cms-library__item {
     @apply relative rounded-lg overflow-hidden border border-gray-100
-           hover:border-[#FFD300] hover:shadow-md transition-all cursor-pointer text-left;
+           hover:border-primary hover:shadow-md transition-all cursor-pointer text-left;
 }
 
 .cms-library__item-preview {
@@ -159,11 +159,11 @@
 }
 
 .cms-library__item-key {
-    @apply block text-[9px] font-bold uppercase tracking-widest text-black/40 truncate;
+    @apply block text-xs font-bold uppercase tracking-widest text-black/40 truncate;
 }
 
 .cms-library__item-section {
-    @apply block text-[9px] text-black/25 truncate;
+    @apply block text-xs text-black/25 truncate;
 }
 
 .cms-library__item:hover .cms-library__item-overlay {

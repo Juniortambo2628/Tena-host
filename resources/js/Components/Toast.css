@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .tena-toast {
     border-radius: 1rem !important;
@@ -9,6 +9,6 @@
 }
 
 .tena-toast-progress {
-    background: #FFD300 !important;
+    background: var(--color-primary) !important;
     height: 3px !important;
 }

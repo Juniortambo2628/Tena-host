@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .frame {
     @apply w-full h-full border-none;

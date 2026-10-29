@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .policy-show {
     @apply space-y-6;
@@ -17,7 +17,7 @@
 }
 
 .policy-show__meta-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .policy-show__meta-value {
@@ -33,7 +33,7 @@
 }
 
 .policy-show__status-badge {
-    @apply inline-block px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply inline-block px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .policy-show__status-badge--published {
@@ -45,7 +45,7 @@
 }
 
 .policy-show__section-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30 block mb-3;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30 block mb-3;
 }
 
 .policy-show__description {

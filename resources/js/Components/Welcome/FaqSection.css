@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .faq-list {
     @apply divide-y divide-gray-200 rounded-2xl border border-gray-200 bg-white;
@@ -9,7 +9,7 @@
 }
 
 .faq-question {
-    @apply flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-semibold text-[#1E1E1E];
+    @apply flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-semibold text-dark;
 }
 
 .faq-question::-webkit-details-marker {
@@ -25,5 +25,5 @@
 }
 
 .faq-answer {
-    @apply pb-5 text-[#5B6170] leading-relaxed;
+    @apply pb-5 text-muted leading-relaxed;
 }

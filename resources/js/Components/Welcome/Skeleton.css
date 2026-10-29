@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .skeleton {
     @apply bg-gray-200 animate-pulse;

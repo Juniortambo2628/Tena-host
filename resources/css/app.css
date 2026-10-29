@@ -1,11 +1,4 @@
-@import "tailwindcss";
-
-@theme {
-    --color-primary: #FFD300;
-    --color-secondary: #ffb100;
-    --color-dark: #1b1b1b;
-    --color-light: #f8f9fa;
-}
+@import "./theme.css";
 
 body {
     background-color: white;
@@ -134,8 +127,8 @@ html {
 }
 
 .font-standard-section-pill {
-    background-color: #1b1b1b;
-    color: #FFD300;
+    background-color: var(--color-dark);
+    color: var(--color-primary);
     padding: 7.5px 17.5px;
     border-radius: 8.5px;
     font-weight: 700;
@@ -153,8 +146,8 @@ html {
 
 /* Component Overrides */
 .btn-primary {
-    background-color: #1b1b1b !important;
-    color: #FFD300 !important;
+    background-color: var(--color-dark) !important;
+    color: var(--color-primary) !important;
     border: none;
     padding: 0.75rem 1.25rem;
     border-radius: 0.75rem;
@@ -222,7 +215,7 @@ html {
     }
 
     .rich-text a {
-        @apply underline decoration-[#FFD300] underline-offset-2;
+        @apply underline decoration-primary underline-offset-2;
     }
 
     .glass-effect {
@@ -270,11 +263,11 @@ html {
     }
 
     .tena-btn-primary {
-        @apply bg-[#1b1b1b] text-white shadow-sm hover:shadow-md hover:-translate-y-0.5;
+        @apply bg-dark text-white shadow-sm hover:shadow-md hover:-translate-y-0.5;
     }
 
     .tena-btn-secondary {
-        @apply bg-[#FFD300] text-black shadow-sm hover:shadow-md hover:-translate-y-0.5;
+        @apply bg-primary text-black shadow-sm hover:shadow-md hover:-translate-y-0.5;
     }
 
     .tena-btn-white {

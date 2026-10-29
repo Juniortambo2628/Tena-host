@@ -1,9 +1,9 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .dashboard-hero {
     /* Pinned only from md: on phones the stacked hero would cover half the screen.
        The offset must follow it: on a relative element `top` would shift it over the content. */
-    @apply relative md:sticky md:top-(--dashboard-header-h) z-20 -mx-4 px-4 sm:-mx-8 sm:px-8 py-4 mb-6 bg-[#FDFCF7]/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+    @apply relative md:sticky md:top-(--dashboard-header-h) z-20 -mx-4 px-4 sm:-mx-8 sm:px-8 py-4 mb-6 bg-canvas/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
 }
 
 .dashboard-hero__header {
@@ -15,7 +15,7 @@
 }
 
 .dashboard-hero__breadcrumbs {
-    @apply flex items-center gap-2 text-[10px] font-semibold text-black/30 mb-2;
+    @apply flex items-center gap-2 text-xs font-semibold text-black/30 mb-2;
 }
 
 .dashboard-hero__breadcrumb-link {
@@ -47,7 +47,7 @@
 }
 
 .dashboard-hero__stat-label {
-    @apply text-[10px] font-semibold text-black/30 mb-1;
+    @apply text-xs font-semibold text-black/30 mb-1;
 }
 
 .dashboard-hero__stat-row {
@@ -59,7 +59,7 @@
 }
 
 .dashboard-hero__stat-trend {
-    @apply text-[10px] font-bold;
+    @apply text-xs font-bold;
 }
 
 .dashboard-hero__stat-trend--positive {

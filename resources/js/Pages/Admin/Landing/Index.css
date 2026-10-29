@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .landing-cms {
     @apply max-w-6xl mx-auto;
@@ -21,11 +21,11 @@
 }
 
 .landing-cms__saving {
-    @apply flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-[#FFD300];
+    @apply flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary;
 }
 
 .landing-cms__saving-dot {
-    @apply w-2 h-2 rounded-full bg-[#FFD300] animate-pulse;
+    @apply w-2 h-2 rounded-full bg-primary animate-pulse;
 }
 
 .landing-cms__sections {
@@ -53,7 +53,7 @@
 }
 
 .landing-cms__footer-text {
-    @apply text-[10px] font-bold text-black/30 uppercase tracking-widest;
+    @apply text-xs font-bold text-black/30 uppercase tracking-widest;
 }
 
 .landing-cms__pages {
@@ -61,11 +61,11 @@
 }
 
 .landing-cms__page-tab {
-    @apply flex flex-col items-start rounded-xl border border-black/10 bg-white px-4 py-3 text-left text-black transition hover:border-[#FFD300];
+    @apply flex flex-col items-start rounded-xl border border-black/10 bg-white px-4 py-3 text-left text-black transition hover:border-primary;
 }
 
 .landing-cms__page-tab--active {
-    @apply border-[#FFD300] bg-[#FFD300]/10;
+    @apply border-primary bg-primary/10;
 }
 
 .landing-cms__page-tab-name {

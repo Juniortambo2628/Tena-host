@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import './Dashboard.css';
 import { T } from '@/Components/Dashboard/Terms';
 import ViewSwitcher from '@/Components/Dashboard/ViewSwitcher';
+import { BRAND_COLORS } from '@/constants';
 
 const VIEWS = [
     { id: 'overview', label: 'Overview', icon: <Activity size={14} /> },
@@ -75,7 +76,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                     data={analytics.guestGrowth}
                                     type="area"
                                     dataKeys={['guests']}
-                                    colors={['#FFD300']}
+                                    colors={[BRAND_COLORS.primary]}
                                     title="Guest Growth"
                                     subtitle={`Trend: ${guestTrend >= 0 ? '+' : ''}${guestTrend}% this week`}
                                     height={280}
@@ -86,7 +87,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                 <GlassCard padding="p-0 overflow-hidden">
                                     <div className="host-dashboard-table-header">
                                         <h3 className="host-dashboard-table-title"><T>Active Properties</T></h3>
-                                        <PillButton variant="ghost" className="text-[10px] py-2 px-4" onClick={() => router.get(route('host.properties.index'))}>See all</PillButton>
+                                        <PillButton variant="ghost" className="text-xs py-2 px-4" onClick={() => router.get(route('host.properties.index'))}>See all</PillButton>
                                     </div>
                                     <div className="host-dashboard-table-wrapper">
                                         <table className="host-dashboard-table">
@@ -117,7 +118,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                                             <div className="host-dashboard-occupancy">
                                                                 <div className="host-dashboard-occupancy-bar-bg">
                                                                     <div
-                                                                        className={`host-dashboard-occupancy-bar ${property.occupancy_rate > 90 ? 'bg-red-500' : 'bg-[#FFD300]'}`}
+                                                                        className={`host-dashboard-occupancy-bar ${property.occupancy_rate > 90 ? 'bg-red-500' : 'bg-primary'}`}
                                                                         style={{ width: `${property.occupancy_rate}%` }}
                                                                     />
                                                                 </div>
@@ -190,7 +191,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                 data={analytics.guestMonthly}
                                 type="bar"
                                 dataKeys={['guests']}
-                                colors={['#FFD300']}
+                                colors={[BRAND_COLORS.primary]}
                                 title="Monthly Guests"
                                 subtitle="Guest growth over 6 months"
                                 height={320}
@@ -200,7 +201,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                     data={analytics.guestSources}
                                     type="pie"
                                     dataKeys={['value']}
-                                    colors={['#FFD300', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6']}
+                                    colors={[BRAND_COLORS.primary, '#3B82F6', '#10B981', '#EF4444', '#8B5CF6']}
                                     title="Guest Sources"
                                     subtitle="Where guests come from"
                                     height={320}
@@ -214,7 +215,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                 data={analytics.guestGrowth}
                                 type="area"
                                 dataKeys={['guests']}
-                                colors={['#FFD300']}
+                                colors={[BRAND_COLORS.primary]}
                                 title="Daily Guest Connections"
                                 subtitle="Last 30 days"
                                 height={280}
@@ -276,7 +277,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                 data={analytics.guestsPerProperty}
                                 type="bar"
                                 dataKeys={['guests']}
-                                colors={['#FFD300', '#3B82F6', '#10B981', '#8B5CF6']}
+                                colors={[BRAND_COLORS.primary, '#3B82F6', '#10B981', '#8B5CF6']}
                                 title="Guests per Property"
                                 subtitle="Distribution across properties"
                                 height={320}
@@ -287,7 +288,7 @@ export default function Dashboard({ properties, stats, analytics }) {
                                     data={analytics.occupancyData}
                                     type="bar"
                                     dataKeys={['occupancy']}
-                                    colors={['#FFD300']}
+                                    colors={[BRAND_COLORS.primary]}
                                     title="Occupancy Rates"
                                     subtitle="Current occupancy by property"
                                     height={320}

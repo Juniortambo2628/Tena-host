@@ -54,7 +54,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
             accessorKey: 'type',
             cell: ({ getValue }) => (
                 <div className="host-marketing-index-campaign-type">
-                    {getValue() === 'Email' ? <Mail size={14} className="text-[#FFD300]" /> : <MessageSquare size={14} className="text-green-500" />}
+                    {getValue() === 'Email' ? <Mail size={14} className="text-primary" /> : <MessageSquare size={14} className="text-green-500" />}
                     <span className="host-marketing-index-campaign-type-label">{getValue()}</span>
                 </div>
             ),
@@ -184,7 +184,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
                         </div>
                         <div className="host-marketing-index-ai-content">
                             <div className="host-marketing-index-ai-header">
-                                <Zap size={18} className="text-[#FFD300]" />
+                                <Zap size={18} className="text-primary" />
                                 <h3 className="host-marketing-index-ai-title">From your data</h3>
                             </div>
                             <h3 className="host-marketing-index-ai-heading">Suggestions</h3>

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .email-template-editor {
     @apply w-full;
@@ -18,9 +18,9 @@
 
 .email-template-editor__pill {
     @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer select-none;
-    background: #1b1b1b;
-    color: #FFD300;
-    border: 1px solid #1b1b1b;
+    background: var(--color-dark);
+    color: var(--color-primary);
+    border: 1px solid var(--color-dark);
 }
 
 .email-template-editor__pill:hover {
@@ -80,7 +80,7 @@
 }
 
 .email-template-editor__resize-input {
-    @apply w-20 px-2 py-1 text-xs font-mono border border-gray-200 rounded-lg bg-white text-center focus:outline-none focus:ring-2 focus:ring-[#FFD300] focus:border-transparent;
+    @apply w-20 px-2 py-1 text-xs font-mono border border-gray-200 rounded-lg bg-white text-center focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
 }
 
 .email-template-editor__resize-unit {

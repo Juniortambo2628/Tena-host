@@ -11,6 +11,7 @@ import { csrfHeaders } from '@/Support/csrf';
 import { TemplatePicker, AccentPicker } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 import './Splash.css';
+import { BRAND_COLORS } from '@/constants';
 
 const categories = [
     ['food', 'Eat'], ['drink', 'Drink'], ['sights', 'See'], ['shop', 'Shop'],
@@ -39,7 +40,7 @@ function initialBranding(saved = {}) {
     const sections = { welcome: true, rules: true, emergency: true, nearby: true, review: true, offers: true, stays: true, ...(saved.sections || {}) };
     return {
         template: normalizeTemplate(saved.template),
-        accent: saved.accent || '#FFD300',
+        accent: saved.accent || BRAND_COLORS.primary,
         heading: saved.heading || '', message: saved.message || '', button: saved.button || '',
         welcome_note: saved.welcome_note || '', host_name: saved.host_name || '', review_prompt: saved.review_prompt || '',
         sections,

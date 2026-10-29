@@ -1,11 +1,11 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .bulk-actions {
     @apply fixed bottom-6 left-1/2 -translate-x-1/2 z-50;
 }
 
 .bulk-actions__inner {
-    @apply flex items-center gap-4 px-6 py-3 bg-[#1b1b1b] text-white rounded-2xl shadow-2xl shadow-black/20;
+    @apply flex items-center gap-4 px-6 py-3 bg-dark text-white rounded-2xl shadow-2xl shadow-black/20;
     @apply border border-white/10 backdrop-blur-xl;
 }
 
@@ -22,7 +22,7 @@
 }
 
 .bulk-actions__count-text strong {
-    @apply text-[#FFD300] font-bold;
+    @apply text-primary font-bold;
 }
 
 .bulk-actions__clear {
@@ -51,7 +51,7 @@
 }
 
 .bulk-actions__btn--primary {
-    @apply bg-[#FFD300]/20 text-[#FFD300] hover:bg-[#FFD300]/30;
+    @apply bg-primary/20 text-primary hover:bg-primary/30;
 }
 
 .bulk-actions__btn--success {

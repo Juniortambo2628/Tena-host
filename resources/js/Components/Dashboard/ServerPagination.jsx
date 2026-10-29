@@ -10,7 +10,7 @@ export default function ServerPagination({ links, className = '' }) {
                     <Link
                         key={i}
                         href={link.url}
-                        className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
                             link.active
                                 ? 'bg-black text-white'
                                 : 'bg-black/5 text-black/40 hover:bg-black/10 hover:text-black/60'
@@ -20,7 +20,7 @@ export default function ServerPagination({ links, className = '' }) {
                 ) : (
                     <span
                         key={i}
-                        className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest bg-black/5 text-black/20 cursor-not-allowed"
+                        className="px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest bg-black/5 text-black/20 cursor-not-allowed"
                         dangerouslySetInnerHTML={{ __html: link.label }}
                     />
                 )

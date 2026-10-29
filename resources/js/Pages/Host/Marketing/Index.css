@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-marketing-index-grid {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
@@ -17,7 +17,7 @@
 }
 
 .host-marketing-index-campaign-date {
-    @apply text-[10px] text-black/40 font-bold mt-0.5;
+    @apply text-xs text-black/40 font-bold mt-0.5;
 }
 
 .host-marketing-index-campaign-type {
@@ -25,7 +25,7 @@
 }
 
 .host-marketing-index-campaign-type-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/60;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/60;
 }
 
 .host-marketing-index-status-dot {
@@ -41,7 +41,7 @@
 }
 
 .host-marketing-index-status-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/60;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/60;
 }
 
 .host-marketing-index-performance {
@@ -85,7 +85,7 @@
 }
 
 .host-marketing-index-action-btn:hover .host-marketing-index-action-icon-yellow {
-    @apply text-[#FFD300];
+    @apply text-primary;
 }
 
 .host-marketing-index-action-icon-red {
@@ -145,7 +145,7 @@
 }
 
 .host-marketing-index-automation-title {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-6 flex items-center gap-2;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40 mb-6 flex items-center gap-2;
 }
 
 .host-marketing-index-automation-list {
@@ -161,7 +161,7 @@
 }
 
 .host-marketing-index-trigger-status {
-    @apply text-[10px] font-semibold uppercase tracking-widest;
+    @apply text-xs font-semibold uppercase tracking-widest;
 }
 
 .host-marketing-index-trigger-status-enabled {

@@ -7,6 +7,7 @@ import { Users, Building2, TrendingUp, Activity, Eye, DollarSign, UserPlus, BarC
 import { motion } from 'framer-motion';
 import './Dashboard.css';
 import ViewSwitcher from '@/Components/Dashboard/ViewSwitcher';
+import { BRAND_COLORS } from '@/constants';
 
 const VIEWS = [
     { id: 'overview', label: 'Overview', icon: <Activity size={14} /> },
@@ -221,7 +222,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                                 data={analytics.planMix}
                                 type="pie"
                                 dataKeys={['value']}
-                                colors={['#9CA3AF', '#FFD300', '#1E1E1E']}
+                                colors={['#9CA3AF', BRAND_COLORS.primary, BRAND_COLORS.dark]}
                                 title="Active plans"
                                 subtitle="Paid subscriptions by plan"
                                 height={300}
@@ -239,7 +240,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                                 data={analytics.guests}
                                 type="bar"
                                 dataKeys={['guests']}
-                                colors={['#FFD300']}
+                                colors={[BRAND_COLORS.primary]}
                                 title="Guest Growth"
                                 subtitle="Monthly new guests"
                                 height={300}
@@ -277,7 +278,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                                     data={stages}
                                     type="bar"
                                     dataKeys={['value']}
-                                    colors={[audience === 'business' ? '#1E1E1E' : '#FFD300']}
+                                    colors={[audience === 'business' ? BRAND_COLORS.dark : BRAND_COLORS.primary]}
                                     title={audience === 'business' ? 'Business funnel' : 'Host funnel'}
                                     subtitle="Last 30 days: click → sign-up → account → paying"
                                     height={300}
@@ -289,7 +290,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                                 data={analytics.signupsByType}
                                 type="bar"
                                 dataKeys={['host', 'business']}
-                                colors={['#FFD300', '#1E1E1E']}
+                                colors={[BRAND_COLORS.primary, BRAND_COLORS.dark]}
                                 title="Sign-ups by type"
                                 subtitle="Hosts and business owners, monthly"
                                 height={300}
@@ -300,7 +301,7 @@ export default function AdminDashboard({ stats, hosts, recentRegistrations, anal
                                 data={analytics.referralSources}
                                 type="pie"
                                 dataKeys={['value']}
-                                colors={['#FFD300', '#3B82F6', '#10B981', '#EF4444', '#8B5CF6', '#EC4899']}
+                                colors={[BRAND_COLORS.primary, '#3B82F6', '#10B981', '#EF4444', '#8B5CF6', '#EC4899']}
                                 title="Referral Sources"
                                 subtitle="Where signups come from"
                                 height={300}

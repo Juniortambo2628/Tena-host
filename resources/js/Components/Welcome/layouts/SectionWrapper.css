@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .section-wrapper {
     @apply py-24;
@@ -13,7 +13,7 @@
 }
 
 .section-wrapper--dark {
-    @apply bg-[#1b1b1b] text-white;
+    @apply bg-dark text-white;
 }
 
 .section-wrapper--sm {

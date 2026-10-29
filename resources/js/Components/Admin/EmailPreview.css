@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .email-preview {
     @apply flex flex-col h-full bg-black/5 rounded-[2.5rem] overflow-hidden border border-black/5;
@@ -17,7 +17,7 @@
 }
 
 .email-preview__template-button {
-    @apply px-4 py-2 rounded-lg text-[10px] font-bold transition-all;
+    @apply px-4 py-2 rounded-lg text-xs font-bold transition-all;
 }
 
 .email-preview__template-button--inactive {
@@ -25,7 +25,7 @@
 }
 
 .email-preview__template-button--active {
-    @apply bg-black text-[#FFD300] shadow-lg shadow-black/10;
+    @apply bg-black text-primary shadow-lg shadow-black/10;
 }
 
 .email-preview__view-tabs {
@@ -57,7 +57,7 @@
 }
 
 .email-preview__sender-avatar {
-    @apply w-10 h-10 rounded-full bg-black flex items-center justify-center text-[#FFD300];
+    @apply w-10 h-10 rounded-full bg-black flex items-center justify-center text-primary;
 }
 
 .email-preview__sender-info {
@@ -69,7 +69,7 @@
 }
 
 .email-preview__recipient {
-    @apply text-[10px] font-bold text-black/40 truncate;
+    @apply text-xs font-bold text-black/40 truncate;
 }
 
 .email-preview__content-frame {
@@ -85,7 +85,7 @@
 }
 
 .email-preview__footer-status {
-    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+    @apply text-xs font-bold text-black/40 uppercase tracking-widest;
 }
 
 .email-preview__live-indicator {
@@ -97,5 +97,5 @@
 }
 
 .email-preview__live-label {
-    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest font-mono;
+    @apply text-xs font-bold text-black/40 uppercase tracking-widest font-mono;
 }

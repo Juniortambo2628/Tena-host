@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .staff-dashboard-grid {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
@@ -25,7 +25,7 @@
 }
 
 .staff-table th {
-    @apply px-8 py-4 text-[10px] font-semibold text-black/30;
+    @apply px-8 py-4 text-xs font-semibold text-black/30;
 }
 
 .staff-table tbody {
@@ -41,7 +41,7 @@
 }
 
 .staff-table-empty {
-    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-xs;
 }
 
 .staff-guest-item {
@@ -49,7 +49,7 @@
 }
 
 .staff-guest-avatar {
-    @apply w-10 h-10 rounded-xl bg-[#FFD300]/10 flex items-center justify-center text-[#d89e00] font-bold text-sm;
+    @apply w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-[#d89e00] font-bold text-sm;
 }
 
 .staff-guest-name {
@@ -57,11 +57,11 @@
 }
 
 .staff-guest-property {
-    @apply text-[10px] text-black/40 font-bold;
+    @apply text-xs text-black/40 font-bold;
 }
 
 .staff-guest-date {
-    @apply text-[10px] font-semibold text-black/30;
+    @apply text-xs font-semibold text-black/30;
 }
 
 .staff-sidebar {
@@ -81,7 +81,7 @@
 }
 
 .staff-sidebar-subtitle {
-    @apply text-[10px] font-semibold text-black/40;
+    @apply text-xs font-semibold text-black/40;
 }
 
 .staff-order-item {
@@ -97,13 +97,13 @@
 }
 
 .staff-order-price {
-    @apply text-[10px] font-semibold text-[#FFD300];
+    @apply text-xs font-semibold text-primary;
 }
 
 .staff-order-details {
-    @apply text-[10px] text-black/40 font-bold;
+    @apply text-xs text-black/40 font-bold;
 }
 
 .staff-empty {
-    @apply text-[10px] font-semibold text-black/30 text-center py-4;
+    @apply text-xs font-semibold text-black/30 text-center py-4;
 }

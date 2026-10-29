@@ -5,6 +5,7 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ToastProvider, notify } from '@/Components/Toast';
+import { BRAND_COLORS } from '@/constants';
 
 // Pages in these folders share one persistent DashboardLayout, so navigating between
 // them swaps only the page. A page can opt out with `Page.layout = null`.
@@ -39,7 +40,7 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#FFD300',
+        color: BRAND_COLORS.primary,
     },
 });
 

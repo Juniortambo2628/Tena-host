@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .glass-modal__header {
     @apply px-6 py-5 sm:px-10 sm:py-8 border-b border-black/5 flex justify-between items-center bg-white/50;

@@ -1,11 +1,11 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .cta-banner {
-    @apply mx-auto flex max-w-5xl flex-col items-center rounded-3xl bg-[#1E1E1E] px-6 py-14 text-center text-white sm:px-12;
+    @apply mx-auto flex max-w-5xl flex-col items-center rounded-3xl bg-dark px-6 py-14 text-center text-white sm:px-12;
 }
 
 .cta-banner-badge {
-    @apply mb-5 inline-block rounded-full bg-[#FFD300] px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#1E1E1E];
+    @apply mb-5 inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-dark;
 }
 
 .cta-banner-title {
@@ -21,11 +21,11 @@
 }
 
 .cta-banner-btn {
-    @apply inline-flex items-center gap-2 rounded-full bg-[#FFD300] px-7 py-3.5 text-sm font-bold text-[#1E1E1E] transition hover:bg-white;
+    @apply inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-bold text-dark transition hover:bg-white;
 }
 
 .cta-banner-btn--ghost {
-    @apply border border-white/30 bg-transparent text-white hover:bg-white hover:text-[#1E1E1E];
+    @apply border border-white/30 bg-transparent text-white hover:bg-white hover:text-dark;
 }
 
 .cta-banner-note {

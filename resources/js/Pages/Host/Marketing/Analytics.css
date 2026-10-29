@@ -1,11 +1,11 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-analytics-back {
     @apply mb-6;
 }
 
 .host-analytics-back-link {
-    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
+    @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
 }
 
 .host-analytics-stats-grid {
@@ -25,7 +25,7 @@
 }
 
 .host-analytics-chart-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-1;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40 mb-1;
 }
 
 .host-analytics-chart-title {
@@ -45,7 +45,7 @@
 }
 
 .host-analytics-chart-dot-yellow {
-    @apply bg-[#FFD300];
+    @apply bg-primary;
 }
 
 .host-analytics-chart-dot-black {
@@ -53,7 +53,7 @@
 }
 
 .host-analytics-chart-legend-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40;
 }
 
 .host-analytics-chart-container {
@@ -69,7 +69,7 @@
 }
 
 .host-analytics-interaction-title {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-6;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40 mb-6;
 }
 
 .host-analytics-device-list {
@@ -93,11 +93,11 @@
 }
 
 .host-analytics-device-trend-up {
-    @apply text-[10px] font-semibold text-green-500;
+    @apply text-xs font-semibold text-green-500;
 }
 
 .host-analytics-device-trend-down {
-    @apply text-[10px] font-semibold text-red-500;
+    @apply text-xs font-semibold text-red-500;
 }
 
 .host-analytics-divider {
@@ -105,7 +105,7 @@
 }
 
 .host-analytics-domains-title {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mb-4;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40 mb-4;
 }
 
 .host-analytics-domains-list {
@@ -134,7 +134,7 @@
 }
 
 .host-analytics-domain-percent {
-    @apply text-[10px] font-semibold text-black w-8;
+    @apply text-xs font-semibold text-black w-8;
 }
 
 .host-analytics-ai-card {
@@ -142,7 +142,7 @@
 }
 
 .host-analytics-ai-icon {
-    @apply text-[#FFD300] mb-6;
+    @apply text-primary mb-6;
 }
 
 .host-analytics-ai-title {
@@ -154,7 +154,7 @@
 }
 
 .host-analytics-ai-highlight {
-    @apply text-[#FFD300];
+    @apply text-primary;
 }
 
 .host-analytics-stat-card {
@@ -177,7 +177,7 @@
 }
 
 .host-analytics-stat-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40;
 }
 
 .host-analytics-stat-value {
@@ -185,7 +185,7 @@
 }
 
 .host-analytics-stat-sub {
-    @apply text-[10px] font-bold text-black/30 transition-colors uppercase tracking-widest;
+    @apply text-xs font-bold text-black/30 transition-colors uppercase tracking-widest;
 }
 
 .host-analytics-stat-card:hover .host-analytics-stat-sub {

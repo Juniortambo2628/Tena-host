@@ -20,7 +20,7 @@ export default function GuestLogin() {
             <div className="guest-login-container">
                 <div className="guest-login-header">
                     <div className="guest-login-icon">
-                        <Mail size={32} className="text-[#FFD300]" />
+                        <Mail size={32} className="text-primary" />
                     </div>
                     <h1 className="guest-login-title">Guest Portal</h1>
                     <p className="guest-login-subtitle">Enter your email to receive a one-time verification code.</p>

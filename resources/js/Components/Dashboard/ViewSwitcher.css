@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .view-switcher {
     @apply flex items-center gap-2 mb-6 p-1 bg-black/5 rounded-2xl w-fit max-w-full overflow-x-auto;

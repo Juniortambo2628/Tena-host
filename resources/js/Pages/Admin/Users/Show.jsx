@@ -87,13 +87,13 @@ export default function UserShow({ user }) {
                                             <select
                                                 value={newRole}
                                                 onChange={(e) => setNewRole(e.target.value)}
-                                                className="text-xs font-bold border border-black/10 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#FFD300]"
+                                                className="text-xs font-bold border border-black/10 rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary"
                                             >
                                                 {ROLES.map(r => (
                                                     <option key={r.value} value={r.value}>{r.label}</option>
                                                 ))}
                                             </select>
-                                            <button onClick={handleRoleChange} className="text-xs font-bold text-[#FFD300] hover:underline">Save</button>
+                                            <button onClick={handleRoleChange} className="text-xs font-bold text-primary hover:underline">Save</button>
                                             <button onClick={() => { setEditingRole(false); setNewRole(user.role); }} className="text-xs text-black/40 hover:text-black">Cancel</button>
                                         </div>
                                     ) : (

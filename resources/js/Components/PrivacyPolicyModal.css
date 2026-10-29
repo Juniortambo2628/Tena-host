@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .privacy-policy-modal__content {
     @apply space-y-8 p-4;
@@ -17,7 +17,7 @@
 }
 
 .privacy-policy-modal__subtitle {
-    @apply text-[10px] font-semibold text-black/40 uppercase tracking-widest;
+    @apply text-xs font-semibold text-black/40 uppercase tracking-widest;
 }
 
 .privacy-policy-modal__points {
@@ -37,7 +37,7 @@
 }
 
 .privacy-policy-modal__point-title {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black;
+    @apply text-xs font-semibold uppercase tracking-widest text-black;
 }
 
 .privacy-policy-modal__point-text {
@@ -49,5 +49,5 @@
 }
 
 .privacy-policy-modal__footer-text {
-    @apply text-[10px] font-bold text-black/30 leading-relaxed italic;
+    @apply text-xs font-bold text-black/30 leading-relaxed italic;
 }

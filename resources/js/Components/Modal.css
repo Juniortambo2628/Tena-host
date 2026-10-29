@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .tena-modal {
     /* Same layer as the search dialog and the cookie banner it can open from. */
