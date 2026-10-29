@@ -51,9 +51,12 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         'billing_cycle',
     ];
 
+    // auth.user is shared with every Inertia page; the encrypted casts decrypt on serialisation.
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     protected $casts = [

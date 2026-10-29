@@ -78,3 +78,21 @@ it('validates profile update fields', function () {
 
     $response->assertSessionHasErrors(['first_name', 'last_name', 'email']);
 });
+
+it('never shares the two-factor secret or recovery codes with the page', function () {
+    $user = User::factory()->host()->create([
+        'two_factor_enabled' => true,
+        'two_factor_secret' => 'JBSWY3DPEHPK3PXP',
+        'two_factor_recovery_codes' => ['code-one', 'code-two'],
+        'two_factor_confirmed_at' => now(),
+    ]);
+
+    $response = $this->actingAs($user)->get(route('host.dashboard'));
+
+    $response->assertOk()->assertInertia(fn ($page) => $page
+        ->where('auth.user.id', $user->id)
+        ->missing('auth.user.two_factor_secret')
+        ->missing('auth.user.two_factor_recovery_codes'));
+    $response->assertDontSee('JBSWY3DPEHPK3PXP');
+    $response->assertDontSee('code-one');
+});
