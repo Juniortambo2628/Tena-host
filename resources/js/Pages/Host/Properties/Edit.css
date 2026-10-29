@@ -47,3 +47,17 @@
 .host-properties-edit-toggle input {
     @apply w-5 h-5 accent-black;
 }
+
+.host-properties-edit-splash {
+    @apply grid items-center gap-5 rounded-[2rem] bg-black/[0.03] p-4;
+    grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.host-properties-edit-splash > button {
+    grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+    .host-properties-edit-splash { grid-template-columns: 150px minmax(0, 1fr) auto; }
+    .host-properties-edit-splash > button { grid-column: auto; }
+}

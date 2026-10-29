@@ -25,10 +25,15 @@ splash-page routing, and host engagement. Written for the Hestia VPS production 
    - Basic Info: name, address
    - WiFi Configuration: WiFi SSID (must match the controller's guest SSID),
      occupancy limit (number of recent guests that triggers an alert)
-   - Brand & Splash: choose one of the three templates (Classic, Retreat, Bold),
-     accent colour, welcome heading/message/button, property logo, splash image
-   - Save. Use **Preview selected template** to open the saved splash in a new tab
-     (preview never authorizes a device).
+   - Brand & Splash: pick one of the five templates (Bento, Horizon, Clover,
+     Monogram, Nocturne) and an accent colour, plus a cover photo
+   - Save, then open **Splash Studio** (property card or property page) to add the
+     cover photo and logo, welcome heading and note, house rules, emergency numbers,
+     nearby picks, the Google review link, offers and cross-sell cards. The studio
+     shows a live phone/laptop preview of unsaved changes; **Open full preview**
+     shows the saved page in a new tab (previews never authorize a device).
+   - After a guest connects, a property with splash content shows the same tabs on
+     the "You're connected" page, with a button on to the page they were opening.
 2. **Register the access point** (Access Points → Add Access Point):
    - MAC address: the AP's device MAC (usually on the label or in the controller
      device list). Colon, hyphen or bare hex all accepted — stored normalized.

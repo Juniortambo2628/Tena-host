@@ -37,7 +37,8 @@ export default function PropertyShow({ property, wifi = {} }) {
                 stats={stats}
                 actions={[
                     { label: 'Back', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('host.properties.index')) },
-                    { label: 'Edit', variant: 'primary', onClick: () => router.get(route('host.properties.edit', property.id)) },
+                    { label: 'Edit', onClick: () => router.get(route('host.properties.edit', property.id)) },
+                    { label: 'Splash Studio', variant: 'primary', onClick: () => router.get(route('host.properties.splash', property.id)) },
                 ]}
             />
 
@@ -47,7 +48,7 @@ export default function PropertyShow({ property, wifi = {} }) {
                     <GlassCard padding="p-8">
                         <h3 className="font-black text-lg">WiFi setup</h3>
                         <ol className="list-decimal pl-5 space-y-3 mt-4 text-sm">
-                            <li><Link className="underline" href={route('host.properties.edit', property.id)}>Configure the property and splash design</Link>, then <a className="underline" href={route('host.properties.splash-preview', property.id)} target="_blank" rel="noopener noreferrer">preview the saved splash</a>.</li>
+                            <li><Link className="underline" href={route('host.properties.splash', property.id)}>Design the splash page in the Splash Studio</Link> (welcome note, house info, local picks, offers), then <a className="underline" href={route('host.properties.splash-preview', property.id)} target="_blank" rel="noopener noreferrer">preview the saved splash</a>.</li>
                             <li><Link className="underline" href={route('host.access-points.index')}>Register the UniFi access point</Link> using its device MAC and select this property. {property.access_points_count} registered.</li>
                             <li>Controller: <strong>{wifi.controllerConfigured ? 'Credentials saved — admin must verify connectivity' : 'Not configured — ask the administrator to connect UniFi'}</strong>.</li>
                             <li>Enable the guest hotspot / external portal on the controller for <strong>{property.wifi_ssid || 'your guest SSID'}</strong>. Portal URL: <code className="break-all">{wifi.portalUrl}</code>. Allow tena-fi.com over HTTPS before guest authentication.</li>

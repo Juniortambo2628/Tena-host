@@ -29,7 +29,8 @@ class WifiReadinessTest extends TestCase
         ])->assertSessionHasNoErrors()->assertRedirect();
 
         $property->refresh();
-        $this->assertSame('bold', $property->branding_json['template']);
+        // First-pass template names are saved as their successors.
+        $this->assertSame('nocturne', $property->branding_json['template']);
         Storage::disk('public')->assertExists(str_replace('/storage/', '', $property->logo_path));
         Storage::disk('public')->assertExists(str_replace('/storage/', '', $property->splash_image_path));
         $this->actingAs($host)->patch(route('host.properties.update', $property), [
