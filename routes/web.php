@@ -267,7 +267,10 @@ Route::post('/api/mpesa/callback', [MpesaCallbackController::class, 'handle'])->
 Route::post('/api/mpesa/extras/callback', [MpesaCallbackController::class, 'extras'])->name('mpesa.extras.callback');
 
 // Ubiquiti UniFi external captive portal (public — pre-auth guest devices).
-// Point UniFi "Guest Control -> External Portal Server" at the /portal URL.
+// UniFi's "External Portal Server" takes a host name only and always sends the
+// device to http://<host>/guest/s/<site>/?id=…&ap=…&t=…&url=…&ssid=…, so that
+// path serves the splash too. /portal stays for previews and manual tests.
+Route::get('/guest/s/{site}', [WifiPortalController::class, 'show'])->where('site', '[A-Za-z0-9_-]+')->name('portal.unifi');
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');

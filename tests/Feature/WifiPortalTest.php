@@ -29,6 +29,28 @@ class WifiPortalTest extends TestCase
         $response->assertSee('Tena Guest');
     }
 
+    public function test_unifi_redirect_path_serves_the_splash_and_carries_params_to_connect(): void
+    {
+        $this->knownAp();
+        $this->mockUnifi();
+
+        // Exactly what a UniFi controller sends for an External Portal Server.
+        $this->get('/guest/s/default/?'.http_build_query([
+            'ap' => '11:22:33:44:55:66', 'id' => 'aa:bb:cc:dd:ee:ff', 't' => '1730180000',
+            'url' => 'http://captive.apple.com/hotspot-detect.html', 'ssid' => 'SunsetVilla_Guest',
+        ]))->assertOk()
+            ->assertSee('Sunset Villa')
+            ->assertSee('name="first_name"', false)
+            ->assertSee('value="aa:bb:cc:dd:ee:ff"', false)
+            ->assertSee('value="11:22:33:44:55:66"', false)
+            ->assertSee(route('portal.connect'), false)
+            ->assertDontSee('Join the guest WiFi network to open this page');
+
+        $this->connectAsGuest(['url' => 'http://captive.apple.com/hotspot-detect.html'])
+            ->assertRedirect('http://captive.apple.com/hotspot-detect.html');
+        $this->assertSame(1, Guest::count());
+    }
+
     public function test_splash_shows_property_name_when_ap_is_known(): void
     {
         $host = User::factory()->create(['role' => 'host']);

@@ -7,17 +7,28 @@ splash-page routing, and host engagement. Written for the Hestia VPS production 
 ## 0. Prerequisites (admin)
 
 1. **UniFi controller credentials** — Admin → Settings → WiFi (UniFi):
-   - Controller URL (e.g. `https://192.168.1.1:8443` or the UniFi OS URL)
-   - Username and password
-   - Site (usually `default`), console type (UniFi OS vs classic)
+   - Controller URL as the TenaFi server will reach it over the internet, e.g.
+     `https://<public-ip-or-ddns>` (UniFi OS console) or `https://<host>:8443`
+     (classic/self-hosted). A `192.168.x.x` address only works if the controller
+     is on the same network as the server, which the Hestia VPS is not: forward
+     HTTPS to the console, or use a cloud-hosted controller.
+   - A **local** controller admin (UniFi OS: Admins → add a local-access-only
+     user, Site Admin role). Ubiquiti cloud/SSO accounts with 2FA can't log in
+     through the API.
+   - Site: the site ID from the controller URL (`/manage/<site>/…`), usually
+     `default`. Console type: UniFi OS (UDM, UDR, UCG, Cloud Key Gen2+) or classic.
    - Click **Test connection**. Must report success before continuing.
 2. **Guest network on the controller** — for the target SSID:
-   - Enable the guest hotspot / captive portal
-   - Portal type: **External Portal Server** (also called "External Portal")
-   - Portal URL: `https://tena-fi.com/portal`
-   - Allowed hosts before auth (if the controller supports it):
-     `tena-fi.com`, `www.tena-fi.com`
+   - Hotspot / captive portal on; portal type **External Portal Server**
+   - Enter the host name only: `tena-fi.com` (no `https://`, no path). UniFi sends
+     each device to `http://tena-fi.com/guest/s/<site>/?id=…&ap=…&t=…&url=…&ssid=…`,
+     which TenaFi serves as the splash.
+   - Pre-Authorization Allowance: `tena-fi.com` (and `www.tena-fi.com`), so the
+     page, its images and the HTTPS form post load before the guest is authorized.
    - The SSID name recorded in the property must match the SSID broadcast.
+3. **Scheduler on the server** — `* * * * * php artisan schedule:run` must be in
+   the site user's crontab. AP online/offline status (every 5 minutes), campaigns,
+   review requests and outage alerts all depend on it.
 
 ## 1. Host side (per property)
 
@@ -48,8 +59,8 @@ splash-page routing, and host engagement. Written for the Hestia VPS production 
 On a phone (turn off mobile data so WiFi is the only route):
 
 1. Join the property's guest SSID.
-2. The phone should redirect to `https://tena-fi.com/portal?...` within a few
-   seconds. The page shows the property name, chosen template, and logo.
+2. The phone should open the splash at `http://tena-fi.com/guest/s/default/?...`
+   (it may hop to `https://`) within a few seconds. The page shows the property name, chosen template, and logo.
    - If it does not redirect, open `http://neverssl.com` in the browser —
      captive-portal detection uses plain HTTP.
 3. New guest: fill in first name + WhatsApp number + consent, tap **Connect**.
@@ -65,7 +76,7 @@ On a phone (turn off mobile data so WiFi is the only route):
 
 | Step | Expected |
 |---|---|
-| GET `/portal` with AP MAC | Property name + template + logo shown |
+| GET `/guest/s/default/` (UniFi redirect) or `/portal` with AP MAC | Property name + template + logo shown |
 | POST `/portal/connect` (valid) | Device authorized on the controller, guest row created/updated, redirect to original URL |
 | POST `/portal/connect` (bad phone/consent) | Form re-shown with field errors (HTTP 422), no guest row, device not authorized |
 | AP not registered in TenaFi | Splash shows "ask your host to link this access point" (HTTP 422) |
@@ -74,12 +85,14 @@ On a phone (turn off mobile data so WiFi is the only route):
 
 ## 4. Troubleshooting
 
-- **Splash never appears**: check the controller's external-portal URL and that
-  the AP's MAC is registered against the right property. Test with
+- **Splash never appears**: check the External Portal Server is the host name
+  `tena-fi.com` (not a URL with a path), that it is in the pre-authorization
+  allowance, and that the AP's MAC is registered against the right property. Test with
   `https://tena-fi.com/portal?ap=<AP_MAC>&id=<phone_MAC>&ssid=<SSID>`.
 - **"This access point is not linked"**: register the AP MAC under Access Points.
-- **"We could not connect you" (503)**: the controller rejected authorization —
-  check Admin → WiFi settings credentials and the site name. No guest is recorded
+- **"We could not connect you" (503)**: the controller rejected or never got the
+  authorization — run **Test connection** in Admin → WiFi; check the controller is
+  reachable from the internet, the admin is a local account, and the site ID. No guest is recorded
   on failure, by design.
 - **Guest not showing on the dashboard**: dashboard polls every 30 s; guest rows
   only appear after successful authorization. PMS-synced and manually added

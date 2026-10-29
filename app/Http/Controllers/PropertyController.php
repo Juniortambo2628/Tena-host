@@ -53,6 +53,7 @@ class PropertyController extends Controller
             'wifi' => [
                 'controllerConfigured' => UnifiService::fromSettings()->isConfigured(),
                 'portalUrl' => route('portal.show'),
+                'portalHost' => parse_url(config('app.url'), PHP_URL_HOST),
                 'guests' => $property->guests()->whereNotNull('device_mac')->count(),
                 'visits' => (int) $property->guests()->whereNotNull('device_mac')->sum('total_visits'),
                 'recentGuests' => $property->guests()->where('last_connected', '>=', now()->subDay())->count(),

@@ -73,4 +73,27 @@ class WifiReadinessTest extends TestCase
         $this->get(route('host.properties.show', $property))->assertInertia(fn ($page) => $page
             ->has('property.access_points', 2)->where('wifi.guests', 0)->where('wifi.visits', 0));
     }
+
+    public function test_authorize_guest_speaks_the_unifi_os_and_classic_apis(): void
+    {
+        Http::fake([
+            'udm.example/api/auth/login' => Http::response(['ok' => true], 200, ['X-CSRF-Token' => 'csrf-123']),
+            'udm.example/proxy/network/api/s/villa/cmd/stamgr' => Http::response(['meta' => ['rc' => 'ok'], 'data' => []]),
+            'classic.example:8443/api/login' => Http::response(['meta' => ['rc' => 'ok']]),
+            'classic.example:8443/api/s/default/cmd/stamgr' => Http::response(['meta' => ['rc' => 'ok'], 'data' => []]),
+        ]);
+
+        $os = new UnifiService(baseUrl: 'https://udm.example', username: 'tenafi', password: 'secret', site: 'villa', isUnifiOs: true);
+        $this->assertTrue($os->authorizeGuest('AA-BB-CC-DD-EE-FF', '112233445566', 60));
+
+        Http::assertSent(fn ($r) => $r->url() === 'https://udm.example/api/auth/login' && $r['username'] === 'tenafi');
+        Http::assertSent(fn ($r) => $r->url() === 'https://udm.example/proxy/network/api/s/villa/cmd/stamgr'
+            && $r->hasHeader('X-CSRF-Token', 'csrf-123')
+            && $r['cmd'] === 'authorize-guest' && $r['mac'] === 'aa:bb:cc:dd:ee:ff'
+            && $r['ap_mac'] === '11:22:33:44:55:66' && $r['minutes'] === 60);
+
+        $classic = new UnifiService(baseUrl: 'https://classic.example:8443', username: 'u', password: 'p', site: 'default', isUnifiOs: false);
+        $this->assertTrue($classic->authorizeGuest('aa:bb:cc:dd:ee:ff'));
+        Http::assertSent(fn ($r) => $r->url() === 'https://classic.example:8443/api/s/default/cmd/stamgr');
+    }
 }

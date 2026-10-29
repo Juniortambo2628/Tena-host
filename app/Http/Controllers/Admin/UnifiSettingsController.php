@@ -30,7 +30,9 @@ class UnifiSettingsController extends Controller
                 // Never send the password to the browser; just whether one is stored.
                 'has_password' => filled(Setting::getValue('unifi_password')) || filled(config('unifi.password')),
             ],
+            // UniFi takes a host name only and appends /guest/s/<site>/ itself.
             'portal_url' => url('/portal'),
+            'portal_host' => parse_url(config('app.url'), PHP_URL_HOST),
         ]);
     }
 

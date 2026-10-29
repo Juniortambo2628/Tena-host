@@ -8,7 +8,7 @@ import { FormField, TextInput, Select, CheckboxField, FormActions } from '@/Comp
 import { Wifi, Plug, CheckCircle2, AlertCircle } from 'lucide-react';
 import { notify } from '@/Components/Toast';
 
-export default function Unifi({ settings, portal_url }) {
+export default function Unifi({ settings, portal_url, portal_host }) {
     const { data, setData, post, processing } = useForm({
         base_url: settings.base_url || '',
         username: settings.username || '',
@@ -181,10 +181,15 @@ export default function Unifi({ settings, portal_url }) {
                             <div className="space-y-2">
                                 <h3 className="settings-page__card-title">Point UniFi here</h3>
                                 <p className="settings-page__card-subtitle">
-                                    In the UniFi dashboard, set Guest Control → External Portal Server to this URL,
-                                    and add the domain to the pre-authorization allowlist:
+                                    In UniFi Network, open the guest network's Hotspot / Captive portal settings, choose
+                                    <strong> External Portal Server</strong> and enter this host name (no https://, no path):
                                 </p>
-                                <code className="block rounded-lg bg-black/5 px-3 py-2 text-sm break-all">{portal_url}</code>
+                                <code className="block rounded-lg bg-black/5 px-3 py-2 text-sm break-all">{portal_host}</code>
+                                <p className="settings-page__card-subtitle">
+                                    UniFi sends guests to <code>http://{portal_host}/guest/s/&lt;site&gt;/</code>, which shows the splash. Also add
+                                    <strong> {portal_host}</strong> under Pre-Authorization Allowance. To test a property's splash by hand, use
+                                    <code className="break-all"> {portal_url}?ap=&lt;AP MAC&gt;&amp;id=&lt;phone MAC&gt;</code>.
+                                </p>
                             </div>
                         </GlassCard>
                     </form>
