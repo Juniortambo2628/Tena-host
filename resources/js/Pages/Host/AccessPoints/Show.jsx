@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -18,7 +17,7 @@ export default function AccessPointShow({ accessPoint }) {
     };
 
     return (
-        <DashboardLayout title="Access Point Details">
+        <>
             <Head title={accessPoint.name} />
 
             <DashboardHero
@@ -78,7 +77,7 @@ export default function AccessPointShow({ accessPoint }) {
                             </div>
                             <div>
                                 <h4 className="text-sm font-black"><T>Property</T></h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Assigned location</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-black/40">Assigned location</p>
                             </div>
                         </div>
                         <p className="font-black text-lg">{accessPoint.property?.name || 'Unknown'}</p>
@@ -94,6 +93,6 @@ export default function AccessPointShow({ accessPoint }) {
                     </Link>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

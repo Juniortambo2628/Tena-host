@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import {
     Mail, MessageCircle, MessageSquare, Users, Clock, Send, PenLine, ClipboardCheck, ArrowLeft, Loader2, Save,
     Wifi, CalendarClock, LogOut, CalendarDays, Gift, CheckCircle2, AlertTriangle, Smartphone,
 } from 'lucide-react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import PillButton from '@/Components/Dashboard/PillButton';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
@@ -335,13 +334,13 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
     };
 
     return (
-        <DashboardLayout title={isEditing ? 'Edit Campaign' : 'Campaign Studio'}>
+        <>
             <Head title={isEditing ? `Edit ${campaign.name}` : 'Campaign Studio'} />
             <DashboardHero
                 title={isEditing ? campaign.name : 'Campaign Studio'}
                 breadcrumbs={[{ label: 'Marketing', href: route('host.marketing.index') }, { label: isEditing ? 'Edit campaign' : 'New campaign' }]}
                 actions={[
-                    { label: 'Back to campaigns', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('host.marketing.index')) },
+                    { label: 'Back to campaigns', icon: <ArrowLeft size={16} />, href: route('host.marketing.index') },
                     { label: isActive ? 'Save changes' : 'Save draft', icon: <Save size={16} />, onClick: () => save(false) },
                 ]}
             />
@@ -369,6 +368,6 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
                 </div>
                 <MessagePreview data={data} propertyName={propertyName} />
             </div>
-        </DashboardLayout>
+        </>
     );
 }

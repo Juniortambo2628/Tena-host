@@ -1,13 +1,14 @@
 import React from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Mail, Phone, Calendar, Building2, Trash2, Loader2 } from 'lucide-react';
 import './Show.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 export default function HostShow({ host }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const { delete: destroy, processing } = useForm();
 
     const breadcrumbs = [
@@ -15,14 +16,18 @@ export default function HostShow({ host }) {
         { label: `${host.first_name} ${host.last_name}` },
     ];
 
-    const handleDelete = () => {
-        if (confirm(`Delete host "${host.first_name} ${host.last_name}"? All their properties will be orphaned.`)) {
-            destroy(route('admin.hosts.destroy', host.id));
-        }
+    const handleDelete = async () => {
+        const ok = await confirm({
+            title: 'Delete Host',
+            message: `Delete host "${host.first_name} ${host.last_name}"? All their properties will be orphaned.`,
+            confirmLabel: 'Delete',
+            variant: 'danger',
+        });
+        if (ok) destroy(route('admin.hosts.destroy', host.id));
     };
 
     return (
-        <DashboardLayout title={`${host.first_name} ${host.last_name}`}>
+        <>
             <Head title={`${host.first_name} ${host.last_name}`} />
 
             <DashboardHero
@@ -30,7 +35,7 @@ export default function HostShow({ host }) {
                 breadcrumbs={breadcrumbs}
                 rootRoute="admin.dashboard"
                 actions={[
-                    { label: 'Back', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('admin.hosts.index')) },
+                    { label: 'Back', icon: <ArrowLeft size={16} />, href: route('admin.hosts.index') },
                 ]}
             />
 
@@ -86,6 +91,7 @@ export default function HostShow({ host }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+            {ConfirmDialogEl}
+        </>
     );
 }

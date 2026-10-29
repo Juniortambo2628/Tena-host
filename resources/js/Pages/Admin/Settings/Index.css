@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .settings-page__tabs {
     @apply space-y-2;
@@ -13,7 +13,7 @@
 }
 
 .settings-page__tab--active {
-    @apply bg-black text-[#FFD300] shadow-xl shadow-black/10;
+    @apply bg-black text-primary shadow-xl shadow-black/10;
 }
 
 .settings-page__status {
@@ -21,7 +21,7 @@
 }
 
 .settings-page__status-row {
-    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/40;
+    @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-black/40;
 }
 
 .settings-page__status-dot {
@@ -57,11 +57,11 @@
 }
 
 .settings-page__card-subtitle {
-    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+    @apply text-xs font-bold text-black/40 uppercase tracking-widest;
 }
 
 .settings-page__hint {
-    @apply p-4 rounded-2xl bg-black/[0.02] border border-black/5 text-[10px] font-bold text-black/50 leading-relaxed;
+    @apply p-4 rounded-2xl bg-black/[0.02] border border-black/5 text-xs font-bold text-black/50 leading-relaxed;
 }
 
 .settings-page__template-section {
@@ -69,7 +69,7 @@
 }
 
 .settings-page__template-title {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30 border-b border-black/5 pb-2;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30 border-b border-black/5 pb-2;
 }
 
 .settings-page__color-field {
@@ -93,7 +93,7 @@
 }
 
 .settings-page__preview-hint {
-    @apply text-[10px] font-bold text-black/40 uppercase tracking-widest;
+    @apply text-xs font-bold text-black/40 uppercase tracking-widest;
 }
 
 .settings-page__preview-modal {
@@ -105,7 +105,7 @@
 }
 
 .settings-page__template-selector-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40;
 }
 
 .settings-page__template-selector-wrap {
@@ -113,7 +113,7 @@
 }
 
 .settings-page__template-select {
-    @apply w-full appearance-none bg-black/[0.03] border border-black/10 rounded-xl px-4 py-3 pr-10 text-sm font-semibold text-black focus:outline-none focus:ring-2 focus:ring-[#FFD300] focus:border-transparent cursor-pointer;
+    @apply w-full appearance-none bg-black/[0.03] border border-black/10 rounded-xl px-4 py-3 pr-10 text-sm font-semibold text-black focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent cursor-pointer;
 }
 
 .settings-page__template-selector-icon {

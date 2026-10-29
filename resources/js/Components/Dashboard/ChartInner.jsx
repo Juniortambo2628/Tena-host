@@ -7,8 +7,9 @@ import {
     XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import ResponsiveContainer from './MeasuredChart';
+import { BRAND_COLORS } from '@/constants';
 
-const DEFAULT_COLORS = ['#10B981', '#FFD300', '#3B82F6', '#EF4444', '#8B5CF6', '#EC4899'];
+const DEFAULT_COLORS = ['#10B981', BRAND_COLORS.primary, '#3B82F6', '#EF4444', '#8B5CF6', '#EC4899'];
 
 function CustomTooltip({ active, payload, label, formatTooltip }) {
     if (!active || !payload?.length) return null;

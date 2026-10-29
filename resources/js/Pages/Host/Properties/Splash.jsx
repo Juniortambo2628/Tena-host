@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm } from '@inertiajs/react';
 import {
     Palette, Heart, House, Compass, Star, Gift, Building2, Plus, Trash2, ChevronUp, ChevronDown,
@@ -12,6 +11,7 @@ import { csrfHeaders } from '@/Support/csrf';
 import { TemplatePicker, AccentPicker } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 import './Splash.css';
+import { BRAND_COLORS } from '@/constants';
 
 const categories = [
     ['food', 'Eat'], ['drink', 'Drink'], ['sights', 'See'], ['shop', 'Shop'],
@@ -40,7 +40,7 @@ function initialBranding(saved = {}) {
     const sections = { welcome: true, rules: true, emergency: true, nearby: true, review: true, offers: true, stays: true, ...(saved.sections || {}) };
     return {
         template: normalizeTemplate(saved.template),
-        accent: saved.accent || '#FFD300',
+        accent: saved.accent || BRAND_COLORS.primary,
         heading: saved.heading || '', message: saved.message || '', button: saved.button || '',
         welcome_note: saved.welcome_note || '', host_name: saved.host_name || '', review_prompt: saved.review_prompt || '',
         sections,
@@ -462,7 +462,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
     const index = steps.indexOf(current);
 
     return (
-        <DashboardLayout title={`Splash Studio · ${property.name}`}>
+        <>
             <Head title={`Splash Studio · ${property.name}`} />
             <DashboardHero
                 title="Splash Studio"
@@ -501,6 +501,6 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
 
                 <Preview propertyId={property.id} data={data} focusTab={current.tab} coverFile={data.splash_image} logoFile={data.logo} />
             </div>
-        </DashboardLayout>
+        </>
     );
 }

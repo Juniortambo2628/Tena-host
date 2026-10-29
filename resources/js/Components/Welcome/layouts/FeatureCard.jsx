@@ -25,7 +25,7 @@ export default function FeatureCard({
                     <img src={image} alt={imageAlt || title} className="feature-card-image" />
                     {icon && (
                         <div className="feature-card-image-overlay">
-                            <i className={`${icon} text-[#FFD300] text-3xl`}></i>
+                            <i className={`${icon} text-primary text-3xl`}></i>
                         </div>
                     )}
                 </div>

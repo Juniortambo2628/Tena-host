@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .hero-wrapper {
     @apply pt-28 pb-16 md:pt-36 md:pb-24 lg:pt-44 bg-gray-50;
@@ -28,17 +28,17 @@
 }
 
 .hero-badge {
-    @apply inline-block align-top bg-[#1b1b1b] text-[#FFD300] font-bold px-5 py-2.5 rounded-full tracking-wide;
+    @apply inline-block align-top bg-dark text-primary font-bold px-5 py-2.5 rounded-full tracking-wide;
 }
 
 .hero-title {
     font-family: system-ui, -apple-system, sans-serif;
     letter-spacing: -0.5px;
-    @apply text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-[#1b1b1b] leading-[1.1] mb-6;
+    @apply text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-dark leading-[1.1] mb-6;
 }
 
 .hero-title-highlight {
-    @apply text-[#FFD300];
+    @apply text-primary;
 }
 
 .hero-subtitle {
@@ -65,11 +65,11 @@
 }
 
 .hero-btn-primary {
-    @apply bg-[#1b1b1b] text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5;
+    @apply bg-dark text-white shadow-lg hover:shadow-xl hover:-translate-y-0.5;
 }
 
 .hero-btn-secondary {
-    @apply bg-transparent text-[#1b1b1b] border-2 border-[#1b1b1b] hover:bg-[#1b1b1b] hover:text-white;
+    @apply bg-transparent text-dark border-2 border-dark hover:bg-dark hover:text-white;
 }
 
 .hero-image-col {
@@ -106,7 +106,7 @@
 }
 
 .hero-feature-image-overlay {
-    @apply absolute inset-0 bg-[#1b1b1b]/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300;
+    @apply absolute inset-0 bg-dark/60 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300;
 }
 
 .hero-feature-content {
@@ -114,7 +114,7 @@
 }
 
 .hero-feature-title {
-    @apply text-base font-bold text-[#1b1b1b] mb-2;
+    @apply text-base font-bold text-dark mb-2;
 }
 
 .hero-feature-desc {
@@ -122,7 +122,7 @@
 }
 
 .hero-body {
-    @apply -mt-4 mb-8 text-base text-[#5B6170] leading-relaxed;
+    @apply -mt-4 mb-8 text-base text-muted leading-relaxed;
 }
 
 /* Rich text from the CMS editor must wrap inside the text column, even
@@ -137,5 +137,5 @@
 }
 
 .hero-note {
-    @apply mt-6 text-sm text-[#5B6170];
+    @apply mt-6 text-sm text-muted;
 }

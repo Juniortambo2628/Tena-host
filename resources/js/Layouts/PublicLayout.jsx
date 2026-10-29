@@ -93,7 +93,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                     {footerLinks.map((link) => (
                                         <li key={link.href}>
                                             <a href={resolveHref(link.href)} className="welcome-footer-link">
-                                                <ChevronRight size={12} className="mr-2 inline text-[#FFD300]" />
+                                                <ChevronRight size={12} className="mr-2 inline text-primary" />
                                                 {titleCase(link.label)}
                                             </a>
                                         </li>

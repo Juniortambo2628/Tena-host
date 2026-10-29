@@ -1,11 +1,11 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .create-user-grid {
     @apply max-w-2xl;
 }
 
 .create-user-info {
-    @apply p-4 bg-[#FFD300]/10 rounded-2xl border border-[#FFD300]/20;
+    @apply p-4 bg-primary/10 rounded-2xl border border-primary/20;
 }
 
 .create-user-info-text {
@@ -21,7 +21,7 @@
 }
 
 .create-user-role--active {
-    @apply border-[#FFD300] bg-[#FFD300]/5;
+    @apply border-primary bg-primary/5;
 }
 
 .create-user-role-content {
@@ -33,7 +33,7 @@
 }
 
 .create-user-role-desc {
-    @apply text-[10px] text-black/40 font-semibold;
+    @apply text-xs text-black/40 font-semibold;
 }
 
 .create-user-cancel {

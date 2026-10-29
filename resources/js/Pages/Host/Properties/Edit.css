@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-properties-edit {
     @apply max-w-2xl;
@@ -17,7 +17,7 @@
 }
 
 .host-properties-edit-label {
-    @apply block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1;
+    @apply block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1;
 }
 
 .host-properties-edit-input {
@@ -25,7 +25,7 @@
 }
 
 .host-properties-edit-error {
-    @apply text-red-500 text-[10px] mt-2 font-bold uppercase tracking-widest ml-1;
+    @apply text-red-500 text-xs mt-2 font-bold uppercase tracking-widest ml-1;
 }
 
 .host-properties-edit-section {

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .payments-page__filters {
     @apply flex flex-col sm:flex-row items-start sm:items-center gap-4;
@@ -17,15 +17,15 @@
 }
 
 .payments-page__status-filters {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-2 max-w-full overflow-x-auto;
 }
 
 .payments-page__filter-btn {
-    @apply px-4 py-2 rounded-xl text-[10px] font-semibold uppercase tracking-widest transition-colors;
+    @apply px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-widest transition-colors flex-none whitespace-nowrap;
 }
 
 .payments-page__filter-btn--active {
-    @apply bg-black text-[#FFD300];
+    @apply bg-black text-primary;
 }
 
 .payments-page__filter-btn:not(.payments-page__filter-btn--active) {
@@ -57,7 +57,7 @@
 }
 
 .payments-page__status-badge {
-    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .payments-page__status--completed {
@@ -81,11 +81,11 @@
 }
 
 .payments-page__page-link {
-    @apply px-4 py-2 rounded-lg text-[10px] font-semibold uppercase tracking-widest transition-colors;
+    @apply px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-widest transition-colors;
 }
 
 .payments-page__page-link--active {
-    @apply bg-black text-[#FFD300];
+    @apply bg-black text-primary;
 }
 
 .payments-page__page-link--inactive {

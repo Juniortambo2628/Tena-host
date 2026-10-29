@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .partners-header {
     @apply text-center mb-8 md:mb-10 max-w-2xl mx-auto;
@@ -58,11 +58,11 @@
 }
 
 .partners-logo--text {
-    @apply flex items-center justify-center text-4xl font-black text-[#1E1E1E] bg-[#FFD300] border-0;
+    @apply flex items-center justify-center text-4xl font-black text-dark bg-primary border-0;
 }
 
 .partners-name {
-    @apply text-sm font-semibold text-[#1E1E1E] leading-tight;
+    @apply text-sm font-semibold text-dark leading-tight;
 }
 
 @keyframes partners-marquee {

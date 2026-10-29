@@ -6,17 +6,17 @@
 }
 .campaign-channel strong { font-size: 14px; font-weight: 900; }
 .campaign-channel small { font-size: 11.5px; color: rgba(0, 0, 0, .5); line-height: 1.4; }
-.campaign-channel em { display: inline-flex; align-items: center; gap: 4px; font-style: normal; font-size: 10px; font-weight: 800; color: #a16207; }
+.campaign-channel em { display: inline-flex; align-items: center; gap: 4px; font-style: normal; font-size: 12px; font-weight: 800; color: #a16207; }
 .campaign-channel[aria-checked=true] { background: #fff; box-shadow: 0 0 0 2px #111, 0 14px 30px -18px rgba(0, 0, 0, .35); }
 
 .campaign-offers { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
 .studio-picks .campaign-offers button { width: auto; height: auto; color: #111; background: #fff3b0; flex: none; display: flex; align-items: center; gap: 10px; border: 0; padding: 12px 14px; border-radius: 18px; background: #fff3b0; cursor: pointer; text-align: left; max-width: 260px; }
 .studio-picks .campaign-offers button::before { display: none; }
 .campaign-offers strong { display: block; font-size: 13px; }
-.campaign-offers small { font-size: 11px; color: rgba(0, 0, 0, .55); }
+.campaign-offers small { font-size: 12px; color: rgba(0, 0, 0, .55); }
 
 .campaign-tokens { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: -8px; }
-.campaign-tokens span { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .14em; color: rgba(0, 0, 0, .4); margin: 0 4px; }
+.campaign-tokens span { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .14em; color: rgba(0, 0, 0, .4); margin: 0 4px; }
 .campaign-tokens button { border: 0; padding: 7px 12px; border-radius: 999px; background: rgba(0, 0, 0, .05); font-size: 12px; font-weight: 800; cursor: pointer; }
 .campaign-tokens button:hover { background: #fff3b0; }
 
@@ -35,8 +35,8 @@
 .campaign-select:focus, .campaign-date:focus { background: #fff; box-shadow: 0 0 0 2px #111; }
 
 .campaign-reach { display: grid; gap: 2px; padding: 18px 20px; border-radius: 22px; background: #111; color: #fff; }
-.campaign-reach span { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; color: rgba(255, 255, 255, .55); }
-.campaign-reach strong { font-size: 34px; font-weight: 900; letter-spacing: -.03em; color: #ffd300; }
+.campaign-reach span { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; color: rgba(255, 255, 255, .55); }
+.campaign-reach strong { font-size: 34px; font-weight: 900; letter-spacing: -.03em; color: var(--color-primary); }
 .campaign-reach small { font-size: 12px; color: rgba(255, 255, 255, .6); }
 .campaign-reach--soft { background: #fff8d6; color: #111; }
 .campaign-reach--soft span { color: rgba(0, 0, 0, .45); }
@@ -59,7 +59,7 @@
 .campaign-phone--sms .campaign-phone__top { background: #f8f8fa; color: #111; justify-content: center; flex-direction: column; gap: 4px; text-align: center; }
 .campaign-phone__top strong { display: block; font-size: 14px; }
 .campaign-phone__top small { font-size: 11px; opacity: .75; }
-.campaign-phone__avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: #ffd300; color: #111; font-weight: 900; flex: none; }
+.campaign-phone__avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--color-primary); color: #111; font-weight: 900; flex: none; }
 .campaign-phone__thread { flex: 1; padding: 18px 14px; overflow: auto; }
 .campaign-bubble { position: relative; max-width: 86%; background: #fff; border-radius: 4px 16px 16px 16px; padding: 10px 12px 18px; box-shadow: 0 1px 1px rgba(0, 0, 0, .08); font-size: 14px; line-height: 1.45; color: #111; }
 .campaign-phone--sms .campaign-bubble { background: #e5e5ea; border-radius: 18px; }

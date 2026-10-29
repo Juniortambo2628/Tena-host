@@ -10,21 +10,49 @@ import {
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, ArrowUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { router } from '@inertiajs/react';
+import EmptyState from './EmptyState';
+import { useTerms } from './Terms';
 import './DataTable.css';
+
+// A column's label in the phone card view: meta.label, else a string header, else its id.
+const columnLabel = (column) => column.columnDef.meta?.label
+    ?? (typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id);
 
 export default function DataTable({
     data,
     columns,
+    title = null,
     searchPlaceholder = "Search...",
+    searchValue = '',
     serverPagination = null,
     onSearch = null,
     enableSelection = false,
+    // Pass selectedIds to control the selection (onSelectionChange then gets ids),
+    // so a page's "clear selection" also unticks the rows.
+    selectedIds = null,
     onSelectionChange = null,
     getRowId = (row) => row.id,
+    emptyMessage = 'No results found',
+    emptyIcon,
+    emptyAction = null,
 }) {
+    const t = useTerms();
     const [sorting, setSorting] = useState([]);
     const [globalFilter, setGlobalFilter] = useState('');
     const [rowSelection, setRowSelection] = useState({});
+    const isSelectionControlled = Array.isArray(selectedIds);
+    const selectionState = isSelectionControlled
+        ? Object.fromEntries(selectedIds.map((id) => [String(id), true]))
+        : rowSelection;
+
+    const handleRowSelectionChange = (updater) => {
+        const next = typeof updater === 'function' ? updater(selectionState) : updater;
+        if (!isSelectionControlled) {
+            setRowSelection(next);
+            return;
+        }
+        onSelectionChange?.(data.map(getRowId).filter((id) => next[String(id)]));
+    };
 
     const selectionColumn = enableSelection ? [{
         id: 'select',
@@ -57,11 +85,11 @@ export default function DataTable({
         state: {
             sorting,
             globalFilter,
-            ...(enableSelection ? { rowSelection } : {}),
+            ...(enableSelection ? { rowSelection: selectionState } : {}),
         },
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
-        ...(enableSelection ? { onRowSelectionChange: setRowSelection } : {}),
+        ...(enableSelection ? { onRowSelectionChange: handleRowSelectionChange } : {}),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: serverPagination ? undefined : getPaginationRowModel(),
@@ -72,7 +100,7 @@ export default function DataTable({
     });
 
     useEffect(() => {
-        if (enableSelection && onSelectionChange) {
+        if (enableSelection && onSelectionChange && !isSelectionControlled) {
             const selectedRows = table.getSelectedRowModel().rows.map(r => r.original);
             onSelectionChange(selectedRows);
         }
@@ -87,13 +115,15 @@ export default function DataTable({
         }
     }, [globalFilter]);
 
+    // Keeps the current query (search, filters) and changes only the page.
     const handlePageChange = (page) => {
-        if (serverPagination && serverPagination.path) {
-            const url = new URL(serverPagination.path);
-            url.searchParams.set('page', page);
-            router.get(url.pathname + url.search, {}, { preserveState: true, replace: true });
-        }
+        if (!serverPagination) return;
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', page);
+        router.get(url.pathname + url.search, {}, { preserveState: true, replace: true });
     };
+
+    const rows = table.getRowModel().rows;
 
     const clearSelection = () => {
         setRowSelection({});
@@ -103,11 +133,12 @@ export default function DataTable({
         <div className="data-table">
             {/* Toolbar */}
             <div className="data-table__toolbar">
+                {title && <h3 className="data-table__title">{t(title)}</h3>}
                 <div className="data-table__search">
                     <Search size={16} className="data-table__search-icon" />
                     {serverPagination && onSearch ? (
                         <input
-                            defaultValue={serverPagination?.search || ''}
+                            defaultValue={searchValue}
                             onChange={(e) => onSearch(e.target.value)}
                             placeholder={searchPlaceholder}
                             className="data-table__search-input"
@@ -123,7 +154,12 @@ export default function DataTable({
                 </div>
             </div>
 
-            {/* Table */}
+            {rows.length === 0 && (
+                <EmptyState icon={emptyIcon} message={emptyMessage} action={emptyAction} />
+            )}
+
+            {/* Table (from lg) */}
+            {rows.length > 0 && (
             <div className="data-table__wrapper">
                 <table className="data-table__table">
                     <thead>
@@ -148,8 +184,7 @@ export default function DataTable({
                         ))}
                     </thead>
                     <tbody className="data-table__body">
-                        {table.getRowModel().rows.length > 0 ? (
-                            table.getRowModel().rows.map((row) => (
+                        {rows.map((row) => (
                                 <tr
                                     key={row.id}
                                     className={cn("data-table__row", row.getIsSelected() && "data-table__row--selected")}
@@ -163,20 +198,42 @@ export default function DataTable({
                                         </td>
                                     ))}
                                 </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan={allColumns.length} className="data-table__empty-cell">
-                                    No results found.
-                                </td>
-                            </tr>
-                        )}
+                        ))}
                     </tbody>
                 </table>
             </div>
+            )}
+
+            {/* Cards (below lg): the first column heads the card, the rest are label/value rows */}
+            {rows.length > 0 && (
+                <div className="data-table__cards">
+                    {rows.map((row) => {
+                        const cells = row.getVisibleCells();
+                        const select = cells.find((c) => c.column.id === 'select');
+                        const actions = cells.find((c) => c.column.id === 'actions');
+                        const [primary, ...fields] = cells.filter((c) => c !== select && c !== actions);
+                        const render = (cell) => flexRender(cell.column.columnDef.cell, cell.getContext());
+                        return (
+                            <div key={row.id} className={cn('data-table__card', row.getIsSelected() && 'data-table__card--selected')}>
+                                <div className="data-table__card-header">
+                                    {select && <div className="data-table__card-select">{render(select)}</div>}
+                                    <div className="data-table__card-primary">{primary && render(primary)}</div>
+                                </div>
+                                {fields.map((cell) => (
+                                    <div key={cell.id} className="data-table__card-field">
+                                        <span className="data-table__card-label">{t(columnLabel(cell.column))}</span>
+                                        <div className="data-table__card-value">{render(cell)}</div>
+                                    </div>
+                                ))}
+                                {actions && <div className="data-table__card-actions">{render(actions)}</div>}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
 
             {/* Pagination */}
-            {serverPagination ? (
+            {rows.length === 0 ? null : serverPagination ? (
                 <div className="data-table__pagination">
                     <div className="data-table__pagination-info">
                         Showing {serverPagination.from}-{serverPagination.to} of {serverPagination.total}

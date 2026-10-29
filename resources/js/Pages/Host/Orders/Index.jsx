@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -19,12 +18,12 @@ export default function OrderIndex({ orders, filters }) {
 
     const statusBadge = (status) => {
         const classes = {
-            pending: 'bg-[#FFD300]/10 text-[#b39700]',
+            pending: 'bg-primary/10 text-[#b39700]',
             fulfilled: 'bg-green-100 text-green-700',
             cancelled: 'bg-red-100 text-red-700',
         };
         return (
-            <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${classes[status]}`}>
+            <span className={`px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-widest ${classes[status]}`}>
                 {status}
             </span>
         );
@@ -64,7 +63,7 @@ export default function OrderIndex({ orders, filters }) {
             header: 'Property',
             accessorKey: 'property.name',
             cell: info => (
-                <span className="text-[10px] font-black uppercase tracking-widest text-black/50">{info.getValue()}</span>
+                <span className="text-xs font-black uppercase tracking-widest text-black/50">{info.getValue()}</span>
             )
         },
         {
@@ -81,7 +80,7 @@ export default function OrderIndex({ orders, filters }) {
                 const order = info.row.original;
                 const labels = { paid: 'Paid (M-Pesa)', pending: 'Awaiting M-Pesa', failed: 'Payment failed', unpaid: 'Collect at property', not_required: 'Free' };
                 return (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-black/60" title={order.mpesa_receipt || ''}>
+                    <span className="text-xs font-black uppercase tracking-widest text-black/60" title={order.mpesa_receipt || ''}>
                         {labels[info.getValue()] || info.getValue()}
                         {order.payment_status === 'paid' && (order.settled_at ? ' · settled' : ' · payout due')}
                     </span>
@@ -102,7 +101,7 @@ export default function OrderIndex({ orders, filters }) {
                     <div className="flex items-center gap-2">
                         <Link
                             href={route('host.orders.show', order.id)}
-                            className="p-2 hover:bg-black/5 rounded-lg text-black/40 hover:text-black transition-colors text-[10px] font-black uppercase tracking-widest"
+                            className="p-2 hover:bg-black/5 rounded-lg text-black/40 hover:text-black transition-colors text-xs font-black uppercase tracking-widest"
                         >
                             View
                         </Link>
@@ -110,13 +109,13 @@ export default function OrderIndex({ orders, filters }) {
                             <>
                                 <button
                                     onClick={() => updateStatus(order, 'fulfilled')}
-                                    className="p-2 hover:bg-green-50 rounded-lg text-black/40 hover:text-green-600 transition-colors text-[10px] font-black uppercase tracking-widest"
+                                    className="p-2 hover:bg-green-50 rounded-lg text-black/40 hover:text-green-600 transition-colors text-xs font-black uppercase tracking-widest"
                                 >
                                     Fulfill
                                 </button>
                                 <button
                                     onClick={() => updateStatus(order, 'cancelled')}
-                                    className="p-2 hover:bg-red-50 rounded-lg text-black/40 hover:text-red-600 transition-colors text-[10px] font-black uppercase tracking-widest"
+                                    className="p-2 hover:bg-red-50 rounded-lg text-black/40 hover:text-red-600 transition-colors text-xs font-black uppercase tracking-widest"
                                 >
                                     Cancel
                                 </button>
@@ -129,7 +128,7 @@ export default function OrderIndex({ orders, filters }) {
     ], []);
 
     return (
-        <DashboardLayout title="Orders">
+        <>
             <Head title="Orders" />
 
             <DashboardHero
@@ -146,19 +145,20 @@ export default function OrderIndex({ orders, filters }) {
                         <button
                             key={status}
                             onClick={() => handleStatusFilter(status === 'all' ? '' : status)}
-                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${filters.status === status || (status === 'all' && !filters.status) ? 'bg-black text-[#FFD300]' : 'bg-black/5 text-black hover:bg-black/10'}`}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${filters.status === status || (status === 'all' && !filters.status) ? 'bg-black text-primary' : 'bg-black/5 text-black hover:bg-black/10'}`}
                         >
                             {status}
                         </button>
                     ))}
                 </div>
                 <DataTable
+                    emptyMessage="No orders yet"
                     data={orders.data || []}
                     columns={columns}
                     searchPlaceholder="Search orders..."
                     serverPagination={orders}
                 />
             </GlassCard>
-        </DashboardLayout>
+        </>
     );
 }

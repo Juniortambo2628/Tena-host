@@ -19,7 +19,7 @@ export default function SearchFilterBar({ search, onSearch, filters, onFilterCha
                         <button
                             key={filter.value}
                             onClick={() => onFilterChange(filter.value)}
-                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                                 filter.active
                                     ? 'bg-black text-white'
                                     : 'bg-black/5 text-black/40 hover:bg-black/10'

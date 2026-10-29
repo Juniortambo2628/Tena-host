@@ -10,6 +10,7 @@ import CropModal from './CropModal';
 import JsonArrayEditor from './JsonArrayEditor';
 import { getExpectedMediaSlots, isSchemaKey } from '@/lib/landingSchema';
 import './SectionEditor.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 function groupContentKeys(content) {
     const simple = {};
@@ -85,6 +86,7 @@ function getTabLabel(tabId) {
 }
 
 export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop, onToggleActive }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
     const [hasChanges, setHasChanges] = useState(false);
@@ -184,14 +186,20 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         if (onMediaUpload) onMediaUpload(media);
     };
 
-    const handleMediaDelete = (media) => {
+    const handleMediaDelete = async (media) => {
         const contentKeys = Object.keys(localContent);
         const belongsToSchema = isSchemaKey(section.section_key, contentKeys, media.media_key);
         const confirmMessage = belongsToSchema
             ? `Remove the uploaded file for "${media.media_key}"? The slot will stay so you can re-upload.`
             : `Remove the custom media slot "${media.media_key}"? This cannot be undone.`;
 
-        if (!window.confirm(confirmMessage)) return;
+        const ok = await confirm({
+            title: belongsToSchema ? 'Remove File' : 'Remove Media Slot',
+            message: confirmMessage,
+            confirmLabel: 'Remove',
+            variant: 'danger',
+        });
+        if (!ok) return;
 
         router.delete(route('admin.landing.media.destroy', { media: media.id }), {
             preserveScroll: true,
@@ -284,12 +292,18 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
     };
 
     // Removing a row renumbers later rows (and their media) on the server.
-    const handleRemoveItem = (arrName, idx, name) => {
+    const handleRemoveItem = async (arrName, idx, name) => {
         if (hasChanges) {
             notify.error('Save your changes first, then remove the item');
             return;
         }
-        if (!window.confirm(`Remove "${name}"? This cannot be undone.`)) return;
+        const ok = await confirm({
+            title: 'Remove Item',
+            message: `Remove "${name}"? This cannot be undone.`,
+            confirmLabel: 'Remove',
+            variant: 'danger',
+        });
+        if (!ok) return;
 
         window.axios.delete(route('admin.landing.items.destroy', { section: section.id, array: arrName, index: idx }))
             .then(({ data }) => {
@@ -642,6 +656,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                 />,
                 document.body
             )}
+            {ConfirmDialogEl}
         </>
     );
 }

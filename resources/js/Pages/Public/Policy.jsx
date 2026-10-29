@@ -18,7 +18,7 @@ export default function Policy({ page, document, site = {}, seo = {} }) {
                     subtitle={updated ? `Version ${document.version || '1.0'} · Last updated ${new Date(updated).toLocaleDateString('en-KE', { dateStyle: 'long' })}` : null}
                 />
                 <article
-                    className="policy-page__content"
+                    className="policy-page__content rich-text"
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(document.content) }}
                 />
             </SectionWrapper>

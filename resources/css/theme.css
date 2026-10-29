@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* The brand's shared values. app.css imports this file, and every component
+   stylesheet references it (@reference), so `bg-primary`, `text-dark`, ... work
+   in JSX classes and in @apply alike. */
+@theme {
+    --color-primary: #FFD300;
+    --color-secondary: #ffb100;
+    --color-dark: #1b1b1b;
+    --color-light: #f8f9fa;
+    /* Muted body text on the public pages. */
+    --color-muted: #5B6170;
+    /* The warm off-white behind the dashboard. */
+    --color-canvas: #FDFCF7;
+}

@@ -1,5 +1,5 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .input-label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300;
+    @apply block text-sm font-medium text-gray-700;
 }

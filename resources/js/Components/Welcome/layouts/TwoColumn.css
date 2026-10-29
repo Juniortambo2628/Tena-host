@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .two-column {
     @apply flex flex-col lg:flex-row items-center gap-12 lg:gap-16;
@@ -31,13 +31,13 @@
 }
 
 .two-column-label {
-    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
+    @apply inline-block bg-dark text-primary font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-6;
 }
 
 .two-column-heading {
     font-family: system-ui, -apple-system, sans-serif;
     letter-spacing: -0.5px;
-    @apply text-3xl font-bold mb-6 leading-tight text-[#1b1b1b];
+    @apply text-3xl font-bold mb-6 leading-tight text-dark;
 }
 
 .two-column-desc {
@@ -56,7 +56,7 @@
 }
 
 .two-column-feature-icon-wrap {
-    @apply flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-gray-50 text-[#FFD300] text-xl mr-4;
+    @apply flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-gray-50 text-primary text-xl mr-4;
 }
 
 .two-column-feature-title {

@@ -19,7 +19,7 @@ export default function StatusBadge({ status, colors, className = '' }) {
     const colorClass = colors?.[lowerStatus] || STATUS_COLORS[lowerStatus] || 'bg-black/5 text-black/40';
 
     return (
-        <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${colorClass} ${className}`}>
+        <span className={`px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-widest ${colorClass} ${className}`}>
             {status}
         </span>
     );

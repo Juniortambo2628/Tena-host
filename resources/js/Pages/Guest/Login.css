@@ -1,7 +1,7 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .guest-login-page {
-    @apply min-h-screen bg-[#FDFCF7] flex items-center justify-center p-6;
+    @apply min-h-screen bg-canvas flex items-center justify-center p-6;
 }
 
 .guest-login-container {
@@ -33,7 +33,7 @@
 }
 
 .guest-login-label {
-    @apply block text-[10px] font-semibold text-black/40 mb-3 ml-1;
+    @apply block text-xs font-semibold text-black/40 mb-3 ml-1;
 }
 
 .guest-login-input {
@@ -41,13 +41,13 @@
 }
 
 .guest-login-error {
-    @apply text-red-500 text-[10px] mt-2 font-bold;
+    @apply text-red-500 text-xs mt-2 font-bold;
 }
 
 .guest-login-submit {
-    @apply w-full py-4 bg-black text-[#FFD300] font-bold rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50;
+    @apply w-full py-4 bg-black text-primary font-bold rounded-2xl shadow-xl shadow-black/10 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50;
 }
 
 .guest-login-footer {
-    @apply text-center text-[10px] font-semibold text-black/30 mt-8;
+    @apply text-center text-xs font-semibold text-black/30 mt-8;
 }

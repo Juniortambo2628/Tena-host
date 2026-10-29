@@ -3,11 +3,12 @@ import { Link } from '@inertiajs/react';
 import { Sparkles } from 'lucide-react';
 import { splashTemplates, accentPresets, defaultSplashDesign, normalizeTemplate } from './splashTemplates';
 import './SplashEditor.css';
+import { BRAND_COLORS } from '@/constants';
 
 export { defaultSplashDesign };
 
 // A miniature of each template's layout, drawn with CSS so it tracks the accent colour.
-export function TemplateThumb({ template, accent = '#FFD300' }) {
+export function TemplateThumb({ template, accent = BRAND_COLORS.primary }) {
     return (
         <span className={`splash-thumb splash-thumb--${template}`} style={{ '--thumb-accent': accent }} aria-hidden="true">
             <i className="splash-thumb__photo" />
@@ -37,7 +38,7 @@ export function TemplatePicker({ value, accent, onChange, compact = false }) {
 }
 
 export function AccentPicker({ value, onChange }) {
-    const accent = value || '#FFD300';
+    const accent = value || BRAND_COLORS.primary;
     return (
         <div className="splash-accents" role="radiogroup" aria-label="Accent colour">
             {accentPresets.map(color => (

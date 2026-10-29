@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './Index.css';
@@ -17,14 +16,17 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { T } from '@/Components/Dashboard/Terms';
 import SplashEditor from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+import { useConfirm } from '@/hooks/useConfirm';
+import { BRAND_COLORS } from '@/constants';
 
 // The modal only picks the look; the Splash Studio owns the rest of branding_json.
-const quickDesign = (saved = {}) => ({ template: normalizeTemplate(saved?.template), accent: saved?.accent || '#FFD300' });
+const quickDesign = (saved = {}) => ({ template: normalizeTemplate(saved?.template), accent: saved?.accent || BRAND_COLORS.primary });
 
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview);
 
 export default function PropertyIndex({ properties, stats: live = {} }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
 
@@ -100,7 +102,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             content: (
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property Name</T></label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property Name</T></label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -108,10 +110,10 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                             value={data.name}
                             onChange={e => setData('name', e.target.value)}
                         />
-                        {errors.name && <p className="text-red-500 text-[10px] mt-2 font-bold uppercase tracking-widest ml-1">{errors.name}</p>}
+                        {errors.name && <p className="text-red-500 text-xs mt-2 font-bold uppercase tracking-widest ml-1">{errors.name}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Address</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Address</label>
                         <textarea
                             rows="2"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all resize-none"
@@ -129,7 +131,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">WiFi SSID</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">WiFi SSID</label>
                             <input
                                 type="text"
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -139,7 +141,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                             />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Occupancy Limit</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Occupancy Limit</label>
                             <div className="relative">
                                 <input
                                     type="number"
@@ -152,7 +154,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                         </div>
                     </div>
                     <div className="p-6 bg-black/[0.02] rounded-[2rem] border border-black/5">
-                        <p className="text-[10px] font-bold text-black/50 leading-relaxed">
+                        <p className="text-xs font-bold text-black/50 leading-relaxed">
                             <Info size={16} className="mr-2 inline"></Info>
                             This is the number of recent WiFi guests that triggers an occupancy alert for the host. Set the same SSID on your UniFi controller, then register the access point under Access Points.
                         </p>
@@ -166,7 +168,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 <div className="space-y-6">
                     <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={editingProperty?.id} />
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Splash Background</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Splash Background</label>
                         <div className="tena-filepond-wrapper">
                             <FilePond
                                 files={data.splash_image ? [data.splash_image] : []}
@@ -185,17 +187,17 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 className="rounded-[2rem] overflow-hidden"
                             />
                         </div>
-                        <p className="text-[10px] text-black/30 mt-3 font-bold uppercase tracking-wider italic">
+                        <p className="text-xs text-black/30 mt-3 font-bold uppercase tracking-wider italic">
                             This image will be used as the background for your guest portal splash screen.
                         </p>
                     </div>
                     {data.splash_image_path && !data.splash_image && (
                         <div className="space-y-3">
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 ml-1">Current Image</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 ml-1">Current Image</label>
                             <div className="w-full h-32 rounded-[2rem] overflow-hidden border border-black/5 relative group">
                                 <img src={data.splash_image_path} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="Current" />
                                 <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span className="text-[10px] font-black text-white uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full backdrop-blur-sm">Active Preview</span>
+                                    <span className="text-xs font-black text-white uppercase tracking-widest bg-black/20 px-4 py-2 rounded-full backdrop-blur-sm">Active Preview</span>
                                 </div>
                             </div>
                         </div>
@@ -206,7 +208,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
     ];
 
     return (
-        <DashboardLayout title="WiFi Access">
+        <>
             <Head title="Properties" />
 
             <DashboardHero
@@ -228,11 +230,11 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                             <div className="host-properties-index-card-top">
                                 <Link
                                     href={route('host.properties.show', property.id)}
-                                    className="w-14 h-14 rounded-2xl bg-[#FFD300]/10 flex items-center justify-center text-[#FFD300] shadow-sm hover:scale-110 transition-transform active:scale-95"
+                                    className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm hover:scale-110 transition-transform active:scale-95"
                                 >
                                      <Home size={24}></Home>
                                 </Link>
-                                <span className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-sm`}>
+                                <span className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-sm`}>
                                     {property.pms_connection_status}
                                 </span>
                             </div>
@@ -269,13 +271,18 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 Splash Studio
                             </PillButton>
                             <button
-                                onClick={() => {
-                                    if (confirm(`Delete "${property.name}"? This cannot be undone.`)) {
-                                        router.delete(route('host.properties.destroy', property.id), {
-                                            onSuccess: () => notify.success('Property deleted'),
-                                            onError: () => notify.error('Failed to delete property'),
-                                        });
-                                    }
+                                onClick={async () => {
+                                    const ok = await confirm({
+                                        title: 'Delete Property',
+                                        message: `Delete "${property.name}"? This cannot be undone.`,
+                                        confirmLabel: 'Delete',
+                                        variant: 'danger',
+                                    });
+                                    if (!ok) return;
+                                    router.delete(route('host.properties.destroy', property.id), {
+                                        onSuccess: () => notify.success('Property deleted'),
+                                        onError: () => notify.error('Failed to delete property'),
+                                    });
                                 }}
                                 className="w-14 h-14 bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl flex items-center justify-center text-black/20 hover:text-red-500 hover:bg-white transition-all active:scale-90"
                             >
@@ -310,6 +317,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 confirmLabel={editingProperty ? 'Update Property' : 'Create Property'}
                 processing={processing}
             />
-        </DashboardLayout>
+            {ConfirmDialogEl}
+        </>
     );
 }

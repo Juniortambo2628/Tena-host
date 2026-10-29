@@ -1,0 +1,13 @@
+@reference "../../../css/theme.css";
+
+.view-switcher {
+    @apply flex items-center gap-2 mb-6 p-1 bg-black/5 rounded-2xl w-fit max-w-full overflow-x-auto;
+}
+
+.view-switcher__tab {
+    @apply flex flex-none items-center gap-2 whitespace-nowrap px-4 py-2 text-xs font-semibold rounded-xl transition-all text-black/40 hover:text-black/70;
+}
+
+.view-switcher__tab--active {
+    @apply bg-white text-black shadow-sm;
+}

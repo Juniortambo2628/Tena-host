@@ -1,7 +1,7 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .welcome-page {
-    @apply min-h-screen bg-white text-[#1E1E1E] selection:bg-[#FFD300] selection:text-black;
+    @apply min-h-screen bg-white text-dark selection:bg-primary selection:text-black;
     /* TenaFi brand font (handoff brand reference) */
     font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
     overflow-x: hidden;
@@ -19,7 +19,7 @@
 
 /* "Coming soon" badge for features that are not live yet. */
 .soon-badge {
-    @apply ml-2 inline-block rounded-full bg-[#FFD300]/25 px-2 py-0.5 align-middle text-[10px] font-bold uppercase tracking-wide text-[#1E1E1E] whitespace-nowrap;
+    @apply ml-2 inline-block rounded-full bg-primary/25 px-2 py-0.5 align-middle text-xs font-bold uppercase tracking-wide text-dark whitespace-nowrap;
 }
 
 .welcome-nav {
@@ -43,11 +43,11 @@
 }
 
 .welcome-nav-link {
-    @apply text-sm font-bold tracking-wide text-black hover:text-[#FFD300] transition-colors;
+    @apply text-sm font-bold tracking-wide text-black hover:text-primary transition-colors;
 }
 
 .welcome-nav-link[aria-current='page'] {
-    @apply text-[#FFD300];
+    @apply text-primary;
 }
 
 /* Header navigation: the same links on every page. Audience links carry a
@@ -55,7 +55,7 @@
    menus expanded inline by the chevron. Desktop (md+): an inline row, menus
    open on hover, keyboard focus or the chevron (touch). */
 .welcome-nav-toggle {
-    @apply ml-1 inline-flex h-11 w-11 items-center justify-center rounded-xl text-[#1E1E1E] hover:bg-gray-100 md:hidden;
+    @apply ml-1 inline-flex h-11 w-11 items-center justify-center rounded-xl text-dark hover:bg-gray-100 md:hidden;
 }
 
 .welcome-nav-links {
@@ -80,7 +80,7 @@
 }
 
 .nav-item-toggle {
-    @apply inline-flex h-11 w-11 items-center justify-center rounded-lg text-[#1E1E1E] hover:bg-gray-100 md:h-8 md:w-6 md:hover:bg-transparent;
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-lg text-dark hover:bg-gray-100 md:h-8 md:w-6 md:hover:bg-transparent;
 }
 
 .nav-item-chevron {
@@ -122,7 +122,7 @@
 }
 
 .nav-mega-overview {
-    @apply mb-2 flex items-center gap-2 border-b border-gray-200 px-3 pb-3 pt-1 text-sm font-bold text-[#1E1E1E] hover:text-[#5B6170] md:mb-3 md:border-gray-100 md:px-0 md:pt-0;
+    @apply mb-2 flex items-center gap-2 border-b border-gray-200 px-3 pb-3 pt-1 text-sm font-bold text-dark hover:text-muted md:mb-3 md:border-gray-100 md:px-0 md:pt-0;
 }
 
 .nav-mega-grid {
@@ -130,15 +130,15 @@
 }
 
 .nav-mega-item {
-    @apply flex flex-col gap-0.5 rounded-xl p-3 transition hover:bg-[#FFD300]/15 focus:bg-[#FFD300]/15 focus:outline-none;
+    @apply flex flex-col gap-0.5 rounded-xl p-3 transition hover:bg-primary/15 focus:bg-primary/15 focus:outline-none;
 }
 
 .nav-mega-label {
-    @apply text-sm font-semibold text-[#1E1E1E];
+    @apply text-sm font-semibold text-dark;
 }
 
 .nav-mega-desc {
-    @apply text-xs leading-snug text-[#5B6170];
+    @apply text-xs leading-snug text-muted;
 }
 
 .welcome-nav-actions {
@@ -146,11 +146,11 @@
 }
 
 .welcome-join-btn {
-    @apply text-sm font-bold tracking-wide px-6 py-2.5 bg-[#FFD300] text-black rounded-xl shadow-lg shadow-[#FFD300]/20 hover:scale-[1.05] active:scale-[0.98] transition-all;
+    @apply text-sm font-bold tracking-wide px-6 py-2.5 bg-primary text-black rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.05] active:scale-[0.98] transition-all;
 }
 
 .welcome-footer {
-    @apply bg-[#1b1b1b] text-white py-16;
+    @apply bg-dark text-white py-16;
 }
 
 .welcome-footer-container {
@@ -178,7 +178,7 @@
 }
 
 .welcome-footer-heading-gold {
-    @apply font-bold mb-6 text-[#FFD300] text-lg;
+    @apply font-bold mb-6 text-primary text-lg;
 }
 
 .welcome-footer-heading {
@@ -194,7 +194,7 @@
 }
 
 .welcome-footer-link i {
-    @apply text-xs mr-2 text-[#FFD300];
+    @apply text-xs mr-2 text-primary;
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }
@@ -208,7 +208,7 @@
 }
 
 .welcome-footer-contact i {
-    @apply text-[#FFD300];
+    @apply text-primary;
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
 }

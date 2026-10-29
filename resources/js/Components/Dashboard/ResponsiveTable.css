@@ -1,7 +1,7 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .responsive-table__desktop {
-    @apply hidden lg:block;
+    @apply hidden lg:block overflow-x-auto;
 }
 
 .responsive-table__mobile {
@@ -17,7 +17,7 @@
 }
 
 .responsive-table__head-cell {
-    @apply px-6 py-4 text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply px-6 py-4 text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .responsive-table__body {
@@ -29,7 +29,7 @@
 }
 
 .responsive-table__row--selected {
-    @apply bg-[#FFD300]/5 hover:bg-[#FFD300]/10;
+    @apply bg-primary/5 hover:bg-primary/10;
 }
 
 .responsive-table__cell {
@@ -42,7 +42,7 @@
 }
 
 .responsive-table__checkbox {
-    @apply w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20 focus:ring-offset-0 cursor-pointer;
+    @apply w-4 h-4 rounded border-black/20 text-primary focus:ring-primary/20 focus:ring-offset-0 cursor-pointer;
 }
 
 .responsive-table__search-bar {
@@ -82,7 +82,7 @@
 }
 
 .responsive-table__empty {
-    @apply px-8 py-20 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
+    @apply p-0;
 }
 
 .responsive-table__card {
@@ -90,7 +90,7 @@
 }
 
 .responsive-table__card--selected {
-    @apply border-[#FFD300]/30 bg-[#FFD300]/5;
+    @apply border-primary/30 bg-primary/5;
 }
 
 .responsive-table__card-header {
@@ -102,7 +102,7 @@
 }
 
 .responsive-table__card-id {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .responsive-table__card-name {
@@ -150,15 +150,11 @@
 }
 
 .responsive-table__card-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .responsive-table__card-value {
     @apply text-sm font-semibold;
-}
-
-.responsive-table__empty-mobile {
-    @apply py-12 text-center text-black/30 font-bold uppercase tracking-widest text-[10px];
 }
 
 .responsive-table__detail {
@@ -170,7 +166,7 @@
 }
 
 .responsive-table__detail-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40;
 }
 
 .responsive-table__detail-value {

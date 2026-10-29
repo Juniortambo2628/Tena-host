@@ -9,7 +9,7 @@ export default function Hero({ section }) {
     if (!section) return <SkeletonHero />;
 
     const badge = getText(section, 'badge', "Africa's guest relationship platform");
-    const title = getContent(section, 'title', 'Turn your existing WiFi into <span class="text-[#FFD300]">growth</span>.');
+    const title = getContent(section, 'title', 'Turn your existing WiFi into <span class="text-primary">growth</span>.');
     const subtitle = getContent(section, 'subtitle', '');
     const ctaPrimary = getText(section, 'cta_primary', 'Join');
     // Empty URL = this page's "Join" target (its sign-up form).
@@ -65,7 +65,7 @@ export default function Hero({ section }) {
                                 <div className="hero-feature-image-wrap">
                                     <img src={feature.image} alt={feature.title} className="hero-feature-image" />
                                     <div className="hero-feature-image-overlay">
-                                        <i className={`${feature.icon} text-[#FFD300] text-2xl`}></i>
+                                        <i className={`${feature.icon} text-primary text-2xl`}></i>
                                     </div>
                                 </div>
                                 <div className="hero-feature-content">

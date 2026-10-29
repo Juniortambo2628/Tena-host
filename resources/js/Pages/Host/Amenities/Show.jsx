@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -18,7 +17,7 @@ export default function AmenityShow({ amenity }) {
     };
 
     return (
-        <DashboardLayout title="Amenity Details">
+        <>
             <Head title={amenity.name} />
 
             <DashboardHero
@@ -77,7 +76,7 @@ export default function AmenityShow({ amenity }) {
                             </div>
                             <div>
                                 <h4 className="text-sm font-black"><T>Property</T></h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Offered at</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-black/40">Offered at</p>
                             </div>
                         </div>
                         <p className="font-black text-lg">{amenity.property?.name || 'Unknown'}</p>
@@ -93,6 +92,6 @@ export default function AmenityShow({ amenity }) {
                     </Link>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .tabbed-modal__container {
     @apply bg-white/95 backdrop-blur-2xl overflow-hidden rounded-[3rem] flex flex-col md:flex-row min-h-[600px] border border-black/5 shadow-2xl shadow-black/10;
@@ -17,7 +17,7 @@
 }
 
 .tabbed-modal__description {
-    @apply text-black/40 text-[10px] font-semibold mt-4 leading-relaxed;
+    @apply text-black/40 text-xs font-semibold mt-4 leading-relaxed;
 }
 
 .tabbed-modal__tabs {
@@ -29,7 +29,7 @@
 }
 
 .tabbed-modal__tab-button--active {
-    @apply bg-black text-[#FFD300] shadow-xl shadow-black/10 scale-[1.02];
+    @apply bg-black text-primary shadow-xl shadow-black/10 scale-[1.02];
 }
 
 .tabbed-modal__tab-button--inactive {
@@ -37,7 +37,7 @@
 }
 
 .tabbed-modal__tab-number {
-    @apply text-[10px] font-semibold;
+    @apply text-xs font-semibold;
 }
 
 .tabbed-modal__tab-number--active {
@@ -73,7 +73,7 @@
 }
 
 .tabbed-modal__step-counter {
-    @apply text-[10px] font-semibold text-black/20;
+    @apply text-xs font-semibold text-black/20;
 }
 
 .tabbed-modal__step-title {

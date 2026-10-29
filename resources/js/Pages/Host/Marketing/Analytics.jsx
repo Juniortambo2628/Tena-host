@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
+import { Head, Link } from '@inertiajs/react';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -13,6 +12,7 @@ import {
     Tooltip,
 } from 'recharts';
 import ResponsiveContainer from '@/Components/Dashboard/MeasuredChart';
+import { BRAND_COLORS } from '@/constants';
 import {
     Mail,
     MessageSquare,
@@ -34,17 +34,17 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
     ];
 
     const actions = [
-        { label: 'Edit Campaign', variant: 'white', icon: <BarChart3 size={16} />, onClick: () => router.get(route('host.marketing.edit', campaign.id)) },
+        { label: 'Edit Campaign', variant: 'white', icon: <BarChart3 size={16} />, href: route('host.marketing.edit', campaign.id) },
     ];
 
     return (
-        <DashboardLayout title="Campaign Analytics">
+        <>
             <Head title={`Analytics: ${campaign.name}`} />
 
             <div className="mb-6">
                 <Link
                     href={route('host.marketing.index')}
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black transition-colors"
+                    className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-black/30 hover:text-black transition-colors"
                 >
                     <ChevronLeft size={14} />
                     Back to Marketing
@@ -60,13 +60,13 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <StatCard
-                    icon={<Eye size={20} className="text-[#FFD300]" />}
+                    icon={<Eye size={20} className="text-primary" />}
                     label="Total Delivered"
                     value={summary.totalDelivered}
                     sub="100% Delivery rate"
                 />
                 <StatCard
-                    icon={<Users size={20} className="text-[#FFD300]" />}
+                    icon={<Users size={20} className="text-primary" />}
                     label="Open Rate"
                     value={summary.openRate}
                     sub="+12% vs last week"
@@ -91,17 +91,17 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                     <GlassCard padding="p-8">
                         <div className="flex justify-between items-center mb-8">
                             <div>
-                                <h3 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-1">Engagement Trends</h3>
+                                <h3 className="text-xs font-black uppercase tracking-widest text-black/40 mb-1">Engagement Trends</h3>
                                 <p className="text-2xl font-black">Performance Over Time</p>
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-[#FFD300]"></div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Opened</span>
+                                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                                    <span className="text-xs font-black uppercase tracking-widest text-black/40">Opened</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full bg-black"></div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-black/40">Delivered</span>
+                                    <span className="text-xs font-black uppercase tracking-widest text-black/40">Delivered</span>
                                 </div>
                             </div>
                         </div>
@@ -116,8 +116,8 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                                             <stop offset="95%" stopColor="#000" stopOpacity={0} />
                                         </linearGradient>
                                         <linearGradient id="colorOpened" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#FFD300" stopOpacity={0.1} />
-                                            <stop offset="95%" stopColor="#FFD300" stopOpacity={0} />
+                                            <stop offset="5%" stopColor={BRAND_COLORS.primary} stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor={BRAND_COLORS.primary} stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
@@ -150,7 +150,7 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                                     <Area
                                         type="monotone"
                                         dataKey="opened"
-                                        stroke="#FFD300"
+                                        stroke={BRAND_COLORS.primary}
                                         strokeWidth={4}
                                         fillOpacity={1}
                                         fill="url(#colorOpened)"
@@ -165,7 +165,7 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                 {/* Secondary: Device/Channel Breakdown */}
                 <div className="space-y-6">
                     <GlassCard padding="p-8">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-6">Audience Interaction</h3>
+                        <h3 className="text-xs font-black uppercase tracking-widest text-black/40 mb-6">Audience Interaction</h3>
                         <div className="space-y-6">
                             <DeviceStat label="Mobile" value="84%" trend={3} />
                             <DeviceStat label="Desktop" value="12%" trend={-2} />
@@ -174,7 +174,7 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
 
                         <div className="h-px bg-black/5 w-full my-8" />
 
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-4">Top Domains</h4>
+                        <h4 className="text-xs font-black uppercase tracking-widest text-black/40 mb-4">Top Domains</h4>
                         <div className="space-y-3">
                             <DomainStat name="gmail.com" percent="62%" />
                             <DomainStat name="icloud.com" percent="18%" />
@@ -183,15 +183,15 @@ export default function MarketingAnalytics({ campaign, performance, summary }) {
                     </GlassCard>
 
                     <GlassCard padding="p-8" className="bg-black text-white">
-                        <TrendingUp size={24} className="text-[#FFD300] mb-6" />
+                        <TrendingUp size={24} className="text-primary mb-6" />
                         <h3 className="text-xl font-black mb-2 tracking-tight">AI Insights</h3>
                         <p className="text-sm text-white/50 font-medium leading-relaxed">
-                            Your midweek open rates are <span className="text-[#FFD300]">15% higher</span> when sent at 10:00 AM. We recommend scheduling future midweek emails for this time.
+                            Your midweek open rates are <span className="text-primary">15% higher</span> when sent at 10:00 AM. We recommend scheduling future midweek emails for this time.
                         </p>
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }
 
@@ -202,10 +202,10 @@ function StatCard({ icon, label, value, sub }) {
                 <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center transition-colors group-hover:bg-black group-hover:text-white">
                     {icon}
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-black/40">{label}</span>
+                <span className="text-xs font-black uppercase tracking-widest text-black/40">{label}</span>
             </div>
             <p className="text-3xl font-black tracking-tight mb-1">{value}</p>
-            <p className="text-[10px] font-bold text-black/30 group-hover:text-black/60 transition-colors uppercase tracking-widest">{sub}</p>
+            <p className="text-xs font-bold text-black/30 group-hover:text-black/60 transition-colors uppercase tracking-widest">{sub}</p>
         </GlassCard>
     );
 }
@@ -217,7 +217,7 @@ function DeviceStat({ label, value, trend }) {
             <div className="flex items-center gap-3">
                 <span className="text-sm font-black text-black">{value}</span>
                 {trend !== 0 && (
-                    <span className={`text-[10px] font-black ${trend > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    <span className={`text-xs font-black ${trend > 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {trend > 0 ? '↑' : '↓'}{Math.abs(trend)}%
                     </span>
                 )}

@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, Link, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -102,7 +101,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
             content: (
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
                         <select
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.property_id}
@@ -112,20 +111,20 @@ export default function AmenityIndex({ amenities, filters, properties }) {
                                 <option key={p.id} value={p.id}>{p.name}</option>
                             ))}
                         </select>
-                        {errors.property_id && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.property_id}</p>}
+                        {errors.property_id && <p className="text-red-500 text-xs mt-2 font-bold">{errors.property_id}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Name</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Name</label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.name}
                             onChange={e => setData('name', e.target.value)}
                         />
-                        {errors.name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.name}</p>}
+                        {errors.name && <p className="text-red-500 text-xs mt-2 font-bold">{errors.name}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Description</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Description</label>
                         <textarea
                             rows="2"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all resize-none"
@@ -135,7 +134,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
                     </div>
                     <div className="host-amenities-modal-grid">
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Price ($)</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Price ($)</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -144,7 +143,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
                                 value={data.price}
                                 onChange={e => setData('price', e.target.value)}
                             />
-                            {errors.price && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.price}</p>}
+                            {errors.price && <p className="text-red-500 text-xs mt-2 font-bold">{errors.price}</p>}
                         </div>
                         <div className="flex items-end">
                             <label className="flex items-center gap-3 cursor-pointer">
@@ -152,21 +151,21 @@ export default function AmenityIndex({ amenities, filters, properties }) {
                                     type="checkbox"
                                     checked={data.is_active}
                                     onChange={e => setData('is_active', e.target.checked)}
-                                    className="w-5 h-5 rounded-lg border-black/20 text-[#FFD300] focus:ring-[#FFD300]"
+                                    className="w-5 h-5 rounded-lg border-black/20 text-primary focus:ring-primary"
                                 />
                                 <span className="text-sm font-bold">Active</span>
                             </label>
                         </div>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Image</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Image</label>
                         <input
                             type="file"
                             accept="image/*"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold text-sm file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-black file:text-white hover:file:bg-black/80"
                             onChange={e => setData('image', e.target.files[0])}
                         />
-                        {errors.image && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.image}</p>}
+                        {errors.image && <p className="text-red-500 text-xs mt-2 font-bold">{errors.image}</p>}
                     </div>
                 </div>
             )
@@ -174,7 +173,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
     ];
 
     return (
-        <DashboardLayout title="Amenities">
+        <>
             <Head title="Amenities" />
 
             <DashboardHero
@@ -190,6 +189,7 @@ export default function AmenityIndex({ amenities, filters, properties }) {
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No amenities yet"
                     data={amenities.data || []}
                     columns={columns}
                     searchPlaceholder="Search amenities..."
@@ -208,6 +208,6 @@ export default function AmenityIndex({ amenities, filters, properties }) {
                 confirmLabel="Add Amenity"
                 processing={processing}
             />
-        </DashboardLayout>
+        </>
     );
 }

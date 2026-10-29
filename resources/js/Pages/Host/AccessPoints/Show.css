@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-accesspoints-show {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
@@ -25,7 +25,7 @@
 }
 
 .host-accesspoints-show-mac {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 mt-1;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40 mt-1;
 }
 
 .host-accesspoints-show-stats {
@@ -37,7 +37,7 @@
 }
 
 .host-accesspoints-stat-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/40 block mb-2;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40 block mb-2;
 }
 
 .host-accesspoints-stat-online {
@@ -53,5 +53,5 @@
 }
 
 .host-accesspoints-back-link {
-    @apply flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors;
+    @apply flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-black/40 hover:text-black transition-colors;
 }

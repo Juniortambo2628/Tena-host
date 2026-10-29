@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
-import DashboardLayout from '@/Layouts/DashboardLayout';
+import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { CreditCard, Smartphone, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import './Billing.css';
 
@@ -41,14 +41,13 @@ export default function Billing({ paystackPublicKey, billingLive, subscription, 
         .map(([units, percent]) => `${percent}% off from ${units} units`).join(', ');
 
     return (
-        <DashboardLayout title="Billing & Subscription">
+        <>
             <Head title="Billing" />
 
+            <DashboardHero title="Billing & Subscription" breadcrumbs={[{ label: 'Billing' }]} />
+
             <div className="host-billing-container">
-                <div>
-                    <h1 className="host-billing-heading">Billing &amp; Subscription</h1>
-                    <p className="host-billing-subheading">One price per unit. Everything included. Pay by M-Pesa or card.</p>
-                </div>
+                <p className="host-billing-subheading">One price per unit. Everything included. Pay by M-Pesa or card.</p>
 
                 <div className="host-billing-plan-card">
                     <div className="host-billing-plan-header">
@@ -124,7 +123,7 @@ export default function Billing({ paystackPublicKey, billingLive, subscription, 
                     <Transactions transactions={mpesaTransactions} />
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }
 

@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -34,7 +33,7 @@ export default function Index({ hosts, stats }) {
                     </div>
                     <div className="flex flex-col">
                         <span className="font-black text-sm">{info.getValue()}</span>
-                        <span className="text-[10px] text-black/40 font-bold leading-none mt-1">{info.row.original.email || info.row.original.phone_number}</span>
+                        <span className="text-xs text-black/40 font-bold leading-none mt-1">{info.row.original.email || info.row.original.phone_number}</span>
                     </div>
                 </div>
             )
@@ -146,7 +145,7 @@ export default function Index({ hosts, stats }) {
     ];
 
     return (
-        <DashboardLayout title="Hosts Management">
+        <>
             <Head title="Hosts" />
             <DashboardHero
                 title="Hosts Management"
@@ -158,11 +157,13 @@ export default function Index({ hosts, stats }) {
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No hosts found"
                     data={data}
                     columns={columns}
                     searchPlaceholder="Search hosts..."
                     serverPagination={hosts}
                     enableSelection
+                    selectedIds={selectedRows}
                     onSelectionChange={setSelectedRows}
                 />
             </GlassCard>
@@ -174,6 +175,6 @@ export default function Index({ hosts, stats }) {
                 actions={bulkActions}
             />
             {ConfirmDialogEl}
-        </DashboardLayout>
+        </>
     );
 }

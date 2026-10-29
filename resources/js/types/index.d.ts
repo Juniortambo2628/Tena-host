@@ -1,5 +1,3 @@
-import { Config } from 'ziggy-js';
-
 export interface User {
     id: number;
     name: string;
@@ -13,5 +11,4 @@ export type PageProps<
     auth: {
         user: User;
     };
-    ziggy: Config & { location: string };
 };

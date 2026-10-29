@@ -1,5 +1,4 @@
 import React from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -16,19 +15,19 @@ export default function OrderShow({ order }) {
 
     const statusBadge = (status) => {
         const classes = {
-            pending: 'bg-[#FFD300]/10 text-[#b39700]',
+            pending: 'bg-primary/10 text-[#b39700]',
             fulfilled: 'bg-green-100 text-green-700',
             cancelled: 'bg-red-100 text-red-700',
         };
         return (
-            <span className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${classes[status]}`}>
+            <span className={`px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest ${classes[status]}`}>
                 {status}
             </span>
         );
     };
 
     return (
-        <DashboardLayout title="Order Details">
+        <>
             <Head title={`Order #${order.id}`} />
 
             <DashboardHero
@@ -50,11 +49,11 @@ export default function OrderShow({ order }) {
                     <GlassCard padding="p-8">
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-2">Status</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-black/40 mb-2">Status</p>
                                 {statusBadge(order.status)}
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-2">Total</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-black/40 mb-2">Total</p>
                                 <p className="text-3xl font-black">${parseFloat(order.total).toFixed(2)}</p>
                             </div>
                         </div>
@@ -92,7 +91,7 @@ export default function OrderShow({ order }) {
                             </div>
                             <div>
                                 <h4 className="text-sm font-black"><T>Property</T></h4>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-black/40">Order placed at</p>
+                                <p className="text-xs font-black uppercase tracking-widest text-black/40">Order placed at</p>
                             </div>
                         </div>
                         <p className="font-black text-lg">{order.property?.name || 'Unknown'}</p>
@@ -114,13 +113,13 @@ export default function OrderShow({ order }) {
 
                     <Link
                         href={route('host.orders.index')}
-                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-black/40 hover:text-black transition-colors"
+                        className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-black transition-colors"
                     >
                         <ArrowLeft size={14} />
                         Back to Orders
                     </Link>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

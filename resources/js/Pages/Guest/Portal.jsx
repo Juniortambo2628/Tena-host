@@ -189,7 +189,7 @@ export default function GuestPortal({ property, amenities, guidebook_link, order
 
                 <div className="guest-portal-footer">
                     <div className="guest-portal-footer-badge">
-                        <ShieldCheck size={14} className="text-[#FFD300]" />
+                        <ShieldCheck size={14} className="text-primary" />
                         <span className="guest-portal-footer-label">Secure Connection Powered by</span>
                     </div>
                     <div className="guest-portal-footer-brand">

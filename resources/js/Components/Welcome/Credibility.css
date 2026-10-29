@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .credibility-card {
     @apply relative overflow-hidden rounded-3xl p-8 md:p-12 lg:p-16 max-w-6xl mx-auto;
@@ -11,12 +11,12 @@
 }
 
 .credibility-decoration {
-    @apply absolute top-0 right-0 w-40 h-40 bg-[#FFD300]/25 rounded-bl-full -mr-10 -mt-10;
+    @apply absolute top-0 right-0 w-40 h-40 bg-primary/25 rounded-bl-full -mr-10 -mt-10;
     pointer-events: none;
 }
 
 .credibility-decoration-bl {
-    @apply absolute bottom-0 left-0 w-32 h-32 bg-[#1b1b1b]/5 rounded-tr-full -ml-8 -mb-8;
+    @apply absolute bottom-0 left-0 w-32 h-32 bg-dark/5 rounded-tr-full -ml-8 -mb-8;
     pointer-events: none;
 }
 
@@ -39,18 +39,18 @@
 
 .credibility-partner-logo {
     @apply w-10 h-10 rounded-lg object-cover flex-shrink-0;
-    background: #FFD300;
+    background: var(--color-primary);
 }
 
 .credibility-badge {
-    @apply inline-block bg-[#1b1b1b] text-[#FFD300] font-bold text-xs px-4 py-2 rounded-full tracking-wide;
+    @apply inline-block bg-dark text-primary font-bold text-xs px-4 py-2 rounded-full tracking-wide;
     line-height: 1.4;
     max-width: 100%;
     overflow-wrap: break-word;
 }
 
 .credibility-title {
-    @apply text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-[#1b1b1b] leading-[1.1] mb-5;
+    @apply text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-dark leading-[1.1] mb-5;
     letter-spacing: -0.03em;
 }
 
@@ -72,12 +72,12 @@
 .credibility-stat {
     @apply flex flex-col min-w-0;
     padding-right: 0.5rem;
-    border-left: 3px solid #FFD300;
+    border-left: 3px solid var(--color-primary);
     padding-left: 0.9rem;
 }
 
 .credibility-stat-value {
-    @apply text-2xl md:text-[1.75rem] font-bold text-[#1b1b1b];
+    @apply text-2xl md:text-[1.75rem] font-bold text-dark;
     letter-spacing: -0.02em;
     line-height: 1.1;
 }
@@ -122,7 +122,7 @@
 }
 
 .credibility-tagline {
-    @apply text-lg md:text-xl font-bold text-[#1b1b1b] tracking-tight;
+    @apply text-lg md:text-xl font-bold text-dark tracking-tight;
     letter-spacing: -0.01em;
 }
 

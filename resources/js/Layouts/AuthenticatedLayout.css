@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../css/theme.css";
 
 .authenticated-layout {
     @apply min-h-screen bg-gray-950 text-gray-100 font-sans selection:bg-red-500;
@@ -13,7 +13,7 @@
 }
 
 .authenticated-layout .ambient-yellow {
-    @apply absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#FFD300]/5 rounded-full blur-[120px];
+    @apply absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px];
 }
 
 .authenticated-layout .main-nav {

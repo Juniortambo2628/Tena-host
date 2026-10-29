@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -7,6 +6,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Mail, Phone, Calendar, Shield, Trash2, Loader2, ChevronDown } from 'lucide-react';
 import './Show.css';
+import { useConfirm } from '@/hooks/useConfirm';
 
 const ROLES = [
     { value: 'admin', label: 'Admin' },
@@ -16,6 +16,7 @@ const ROLES = [
 ];
 
 export default function UserShow({ user }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const { delete: destroy, processing } = useForm();
     const [editingRole, setEditingRole] = useState(false);
     const [newRole, setNewRole] = useState(user.role);
@@ -58,7 +59,7 @@ export default function UserShow({ user }) {
     };
 
     return (
-        <DashboardLayout title={`${user.first_name} ${user.last_name}`}>
+        <>
             <Head title={`${user.first_name} ${user.last_name}`} />
 
             <DashboardHero
@@ -66,7 +67,7 @@ export default function UserShow({ user }) {
                 breadcrumbs={breadcrumbs}
                 rootRoute="admin.dashboard"
                 actions={[
-                    { label: 'Back', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('admin.users.index')) },
+                    { label: 'Back', icon: <ArrowLeft size={16} />, href: route('admin.users.index') },
                 ]}
             />
 
@@ -86,13 +87,13 @@ export default function UserShow({ user }) {
                                             <select
                                                 value={newRole}
                                                 onChange={(e) => setNewRole(e.target.value)}
-                                                className="text-xs font-bold border border-black/10 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#FFD300]"
+                                                className="text-xs font-bold border border-black/10 rounded-lg px-3 py-1.5 focus:outline-none focus:border-primary"
                                             >
                                                 {ROLES.map(r => (
                                                     <option key={r.value} value={r.value}>{r.label}</option>
                                                 ))}
                                             </select>
-                                            <button onClick={handleRoleChange} className="text-xs font-bold text-[#FFD300] hover:underline">Save</button>
+                                            <button onClick={handleRoleChange} className="text-xs font-bold text-primary hover:underline">Save</button>
                                             <button onClick={() => { setEditingRole(false); setNewRole(user.role); }} className="text-xs text-black/40 hover:text-black">Cancel</button>
                                         </div>
                                     ) : (
@@ -148,6 +149,7 @@ export default function UserShow({ user }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+            {ConfirmDialogEl}
+        </>
     );
 }

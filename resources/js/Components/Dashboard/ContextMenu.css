@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .context-menu {
     @apply fixed z-[300];
@@ -49,7 +49,7 @@
 }
 
 .context-menu__item-shortcut {
-    @apply text-[10px] font-bold text-black/20 tracking-wider;
+    @apply text-xs font-bold text-black/20 tracking-wider;
 }
 
 .context-menu__divider {

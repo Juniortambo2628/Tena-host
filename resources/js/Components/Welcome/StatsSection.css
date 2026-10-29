@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .stats-grid {
     @apply grid grid-cols-1 gap-6 max-w-5xl mx-auto;
@@ -13,11 +13,11 @@
 }
 
 .stats-value {
-    @apply text-4xl font-black leading-none text-[#1E1E1E];
+    @apply text-4xl font-black leading-none text-dark;
 }
 
 .stats-label {
-    @apply text-sm leading-relaxed text-[#5B6170];
+    @apply text-sm leading-relaxed text-muted;
 }
 
 .stats-figure {
@@ -30,13 +30,13 @@
 
 .stats-figure figcaption,
 .stats-caption {
-    @apply mt-3 text-center text-xs italic text-[#5B6170];
+    @apply mt-3 text-center text-xs italic text-muted;
 }
 
 .stats-note {
-    @apply mt-8 text-center font-semibold text-[#1E1E1E] max-w-3xl mx-auto;
+    @apply mt-8 text-center font-semibold text-dark max-w-3xl mx-auto;
 }
 
 .stats-sources {
-    @apply mt-6 text-center text-xs text-[#5B6170] max-w-3xl mx-auto;
+    @apply mt-6 text-center text-xs text-muted max-w-3xl mx-auto;
 }

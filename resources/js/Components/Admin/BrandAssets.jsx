@@ -3,14 +3,16 @@ import { router } from '@inertiajs/react';
 import { ImageIcon, Upload, RotateCcw } from 'lucide-react';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import { notify } from '@/Components/Toast';
+import { useConfirm } from '@/hooks/useConfirm';
 
 // Preview each logo on the surface it is made for.
 const SURFACE = {
-    logo_footer_url: 'bg-[#1b1b1b]',
+    logo_footer_url: 'bg-dark',
     favicon_url: 'bg-gray-100',
 };
 
 function LogoSlot({ logo }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const input = useRef(null);
 
     const upload = (file) => {
@@ -23,8 +25,14 @@ function LogoSlot({ logo }) {
         });
     };
 
-    const reset = () => {
-        if (!window.confirm(`Go back to the default ${logo.label.toLowerCase()}?`)) return;
+    const reset = async () => {
+        const ok = await confirm({
+            title: 'Reset Logo',
+            message: `Go back to the default ${logo.label.toLowerCase()}?`,
+            confirmLabel: 'Reset',
+            variant: 'warning',
+        });
+        if (!ok) return;
         router.delete(route('admin.branding.reset', logo.key), {
             preserveScroll: true,
             onSuccess: () => notify.success(`${logo.label} reset`),
@@ -57,6 +65,7 @@ function LogoSlot({ logo }) {
                     onChange={(e) => { upload(e.target.files?.[0]); e.target.value = ''; }}
                 />
             </div>
+            {ConfirmDialogEl}
         </div>
     );
 }

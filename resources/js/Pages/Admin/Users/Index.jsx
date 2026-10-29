@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -34,7 +33,7 @@ export default function Index({ users, stats }) {
                     </div>
                     <div className="flex flex-col">
                         <span className="font-black text-sm">{info.row.original.first_name} {info.row.original.last_name}</span>
-                        <span className="text-[10px] text-black/40 font-bold leading-none mt-1">{info.row.original.email}</span>
+                        <span className="text-xs text-black/40 font-bold leading-none mt-1">{info.row.original.email}</span>
                     </div>
                 </div>
             )
@@ -130,7 +129,7 @@ export default function Index({ users, stats }) {
     ];
 
     return (
-        <DashboardLayout title="User Management">
+        <>
             <Head title="Users" />
             <DashboardHero
                 title="User Management"
@@ -139,17 +138,19 @@ export default function Index({ users, stats }) {
                 rootRoute="admin.dashboard"
                 stats={summaryStats}
                 actions={[
-                    { label: 'Add User', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('admin.users.create')) },
+                    { label: 'Add User', variant: 'primary', icon: <Plus size={16} />, href: route('admin.users.create') },
                 ]}
             />
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
+                    emptyMessage="No users found"
                     data={data}
                     columns={columns}
                     searchPlaceholder="Search users..."
                     serverPagination={users}
                     enableSelection
+                    selectedIds={selectedRows}
                     onSelectionChange={setSelectedRows}
                 />
             </GlassCard>
@@ -161,6 +162,6 @@ export default function Index({ users, stats }) {
                 actions={bulkActions}
             />
             {ConfirmDialogEl}
-        </DashboardLayout>
+        </>
     );
 }

@@ -1,11 +1,11 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .twofa-root {
-    @apply min-h-screen bg-white flex flex-col md:flex-row selection:bg-[#FFD300] selection:text-black;
+    @apply min-h-screen bg-white flex flex-col md:flex-row selection:bg-primary selection:text-black;
 }
 
 .twofa-back-link {
-    @apply absolute md:fixed top-6 md:top-8 left-8 z-50 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
+    @apply absolute md:fixed top-6 md:top-8 left-8 z-50 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-black/30 hover:text-black transition-colors;
 }
 
 .twofa-left {
@@ -57,7 +57,7 @@
 }
 
 .twofa-label {
-    @apply text-[10px] font-semibold text-black/30 px-1;
+    @apply text-xs font-semibold text-black/30 px-1;
 }
 
 .twofa-input {
@@ -65,7 +65,7 @@
 }
 
 .twofa-error {
-    @apply text-[10px] font-semibold text-red-500 px-1 text-center;
+    @apply text-xs font-semibold text-red-500 px-1 text-center;
 }
 
 .twofa-submit {
@@ -77,11 +77,11 @@
 }
 
 .twofa-help-text {
-    @apply text-center text-[10px] font-semibold text-black/20 pt-4;
+    @apply text-center text-xs font-semibold text-black/20 pt-4;
 }
 
 .twofa-help-link {
-    @apply text-black hover:text-[#FFD300] transition-colors ml-1;
+    @apply text-black hover:text-primary transition-colors ml-1;
 }
 
 .twofa-right {

@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .policy-show {
     @apply space-y-6;
@@ -17,7 +17,7 @@
 }
 
 .policy-show__meta-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30;
 }
 
 .policy-show__meta-value {
@@ -33,7 +33,7 @@
 }
 
 .policy-show__status-badge {
-    @apply inline-block px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply inline-block px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .policy-show__status-badge--published {
@@ -45,7 +45,7 @@
 }
 
 .policy-show__section-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest text-black/30 block mb-3;
+    @apply text-xs font-semibold uppercase tracking-widest text-black/30 block mb-3;
 }
 
 .policy-show__description {
@@ -62,28 +62,4 @@
 
 .policy-show__content-body {
     @apply text-sm text-black/70 leading-relaxed;
-}
-
-.policy-show__content-body h1,
-.policy-show__content-body h2,
-.policy-show__content-body h3,
-.policy-show__content-body h4 {
-    @apply font-semibold text-black mt-6 mb-3;
-}
-
-.policy-show__content-body p {
-    @apply mb-4;
-}
-
-.policy-show__content-body ul,
-.policy-show__content-body ol {
-    @apply ml-6 mb-4;
-}
-
-.policy-show__content-body li {
-    @apply mb-2;
-}
-
-.policy-show__content-body a {
-    @apply text-[#FFD300] underline;
 }

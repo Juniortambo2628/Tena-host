@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-guests-show {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
@@ -13,7 +13,7 @@
 }
 
 .host-guests-show-label {
-    @apply block text-[10px] font-semibold text-black/20 mb-1;
+    @apply block text-xs font-semibold text-black/20 mb-1;
 }
 
 .host-guests-show-value {
@@ -21,7 +21,7 @@
 }
 
 .host-guests-show-address-note {
-    @apply text-[10px] font-bold text-black/40 mt-1 uppercase tracking-tight italic;
+    @apply text-xs font-bold text-black/40 mt-1 uppercase tracking-tight italic;
 }
 
 .host-guests-marketing-card {
@@ -29,7 +29,7 @@
 }
 
 .host-guests-marketing-title {
-    @apply text-[10px] font-semibold text-white/40;
+    @apply text-xs font-semibold text-white/40;
 }
 
 .host-guests-marketing-desc {
@@ -45,7 +45,7 @@
 }
 
 .host-guests-visit-header-cell {
-    @apply px-8 py-4 text-[10px] font-semibold text-black/30;
+    @apply px-8 py-4 text-xs font-semibold text-black/30;
 }
 
 .host-guests-visit-row {
@@ -61,7 +61,7 @@
 }
 
 .host-guests-visit-status {
-    @apply text-[10px] font-semibold px-3 py-1 bg-green-500/10 text-green-600 rounded-full;
+    @apply text-xs font-semibold px-3 py-1 bg-green-500/10 text-green-600 rounded-full;
 }
 
 .host-guests-notes-textarea {

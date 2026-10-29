@@ -1,5 +1,4 @@
 import React from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm, router } from '@inertiajs/react';
 import './Edit.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -9,6 +8,7 @@ import { ArrowLeft, Loader2, Sparkles, Star, Store } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 import { TemplateThumb } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+import { BRAND_COLORS } from '@/constants';
 
 export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -38,14 +38,14 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
     ];
 
     return (
-        <DashboardLayout title={`Edit ${property.name}`}>
+        <>
             <Head title={`Edit ${property.name}`} />
 
             <DashboardHero
                 title={`Editing: ${property.name}`}
                 breadcrumbs={breadcrumbs}
                 actions={[
-                    { label: 'Cancel', icon: <ArrowLeft size={16} />, onClick: () => router.get(route('host.properties.show', property.id)) },
+                    { label: 'Cancel', icon: <ArrowLeft size={16} />, href: route('host.properties.show', property.id) },
                 ]}
             />
 
@@ -95,7 +95,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                         </div>
 
                         <div className="host-properties-edit-splash">
-                            <TemplateThumb template={normalizeTemplate(property.branding_json?.template)} accent={property.branding_json?.accent || '#FFD300'} />
+                            <TemplateThumb template={normalizeTemplate(property.branding_json?.template)} accent={property.branding_json?.accent || BRAND_COLORS.primary} />
                             <div>
                                 <p className="host-properties-edit-section-title"><Sparkles size={14} /> Guest splash page</p>
                                 <p className="host-properties-edit-hint">
@@ -218,6 +218,6 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                     </form>
                 </GlassCard>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

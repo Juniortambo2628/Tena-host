@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .host-properties-show {
     @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
@@ -29,7 +29,7 @@
 }
 
 .host-properties-show-detail-label {
-    @apply text-[10px] font-semibold text-black/40;
+    @apply text-xs font-semibold text-black/40;
 }
 
 .host-properties-show-detail-value {

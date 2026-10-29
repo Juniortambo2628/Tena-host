@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .media-showcase {
     @apply w-full mx-auto;
@@ -17,7 +17,7 @@
 }
 
 .media-showcase__overlay {
-    @apply absolute inset-0 bg-gradient-to-t from-[#FFD300]/30 via-[#FFD300]/10 to-transparent;
+    @apply absolute inset-0 bg-gradient-to-t from-primary/30 via-primary/10 to-transparent;
 }
 
 .media-showcase__brand {
@@ -29,7 +29,7 @@
 }
 
 .media-showcase__tagline {
-    @apply text-[#1b1b1b] text-lg md:text-2xl font-bold tracking-tight;
+    @apply text-dark text-lg md:text-2xl font-bold tracking-tight;
     font-family: system-ui, -apple-system, sans-serif;
     letter-spacing: -0.5px;
 }

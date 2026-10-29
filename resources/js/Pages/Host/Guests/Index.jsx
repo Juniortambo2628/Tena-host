@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, Link, useForm, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -9,8 +8,8 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
 import BulkActions from '@/Components/Dashboard/BulkActions';
-import ServerPagination from '@/Components/Dashboard/ServerPagination';
-import { Plus, Edit2, Trash2, Loader2, Search } from 'lucide-react';
+import DataTable from '@/Components/Dashboard/DataTable';
+import { Plus, Edit2, Trash2, Users } from 'lucide-react';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
 
 // Inline: the legacy Bootstrap sheet's label rule outranks Tailwind's layered `flex`.
@@ -91,6 +90,69 @@ export default function GuestIndex({ guests, filters, properties }) {
         }
     };
 
+    const columns = [
+        {
+            header: t('Guest'),
+            accessorKey: 'first_name',
+            cell: ({ row: { original: guest } }) => (
+                <div className="flex items-center gap-4">
+                    <div className="host-guests-avatar">
+                        {guest.first_name?.charAt(0) || 'G'}
+                    </div>
+                    <div className="flex flex-col">
+                        <Link href={route('host.guests.show', guest.id)} className="host-guests-name-link">
+                            {guest.first_name} {guest.last_name}
+                        </Link>
+                        <span className="host-guests-id-badge">ID: {guest.id}</span>
+                    </div>
+                </div>
+            ),
+        },
+        {
+            header: 'Contact',
+            accessorKey: 'email',
+            cell: ({ row: { original: guest } }) => (
+                <div className="flex flex-col gap-1">
+                    <span className="host-guests-email">{guest.email || 'No email'}</span>
+                    <span className="host-guests-phone">{guest.phone || 'No phone'}</span>
+                </div>
+            ),
+        },
+        {
+            header: t('Property'),
+            id: 'property',
+            accessorFn: (guest) => guest.property?.name,
+            cell: ({ getValue }) => <span className="host-guests-property">{getValue() || 'Unknown'}</span>,
+        },
+        {
+            header: 'Activity',
+            accessorKey: 'total_visits',
+            cell: ({ row: { original: guest } }) => (
+                <div className="flex flex-col">
+                    <span className="host-guests-visits">{guest.total_visits} visits</span>
+                    <span className="host-guests-last-date">
+                        {guest.last_connected ? new Date(guest.last_connected).toLocaleDateString() : 'Never'}
+                    </span>
+                </div>
+            ),
+        },
+        {
+            header: 'Actions',
+            id: 'actions',
+            enableSorting: false,
+            cell: ({ row: { original: guest } }) => (
+                <div className="host-guests-actions">
+                    <button onClick={() => openEditModal(guest)} className="host-guests-edit-btn" title="Edit" aria-label="Edit guest">
+                        <Edit2 size={14} />
+                    </button>
+                    <button onClick={() => handleDelete(guest)} className="host-guests-delete-btn" title="Delete" aria-label="Delete guest">
+                        <Trash2 size={14} />
+                    </button>
+                </div>
+            ),
+        },
+    ];
+
     const breadcrumbs = [{ label: 'Guests' }];
     const actions = [
         { label: 'Add Guest', variant: 'primary', icon: <Plus size={16} />, onClick: openCreateModal },
@@ -103,38 +165,38 @@ export default function GuestIndex({ guests, filters, properties }) {
                 <div className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">First Name</label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">First Name</label>
                             <input
                                 type="text"
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.first_name}
                                 onChange={e => setData('first_name', e.target.value)}
                             />
-                            {errors.first_name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.first_name}</p>}
+                            {errors.first_name && <p className="text-red-500 text-xs mt-2 font-bold">{errors.first_name}</p>}
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Last Name <span className="normal-case tracking-normal font-bold text-black/30">(optional)</span></label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Last Name <span className="normal-case tracking-normal font-bold text-black/30">(optional)</span></label>
                             <input
                                 type="text"
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.last_name}
                                 onChange={e => setData('last_name', e.target.value)}
                             />
-                            {errors.last_name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.last_name}</p>}
+                            {errors.last_name && <p className="text-red-500 text-xs mt-2 font-bold">{errors.last_name}</p>}
                         </div>
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Email</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Email</label>
                         <input
                             type="email"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.email}
                             onChange={e => setData('email', e.target.value)}
                         />
-                        {errors.email && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.email}</p>}
+                        {errors.email && <p className="text-red-500 text-xs mt-2 font-bold">{errors.email}</p>}
                     </div>
                     <div>
-                        <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Phone</label>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Phone</label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -143,12 +205,12 @@ export default function GuestIndex({ guests, filters, properties }) {
                             placeholder="0712 345 678"
                             inputMode="tel"
                         />
-                        {errors.phone && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.phone}</p>}
-                        <p className="text-[10px] text-black/40 mt-2 ml-1 font-bold">A phone number or an email is enough. Kenyan numbers can start with 0.</p>
+                        {errors.phone && <p className="text-red-500 text-xs mt-2 font-bold">{errors.phone}</p>}
+                        <p className="text-xs text-black/40 mt-2 ml-1 font-bold">A phone number or an email is enough. Kenyan numbers can start with 0.</p>
                     </div>
                     {!editingGuest && (
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
+                            <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property</T></label>
                             <select
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                                 value={data.property_id}
@@ -159,7 +221,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                                     <option key={p.id} value={p.id}>{p.name}</option>
                                 ))}
                             </select>
-                            {errors.property_id && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.property_id}</p>}
+                            {errors.property_id && <p className="text-red-500 text-xs mt-2 font-bold">{errors.property_id}</p>}
                         </div>
                     )}
                     {!editingGuest && (
@@ -168,7 +230,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                                 <input type="checkbox" className="w-4 h-4 accent-black" style={{ marginTop: 2, flex: "none" }} checked={data.contact_consent} onChange={e => setData('contact_consent', e.target.checked)} />
                                 <span>The guest agreed to be contacted about their stay (e.g. a thank-you and a review request).</span>
                             </label>
-                            {errors.contact_consent && <p className="text-red-500 text-[10px] font-bold">{errors.contact_consent}</p>}
+                            {errors.contact_consent && <p className="text-red-500 text-xs font-bold">{errors.contact_consent}</p>}
                             <label className="text-xs font-bold leading-relaxed cursor-pointer" style={consentRow}>
                                 <input type="checkbox" className="w-4 h-4 accent-black" style={{ marginTop: 2, flex: "none" }} checked={data.marketing_opt_in} onChange={e => setData('marketing_opt_in', e.target.checked)} />
                                 <span>They also want offers and news. Only these guests receive campaigns.</span>
@@ -181,7 +243,7 @@ export default function GuestIndex({ guests, filters, properties }) {
     ];
 
     return (
-        <DashboardLayout title="Guests">
+        <>
             <Head title="Guest List" />
 
             <DashboardHero
@@ -194,127 +256,20 @@ export default function GuestIndex({ guests, filters, properties }) {
             />
 
             <GlassCard padding="p-0 overflow-hidden">
-                {/* Search Bar */}
-                <div className="px-6 py-4 border-b border-black/5">
-                    <div className="flex items-center gap-2 bg-black/5 px-4 py-2.5 rounded-xl w-72">
-                        <Search size={16} className="text-black/30" />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            placeholder={t('Search guests...')}
-                            className="bg-transparent border-none p-0 text-sm font-bold placeholder:text-black/30 focus:ring-0 w-full"
-                        />
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="host-guests-table-header">
-                                <th className="host-guests-table-header-cell w-10">
-                                    <input
-                                        type="checkbox"
-                                        checked={guests.data.length > 0 && selectedIds.length === guests.data.length}
-                                        onChange={() => {
-                                            if (selectedIds.length === guests.data.length) {
-                                                setSelectedIds([]);
-                                            } else {
-                                                setSelectedIds(guests.data.map(g => g.id));
-                                            }
-                                        }}
-                                        className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
-                                    />
-                                </th>
-                                <th className="host-guests-table-header-cell"><T>Guest</T></th>
-                                <th className="host-guests-table-header-cell">Contact</th>
-                                <th className="host-guests-table-header-cell"><T>Property</T></th>
-                                <th className="host-guests-table-header-cell">Activity</th>
-                                <th className="host-guests-table-header-cell">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-black/5">
-                            {guests.data.length > 0 ? (
-                                guests.data.map((guest) => (
-                                    <tr key={guest.id} className={`host-guests-table-row ${selectedIds.includes(guest.id) ? 'bg-[#FFD300]/5' : ''}`}>
-                                        <td className="host-guests-table-cell w-10">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedIds.includes(guest.id)}
-                                                onChange={() => {
-                                                    if (selectedIds.includes(guest.id)) {
-                                                        setSelectedIds(selectedIds.filter(id => id !== guest.id));
-                                                    } else {
-                                                        setSelectedIds([...selectedIds, guest.id]);
-                                                    }
-                                                }}
-                                                className="w-4 h-4 rounded border-black/20 text-[#FFD300] focus:ring-[#FFD300]/20"
-                                            />
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="flex items-center gap-4">
-                                                <div className="host-guests-avatar">
-                                                    {guest.first_name?.charAt(0) || 'G'}
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <Link href={route('host.guests.show', guest.id)} className="host-guests-name-link">
-                                                        {guest.first_name} {guest.last_name}
-                                                    </Link>
-                                                    <span className="host-guests-id-badge">ID: {guest.id}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="flex flex-col gap-1">
-                                                <span className="host-guests-email">{guest.email || 'No email'}</span>
-                                                <span className="host-guests-phone">{guest.phone || 'No phone'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <span className="host-guests-property">
-                                                {guest.property?.name || 'Unknown'}
-                                            </span>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="flex flex-col">
-                                                <span className="host-guests-visits">{guest.total_visits} visits</span>
-                                                <span className="host-guests-last-date">
-                                                    {guest.last_connected ? new Date(guest.last_connected).toLocaleDateString() : 'Never'}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className="host-guests-table-cell">
-                                            <div className="host-guests-actions">
-                                                <button
-                                                    onClick={() => openEditModal(guest)}
-                                                    className="host-guests-edit-btn"
-                                                    title="Edit"
-                                                >
-                                                    <Edit2 size={14} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(guest)}
-                                                    className="host-guests-delete-btn"
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6" className="host-guests-empty">
-                                        <T>No guests found</T>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                <ServerPagination links={guests.links} className="justify-center mt-6" />
+                <DataTable
+                    data={guests.data}
+                    columns={columns}
+                    searchPlaceholder={t('Search guests...')}
+                    searchValue={searchQuery}
+                    onSearch={handleSearch}
+                    serverPagination={guests}
+                    enableSelection
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                    emptyIcon={Users}
+                    emptyMessage={searchQuery ? 'No guests match your search' : 'No guests yet'}
+                    emptyAction={searchQuery ? null : { label: 'Add Guest', icon: <Plus size={14} />, onClick: openCreateModal }}
+                />
             </GlassCard>
 
             <BulkActions
@@ -361,6 +316,6 @@ export default function GuestIndex({ guests, filters, properties }) {
                 processing={processing}
             />
             {ConfirmDialogEl}
-        </DashboardLayout>
+        </>
     );
 }

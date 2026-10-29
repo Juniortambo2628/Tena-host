@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../css/theme.css";
 
 .contact-form-section {
     @apply max-w-3xl mx-auto mt-16;
@@ -17,11 +17,11 @@
 }
 
 .contact-form-badge {
-    @apply inline-flex items-center bg-[#1b1b1b] text-[#FFD300] font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-5;
+    @apply inline-flex items-center bg-dark text-primary font-bold text-sm px-5 py-2.5 rounded-full tracking-wide mb-5;
 }
 
 .contact-form-title {
-    @apply text-2xl md:text-3xl font-bold text-[#1b1b1b] leading-tight mb-3;
+    @apply text-2xl md:text-3xl font-bold text-dark leading-tight mb-3;
     letter-spacing: -0.02em;
 }
 
@@ -43,12 +43,12 @@
 }
 
 .contact-form-label {
-    @apply text-sm font-semibold text-[#1b1b1b] mb-2;
+    @apply text-sm font-semibold text-dark mb-2;
 }
 
 .contact-form-input,
 .contact-form-textarea {
-    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-[#1b1b1b] placeholder-gray-400;
+    @apply w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-dark placeholder-gray-400;
     transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
     font-size: 0.95rem;
     outline: none;
@@ -56,7 +56,7 @@
 
 .contact-form-input:focus,
 .contact-form-textarea:focus {
-    @apply border-[#1b1b1b] bg-white;
+    @apply border-dark bg-white;
     box-shadow: 0 0 0 3px rgba(255, 211, 0, 0.35);
 }
 
@@ -70,7 +70,7 @@
 }
 
 .contact-form-submit {
-    @apply inline-flex items-center px-8 py-3 rounded-xl bg-[#1b1b1b] text-white font-bold transition-colors;
+    @apply inline-flex items-center px-8 py-3 rounded-xl bg-dark text-white font-bold transition-colors;
 }
 
 .contact-form-submit:hover:not(:disabled) {

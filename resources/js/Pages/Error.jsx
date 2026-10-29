@@ -30,8 +30,8 @@ export default function ErrorPage({ status }) {
             <Head title={`${status} Error`} />
             <div className="max-w-lg w-full text-center">
                 <div className="mb-8">
-                    <div className="w-20 h-20 bg-[#FFD300]/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                        <span className="text-4xl font-bold text-[#FFD300]">{status}</span>
+                    <div className="w-20 h-20 bg-primary/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <span className="text-4xl font-bold text-primary">{status}</span>
                     </div>
                     <h1 className="text-3xl font-bold tracking-tighter mb-3">{title}</h1>
                     <p className="text-gray-500 text-lg leading-relaxed">{description}</p>
@@ -40,7 +40,7 @@ export default function ErrorPage({ status }) {
                 <div className="flex items-center justify-center gap-4">
                     <Link
                         href="/"
-                        className="bg-[#1b1b1b] text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition-all hover:shadow-lg"
+                        className="bg-dark text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition-all hover:shadow-lg"
                     >
                         Back to Home
                     </Link>

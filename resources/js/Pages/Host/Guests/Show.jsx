@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import DashboardLayout from '@/Layouts/DashboardLayout';
 import './Show.css';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -52,7 +51,7 @@ export default function GuestShow({ guest, activity = [] }) {
     ];
 
     return (
-        <DashboardLayout title="Guest Profile">
+        <>
             <Head title={`Guest: ${name}`} />
 
             <DashboardHero
@@ -65,7 +64,7 @@ export default function GuestShow({ guest, activity = [] }) {
             <div className="host-guests-show">
                 <div className="host-guests-show-contact">
                     <GlassCard padding="p-8">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-6">Contact Information</h3>
+                        <h3 className="text-xs font-black uppercase tracking-widest text-black/40 mb-6">Contact Information</h3>
 
                         {editing ? (
                             <form onSubmit={saveDetails} className="space-y-4">
@@ -129,7 +128,7 @@ export default function GuestShow({ guest, activity = [] }) {
                     <GlassCard padding="p-0 overflow-hidden">
                         <div className="px-8 py-6 border-b border-black/5 flex justify-between items-center">
                             <h3 className="font-black text-xs uppercase tracking-widest text-black/50">Activity</h3>
-                            <span className="text-[10px] font-black text-black/30 uppercase tracking-widest">{guest.total_visits || 0} visits</span>
+                            <span className="text-xs font-black text-black/30 uppercase tracking-widest">{guest.total_visits || 0} visits</span>
                         </div>
                         {activity.length === 0 ? (
                             <p className="px-8 py-6 text-sm text-black/50">No activity yet.</p>
@@ -149,7 +148,7 @@ export default function GuestShow({ guest, activity = [] }) {
                     </GlassCard>
 
                     <GlassCard padding="p-8">
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-black/40 mb-6">Internal Notes</h3>
+                        <h3 className="text-xs font-black uppercase tracking-widest text-black/40 mb-6">Internal Notes</h3>
                         <textarea
                             className="host-guests-notes-textarea"
                             placeholder="Add private notes about this guest..."
@@ -162,6 +161,6 @@ export default function GuestShow({ guest, activity = [] }) {
                     </GlassCard>
                 </div>
             </div>
-        </DashboardLayout>
+        </>
     );
 }

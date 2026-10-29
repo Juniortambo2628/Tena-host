@@ -1,17 +1,4 @@
-@reference "tailwindcss";
-
-/* View Switcher */
-.admin-view-switcher {
-    @apply flex items-center gap-2 mb-6 p-1 bg-black/5 rounded-2xl w-fit;
-}
-
-.admin-view-btn {
-    @apply flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl transition-all text-black/40 hover:text-black/70;
-}
-
-.admin-view-btn--active {
-    @apply bg-white text-black shadow-sm;
-}
+@reference "../../../css/theme.css";
 
 /* Dashboard Grid */
 .admin-dashboard-grid {
@@ -35,7 +22,7 @@
 }
 
 .admin-chart-header h3 {
-    @apply text-[10px] font-semibold text-black/40 mb-1;
+    @apply text-xs font-semibold text-black/40 mb-1;
 }
 
 .admin-chart-header p {
@@ -59,7 +46,7 @@
 }
 
 .admin-view-all-link {
-    @apply text-[10px] font-semibold text-black/30 hover:text-black transition-colors;
+    @apply text-xs font-semibold text-black/30 hover:text-black transition-colors;
 }
 
 .admin-table {
@@ -71,7 +58,7 @@
 }
 
 .admin-table th {
-    @apply px-8 py-4 text-[10px] font-semibold text-black/30;
+    @apply px-8 py-4 text-xs font-semibold text-black/30;
 }
 
 .admin-table tbody {
@@ -91,7 +78,7 @@
 }
 
 .admin-host-email {
-    @apply text-[10px] text-black/40 font-bold leading-none mt-1;
+    @apply text-xs text-black/40 font-bold leading-none mt-1;
 }
 
 .admin-host-properties {
@@ -103,7 +90,7 @@
 }
 
 .admin-status-badge {
-    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold;
+    @apply px-2.5 py-1 rounded-lg text-xs font-semibold;
 }
 
 .admin-status-active {
@@ -119,7 +106,7 @@
 }
 
 .admin-table-empty {
-    @apply px-6 py-16 text-center text-black/30 font-semibold text-[10px];
+    @apply px-6 py-16 text-center text-black/30 font-semibold text-xs;
 }
 
 .admin-sidebar {
@@ -147,7 +134,7 @@
 }
 
 .admin-stat-label {
-    @apply text-[10px] font-semibold text-black/40;
+    @apply text-xs font-semibold text-black/40;
 }
 
 .admin-stat-value {
@@ -179,7 +166,7 @@
 }
 
 .admin-waitlist-date {
-    @apply text-[10px] font-semibold text-black/30;
+    @apply text-xs font-semibold text-black/30;
 }
 
 .admin-waitlist-details {
@@ -187,5 +174,5 @@
 }
 
 .admin-waitlist-empty {
-    @apply p-8 text-center text-black/30 text-[10px] font-semibold;
+    @apply p-8 text-center text-black/30 text-xs font-semibold;
 }

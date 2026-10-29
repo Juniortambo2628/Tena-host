@@ -198,7 +198,7 @@ export default function PolicyIndex({ policies }) {
                 { label: 'Drafts', value: draftCount },
             ]}
             actions={[
-                { label: 'New Policy', onClick: () => router.visit(route('admin.policies.create')), variant: 'black', icon: <Plus size={16} /> },
+                { label: 'New Policy', href: route('admin.policies.create'), variant: 'black', icon: <Plus size={16} /> },
             ]}
         >
             <Head title="Policies & Terms" />

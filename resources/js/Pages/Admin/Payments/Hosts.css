@@ -1,4 +1,4 @@
-@reference "tailwindcss";
+@reference "../../../../css/theme.css";
 
 .payment-hosts {
     @apply space-y-6;
@@ -21,7 +21,7 @@
 }
 
 .payment-hosts__sub-badge {
-    @apply px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-widest;
+    @apply px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-widest;
 }
 
 .payment-hosts__sub-badge--active {
