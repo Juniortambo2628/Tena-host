@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -9,10 +9,9 @@ import { ArrowLeft, User, Building2, Package, Clock } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 
 export default function OrderShow({ order }) {
-    const { patch } = useForm();
 
     const updateStatus = (status) => {
-        patch(route('host.orders.update', order.id), { data: { status } });
+        router.patch(route('host.orders.update', order.id), { status }, { preserveScroll: true });
     };
 
     const statusBadge = (status) => {

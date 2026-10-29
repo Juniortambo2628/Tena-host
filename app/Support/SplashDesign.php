@@ -92,15 +92,20 @@ class SplashDesign
         return $branding;
     }
 
+    /** The property's brand colour, or the default when unset or malformed. */
+    public static function accent(?Property $property): string
+    {
+        $accent = $property?->branding_json['accent'] ?? null;
+
+        return is_string($accent) && preg_match('/^#[0-9a-fA-F]{6}$/', $accent) ? $accent : self::DEFAULT_ACCENT;
+    }
+
     public static function forProperty(?Property $property, ?string $template = null): array
     {
         $settings = $property?->branding_json ?? [];
         $template ??= $settings['template'] ?? 'bento';
         $template = self::LEGACY[$template] ?? $template;
-        $accent = $settings['accent'] ?? self::DEFAULT_ACCENT;
-        if (! is_string($accent) || ! preg_match('/^#[0-9a-fA-F]{6}$/', $accent)) {
-            $accent = self::DEFAULT_ACCENT;
-        }
+        $accent = self::accent($property);
 
         $on = fn (string $section) => (bool) ($settings['sections'][$section] ?? true);
         $list = fn (string $key) => array_values(array_filter((array) ($settings[$key] ?? []), 'is_array'));

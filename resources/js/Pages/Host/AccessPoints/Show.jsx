@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -9,14 +9,12 @@ import { Wifi, WifiOff, ArrowLeft, Building2 } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 
 export default function AccessPointShow({ accessPoint }) {
-    const { patch, processing } = useForm({
-        status: accessPoint.status,
-    });
+    const [processing, setProcessing] = useState(false);
 
     const toggleStatus = () => {
-        patch(route('host.access-points.update', accessPoint.id), {
-            data: { status: accessPoint.status === 'online' ? 'offline' : 'online' },
-        });
+        router.patch(route('host.access-points.update', accessPoint.id), {
+            status: accessPoint.status === 'online' ? 'offline' : 'online',
+        }, { preserveScroll: true, onStart: () => setProcessing(true), onFinish: () => setProcessing(false) });
     };
 
     return (

@@ -13,6 +13,9 @@ import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { Plus, Edit2, Trash2, Loader2, Search } from 'lucide-react';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
 
+// Inline: the legacy Bootstrap sheet's label rule outranks Tailwind's layered `flex`.
+const consentRow = { display: 'flex', alignItems: 'flex-start', gap: 12 };
+
 export default function GuestIndex({ guests, filters, properties }) {
     const t = useTerms();
     const [showModal, setShowModal] = useState(false);
@@ -21,12 +24,14 @@ export default function GuestIndex({ guests, filters, properties }) {
     const [searchQuery, setSearchQuery] = useState(filters?.search || '');
     const { confirm, ConfirmDialogEl } = useConfirm();
 
-    const { data, setData, post, patch, processing, errors, reset } = useForm({
+    const { data, setData, post, put, processing, errors, reset, clearErrors } = useForm({
         property_id: '',
         first_name: '',
         last_name: '',
         email: '',
         phone: '',
+        contact_consent: false,
+        marketing_opt_in: false,
     });
 
     const handleSearch = (value) => {
@@ -37,6 +42,7 @@ export default function GuestIndex({ guests, filters, properties }) {
     const openCreateModal = () => {
         setEditingGuest(null);
         reset();
+        clearErrors();
         setShowModal(true);
     };
 
@@ -46,8 +52,10 @@ export default function GuestIndex({ guests, filters, properties }) {
             property_id: guest.property_id,
             first_name: guest.first_name,
             last_name: guest.last_name,
-            email: guest.email,
+            email: guest.email || '',
             phone: guest.phone || '',
+            contact_consent: true,
+            marketing_opt_in: !!guest.marketing_opt_in,
         });
         setShowModal(true);
     };
@@ -61,7 +69,7 @@ export default function GuestIndex({ guests, filters, properties }) {
         };
 
         if (editingGuest) {
-            patch(route('host.guests.update', editingGuest.id), options);
+            put(route('host.guests.update', editingGuest.id), options);
         } else {
             post(route('host.guests.store'), options);
         }
@@ -105,7 +113,7 @@ export default function GuestIndex({ guests, filters, properties }) {
                             {errors.first_name && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.first_name}</p>}
                         </div>
                         <div>
-                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Last Name</label>
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Last Name <span className="normal-case tracking-normal font-bold text-black/30">(optional)</span></label>
                             <input
                                 type="text"
                                 className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
@@ -132,8 +140,11 @@ export default function GuestIndex({ guests, filters, properties }) {
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
                             value={data.phone}
                             onChange={e => setData('phone', e.target.value)}
-                            placeholder="+254..."
+                            placeholder="0712 345 678"
+                            inputMode="tel"
                         />
+                        {errors.phone && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.phone}</p>}
+                        <p className="text-[10px] text-black/40 mt-2 ml-1 font-bold">A phone number or an email is enough. Kenyan numbers can start with 0.</p>
                     </div>
                     {!editingGuest && (
                         <div>
@@ -149,6 +160,19 @@ export default function GuestIndex({ guests, filters, properties }) {
                                 ))}
                             </select>
                             {errors.property_id && <p className="text-red-500 text-[10px] mt-2 font-bold">{errors.property_id}</p>}
+                        </div>
+                    )}
+                    {!editingGuest && (
+                        <div className="space-y-3 rounded-2xl bg-black/[0.03] p-4">
+                            <label className="text-xs font-bold leading-relaxed cursor-pointer" style={consentRow}>
+                                <input type="checkbox" className="w-4 h-4 accent-black" style={{ marginTop: 2, flex: "none" }} checked={data.contact_consent} onChange={e => setData('contact_consent', e.target.checked)} />
+                                <span>The guest agreed to be contacted about their stay (e.g. a thank-you and a review request).</span>
+                            </label>
+                            {errors.contact_consent && <p className="text-red-500 text-[10px] font-bold">{errors.contact_consent}</p>}
+                            <label className="text-xs font-bold leading-relaxed cursor-pointer" style={consentRow}>
+                                <input type="checkbox" className="w-4 h-4 accent-black" style={{ marginTop: 2, flex: "none" }} checked={data.marketing_opt_in} onChange={e => setData('marketing_opt_in', e.target.checked)} />
+                                <span>They also want offers and news. Only these guests receive campaigns.</span>
+                            </label>
                         </div>
                     )}
                 </div>

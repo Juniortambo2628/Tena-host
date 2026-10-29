@@ -8,6 +8,7 @@ use App\Services\ExtrasPaymentService;
 use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class OrderController extends Controller
@@ -58,9 +59,10 @@ class OrderController extends Controller
         }
 
         $validated = $request->validate([
-            'guest_id' => 'required|exists:guests,id',
-            'property_id' => 'required|exists:properties,id',
-            'amenity_id' => 'required|exists:amenities,id',
+            'property_id' => ['required', 'integer', Rule::in($user->propertyIds())],
+            // The guest and the extra must belong to that same property.
+            'guest_id' => ['required', 'integer', Rule::exists('guests', 'id')->where('property_id', $request->integer('property_id'))],
+            'amenity_id' => ['required', 'integer', Rule::exists('amenities', 'id')->where('property_id', $request->integer('property_id'))],
             'status' => 'nullable|in:pending,fulfilled,cancelled',
             'total' => 'required|numeric|min:0',
         ]);

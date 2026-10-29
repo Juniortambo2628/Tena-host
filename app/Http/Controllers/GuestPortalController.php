@@ -11,29 +11,34 @@ use Inertia\Inertia;
 class GuestPortalController extends Controller
 {
     /**
+     * The property a signed-in user may open in the guest portal: guests only
+     * where they have stayed, hosts and staff only their own properties (a
+     * preview), admins any.
+     *
+     * @param  list<string>  $with
+     */
+    public static function accessibleProperty(Request $request, array $with = []): Property
+    {
+        $user = $request->user();
+        $allowed = array_values(array_unique(array_map('intval', match (true) {
+            $user->isGuest() => $user->guestRecords()->pluck('property_id')->all(),
+            $user->isStaff() => $user->staffProperties()->pluck('properties.id')->all(),
+            default => $user->propertyIds(),
+        })));
+
+        $propertyId = (int) $request->query('p', $allowed[0] ?? 0);
+        abort_unless(in_array($propertyId, $allowed, true), $allowed ? 403 : 404, 'You do not have access to this property.');
+
+        return Property::with($with)->findOrFail($propertyId);
+    }
+
+    /**
      * Display the guest portal for an assigned property.
      */
     public function index(Request $request, ExtrasPaymentService $payments)
     {
         $user = $request->user();
-
-        if ($user && $user->isGuest()) {
-            $propertyIds = $user->guestRecords()->pluck('property_id')->unique()->values();
-            $propertyId = $request->query('p', $propertyIds->first());
-
-            if ($propertyId && ! $propertyIds->contains($propertyId)) {
-                abort(403, 'You do not have access to this property.');
-            }
-        } else {
-            // Fallback for public preview or staff/admin
-            $propertyId = $request->query('p', Property::first()?->id);
-        }
-
-        $property = Property::with(['accessPoints', 'host'])->find($propertyId);
-
-        if (! $property) {
-            abort(404);
-        }
+        $property = static::accessibleProperty($request, ['accessPoints', 'host']);
 
         return Inertia::render('Guest/Portal', [
             'property' => $property,

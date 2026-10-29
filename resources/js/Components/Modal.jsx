@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-    Dialog,
-    DialogBackdrop,
-    DialogPanel,
-    Transition,
-    TransitionChild,
-} from '@headlessui/react';
+import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
 import './Modal.css';
 
 
@@ -23,46 +17,27 @@ export default function Modal({
     };
 
     const maxWidthClass = {
-        sm: 'modal__panel--sm',
-        md: 'modal__panel--md',
-        lg: 'modal__panel--lg',
-        xl: 'modal__panel--xl',
-        '2xl': 'modal__panel--2xl',
+        sm: 'tena-modal__panel--sm',
+        md: 'tena-modal__panel--md',
+        lg: 'tena-modal__panel--lg',
+        xl: 'tena-modal__panel--xl',
+        '2xl': 'tena-modal__panel--2xl',
     }[maxWidth];
 
+    // Classes are namespaced: the legacy Bootstrap stylesheet in app.css hides
+    // any `.modal`, and Headless UI closes a dialog whose panel has no size.
+    // Its parts animate through their own `transition` prop (Headless UI v2).
     return (
-        <Transition show={show} as={React.Fragment}>
-            <Dialog
-                as="div"
-                id="modal"
-                className="modal"
-                onClose={close}
-            >
-                <DialogBackdrop
-                    transition
-                    className="modal__backdrop"
-                />
+        <Dialog open={show} onClose={close} className="tena-modal">
+            <DialogBackdrop transition className="tena-modal__backdrop" />
 
-                <div className="modal__wrapper">
-                    <div className="modal__container">
-                        <TransitionChild
-                            as={React.Fragment}
-                            enter="modal__enter"
-                            enterFrom="modal__enter-from"
-                            enterTo="modal__enter-to"
-                            leave="modal__leave"
-                            leaveFrom="modal__leave-from"
-                            leaveTo="modal__leave-to"
-                        >
-                            <DialogPanel
-                                className={`modal__panel ${maxWidthClass}`}
-                            >
-                                {children}
-                            </DialogPanel>
-                        </TransitionChild>
-                    </div>
+            <div className="tena-modal__wrapper">
+                <div className="tena-modal__container">
+                    <DialogPanel transition className={`tena-modal__panel ${maxWidthClass}`}>
+                        {children}
+                    </DialogPanel>
                 </div>
-            </Dialog>
-        </Transition>
+            </div>
+        </Dialog>
     );
 }

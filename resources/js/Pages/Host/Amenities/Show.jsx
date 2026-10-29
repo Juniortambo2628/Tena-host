@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -9,14 +9,12 @@ import { ArrowLeft, Building2, CheckCircle2, XCircle } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 
 export default function AmenityShow({ amenity }) {
-    const { patch, processing } = useForm({
-        is_active: amenity.is_active,
-    });
+    const [processing, setProcessing] = useState(false);
 
     const toggleActive = () => {
-        patch(route('host.amenities.update', amenity.id), {
-            data: { is_active: !amenity.is_active },
-        });
+        router.patch(route('host.amenities.update', amenity.id), {
+            is_active: !amenity.is_active,
+        }, { preserveScroll: true, onStart: () => setProcessing(true), onFinish: () => setProcessing(false) });
     };
 
     return (

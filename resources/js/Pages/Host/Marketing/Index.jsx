@@ -40,7 +40,7 @@ export default function MarketingIndex({ campaigns, stats, insights = [], trigge
     const breadcrumbs = [{ label: 'Marketing' }];
 
     const actions = [
-        { label: 'New Campaign', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('host.marketing.builder')) },
+        { label: 'Open Campaign Studio', variant: 'primary', icon: <Plus size={16} />, onClick: () => router.get(route('host.marketing.builder')) },
     ];
 
     const heroStats = [
