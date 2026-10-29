@@ -19,6 +19,27 @@ class CampaignLinks
     private const HREF_URL = '~(?<=href=["\'])https?://[^"\']+~i';
 
     /**
+     * A campaign email's body as HTML. The studio writes plain text: it is
+     * escaped, links become anchors and line breaks are kept. Content that is
+     * already HTML (older campaigns) passes through unchanged.
+     */
+    public static function emailHtml(string $content): string
+    {
+        // Real markup only: "<3" or "a < b" in a plain message must still be escaped.
+        if (preg_match('~</?(p|br|a|div|span|strong|b|em|i|ul|ol|li|h[1-6]|img|table)\b[^<>]*>~i', $content)) {
+            return $content;
+        }
+
+        $html = preg_replace_callback('~https?://[^\s<>"\']+~i', function ($m) {
+            $url = rtrim($m[0], '.,;:!?)');
+
+            return '<a href="'.$url.'">'.$url.'</a>'.substr($m[0], strlen($url));
+        }, e($content));
+
+        return nl2br($html, false);
+    }
+
+    /**
      * Swap every link for the recipient's tracked link.
      */
     public static function track(string $content, CampaignRecipient $recipient, bool $html = false): string

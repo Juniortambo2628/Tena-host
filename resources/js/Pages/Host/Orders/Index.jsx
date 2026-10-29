@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -8,14 +8,13 @@ import DataTable from '@/Components/Dashboard/DataTable';
 import { ArrowLeft, Building2, User, Package, Clock } from 'lucide-react';
 
 export default function OrderIndex({ orders, filters }) {
-    const { patch } = useForm();
 
     const handleStatusFilter = (status) => {
         router.get(route('host.orders.index'), { status }, { preserveState: true });
     };
 
     const updateStatus = (order, status) => {
-        patch(route('host.orders.update', order.id), { data: { status } });
+        router.patch(route('host.orders.update', order.id), { status }, { preserveScroll: true });
     };
 
     const statusBadge = (status) => {

@@ -8,6 +8,7 @@ use App\Support\Phone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class GuestController extends Controller
@@ -23,7 +24,10 @@ class GuestController extends Controller
                 $query->where(function ($q) use ($search) {
                     $q->where('first_name', 'like', "%{$search}%")
                         ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        // Phones are stored as +2547…; match "0712 345", "712345" or "+254712".
+                        ->when(strlen($digits = ltrim(preg_replace('/\D/', '', $search), '0')) >= 3,
+                            fn ($q) => $q->orWhere('phone', 'like', "%{$digits}%"));
                 });
             })
             ->latest()
@@ -37,23 +41,49 @@ class GuestController extends Controller
     }
 
     /**
-     * Store a newly created guest.
+     * Add a guest by hand (walk-in, phone booking). Only into the host's own
+     * properties; a guest already on file with the same phone or email is updated.
      */
     public function store(Request $request)
     {
+        $request->merge(['phone' => Phone::toE164($request->input('phone'))]);
         $validated = $request->validate([
-            'property_id' => 'required|exists:properties,id',
+            'property_id' => ['required', 'integer', Rule::in(Auth::user()->propertyIds())],
             'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'last_name' => 'nullable|string|max:255',
             'email' => 'nullable|required_without:phone|email|max:255',
-            'phone' => 'nullable|required_without:email|string|max:20',
+            'phone' => ['nullable', 'required_without:email', 'string', 'max:20', $this->validPhone()],
+            'contact_consent' => 'accepted',
+            'marketing_opt_in' => 'nullable|boolean',
+        ], [
+            'property_id.in' => 'Choose one of your properties.',
+            'email.required_without' => 'Add a phone number or an email address.',
+            'phone.required_without' => 'Add a phone number or an email address.',
+            'contact_consent.accepted' => 'Confirm the guest agreed to be contacted.',
         ]);
 
         $this->authorize('create', Guest::class);
 
-        $guest = Guest::create($validated);
+        $email = filled($validated['email'] ?? null) ? strtolower(trim($validated['email'])) : null;
+        $guest = Guest::where('property_id', $validated['property_id'])
+            ->where(fn ($q) => $q->when($validated['phone'], fn ($q, $phone) => $q->where('phone', $phone))
+                ->when($email, fn ($q) => $q->orWhere('email', $email)))
+            ->first() ?? new Guest(['property_id' => $validated['property_id'], 'source' => 'Manual', 'total_visits' => 0]);
+        $existed = $guest->exists;
 
-        return redirect()->back()->with('success', 'Guest added successfully.');
+        $guest->fill([
+            'first_name' => trim($validated['first_name']),
+            'last_name' => $validated['last_name'] ?? $guest->last_name,
+            'email' => $email ?? $guest->email,
+            'phone' => $validated['phone'] ?? $guest->phone,
+            // Same rule as the WiFi form: an opt-in sticks once given.
+            'marketing_opt_in' => $guest->marketing_opt_in || ! empty($validated['marketing_opt_in']),
+            'consent_text' => 'Added by the host, who confirmed the guest agreed to be contacted about their stay'
+                .(! empty($validated['marketing_opt_in']) ? ' and to receive offers.' : '.'),
+            'consented_at' => now(),
+        ])->save();
+
+        return redirect()->back()->with('success', $existed ? 'That guest was already on file, so their details were updated.' : 'Guest added successfully.');
     }
 
     /**
@@ -76,17 +106,17 @@ class GuestController extends Controller
     {
         $this->authorize('update', $guest);
 
+        if ($request->has('phone')) {
+            $request->merge(['phone' => Phone::toE164($request->input('phone'))]);
+        }
+
         $validated = $request->validate([
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
             'email' => 'sometimes|nullable|email|max:255',
-            'phone' => 'sometimes|nullable|string|max:20',
+            'phone' => ['sometimes', 'nullable', 'string', 'max:20', $this->validPhone()],
             'notes' => 'sometimes|nullable|string|max:5000',
         ]);
-
-        if (array_key_exists('phone', $validated)) {
-            $validated['phone'] = Phone::toE164($validated['phone']);
-        }
 
         $guest->update($validated);
 
@@ -124,6 +154,16 @@ class GuestController extends Controller
         return $events->filter(fn ($e) => $e[0])
             ->map(fn ($e) => ['at' => Carbon::parse($e[0])->toIso8601String(), 'label' => $e[1], 'detail' => $e[2]])
             ->sortByDesc('at')->values()->all();
+    }
+
+    /** Phones are stored as E.164 so WhatsApp/SMS and duplicate checks work. */
+    protected function validPhone(): \Closure
+    {
+        return function ($attribute, $value, $fail) {
+            if ($value && ! Phone::isValid($value)) {
+                $fail('Enter a valid phone number, e.g. 0712 345 678 or +44 7700 900123.');
+            }
+        };
     }
 
     /**

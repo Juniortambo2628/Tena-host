@@ -41,7 +41,6 @@ use App\Http\Controllers\VenueController;
 use App\Http\Controllers\WifiPortalController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\LandingPage;
-use App\Models\Property;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -185,36 +184,37 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('/access-points', [AccessPointController::class, 'index'])->name('access-points.index');
         Route::post('/access-points', [AccessPointController::class, 'store'])->name('access-points.store');
         Route::get('/access-points/{accessPoint}', [AccessPointController::class, 'show'])->name('access-points.show');
-        Route::put('/access-points/{accessPoint}', [AccessPointController::class, 'update'])->name('access-points.update');
+        Route::match(['put', 'patch'], '/access-points/{accessPoint}', [AccessPointController::class, 'update'])->name('access-points.update');
         Route::delete('/access-points/{accessPoint}', [AccessPointController::class, 'destroy'])->name('access-points.destroy');
 
         // Amenities
         Route::get('/amenities', [AmenityController::class, 'index'])->name('amenities.index');
         Route::post('/amenities', [AmenityController::class, 'store'])->name('amenities.store');
         Route::get('/amenities/{amenity}', [AmenityController::class, 'show'])->name('amenities.show');
-        Route::put('/amenities/{amenity}', [AmenityController::class, 'update'])->name('amenities.update');
+        Route::match(['put', 'patch'], '/amenities/{amenity}', [AmenityController::class, 'update'])->name('amenities.update');
         Route::delete('/amenities/{amenity}', [AmenityController::class, 'destroy'])->name('amenities.destroy');
 
         // Orders
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-        Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
+        Route::match(['put', 'patch'], '/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
         Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
         // Guests
         Route::get('/guests', [GuestController::class, 'index'])->name('guests.index');
         Route::post('/guests', [GuestController::class, 'store'])->name('guests.store');
         Route::get('/guests/{guest}', [GuestController::class, 'show'])->name('guests.show');
-        Route::put('/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
+        Route::match(['put', 'patch'], '/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
         Route::delete('/guests/{guest}', [GuestController::class, 'destroy'])->name('guests.destroy');
 
         // Marketing
         Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
         Route::get('/marketing/create', [MarketingController::class, 'create'])->name('marketing.builder');
         Route::get('/marketing/estimate', [MarketingController::class, 'estimate'])->name('marketing.estimate');
+        Route::post('/marketing/preview', [MarketingController::class, 'preview'])->name('marketing.preview');
         Route::post('/marketing', [MarketingController::class, 'store'])->name('marketing.store');
         Route::get('/marketing/{id}/edit', [MarketingController::class, 'edit'])->name('marketing.edit');
-        Route::put('/marketing/{id}', [MarketingController::class, 'update'])->name('marketing.update');
+        Route::match(['put', 'patch'], '/marketing/{id}', [MarketingController::class, 'update'])->name('marketing.update');
         Route::delete('/marketing/{id}', [MarketingController::class, 'destroy'])->name('marketing.destroy');
         Route::get('/marketing/{id}/analytics', [MarketingController::class, 'analytics'])->name('marketing.analytics');
         Route::post('/marketing/{id}/activate', [MarketingController::class, 'activate'])->name('marketing.activate');
@@ -238,12 +238,7 @@ Route::prefix('g')->name('guest.')->group(function () {
         Route::post('/logout', [GuestOtpController::class, 'destroy'])->name('logout');
 
         Route::get('/guide', function () {
-            $propertyId = request()->query('p', Property::first()?->id);
-            $property = Property::with('amenities')->find($propertyId);
-
-            if (! $property) {
-                abort(404);
-            }
+            $property = GuestPortalController::accessibleProperty(request(), ['amenities']);
 
             return Inertia::render('Guest/Guidebook', [
                 'property' => $property,
@@ -284,6 +279,7 @@ Route::post('/api/whatsapp/webhook', [MessagingWebhookController::class, 'whatsA
 Route::post('/api/sms/inbound', [MessagingWebhookController::class, 'sms'])->name('sms.inbound');
 
 // Campaign link and open tracking (CampaignLinks).
+Route::get('/c/{token}/unsubscribe', [CampaignTrackingController::class, 'unsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed')->name('campaigns.unsubscribe');
 Route::get('/c/{token}/o.gif', [CampaignTrackingController::class, 'open'])->where('token', '[A-Za-z0-9]{8}')->name('campaigns.open');
 Route::get('/c/{token}/{n}', [CampaignTrackingController::class, 'click'])->where(['token' => '[A-Za-z0-9]{8}', 'n' => '[0-9]{1,2}'])->name('campaigns.click');
 

@@ -122,6 +122,7 @@ it('allows host to create a guest', function () {
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john@example.com',
+        'contact_consent' => '1',
     ]);
 
     $response->assertRedirect();
@@ -174,7 +175,9 @@ it('allows host to delete a guest', function () {
 it('validates required fields when creating a guest', function () {
     $response = $this->actingAs($this->host)->post(route('host.guests.store'), []);
 
-    $response->assertSessionHasErrors(['property_id', 'first_name', 'last_name', 'email']);
+    // A last name is optional (WiFi guests only give a first name); consent is not.
+    $response->assertSessionHasErrors(['property_id', 'first_name', 'email', 'contact_consent']);
+    $response->assertSessionDoesntHaveErrors('last_name');
 });
 
 // ─── Order Management ─────────────────────────────────────────────────────────

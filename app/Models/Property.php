@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class Property extends Model
 {
@@ -49,6 +50,21 @@ class Property extends Model
     protected $with = [
         'host:id,first_name,last_name,email,phone_number,account_type',
     ];
+
+    protected static function booted(): void
+    {
+        // Ownership checks read User::propertyIds() from a cache; a new, moved or
+        // deleted property must show up there straight away.
+        $forget = function (Property $property) {
+            foreach (array_unique(array_filter([$property->user_id, $property->getOriginal('user_id')])) as $userId) {
+                Cache::forget("user_property_ids_{$userId}");
+            }
+            Cache::forget('admin_property_ids');
+        };
+        static::saved($forget);
+        static::deleted($forget);
+        static::restored($forget);
+    }
 
     /**
      * Get the host that owns the property.

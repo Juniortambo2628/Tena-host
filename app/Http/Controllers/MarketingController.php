@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\CampaignEmail;
 use App\Models\Campaign;
+use App\Models\Guest;
 use App\Models\MarketingEvent;
 use App\Services\CampaignAutomation;
 use App\Services\CampaignDispatcher;
 use App\Services\MarketingInsights;
+use App\Services\Messaging\Messenger;
+use App\Support\SplashDesign;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class MarketingController extends Controller
@@ -85,41 +90,28 @@ class MarketingController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Host/Marketing/Builder', [
-            'campaign' => null,
-            'properties' => Auth::user()->properties,
-        ]);
+        return Inertia::render('Host/Marketing/Builder', $this->studioProps(null));
     }
 
     /**
      * Store a newly created campaign.
      */
-    public function store(Request $request)
+    public function store(Request $request, CampaignAutomation $automation)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|in:email,sms,whatsapp',
-            'subject' => 'nullable|string|max:255',
-            'content' => 'nullable|string',
-            'trigger_event' => 'nullable|string',
-            'trigger_delay' => 'nullable|string',
-            'target_audience' => 'nullable|string',
-            'property_id' => 'nullable|exists:properties,id',
-            'audience_property_id' => 'nullable|exists:properties,id',
-            'audience_from' => 'nullable|date',
-            'audience_to' => 'nullable|date|after_or_equal:audience_from',
-            'schedule_trigger' => 'nullable|string',
-            'scheduled_at' => 'nullable|date',
-        ]);
+        $validated = $request->validate($this->rules(required: true));
 
         $campaign = Campaign::create([
-            ...$validated,
+            ...collect($validated)->except('launch')->all(),
             'user_id' => Auth::id(),
             'status' => 'draft',
         ]);
 
-        return redirect()->route('host.marketing.index')
-            ->with('success', 'Campaign created successfully.');
+        if ($request->boolean('launch')) {
+            return $this->launch($campaign, $automation);
+        }
+
+        return redirect()->route('host.marketing.edit', $campaign->id)
+            ->with('success', 'Draft saved.');
     }
 
     /**
@@ -129,39 +121,121 @@ class MarketingController extends Controller
     {
         $campaign = Campaign::where('user_id', Auth::id())->findOrFail($id);
 
-        return Inertia::render('Host/Marketing/Builder', [
-            'campaign' => $campaign,
-            'properties' => Auth::user()->properties,
-        ]);
+        return Inertia::render('Host/Marketing/Builder', $this->studioProps($campaign));
     }
 
     /**
      * Update the specified campaign.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, CampaignAutomation $automation, $id)
     {
         $campaign = Campaign::where('user_id', Auth::id())->findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'type' => 'sometimes|in:email,sms,whatsapp',
-            'status' => 'sometimes|in:draft,active,paused,archived',
-            'subject' => 'nullable|string|max:255',
-            'content' => 'nullable|string',
-            'trigger_event' => 'nullable|string',
-            'trigger_delay' => 'nullable|string',
-            'target_audience' => 'nullable|string',
-            'property_id' => 'nullable|exists:properties,id',
-            'audience_property_id' => 'nullable|exists:properties,id',
-            'audience_from' => 'nullable|date',
-            'audience_to' => 'nullable|date|after_or_equal:audience_from',
-            'schedule_trigger' => 'nullable|string',
-            'scheduled_at' => 'nullable|date',
+        $validated = $request->validate($this->rules() + [
+            // Going live always runs through activate(), which queues the sends.
+            'status' => 'sometimes|in:draft,paused,archived',
         ]);
 
-        $campaign->update($validated);
+        $campaign->update(collect($validated)->except('launch')->all());
 
-        return redirect()->back()->with('success', 'Campaign updated successfully.');
+        if ($request->boolean('launch') && $campaign->status !== 'active') {
+            return $this->launch($campaign, $automation);
+        }
+
+        return redirect()->back()->with('success', 'Campaign saved.');
+    }
+
+    /**
+     * The campaign studio: properties, offers already written for the splash
+     * pages (one tap to reuse), and which channels can actually send.
+     *
+     * @return array<string, mixed>
+     */
+    protected function studioProps(?Campaign $campaign): array
+    {
+        $properties = Auth::user()->properties()->orderBy('name')->get();
+        $messenger = app(Messenger::class);
+
+        return [
+            'campaign' => $campaign,
+            'properties' => $properties->map->only(['id', 'name']),
+            'splashOffers' => $properties->flatMap(fn ($p) => collect(SplashDesign::forProperty($p)['content']['offers'])
+                ->map(fn ($o) => ['property_id' => $p->id, 'property' => $p->name] + $o))->values(),
+            'channels' => [
+                'email' => true,
+                'whatsapp' => $messenger->configured('whatsapp'),
+                'sms' => $messenger->configured('sms'),
+            ],
+        ];
+    }
+
+    /**
+     * Render an unsaved campaign email exactly as guests get it, for a sample guest.
+     */
+    public function preview(Request $request)
+    {
+        $data = $request->validate([
+            'subject' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
+            'content' => 'nullable|string|max:5000',
+            'property_id' => ['nullable', 'integer', Rule::in(Auth::user()->propertyIds())],
+        ]);
+
+        $property = Auth::user()->properties()->find($data['property_id'] ?? null) ?? Auth::user()->properties()->first();
+        $guest = new Guest(['first_name' => 'Wanjiru', 'last_name' => 'Kamau', 'email' => 'wanjiru@example.com']);
+        $guest->setRelation('property', $property);
+        $campaign = new Campaign(['type' => 'email', 'name' => $data['name'] ?? '', 'subject' => $data['subject'] ?? '', 'content' => $data['content'] ?? '']);
+
+        return response()->view('emails.campaign', CampaignEmail::viewData($campaign, $guest));
+    }
+
+    /**
+     * Shared by the studio's create and edit saves.
+     *
+     * @return array<string, mixed>
+     */
+    protected function rules(bool $required = false): array
+    {
+        $own = Rule::in(Auth::user()->propertyIds());
+        $need = $required ? 'required' : 'sometimes';
+
+        return [
+            'name' => "{$need}|string|max:255",
+            'type' => "{$need}|in:email,sms,whatsapp",
+            'subject' => 'nullable|string|max:255',
+            'content' => 'nullable|string|max:5000',
+            'trigger_event' => ['nullable', Rule::in([CampaignAutomation::CONNECTS, CampaignAutomation::BEFORE_ARRIVAL, CampaignAutomation::CHECKOUT_DAY, CampaignAutomation::CUSTOM_DATE])],
+            'trigger_delay' => 'nullable|in:Instant,1 Hour,6 Hours,24 Hours,3 Days,7 Days',
+            'target_audience' => 'nullable|in:all_guests,property_guests,new_guests,returning_guests,vip_guests',
+            'property_id' => ['nullable', 'integer', $own],
+            'audience_property_id' => ['nullable', 'integer', $own],
+            'audience_from' => 'nullable|date',
+            'audience_to' => 'nullable|date|after_or_equal:audience_from',
+            'schedule_trigger' => 'nullable|string|max:255',
+            'scheduled_at' => 'nullable|date',
+            'launch' => 'sometimes|boolean',
+        ];
+    }
+
+    protected function launch(Campaign $campaign, CampaignAutomation $automation)
+    {
+        if (blank($campaign->content)) {
+            return redirect()->route('host.marketing.edit', $campaign->id)
+                ->with('error', 'Saved as a draft: write the message before launching.');
+        }
+
+        $queued = $automation->activate($campaign);
+
+        return redirect()->route('host.marketing.index')->with('success', $this->launchedMessage($campaign, $queued));
+    }
+
+    protected function launchedMessage(Campaign $campaign, int $queued): string
+    {
+        return match (true) {
+            ! CampaignAutomation::isBroadcast($campaign) => 'Campaign is live. Each guest gets it after "'.$campaign->trigger_event.'".',
+            $queued === 0 && $campaign->scheduled_at?->isFuture() => 'Campaign scheduled for '.$campaign->scheduled_at->format('j M Y, H:i').'.',
+            default => "Campaign activated. {$queued} guests queued for delivery.",
+        };
     }
 
     /**
@@ -178,13 +252,7 @@ class MarketingController extends Controller
 
         $queued = app(CampaignAutomation::class)->activate($campaign);
 
-        $message = match (true) {
-            ! CampaignAutomation::isBroadcast($campaign) => 'Campaign is live. Each guest gets it after "'.$campaign->trigger_event.'".',
-            $queued === 0 && $campaign->scheduled_at?->isFuture() => 'Campaign scheduled for '.$campaign->scheduled_at->format('j M Y, H:i').'.',
-            default => "Campaign activated. {$queued} guests queued for delivery.",
-        };
-
-        return redirect()->back()->with('success', $message);
+        return redirect()->back()->with('success', $this->launchedMessage($campaign, $queued));
     }
 
     /**

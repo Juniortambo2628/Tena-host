@@ -3,7 +3,7 @@ import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Head, useForm } from '@inertiajs/react';
 import {
     Palette, Heart, House, Compass, Star, Gift, Building2, Plus, Trash2, ChevronUp, ChevronDown,
-    Smartphone, Monitor, ExternalLink, Loader2, Save, ImagePlus, Wifi, CheckCircle2, PhoneCall,
+    Smartphone, Monitor, ExternalLink, Loader2, Save, ImagePlus, Wifi, CheckCircle2, PhoneCall, Megaphone,
 } from 'lucide-react';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -395,6 +395,11 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
         offers: (
             <>
                 <SectionHead title="Offers" description="Upcoming deals and events. Guests who opt in to offers hear about them first." sectionKey="offers" branding={b} setSection={setSection} />
+                {b.offers.some(o => o.title) && (
+                    <a className="studio-chip-btn" href={route('host.marketing.builder')}>
+                        <Megaphone size={14} /> Send these to opted-in guests in the Campaign Studio
+                    </a>
+                )}
                 <RowList
                     rows={b.offers} max={8} addLabel="Add an offer" empty="e.g. 20% off your next stay when you book direct."
                     onAdd={() => set('offers', [...b.offers, { ...blank.offers }])}
