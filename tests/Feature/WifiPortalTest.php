@@ -233,7 +233,7 @@ class WifiPortalTest extends TestCase
     public function test_templates_use_saved_property_branding_and_correct_upload_urls(): void
     {
         $property = $this->knownAp();
-        foreach (['classic', 'retreat', 'bold'] as $template) {
+        foreach (['bento', 'horizon', 'clover', 'monogram', 'nocturne'] as $template) {
             $property->update([
                 'branding_json' => ['template' => $template, 'heading' => 'Stay a little longer', 'accent' => '#123456'],
                 'logo_path' => '/storage/properties/logo.png',
@@ -248,13 +248,22 @@ class WifiPortalTest extends TestCase
         }
     }
 
+    public function test_first_pass_template_names_keep_rendering(): void
+    {
+        $property = $this->knownAp();
+        foreach (['classic' => 'bento', 'retreat' => 'horizon', 'bold' => 'nocturne'] as $old => $new) {
+            $property->update(['branding_json' => ['template' => $old]]);
+            $this->get('/portal?ap=11:22:33:44:55:66&id=aa:bb:cc:dd:ee:ff')->assertOk()->assertSee('splash--'.$new);
+        }
+    }
+
     public function test_preview_is_owner_only_and_cannot_connect(): void
     {
         $property = $this->knownAp();
         $this->mockUnifi(0);
         $url = route('host.properties.splash-preview', $property);
-        $this->actingAs($property->host)->get($url.'?template=retreat')
-            ->assertOk()->assertSee('splash--retreat')->assertSee('Preview only')->assertSee('disabled');
+        $this->actingAs($property->host)->get($url.'?template=horizon')
+            ->assertOk()->assertSee('splash--horizon')->assertSee('Preview only')->assertSee('disabled');
         $other = User::factory()->create(['role' => 'host']);
         $this->actingAs($other)->get($url)->assertForbidden();
         $this->assertSame(0, Guest::count());

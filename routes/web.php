@@ -176,7 +176,9 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
 
         // Properties
         Route::get('properties/export', [PropertyController::class, 'export'])->name('properties.export');
-        Route::get('properties/{property}/splash-preview', [WifiPortalController::class, 'preview'])->name('properties.splash-preview');
+        Route::match(['get', 'post'], 'properties/{property}/splash-preview', [WifiPortalController::class, 'preview'])->name('properties.splash-preview');
+        Route::get('properties/{property}/splash', [PropertyController::class, 'splash'])->name('properties.splash');
+        Route::post('properties/{property}/splash', [PropertyController::class, 'updateSplash'])->name('properties.splash.update');
         Route::resource('properties', PropertyController::class)->except(['create']);
 
         // Access Points

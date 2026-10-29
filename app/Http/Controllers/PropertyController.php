@@ -10,6 +10,7 @@ use App\Support\SplashDesign;
 use App\Traits\HasImageUpload;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class PropertyController extends Controller
@@ -77,9 +78,63 @@ class PropertyController extends Controller
         ]);
     }
 
+    /**
+     * The splash studio: design and guest content with a live preview.
+     */
+    public function splash(Property $property)
+    {
+        $this->authorize('update', $property);
+
+        return Inertia::render('Host/Properties/Splash', [
+            'property' => $property->only(['id', 'name', 'address', 'wifi_ssid', 'review_url', 'logo_path', 'splash_image_path']) + [
+                'branding_json' => SplashDesign::clean($property->branding_json ?? []),
+            ],
+            'otherProperties' => Auth::user()->properties()->whereKeyNot($property->id)->orderBy('name')
+                ->get(['id', 'name', 'address', 'splash_image_path']),
+            'hostPhone' => $property->host?->phone_number,
+            'templates' => SplashDesign::TEMPLATES,
+        ]);
+    }
+
+    /**
+     * Save the studio. It always sends the whole design, so lists left empty are cleared.
+     */
+    public function updateSplash(Request $request, Property $property)
+    {
+        $this->authorize('update', $property);
+
+        $rules = SplashDesign::rules();
+        $rules['branding_json'] = str_replace('nullable', 'required', $rules['branding_json']);
+        $validated = $request->validate($rules + [
+            'logo' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
+            'splash_image' => 'nullable|image|max:4096',
+            // Automatic review requests need somewhere to send guests.
+            'review_url' => ['nullable', 'url:https', 'max:500', Rule::requiredIf((bool) $property->review_requests_enabled)],
+        ], ['review_url.required' => 'Automatic review requests are on, so keep a review link (or turn them off on the property page).']);
+
+        $changes = ['branding_json' => SplashDesign::clean($validated['branding_json'])];
+        if ($request->has('review_url')) {
+            $changes['review_url'] = $validated['review_url'] ?? null;
+        }
+        if ($request->hasFile('splash_image')) {
+            $changes['splash_image_path'] = $this->updateImage($request->file('splash_image'), $property->splash_image_path, 'properties');
+        }
+        if ($request->hasFile('logo')) {
+            $changes['logo_path'] = $this->updateImage($request->file('logo'), $property->logo_path, 'properties');
+        }
+
+        $property->update($changes);
+
+        return redirect()->back()->with('success', 'Splash page saved.');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules());
+
+        if (isset($validated['branding_json'])) {
+            $validated['branding_json'] = SplashDesign::clean($validated['branding_json']);
+        }
 
         if ($request->hasFile('splash_image')) {
             $validated['splash_image_path'] = $this->storeImage($request->file('splash_image'), 'properties');
@@ -99,6 +154,11 @@ class PropertyController extends Controller
         $this->authorize('update', $property);
 
         $validated = $request->validate($this->rules());
+
+        // The property form only carries the template and colour; keep the studio's content.
+        if (isset($validated['branding_json'])) {
+            $validated['branding_json'] = SplashDesign::clean(array_replace($property->branding_json ?? [], $validated['branding_json']));
+        }
 
         if ($request->hasFile('splash_image')) {
             $validated['splash_image_path'] = $this->updateImage(
@@ -137,12 +197,7 @@ class PropertyController extends Controller
             'address' => 'nullable|string|max:255',
             'wifi_ssid' => 'nullable|string|max:255',
             'occupancy_threshold' => 'integer|min:1',
-            'branding_json' => 'nullable|array:template,accent,heading,message,button',
-            'branding_json.template' => 'required_with:branding_json|in:'.implode(',', SplashDesign::TEMPLATES),
-            'branding_json.accent' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
-            'branding_json.heading' => 'nullable|string|max:100',
-            'branding_json.message' => 'nullable|string|max:240',
-            'branding_json.button' => 'nullable|string|max:40',
+            ...SplashDesign::rules(),
             'logo' => 'nullable|image|mimes:jpeg,png,webp|max:2048',
             'splash_image' => 'nullable|image|max:2048',
             'review_url' => 'nullable|url:https|max:500|required_if_accepted:review_requests_enabled',

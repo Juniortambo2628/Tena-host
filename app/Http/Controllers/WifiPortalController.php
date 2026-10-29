@@ -45,12 +45,23 @@ class WifiPortalController extends Controller
         ]);
     }
 
+    /**
+     * Owner-only preview. GET shows the saved design (optionally in another
+     * template); POST renders an unsaved studio draft without storing it.
+     */
     public function preview(Request $request, Property $property)
     {
         $this->authorize('update', $property);
-        $data = $request->validate(['template' => 'nullable|in:'.implode(',', SplashDesign::TEMPLATES)]);
+        $data = $request->validate(['template' => 'nullable|in:'.implode(',', array_merge(SplashDesign::TEMPLATES, array_keys(SplashDesign::LEGACY)))]
+            + ($request->isMethod('post') ? SplashDesign::rules() + ['review_url' => 'nullable|url:https|max:500', 'page' => 'nullable|in:splash,connected'] : []));
 
-        return view('portal.splash', array_replace($this->context(new Request), [
+        if ($request->isMethod('post')) {
+            // Never saved: the draft only lives on this in-memory model.
+            $property->branding_json = SplashDesign::clean($data['branding_json'] ?? []);
+            $property->review_url = $data['review_url'] ?? null;
+        }
+
+        return view(($data['page'] ?? 'splash') === 'connected' ? 'portal.connected' : 'portal.splash', array_replace($this->context(new Request), [
             'property' => $property,
             'propertyName' => $property->name,
             'logoUrl' => SplashDesign::imageUrl($property->logo_path),
@@ -59,6 +70,8 @@ class WifiPortalController extends Controller
             'consentText' => static::consentText($property->name),
             'isBusiness' => (bool) $property->host?->isBusiness(),
             'preview' => true,
+            // The studio frames the draft and labels it itself.
+            'embedded' => $request->isMethod('post'),
             'canConnect' => false,
         ]));
     }
@@ -155,12 +168,15 @@ class WifiPortalController extends Controller
         }
 
         // Send the device back to where it was headed, or to a success page.
+        // When the host has guest content (house info, local picks, offers), the
+        // success page carries it, with a link on to the original destination.
         $target = $data['url'] ?? null;
-        if ($target && preg_match('#^https?://#i', $target)) {
+        $target = $target && preg_match('#^https?://#i', $target) ? $target : null;
+        if ($target && ! $context['design']['hasContent']) {
             return redirect()->away($target);
         }
 
-        return view('portal.connected', $context);
+        return view('portal.connected', $context + ['continueUrl' => $target]);
     }
 
     /**

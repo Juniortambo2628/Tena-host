@@ -15,7 +15,11 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { T } from '@/Components/Dashboard/Terms';
-import SplashEditor, { defaultSplashDesign } from '@/Components/Properties/SplashEditor';
+import SplashEditor from '@/Components/Properties/SplashEditor';
+import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+
+// The modal only picks the look; the Splash Studio owns the rest of branding_json.
+const quickDesign = (saved = {}) => ({ template: normalizeTemplate(saved?.template), accent: saved?.accent || '#FFD300' });
 
 // Register the plugins
 registerPlugin(FilePondPluginImagePreview);
@@ -31,7 +35,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
         splash_image_path: '',
         splash_image: null,
         logo: null,
-        branding_json: { ...defaultSplashDesign },
+        branding_json: quickDesign(),
         occupancy_threshold: 20,
     });
 
@@ -51,7 +55,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             splash_image_path: property.splash_image_path || '',
             splash_image: null,
             logo: null,
-            branding_json: { ...defaultSplashDesign, ...property.branding_json },
+            branding_json: quickDesign(property.branding_json),
             occupancy_threshold: property.occupancy_threshold || 20,
         });
         clearErrors();
@@ -160,7 +164,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             label: 'Brand & Splash',
             content: (
                 <div className="space-y-6">
-                    <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={editingProperty?.id} onLogoChange={file => setData('logo', file)} logoUrl={editingProperty?.logo_path} />
+                    <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={editingProperty?.id} />
                     <div>
                         <label className="block text-[10px] font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Splash Background</label>
                         <div className="tena-filepond-wrapper">
@@ -256,6 +260,13 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 className="flex-1"
                             >
                                 Configure Unit
+                            </PillButton>
+                            <PillButton
+                                onClick={() => router.get(route('host.properties.splash', property.id))}
+                                variant="primary"
+                                className="flex-1"
+                            >
+                                Splash Studio
                             </PillButton>
                             <button
                                 onClick={() => {

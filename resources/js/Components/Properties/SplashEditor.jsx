@@ -1,49 +1,83 @@
 import React from 'react';
+import { Link } from '@inertiajs/react';
+import { Sparkles } from 'lucide-react';
+import { splashTemplates, accentPresets, defaultSplashDesign, normalizeTemplate } from './splashTemplates';
 import './SplashEditor.css';
 
-export const defaultSplashDesign = { template: 'classic', accent: '#FFD300', heading: '', message: '', button: '' };
+export { defaultSplashDesign };
 
-const templates = [
-    ['classic', 'Classic', 'Clean, compact and familiar.'],
-    ['retreat', 'Retreat', 'Warm, photo-led hospitality.'],
-    ['bold', 'Bold', 'High contrast with a full-screen photo.'],
-];
+// A miniature of each template's layout, drawn with CSS so it tracks the accent colour.
+export function TemplateThumb({ template, accent = '#FFD300' }) {
+    return (
+        <span className={`splash-thumb splash-thumb--${template}`} style={{ '--thumb-accent': accent }} aria-hidden="true">
+            <i className="splash-thumb__photo" />
+            <i className="splash-thumb__panel"><b /><b /><b /></i>
+            <i className="splash-thumb__cards"><b /><b /><b /></i>
+        </span>
+    );
+}
 
-export default function SplashEditor({ value, onChange, errors = {}, propertyId, onLogoChange, logoUrl }) {
+export function TemplatePicker({ value, accent, onChange, compact = false }) {
+    const current = normalizeTemplate(value);
+    return (
+        <div className={`splash-templates ${compact ? 'splash-templates--compact' : ''}`} role="radiogroup" aria-label="Splash template">
+            {splashTemplates.map(t => (
+                <label key={t.key} className="splash-template">
+                    <input type="radio" name="splash-template" value={t.key} checked={current === t.key} onChange={() => onChange(t.key)} />
+                    <TemplateThumb template={t.key} accent={accent} />
+                    <span className="splash-template__text">
+                        <strong>{t.name}</strong>
+                        {!compact && <small>{t.description}</small>}
+                        <em>{t.best}</em>
+                    </span>
+                </label>
+            ))}
+        </div>
+    );
+}
+
+export function AccentPicker({ value, onChange }) {
+    const accent = value || '#FFD300';
+    return (
+        <div className="splash-accents" role="radiogroup" aria-label="Accent colour">
+            {accentPresets.map(color => (
+                <button key={color} type="button" role="radio" aria-checked={accent.toLowerCase() === color.toLowerCase()}
+                    aria-label={color} className="splash-accent" style={{ background: color }} onClick={() => onChange(color)} />
+            ))}
+            <label className="splash-accent splash-accent--custom" title="Custom colour">
+                <input type="color" value={accent} onChange={e => onChange(e.target.value)} aria-label="Custom accent colour" />
+            </label>
+        </div>
+    );
+}
+
+/**
+ * The quick picker inside the property modal: template and colour only.
+ * Everything else (welcome note, house rules, nearby picks...) lives in the Splash Studio.
+ */
+export default function SplashEditor({ value, onChange, errors = {}, propertyId }) {
     const design = { ...defaultSplashDesign, ...value };
     const set = (key, next) => onChange({ ...design, [key]: next });
     return (
-        <fieldset className="splash-editor">
-            <legend>Splash page design</legend>
-            <div className="splash-editor__templates">
-                {templates.map(([key, name, description]) => (
-                    <label key={key} className={`splash-choice splash-choice--${key}`}>
-                        <input type="radio" name="splash-template" value={key} checked={design.template === key} onChange={() => set('template', key)} />
-                        <span className="splash-choice__sample" aria-hidden="true"><i /><b>Welcome</b><em>Connect to WiFi</em></span>
-                        <strong>{name}</strong><small>{description}</small>
-                    </label>
-                ))}
+        <div className="splash-editor">
+            <div>
+                <p className="splash-editor__label">Template</p>
+                <TemplatePicker value={design.template} accent={design.accent} onChange={t => set('template', t)} compact />
+                {errors['branding_json.template'] && <p className="splash-editor__error" role="alert">{errors['branding_json.template']}</p>}
             </div>
-            {errors['branding_json.template'] && <p role="alert">{errors['branding_json.template']}</p>}
-            <label>Accent colour <input type="color" value={design.accent || '#FFD300'} onChange={e => set('accent', e.target.value)} /></label>
-            {[
-                ['heading', 'Welcome heading', 'Welcome to your property', 100],
-                ['message', 'Welcome message', 'Connect to the WiFi and stay in touch.', 240],
-                ['button', 'Connect button', 'Connect to WiFi', 40],
-            ].map(([key, label, placeholder, maxLength]) => (
-                <label key={key}>{label}
-                    <input type="text" value={design[key] || ''} maxLength={maxLength} placeholder={placeholder} onChange={e => set(key, e.target.value)} />
-                    {errors[`branding_json.${key}`] && <small role="alert">{errors[`branding_json.${key}`]}</small>}
-                </label>
-            ))}
-            <label>Property logo (PNG, JPEG or WebP, up to 2 MB)
-                <input type="file" accept="image/png,image/jpeg,image/webp" onChange={e => onLogoChange(e.target.files[0] || null)} />
-                {errors.logo && <small role="alert">{errors.logo}</small>}
-            </label>
-            {logoUrl && <img className="splash-editor__logo" src={logoUrl} alt="Saved property logo" />}
-            {errors.splash_image && <p role="alert">{errors.splash_image}</p>}
-            <p>Use the splash image below with any template. Text and images appear on the actual guest connection page.</p>
-            {propertyId && <a href={route('host.properties.splash-preview', { property: propertyId, template: design.template })} target="_blank" rel="noopener noreferrer">Preview selected template with saved content ↗</a>}
-        </fieldset>
+            <div>
+                <p className="splash-editor__label">Accent colour</p>
+                <AccentPicker value={design.accent} onChange={c => set('accent', c)} />
+                {errors['branding_json.accent'] && <p className="splash-editor__error" role="alert">{errors['branding_json.accent']}</p>}
+            </div>
+            <div className="splash-editor__studio">
+                <Sparkles size={18} />
+                <p>
+                    {propertyId
+                        ? <>Add a welcome note, house rules, emergency numbers, local picks, reviews and offers in the <Link href={route('host.properties.splash', propertyId)}>Splash Studio</Link>, with a live preview.</>
+                        : <>After saving, open the property's <strong>Splash Studio</strong> to add a welcome note, house rules, local picks, reviews and offers.</>}
+                </p>
+            </div>
+        </div>
     );
 }

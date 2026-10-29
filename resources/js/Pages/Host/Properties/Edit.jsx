@@ -5,9 +5,10 @@ import './Edit.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { ArrowLeft, Loader2, Star, Store } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, Star, Store } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
-import SplashEditor, { defaultSplashDesign } from '@/Components/Properties/SplashEditor';
+import { TemplateThumb } from '@/Components/Properties/SplashEditor';
+import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 
 export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -15,9 +16,6 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         address: property.address || '',
         wifi_ssid: property.wifi_ssid || '',
         occupancy_threshold: property.occupancy_threshold || 20,
-        splash_image: null,
-        logo: null,
-        branding_json: { ...defaultSplashDesign, ...property.branding_json },
         review_requests_enabled: !!property.review_requests_enabled,
         review_url: property.review_url || '',
         review_request_delay_hours: property.review_request_delay_hours || 24,
@@ -96,20 +94,15 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                             </div>
                         </div>
 
-                        <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={property.id} onLogoChange={file => setData('logo', file)} logoUrl={property.logo_path} />
-                        <div>
-                            <label className="host-properties-edit-label">Splash Image (up to 2 MB)</label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={e => setData('splash_image', e.target.files[0])}
-                                className="host-properties-edit-input"
-                            />
-                            {property.splash_image_path && (
-                                <div className="mt-4">
-                                    <img src={property.splash_image_path} alt="Current" className="w-full h-32 object-cover rounded-2xl" />
-                                </div>
-                            )}
+                        <div className="host-properties-edit-splash">
+                            <TemplateThumb template={normalizeTemplate(property.branding_json?.template)} accent={property.branding_json?.accent || '#FFD300'} />
+                            <div>
+                                <p className="host-properties-edit-section-title"><Sparkles size={14} /> Guest splash page</p>
+                                <p className="host-properties-edit-hint">
+                                    Template, photos, welcome note, house rules, emergency numbers, local picks, reviews, offers and cross-sell cards, with a live preview.
+                                </p>
+                            </div>
+                            <PillButton variant="primary" onClick={() => router.get(route('host.properties.splash', property.id))}>Open Splash Studio</PillButton>
                         </div>
 
                         <fieldset className="host-properties-edit-section">

@@ -49,21 +49,4 @@
     button:disabled { opacity: .6; cursor: default; }
     .fine { color: var(--muted); font-size: 12px; margin: 16px 0 0; text-align: center; }
     p { line-height: 1.5; }
-    .splash .card { position: relative; overflow: hidden; }
-    .splash h1 { overflow-wrap: anywhere; }
-    .splash-cover { width: calc(100% + 48px); max-height: 220px; object-fit: cover; display: block; margin: -30px -24px 24px; }
-    .splash-eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 10px; font-weight: 700; color: var(--muted); margin: 0 0 18px; }
-    .splash--classic .card { border-top: 6px solid var(--yellow); }
-    .splash--retreat { background: #e9ede6; }
-    .splash--retreat .card { max-width: 480px; border-radius: 6px; background: #fffdf7; }
-    .splash--retreat h1 { font-family: Georgia, serif; font-size: 30px; font-weight: 400; }
-    .splash--retreat .splash-cover { max-height: 260px; }
-    .splash--retreat button { border-radius: 4px; }
-    .splash--bold { background: #181b22; }
-    .splash-backdrop { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .3; }
-    .splash--bold .card { max-width: 460px; border: 3px solid var(--yellow); box-shadow: 12px 12px 0 rgba(0,0,0,.25); }
-    .splash--bold h1 { font-size: 32px; letter-spacing: -.04em; }
-    .splash--bold .logo { border-radius: 50%; }
-    .preview-notice { position: relative; z-index: 1; background: #edf4ff; color: #1e40af; padding: 12px; border-radius: 8px; font-size: 12px; margin: 0 0 36px; }
-    @media (max-width: 480px) { .splash { padding: 12px; align-items: flex-start; } .splash .card { margin: 12px auto; } }
 </style>
