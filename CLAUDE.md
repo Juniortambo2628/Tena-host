@@ -17,8 +17,8 @@ Every merge to `master` deploys to production automatically once CI passes
 (`.github/workflows/deploy.yml`). There is no staging. So:
 
 - Never push to `master`. Work on a branch and open a pull request.
-- Branch names: `glen/<short-topic>` for Glen's work, `claude/...` or
-  `kevin/...` for Kevin's.
+- Use the branch your Claude Code session assigns (usually `claude/...`); if
+  it assigns none, name it after the change (`glen/<short-topic>` for Glen's).
 - One request per pull request. Small pull requests are reviewed and merged
   faster and are easy to undo.
 - Never merge your own pull request from Glen's side; Kevin's side reviews and

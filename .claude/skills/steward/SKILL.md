@@ -1,14 +1,15 @@
 ---
 name: steward
-description: How pull requests to master are reviewed and merged in this repository, especially Glen's (glen/* branches). Use when reviewing, fixing or merging a pull request here.
+description: How pull requests to master are reviewed and merged in this repository, especially Glen's (author glenmuraya7-art). Use when reviewing, fixing or merging a pull request here.
 ---
 
 # Reviewing and merging pull requests
 
 Merging to `master` deploys to production (see CLAUDE.md, "Merging is
-deploying"). Kevin owns the repository; Glen opens pull requests through Claude
-Code and is not technical, so everything written on his pull requests is in
-plain language.
+deploying"). Kevin (`Juniortambo2628`) owns the repository; Glen
+(`glenmuraya7-art`) opens pull requests through Claude Code and is not
+technical, so everything written on his pull requests is in plain language.
+Recognise his pull requests by author, not branch name.
 
 ## Review every pull request
 
