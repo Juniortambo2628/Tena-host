@@ -1,6 +1,13 @@
 .studio { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
 @media (min-width: 1180px) { .studio { grid-template-columns: minmax(0, 1fr) minmax(420px, 46%); } }
 
+/* A fixed-height workspace (--studio-h is set from the screen in Splash.jsx): the
+   tabs and Back/Next stay in place and only the section between them scrolls. */
+.studio-editor { display: flex; flex-direction: column; height: var(--studio-h, auto); }
+.studio-steps { flex: none; }
+.studio-section { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; align-content: start; }
+.studio-footer { flex: none; border-top: 1px solid rgba(0, 0, 0, .06); }
+
 /* editor column */
 .studio-editor { background: #fff; border-radius: 32px; box-shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 24px 60px -30px rgba(0, 0, 0, .25); min-width: 0; overflow: hidden; }
 .studio-steps { display: flex; flex-wrap: wrap; gap: 4px; padding: 10px; background: #f6f5f2; }
@@ -15,7 +22,7 @@
 .studio-steps button.has-error { color: #dc2626; }
 .studio-steps button.has-error::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #dc2626; }
 
-.studio-section { padding: 28px 30px 8px; display: grid; gap: 18px; }
+.studio-section { padding: 28px 30px 24px; display: grid; gap: 18px; }
 .studio-section__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .studio-section__head h2 { font-size: 22px; font-weight: 900; letter-spacing: -.02em; }
 .studio-section__head p { font-size: 13px; color: rgba(0, 0, 0, .5); margin-top: 4px; max-width: 52ch; line-height: 1.5; }
@@ -80,13 +87,18 @@
 .studio-picks button:disabled { opacity: .55; cursor: default; }
 .studio-linked { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(0, 0, 0, .55); }
 
-.studio-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px 30px 26px; }
+.studio-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 30px 20px; background: #fff; }
 .studio-dirty { font-size: 12px; font-weight: 700; color: rgba(0, 0, 0, .4); display: flex; align-items: center; gap: 6px; }
 .studio-dirty.is-on { color: #a16207; }
 .studio-dirty.is-on::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; }
 
 /* preview column */
-.studio-preview { position: sticky; top: 16px; background: #17171b; border-radius: 32px; padding: 14px; min-width: 0; }
+.studio-preview { background: #17171b; border-radius: 32px; padding: 14px; min-width: 0; }
+@media (min-width: 1180px) {
+    /* Same height as the editor; the device scales to fit inside it. */
+    .studio-preview { height: var(--studio-h, auto); display: flex; flex-direction: column; }
+    .studio-preview__stage { flex: 1; min-height: 0; align-items: center; }
+}
 .studio-preview__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
 .studio-seg { display: flex; gap: 2px; padding: 3px; border-radius: 14px; background: rgba(255, 255, 255, .08); }
 .studio-seg button { display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: rgba(255, 255, 255, .6); font-size: 12px; font-weight: 800; padding: 7px 11px; border-radius: 11px; cursor: pointer; }
@@ -100,10 +112,9 @@
 .studio-device iframe { border: 0; display: block; transform-origin: 0 0; background: #fff; }
 .studio-preview__note { font-size: 12px; color: rgba(255, 255, 255, .45); text-align: center; margin-top: 12px; }
 
-@media (max-width: 1179px) {
-    .studio-preview { position: relative; top: 0; }
-}
 @media (max-width: 640px) {
+    /* One swipeable row of tabs instead of three wrapped rows. */
+    .studio-steps { flex-wrap: nowrap; overflow-x: auto; }
     .studio-section { padding: 22px 18px 4px; }
     .studio-section__head { flex-direction: column; }
     .studio-footer { padding: 16px 18px 20px; flex-wrap: wrap; }

@@ -12,6 +12,33 @@ import { TemplatePicker, AccentPicker } from '@/Components/Properties/SplashEdit
 import { normalizeTemplate, originalTemplates, templateDefaults, applyTemplate, recommendedTemplate, findTemplate, tileIcons, nameAndPhoneOnly } from '@/Components/Properties/splashTemplates';
 import './Splash.css';
 import { BRAND_COLORS } from '@/constants';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+
+/**
+ * Sizes the studio to the screen under whatever stays pinned above it (the
+ * dashboard header, and the page heading where it is sticky), so the editor's
+ * tabs and Back/Next stay put and only its middle scrolls.
+ */
+function useFitToScreen(ref) {
+    useEffect(() => {
+        const el = ref.current;
+        const area = el?.closest('[scroll-region]');
+        if (!el || !area) return undefined;
+        const fit = () => {
+            let pinned = 0;
+            for (const node of area.querySelectorAll('.dashboard-layout__header, .dashboard-hero')) {
+                const style = getComputedStyle(node);
+                if (style.position === 'sticky') pinned += node.offsetHeight + parseFloat(style.marginBottom || 0);
+            }
+            el.style.setProperty('--studio-h', `${Math.max(480, area.clientHeight - pinned - 32)}px`);
+        };
+        fit();
+        const ro = new ResizeObserver(fit);
+        ro.observe(area);
+        area.querySelectorAll('.dashboard-layout__header, .dashboard-hero').forEach((node) => ro.observe(node));
+        return () => ro.disconnect();
+    }, [ref]);
+}
 
 const categories = [
     ['food', 'Eat'], ['drink', 'Drink'], ['sights', 'See'], ['shop', 'Shop'],
@@ -130,6 +157,7 @@ function Preview({ propertyId, data, focusTab, coverFile, logoFile }) {
     const [page, setPage] = useState('splash');
     const [status, setStatus] = useState('loading');
     const [scale, setScale] = useState(1);
+    const fitHeight = useMediaQuery('(min-width: 1180px)');
     const size = device === 'phone' ? { w: 390, h: 800 } : { w: 1440, h: 900 };
     const urls = useMemo(() => ({
         cover: coverFile ? URL.createObjectURL(coverFile) : null,
@@ -139,10 +167,11 @@ function Preview({ propertyId, data, focusTab, coverFile, logoFile }) {
 
     useEffect(() => {
         if (!box.current) return;
-        const ro = new ResizeObserver(([entry]) => setScale(Math.min(1, entry.contentRect.width / size.w)));
+        // Side by side, the stage has a fixed height, so the device fits both ways.
+        const ro = new ResizeObserver(([entry]) => setScale(Math.min(1, entry.contentRect.width / size.w, fitHeight ? entry.contentRect.height / size.h : 1)));
         ro.observe(box.current);
         return () => ro.disconnect();
-    }, [size.w]);
+    }, [size.w, size.h, fitHeight]);
 
     // Unsaved photos never reach the server; swap them into the rendered page instead.
     const decorate = () => {
@@ -514,6 +543,10 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
 
     const current = steps.find(s => s.key === step);
     const index = steps.indexOf(current);
+    const studio = useRef(null);
+    const sectionRef = useRef(null);
+    useFitToScreen(studio);
+    useEffect(() => { if (sectionRef.current) sectionRef.current.scrollTop = 0; }, [step]);
 
     return (
         <>
@@ -527,7 +560,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
                 ]}
             />
 
-            <div className="studio">
+            <div className="studio" ref={studio}>
                 <div className="studio-editor">
                     <nav className="studio-steps" aria-label="Splash sections">
                         {steps.map(({ key, label, icon: Icon }) => (
@@ -540,7 +573,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
                         ))}
                     </nav>
 
-                    <section className="studio-section" aria-label={current.label}>
+                    <section className="studio-section" aria-label={current.label} ref={sectionRef}>
                         {sectionBody[step]}
                     </section>
 
