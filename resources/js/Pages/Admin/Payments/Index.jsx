@@ -3,9 +3,8 @@ import { Head, router, Link } from '@inertiajs/react';
 import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
-import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import DataTable from '@/Components/Dashboard/DataTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
-import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { CreditCard, DollarSign, Clock, CheckCircle2, AlertCircle, Search, Users } from 'lucide-react';
 import './Index.css';
 
@@ -32,16 +31,18 @@ export default function PaymentIndex({ transactions, stats, filters }) {
 
     const columns = [
         {
-            key: 'receipt',
-            label: 'Receipt',
-            render: (item) => (
+            id: 'receipt',
+            accessorFn: (item) => item.MpesaReceiptNumber,
+            header: 'Receipt',
+            cell: ({ row: { original: item } }) => (
                 <span className="payments-page__receipt">{item.MpesaReceiptNumber || '-'}</span>
             ),
         },
         {
-            key: 'user',
-            label: 'User',
-            render: (item) => (
+            id: 'user',
+            accessorFn: (item) => item.user?.name,
+            header: 'User',
+            cell: ({ row: { original: item } }) => (
                 <div className="payments-page__user">
                     <span className="payments-page__user-name">{item.user?.name || 'Unknown'}</span>
                     <span className="payments-page__user-email">{item.user?.email}</span>
@@ -49,32 +50,36 @@ export default function PaymentIndex({ transactions, stats, filters }) {
             ),
         },
         {
-            key: 'amount',
-            label: 'Amount',
-            render: (item) => (
+            id: 'amount',
+            accessorFn: (item) => item.Amount,
+            header: 'Amount',
+            cell: ({ row: { original: item } }) => (
                 <span className="payments-page__amount">KES {item.Amount}</span>
             ),
         },
         {
-            key: 'phone',
-            label: 'Phone',
-            render: (item) => (
+            id: 'phone',
+            accessorFn: (item) => item.PhoneNumber,
+            header: 'Phone',
+            cell: ({ row: { original: item } }) => (
                 <span className="payments-page__phone">{item.PhoneNumber}</span>
             ),
         },
         {
-            key: 'status',
-            label: 'Status',
-            render: (item) => (
+            id: 'status',
+            accessorFn: (item) => item.Status,
+            header: 'Status',
+            cell: ({ row: { original: item } }) => (
                 <span className={`payments-page__status-badge ${statusColors[item.Status] || ''}`}>
                     {item.Status}
                 </span>
             ),
         },
         {
-            key: 'date',
-            label: 'Date',
-            render: (item) => (
+            id: 'date',
+            accessorFn: (item) => item.created_at,
+            header: 'Date',
+            cell: ({ row: { original: item } }) => (
                 <span className="payments-page__date">
                     {new Date(item.created_at).toLocaleDateString()}
                 </span>
@@ -127,23 +132,21 @@ export default function PaymentIndex({ transactions, stats, filters }) {
 
             {/* Transactions Table */}
             <GlassCard padding="p-0 overflow-hidden">
-                <ResponsiveTable
+                <DataTable
                     data={transactions.data}
                     columns={columns}
-                    actions={tableActions}
-                    primaryField="MpesaReceiptNumber"
-                    subtitleField={(item) => item.user?.name || 'Unknown'}
-                    detailTitle="Transaction Details"
+                    rowActions={tableActions}
                     emptyMessage="No transactions found"
                     enableSelection
                     selectedIds={selectedIds}
                     onSelectionChange={setSelectedIds}
+                    serverPagination={transactions}
                     onSearch={handleSearch}
+                    searchValue={search}
                     searchPlaceholder="Search by receipt, phone, or user..."
                 />
             </GlassCard>
 
-            <ServerPagination links={transactions.links} className="justify-center mt-6" />
 
             <BulkActions
                 selectedCount={selectedIds.length}

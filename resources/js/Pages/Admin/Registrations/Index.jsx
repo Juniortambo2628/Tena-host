@@ -3,9 +3,8 @@ import PageShell from '@/Layouts/PageShell';
 import { Link, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
-import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import DataTable from '@/Components/Dashboard/DataTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
-import ServerPagination from '@/Components/Dashboard/ServerPagination';
 import { useConfirm } from '@/hooks/useConfirm';
 import { UserPlus, XCircle, Trash2 } from 'lucide-react';
 import './Index.css';
@@ -101,58 +100,66 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
 
     const columns = [
         {
-            key: 'name',
-            label: 'Name',
-            render: (item) => (
+            id: 'name',
+            accessorFn: (item) => `${item.first_name} ${item.last_name}`,
+            header: 'Name',
+            cell: ({ row: { original: item } }) => (
                 <span className="registrations-page__name">{item.first_name} {item.last_name}</span>
             ),
         },
         {
-            key: 'email',
-            label: 'Email',
-            render: (item) => (
+            id: 'email',
+            accessorFn: (item) => item.email,
+            header: 'Email',
+            cell: ({ row: { original: item } }) => (
                 <span className="registrations-page__email">{item.email || item.phone || '-'}</span>
             ),
         },
         {
-            key: 'type',
-            label: 'Type',
-            render: (item) => (
+            id: 'type',
+            accessorFn: (item) => item.type,
+            header: 'Type',
+            cell: ({ row: { original: item } }) => (
                 <span className={`registrations-page__type registrations-page__type--${item.type}`}>{item.type}</span>
             ),
         },
         {
-            key: 'business',
-            label: 'Business / Property',
-            render: (item) => (
+            id: 'business',
+            accessorFn: (item) => item.business_name,
+            header: 'Business / Property',
+            cell: ({ row: { original: item } }) => (
                 <span className="registrations-page__property-type">
                     {item.business_name || item.answers?.businessType || (item.property_type !== 'other' ? item.property_type : '-')}
                 </span>
             ),
         },
         {
-            key: 'location',
-            label: 'Location',
-            render: (item) => <span className="registrations-page__units">{item.location || '-'}</span>,
+            id: 'location',
+            accessorFn: (item) => item.location,
+            header: 'Location',
+            cell: ({ row: { original: item } }) => <span className="registrations-page__units">{item.location || '-'}</span>,
         },
         {
-            key: 'units',
-            label: 'Units',
-            render: (item) => (
+            id: 'units',
+            accessorFn: (item) => item.units,
+            header: 'Units',
+            cell: ({ row: { original: item } }) => (
                 <span className="registrations-page__units">{item.units || item.answers?.locations || '-'}</span>
             ),
         },
         {
-            key: 'phone',
-            label: 'Phone',
-            detailOnly: true,
-            render: (item) => item.phone || '-',
+            id: 'phone',
+            accessorFn: (item) => item.phone,
+            header: 'Phone',
+            meta: { detailOnly: true },
+            cell: ({ row: { original: item } }) => item.phone || '-',
         },
         {
-            key: 'answers',
-            label: 'Other answers',
-            detailOnly: true,
-            render: (item) => {
+            id: 'answers',
+            accessorFn: (item) => null,
+            header: 'Other answers',
+            meta: { detailOnly: true },
+            cell: ({ row: { original: item } }) => {
                 const rows = Object.entries({
                     primary_platform: item.primary_platform,
                     biggest_challenge: item.biggest_challenge,
@@ -167,17 +174,19 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             },
         },
         {
-            key: 'consent',
-            label: 'Consent',
-            detailOnly: true,
-            render: (item) => item.consented_at
+            id: 'consent',
+            accessorFn: (item) => item.consented_at,
+            header: 'Consent',
+            meta: { detailOnly: true },
+            cell: ({ row: { original: item } }) => item.consented_at
                 ? <span className="registrations-page__consent">{new Date(item.consented_at).toLocaleString()} via /{item.source_page}: “{item.consent_text}”</span>
                 : '-',
         },
         {
-            key: 'status',
-            label: 'Status',
-            render: (item) => (
+            id: 'status',
+            accessorFn: (item) => item.status,
+            header: 'Status',
+            cell: ({ row: { original: item } }) => (
                 <span className={`registrations-page__status-badge ${statusClass(item.status)}`}>
                     {item.status}
                 </span>
@@ -190,21 +199,21 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             key: 'convert',
             label: 'Create account',
             icon: <UserPlus size={14} />,
-            variant: 'convert',
+            variant: 'success',
             onClick: handleConvert,
         },
         {
             key: 'deactivate',
             label: 'Deactivate',
             icon: <XCircle size={14} />,
-            variant: 'deactivate',
+            variant: 'warning',
             onClick: (item) => handleStatusChange(item.id, 'inactive'),
         },
         {
             key: 'delete',
             label: 'Delete',
             icon: <Trash2 size={14} />,
-            variant: 'delete',
+            variant: 'danger',
             onClick: (item) => handleDelete(item.id),
         },
     ];
@@ -288,22 +297,20 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             </div>
 
             <GlassCard padding="p-0 overflow-hidden">
-                <ResponsiveTable
+                <DataTable
                     data={registrations.data}
                     columns={columns}
-                    actions={tableActions}
-                    primaryField={(item) => `${item.first_name} ${item.last_name}`}
-                    subtitleField="email"
+                    rowActions={tableActions}
                     detailTitle="Registration Details"
                     emptyMessage="No registrations found"
                     enableSelection
                     selectedIds={selectedIds}
                     onSelectionChange={setSelectedIds}
+                    serverPagination={registrations}
                     searchPlaceholder="Search registrations..."
                 />
             </GlassCard>
 
-            <ServerPagination links={registrations.links} className="justify-center mt-6" />
 
             <BulkActions
                 selectedCount={selectedIds.length}
