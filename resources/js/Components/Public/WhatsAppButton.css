@@ -24,7 +24,7 @@
 }
 
 .whatsapp-float:focus-visible {
-    outline: 3px solid #FFD300;
+    outline: 3px solid var(--color-primary);
     outline-offset: 3px;
 }
 
