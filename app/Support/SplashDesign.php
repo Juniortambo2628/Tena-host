@@ -8,10 +8,29 @@ use App\Models\Property;
  * The guest splash page: a template, its look, and the guest content a host
  * chooses to show (welcome note, house info, nearby picks, reviews, offers and
  * their other stays). Everything lives in properties.branding_json.
+ *
+ * Templates, their groups and the business types that recommend them come
+ * from resources/data/splash-templates.json, shared with the React editor.
  */
 class SplashDesign
 {
-    public const TEMPLATES = ['bento', 'horizon', 'clover', 'monogram', 'nocturne'];
+    public const TEMPLATES = ['bento', 'horizon', 'clover', 'monogram', 'brew', 'bistro', 'nocturne', 'bloom', 'fade', 'pulse', 'calm', 'corner'];
+
+    /**
+     * The first five templates. Designs saved before per-template defaults keep
+     * their old fallbacks (headline, sign-up fields, opt-in line) so they render as before.
+     */
+    public const ORIGINAL = ['bento', 'horizon', 'clover', 'monogram', 'nocturne'];
+
+    /** Content sections only short-term rentals need; business pages start with them off. */
+    public const RENTAL_SECTIONS = ['rules', 'emergency', 'nearby', 'stays'];
+
+    public const TILE_ICONS = ['guide', 'clock', 'home', 'star', 'menu', 'wifi', 'gift', 'cal', 'list', 'tag', 'cart'];
+
+    /** Clinics ask for a first name and phone number only. */
+    public const NAME_AND_PHONE_ONLY = ['calm'];
+
+    private static ?array $catalog = null;
 
     /** Templates from the first pass, kept so saved designs keep rendering. */
     public const LEGACY = ['classic' => 'bento', 'retreat' => 'horizon', 'bold' => 'nocturne'];
@@ -32,7 +51,7 @@ class SplashDesign
         $templates = implode(',', array_merge(self::TEMPLATES, array_keys(self::LEGACY)));
 
         return [
-            'branding_json' => 'nullable|array:template,accent,heading,message,button,welcome_note,host_name,review_prompt,sections,house_rules,emergency,nearby,offers,stays',
+            'branding_json' => 'nullable|array:template,accent,heading,message,button,welcome_note,host_name,review_prompt,sections,house_rules,emergency,nearby,offers,stays,fields,opt_in,tiles',
             'branding_json.template' => 'required_with:branding_json|in:'.$templates,
             'branding_json.accent' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'branding_json.heading' => 'nullable|string|max:100',
@@ -64,7 +83,128 @@ class SplashDesign
             'branding_json.stays.*.detail' => 'nullable|string|max:200',
             'branding_json.stays.*.price' => 'nullable|string|max:40',
             'branding_json.stays.*.url' => 'nullable|url:http,https|max:500',
+            'branding_json.fields' => 'nullable|array:email,birthday',
+            'branding_json.fields.*' => 'boolean',
+            'branding_json.opt_in' => 'nullable|string|max:120',
+            'branding_json.tiles' => 'nullable|array|max:3',
+            'branding_json.tiles.*.icon' => 'nullable|in:'.implode(',', self::TILE_ICONS),
+            'branding_json.tiles.*.label' => 'nullable|string|max:30',
+            'branding_json.tiles.*.url' => 'nullable|url:http,https|max:500',
         ];
+    }
+
+    /** groups, businessTypes, templates and accents from the shared JSON. */
+    public static function catalog(): array
+    {
+        return self::$catalog ??= json_decode(file_get_contents(resource_path('data/splash-templates.json')), true, flags: JSON_THROW_ON_ERROR);
+    }
+
+    /** @return array<string, mixed>|null */
+    public static function template(string $key): ?array
+    {
+        return collect(self::catalog()['templates'])->firstWhere('id', self::LEGACY[$key] ?? $key);
+    }
+
+    /** @return list<string> */
+    public static function businessTypes(): array
+    {
+        return array_column(self::catalog()['businessTypes'], 'id');
+    }
+
+    /** The business type's group (stays, food, beauty, health, retail), or null. */
+    public static function groupFor(?string $businessType): ?string
+    {
+        return collect(self::catalog()['businessTypes'])->firstWhere('id', $businessType)['group'] ?? null;
+    }
+
+    public static function recommendedTemplate(?string $businessType): ?string
+    {
+        return collect(self::catalog()['businessTypes'])->firstWhere('id', $businessType)['template'] ?? null;
+    }
+
+    /**
+     * A local business rather than a rental: its business type says so, or,
+     * when none is set, its owner's account does.
+     */
+    public static function isBusiness(?Property $property): bool
+    {
+        $group = self::groupFor($property?->business_type);
+
+        return $group ? $group !== 'stays' : (bool) $property?->host?->isBusiness();
+    }
+
+    /**
+     * A template's starting content: headline, sign-up fields, opt-in line and,
+     * for businesses, the quick tiles. Rental-only sections start off for businesses.
+     *
+     * @return array<string, mixed>
+     */
+    public static function defaults(string $template, bool $business): array
+    {
+        $defaults = self::template($template)['defaults'] ?? null;
+        if (! $defaults) {
+            return [];
+        }
+
+        return array_filter([
+            'heading' => $defaults['headline'],
+            'opt_in' => $defaults['optIn'],
+            'fields' => $defaults['fields'],
+            'tiles' => $business ? array_map(fn ($t) => $t + ['url' => null], $defaults['tiles']) : null,
+            'sections' => $business ? array_fill_keys(self::RENTAL_SECTIONS, false) : null,
+        ], fn ($v) => $v !== null);
+    }
+
+    /**
+     * Fill in the template's starting content wherever the design has none yet.
+     *
+     * @param  array<string, mixed>  $branding
+     * @return array<string, mixed>
+     */
+    public static function withDefaults(array $branding, bool $business): array
+    {
+        foreach (self::defaults($branding['template'] ?? 'bento', $business) as $key => $value) {
+            if ($key === 'sections') {
+                $branding['sections'] = ($branding['sections'] ?? []) + $value;
+            } elseif (blank($branding[$key] ?? null)) {
+                $branding[$key] = $value;
+            }
+        }
+
+        return $branding;
+    }
+
+    /**
+     * Switching template swaps in the new template's starting content, except
+     * where the owner changed it from the old template's.
+     *
+     * @param  array<string, mixed>  $saved
+     * @param  array<string, mixed>  $branding
+     * @return array<string, mixed>
+     */
+    public static function switchTemplate(array $saved, array $branding, bool $business): array
+    {
+        $from = self::LEGACY[$saved['template'] ?? ''] ?? ($saved['template'] ?? null);
+        $to = $branding['template'] ?? null;
+        if (! $from || ! $to || $from === $to) {
+            return $branding;
+        }
+
+        $old = self::defaults($from, $business);
+        foreach (self::defaults($to, $business) as $key => $value) {
+            if ($key === 'sections') {
+                continue;
+            }
+            $current = $branding[$key] ?? null;
+            // Tiles compare without the owner's links, which carry over.
+            $comparable = $key === 'tiles' && is_array($current) ? array_map(fn ($t) => array_diff_key((array) $t, ['url' => 1]), $current) : $current;
+            $oldComparable = $key === 'tiles' ? array_map(fn ($t) => array_diff_key($t, ['url' => 1]), $old[$key] ?? []) : ($old[$key] ?? null);
+            if (blank($current) || $comparable == $oldComparable) {
+                $branding[$key] = $value;
+            }
+        }
+
+        return $branding;
     }
 
     /**
@@ -88,6 +228,15 @@ class SplashDesign
         $branding['offers'] = $rows('offers', 'title');
         $branding['stays'] = $rows('stays', 'title');
         $branding['stays'] = array_map(fn ($row) => ['property_id' => empty($row['property_id']) ? null : (int) $row['property_id']] + $row, $branding['stays']);
+        if (isset($branding['tiles'])) {
+            $branding['tiles'] = array_slice($rows('tiles', 'label'), 0, 3);
+        }
+        if (isset($branding['fields'])) {
+            $branding['fields'] = array_map(fn ($on) => filter_var($on, FILTER_VALIDATE_BOOLEAN), $branding['fields']);
+        }
+        if (in_array($branding['template'], self::NAME_AND_PHONE_ONLY, true)) {
+            $branding['fields'] = ['email' => false, 'birthday' => false];
+        }
 
         return $branding;
     }
@@ -105,9 +254,14 @@ class SplashDesign
         $settings = $property?->branding_json ?? [];
         $template ??= $settings['template'] ?? 'bento';
         $template = self::LEGACY[$template] ?? $template;
+        $template = in_array($template, self::TEMPLATES, true) ? $template : 'bento';
         $accent = self::accent($property);
+        $business = self::isBusiness($property);
+        $original = in_array($template, self::ORIGINAL, true);
+        // Saved designs from before template defaults keep their old fallbacks.
+        $defaults = $original ? [] : self::defaults($template, $business);
 
-        $on = fn (string $section) => (bool) ($settings['sections'][$section] ?? true);
+        $on = fn (string $section) => (bool) ($settings['sections'][$section] ?? $defaults['sections'][$section] ?? true);
         $list = fn (string $key) => array_values(array_filter((array) ($settings[$key] ?? []), 'is_array'));
 
         $nearby = array_map(fn ($place) => [
@@ -138,16 +292,56 @@ class SplashDesign
             'stays' => $on('stays') ? self::stays($property, $list('stays')) : [],
         ];
 
+        $fields = in_array($template, self::NAME_AND_PHONE_ONLY, true)
+            ? ['email' => false, 'birthday' => false]
+            : array_map('boolval', ($settings['fields'] ?? []) + ($defaults['fields'] ?? []) + ['email' => true, 'birthday' => $business]);
+
         return [
-            'template' => in_array($template, self::TEMPLATES, true) ? $template : 'bento',
-            'heading' => $settings['heading'] ?? null,
+            'template' => $template,
+            'look' => self::template($template)['look'] ?? [],
+            'heading' => ($settings['heading'] ?? null) ?: (isset($defaults['heading']) ? str_replace('{name}', (string) $property?->name, $defaults['heading']) : null),
             'message' => $settings['message'] ?? 'Connect to the WiFi and stay in touch.',
             'button' => $settings['button'] ?? 'Connect to WiFi',
             'accent' => $accent,
             'ink' => self::readableInk($accent),
             'content' => $content,
             'hasContent' => (bool) array_filter($content),
+            'fields' => $fields,
+            'optIn' => ($settings['opt_in'] ?? null) ?: ($defaults['opt_in'] ?? 'Send me offers and early access to direct deals'),
+            'tiles' => self::tiles($property, $settings['tiles'] ?? $defaults['tiles'] ?? [], $content, $business),
         ];
+    }
+
+    /**
+     * The three quick tiles under a business's headline. A tile without its own
+     * link opens what its icon suggests: the menu or services on the customer
+     * homepage, or the Offers tab.
+     *
+     * @param  array<int, mixed>  $tiles
+     * @param  array<string, mixed>  $content
+     * @return list<array{icon: string, label: string, url: ?string, goto: ?string}>
+     */
+    protected static function tiles(?Property $property, array $tiles, array $content, bool $business): array
+    {
+        if (! $business) {
+            return [];
+        }
+
+        return array_values(array_filter(array_map(function ($tile) use ($property, $content) {
+            if (! is_array($tile) || blank($tile['label'] ?? null)) {
+                return null;
+            }
+            $icon = in_array($tile['icon'] ?? null, self::TILE_ICONS, true) ? $tile['icon'] : 'star';
+            $url = ($tile['url'] ?? null) ?: null;
+            $goto = null;
+            if (! $url && in_array($icon, ['gift', 'tag'], true) && $content['offers']) {
+                $goto = 'offers';
+            } elseif (! $url && in_array($icon, ['menu', 'list'], true) && $property?->exists) {
+                $url = route('venue.show', $property);
+            }
+
+            return ['icon' => $icon, 'label' => (string) $tile['label'], 'url' => $url, 'goto' => $goto];
+        }, array_slice($tiles, 0, 3))));
     }
 
     /**

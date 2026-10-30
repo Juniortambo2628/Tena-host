@@ -7,6 +7,7 @@ use App\Models\Registration;
 use App\Models\User;
 use App\Services\Messaging\Messenger;
 use App\Support\Phone;
+use App\Support\SplashDesign;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -23,6 +24,17 @@ class SignupConversionService
 {
     public const INVITE_DAYS = 7;
 
+    /** The business sign-up form's "Type of business" options, as property business types. */
+    public const SIGNUP_BUSINESS_TYPES = [
+        'Café' => 'cafe',
+        'Restaurant' => 'restaurant',
+        'Bar or lounge' => 'bar',
+        'Salon, barber or spa' => 'salon',
+        'Clinic or dental practice' => 'clinic',
+        'Gym or studio' => 'gym',
+        'Shop or showroom' => 'shop',
+    ];
+
     public function __construct(protected Messenger $messenger) {}
 
     /**
@@ -35,9 +47,17 @@ class SignupConversionService
         $user ??= $this->findOrCreateUser($registration);
 
         if (! $user->properties()->exists()) {
+            $type = self::SIGNUP_BUSINESS_TYPES[$registration->answers['businessType'] ?? ''] ?? null;
+            $template = SplashDesign::recommendedTemplate($type);
             $user->properties()->create([
                 'name' => $registration->business_name ?: "{$user->first_name}'s ".($registration->type === Registration::TYPE_BUSINESS ? 'business' : 'property'),
+                'business_type' => $type,
                 'address' => $registration->location,
+                // Start from the template the business type recommends, with its headline, fields and accent.
+                'branding_json' => $template ? SplashDesign::clean(SplashDesign::withDefaults([
+                    'template' => $template,
+                    'accent' => SplashDesign::template($template)['accent'],
+                ], SplashDesign::groupFor($type) !== 'stays')) : null,
             ]);
         }
 
