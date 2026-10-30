@@ -250,7 +250,7 @@ export default function Index({ settings, logos = [] }) {
             breadcrumbs={[{ label: 'Settings', href: route('admin.settings.index') }]}
             rootRoute="admin.dashboard"
             actions={[
-                { label: processing ? 'Saving...' : 'Manual Save', onClick: handleSave, variant: 'black', icon: null },
+                { label: processing ? 'Saving...' : 'Manual Save', onClick: handleSave, variant: 'primary', icon: null },
             ]}
         >
             <Head title="Settings" />

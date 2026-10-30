@@ -3,16 +3,17 @@ import { Head, router } from '@inertiajs/react';
 import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
-import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import DataTable from '@/Components/Dashboard/DataTable';
 import { ArrowLeft, Users, DollarSign, CreditCard, Calendar } from 'lucide-react';
 import './Hosts.css';
 
 export default function PaymentHosts({ hosts }) {
     const columns = [
         {
-            key: 'name',
-            label: 'Host',
-            render: (item) => (
+            id: 'name',
+            accessorFn: (item) => `${item.name} ${item.email}`,
+            header: 'Host',
+            cell: ({ row: { original: item } }) => (
                 <div className="payment-hosts__host">
                     <span className="payment-hosts__host-name">{item.name}</span>
                     <span className="payment-hosts__host-email">{item.email}</span>
@@ -20,32 +21,36 @@ export default function PaymentHosts({ hosts }) {
             ),
         },
         {
-            key: 'subscription',
-            label: 'Subscription',
-            render: (item) => (
+            id: 'subscription',
+            accessorFn: (item) => item.subscribed ? 'Subscribed' : 'None',
+            header: 'Subscription',
+            cell: ({ row: { original: item } }) => (
                 <span className={`payment-hosts__sub-badge ${item.subscribed ? 'payment-hosts__sub-badge--active' : 'payment-hosts__sub-badge--inactive'}`}>
                     {item.subscribed ? 'Active' : 'Inactive'}
                 </span>
             ),
         },
         {
-            key: 'total_paid',
-            label: 'Total Paid',
-            render: (item) => (
+            id: 'total_paid',
+            accessorFn: (item) => item.total_paid,
+            header: 'Total Paid',
+            cell: ({ row: { original: item } }) => (
                 <span className="payment-hosts__amount">KES {item.total_paid.toLocaleString()}</span>
             ),
         },
         {
-            key: 'transactions',
-            label: 'Transactions',
-            render: (item) => (
+            id: 'transactions',
+            accessorFn: (item) => item.transaction_count,
+            header: 'Transactions',
+            cell: ({ row: { original: item } }) => (
                 <span className="payment-hosts__count">{item.transaction_count}</span>
             ),
         },
         {
-            key: 'last_payment',
-            label: 'Last Payment',
-            render: (item) => (
+            id: 'last_payment',
+            accessorFn: (item) => item.last_payment,
+            header: 'Last Payment',
+            cell: ({ row: { original: item } }) => (
                 <span className="payment-hosts__date">
                     {item.last_payment ? new Date(item.last_payment).toLocaleDateString() : 'Never'}
                 </span>
@@ -90,14 +95,12 @@ export default function PaymentHosts({ hosts }) {
                 </div>
 
                 <GlassCard padding="p-0 overflow-hidden">
-                    <ResponsiveTable
+                    <DataTable
                         data={hosts}
                         columns={columns}
-                        actions={tableActions}
-                        primaryField="name"
-                        subtitleField="email"
-                        detailTitle="Host Payment Details"
+                        rowActions={tableActions}
                         emptyMessage="No hosts found"
+                        searchPlaceholder="Search hosts..."
                     />
                 </GlassCard>
             </div>

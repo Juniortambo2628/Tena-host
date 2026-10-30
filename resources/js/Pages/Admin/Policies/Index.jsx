@@ -3,7 +3,7 @@ import { Head, router } from '@inertiajs/react';
 import PageShell from '@/Layouts/PageShell';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
-import ResponsiveTable from '@/Components/Dashboard/ResponsiveTable';
+import DataTable from '@/Components/Dashboard/DataTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
 import { FileText, Plus, Eye, Edit3, Trash2, ToggleLeft, ToggleRight, Shield, Cookie, AlertCircle, HandshakeIcon } from 'lucide-react';
 import { notify } from '@/Components/Toast';
@@ -60,9 +60,10 @@ export default function PolicyIndex({ policies }) {
 
     const columns = [
         {
-            key: 'type',
-            label: 'Type',
-            render: (item) => (
+            id: 'type',
+            accessorFn: (item) => item.type,
+            header: 'Type',
+            cell: ({ row: { original: item } }) => (
                 <div className="policies-page__type-cell">
                     <span className="policies-page__type-icon">{typeIcons[item.type]}</span>
                     <span className="policies-page__type-label">{typeLabels[item.type]}</span>
@@ -70,32 +71,36 @@ export default function PolicyIndex({ policies }) {
             ),
         },
         {
-            key: 'title',
-            label: 'Title',
-            render: (item) => (
+            id: 'title',
+            accessorFn: (item) => item.title,
+            header: 'Title',
+            cell: ({ row: { original: item } }) => (
                 <span className="policies-page__title">{item.title}</span>
             ),
         },
         {
-            key: 'version',
-            label: 'Version',
-            render: (item) => (
+            id: 'version',
+            accessorFn: (item) => item.version,
+            header: 'Version',
+            cell: ({ row: { original: item } }) => (
                 <span className="policies-page__version">v{item.version}</span>
             ),
         },
         {
-            key: 'status',
-            label: 'Status',
-            render: (item) => (
+            id: 'status',
+            accessorFn: (item) => item.is_published ? 'Published' : 'Draft',
+            header: 'Status',
+            cell: ({ row: { original: item } }) => (
                 <span className={`policies-page__status-badge ${item.is_published ? 'policies-page__status-badge--published' : 'policies-page__status-badge--draft'}`}>
                     {item.is_published ? 'Published' : 'Draft'}
                 </span>
             ),
         },
         {
-            key: 'effective_date',
-            label: 'Effective Date',
-            render: (item) => (
+            id: 'effective_date',
+            accessorFn: (item) => item.effective_date,
+            header: 'Effective Date',
+            cell: ({ row: { original: item } }) => (
                 <span className="policies-page__date">
                     {item.effective_date ? new Date(item.effective_date).toLocaleDateString() : '-'}
                 </span>
@@ -126,7 +131,7 @@ export default function PolicyIndex({ policies }) {
             key: 'delete',
             label: 'Delete',
             icon: <Trash2 size={14} />,
-            variant: 'delete',
+            variant: 'danger',
             onClick: (item) => handleDelete(item),
         },
     ];
@@ -198,18 +203,15 @@ export default function PolicyIndex({ policies }) {
                 { label: 'Drafts', value: draftCount },
             ]}
             actions={[
-                { label: 'New Policy', href: route('admin.policies.create'), variant: 'black', icon: <Plus size={16} /> },
+                { label: 'New Policy', href: route('admin.policies.create'), variant: 'primary', icon: <Plus size={16} /> },
             ]}
         >
             <Head title="Policies & Terms" />
             <GlassCard padding="p-0 overflow-hidden">
-                <ResponsiveTable
+                <DataTable
                     data={policies}
                     columns={columns}
-                    actions={tableActions}
-                    primaryField="title"
-                    subtitleField={(item) => typeLabels[item.type]}
-                    detailTitle="Policy Details"
+                    rowActions={tableActions}
                     emptyMessage="No policies created yet"
                     enableSelection
                     selectedIds={selectedIds}

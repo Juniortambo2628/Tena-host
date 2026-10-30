@@ -94,9 +94,10 @@ Laravel 12 + Inertia 2 + React 18, Tailwind CSS v4, Vite. Pages live in
 - **Page heading:** `DashboardHero` (or `PageShell`, which adds `<Head>`), with
   `breadcrumbs` and `actions`. Actions that navigate take `href` (rendered as a
   prefetching link), not `onClick={() => router.get(...)}`.
-- **Lists:** `Components/Dashboard/DataTable` (server pagination, search,
-  selection, card view on phones). `ResponsiveTable` only where its row-action
-  menu and detail modal are needed.
+- **Lists:** `Components/Dashboard/DataTable`, the one table: server or client
+  pagination, search, selection, a card view on phones, `rowActions` for
+  per-row buttons, and `detailTitle` for a "View details" dialog (columns with
+  `meta: { detailOnly: true }` appear only there).
 - **Empty lists:** `Components/Dashboard/EmptyState` with a specific message
   ("No guests yet") and an action when there is one.
 - **Confirmations:** `useConfirm()` from `@/hooks/useConfirm` and render

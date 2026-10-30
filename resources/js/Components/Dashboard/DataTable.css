@@ -28,7 +28,7 @@
     @apply hidden lg:block overflow-x-auto;
 }
 
-/* Phone/tablet: one card per row, styled like ResponsiveTable's cards. */
+/* Phone/tablet: one card per row. */
 .data-table__cards {
     @apply lg:hidden space-y-3 px-4;
 }
@@ -62,7 +62,7 @@
 }
 
 .data-table__card-value {
-    @apply min-w-0 text-right text-sm font-semibold;
+    @apply min-w-0 text-right text-sm font-semibold [overflow-wrap:anywhere];
 }
 
 .data-table__card-actions {
@@ -136,4 +136,65 @@
 
 .data-table__pagination-page {
     @apply px-4 py-2 text-xs font-semibold text-black/40;
+}
+
+/* Row actions (icon buttons) and the "View details" dialog. */
+.data-table__actions {
+    @apply flex items-center justify-end lg:justify-start gap-1;
+}
+
+.data-table__action-btn {
+    @apply p-2 rounded-lg transition-colors text-black/40 hover:bg-black/5 hover:text-black;
+}
+
+.data-table__action-btn--success {
+    @apply hover:bg-green-50 hover:text-green-600;
+}
+
+.data-table__action-btn--warning {
+    @apply hover:bg-orange-50 hover:text-orange-600;
+}
+
+.data-table__action-btn--danger {
+    @apply hover:bg-red-50 hover:text-red-500;
+}
+
+.data-table__detail {
+    @apply space-y-1;
+}
+
+.data-table__detail-row {
+    @apply flex items-center justify-between gap-6 py-3 border-b border-black/5;
+}
+
+.data-table__detail-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-black/40;
+}
+
+.data-table__detail-value {
+    @apply min-w-0 text-sm font-semibold text-right [overflow-wrap:anywhere];
+}
+
+.data-table__detail-actions {
+    @apply flex flex-wrap items-center gap-2 pt-4 mt-4;
+}
+
+.data-table__detail-action-btn {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors;
+}
+
+.data-table__detail-action-btn--default {
+    @apply bg-black/5 text-black/60 hover:bg-black/10;
+}
+
+.data-table__detail-action-btn--success {
+    @apply bg-green-50 text-green-600 hover:bg-green-100;
+}
+
+.data-table__detail-action-btn--warning {
+    @apply bg-orange-50 text-orange-600 hover:bg-orange-100;
+}
+
+.data-table__detail-action-btn--danger {
+    @apply bg-red-50 text-red-500 hover:bg-red-100;
 }

@@ -7,10 +7,11 @@ import {
     getSortedRowModel,
     flexRender,
 } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, ArrowUpDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search, ArrowUpDown, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { router } from '@inertiajs/react';
 import EmptyState from './EmptyState';
+import GlassModal from '@/Components/GlassModal';
 import { useTerms } from './Terms';
 import './DataTable.css';
 
@@ -35,6 +36,11 @@ export default function DataTable({
     emptyMessage = 'No results found',
     emptyIcon,
     emptyAction = null,
+    // Buttons for each row: [{ key, label, icon, variant: 'success' | 'warning' | 'danger', onClick(row) }].
+    rowActions = [],
+    // With a title, each row gets "View details": a dialog listing every column,
+    // including those marked meta.detailOnly (hidden from the table and cards).
+    detailTitle = null,
 }) {
     const t = useTerms();
     const [sorting, setSorting] = useState([]);
@@ -77,7 +83,37 @@ export default function DataTable({
         enableHiding: false,
     }] : [];
 
-    const allColumns = [...selectionColumn, ...columns];
+    const [detailRow, setDetailRow] = useState(null);
+    const actionColumn = rowActions.length > 0 || detailTitle ? [{
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableGlobalFilter: false,
+        cell: ({ row }) => (
+            <div className="data-table__actions">
+                {detailTitle && (
+                    <button type="button" className="data-table__action-btn" title="View details" aria-label="View details" onClick={() => setDetailRow(row.original)}>
+                        <Eye size={14} />
+                    </button>
+                )}
+                {rowActions.map((action) => (
+                    <button
+                        key={action.key}
+                        type="button"
+                        className={cn('data-table__action-btn', action.variant && `data-table__action-btn--${action.variant}`)}
+                        title={t(action.label)}
+                        aria-label={t(action.label)}
+                        onClick={() => action.onClick(row.original)}
+                    >
+                        {action.icon}
+                    </button>
+                ))}
+            </div>
+        ),
+    }] : [];
+
+    const allColumns = [...selectionColumn, ...columns, ...actionColumn];
+    const columnVisibility = Object.fromEntries(columns.filter((c) => c.meta?.detailOnly).map((c) => [c.id ?? c.accessorKey, false]));
 
     const table = useReactTable({
         data,
@@ -85,6 +121,7 @@ export default function DataTable({
         state: {
             sorting,
             globalFilter,
+            columnVisibility,
             ...(enableSelection ? { rowSelection: selectionState } : {}),
         },
         onSortingChange: setSorting,
@@ -230,6 +267,39 @@ export default function DataTable({
                         );
                     })}
                 </div>
+            )}
+
+            {detailTitle && (
+                <GlassModal isOpen={!!detailRow} onClose={() => setDetailRow(null)} title={t(detailTitle)} maxWidth="lg">
+                    {detailRow && (() => {
+                        const row = table.getCoreRowModel().rows.find((r) => r.original === detailRow);
+                        const cells = row ? row.getAllCells().filter((c) => !['select', 'actions'].includes(c.column.id)) : [];
+                        return (
+                            <div className="data-table__detail">
+                                {cells.map((cell) => (
+                                    <div key={cell.id} className="data-table__detail-row">
+                                        <span className="data-table__detail-label">{t(columnLabel(cell.column))}</span>
+                                        <div className="data-table__detail-value">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
+                                    </div>
+                                ))}
+                                {rowActions.length > 0 && (
+                                    <div className="data-table__detail-actions">
+                                        {rowActions.map((action) => (
+                                            <button
+                                                key={action.key}
+                                                type="button"
+                                                className={cn('data-table__detail-action-btn', `data-table__detail-action-btn--${action.variant || 'default'}`)}
+                                                onClick={() => { setDetailRow(null); action.onClick(detailRow); }}
+                                            >
+                                                {action.icon} {t(action.label)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })()}
+                </GlassModal>
             )}
 
             {/* Pagination */}
