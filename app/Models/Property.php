@@ -19,6 +19,7 @@ class Property extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'business_type',
         'address',
         'description',
         'wifi_ssid',

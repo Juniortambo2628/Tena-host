@@ -108,3 +108,6 @@
     .studio-section__head { flex-direction: column; }
     .studio-footer { padding: 16px 18px 20px; flex-wrap: wrap; }
 }
+
+/* sign-up form switches */
+.studio-toggles { display: grid; gap: 10px; justify-items: start; }

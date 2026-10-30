@@ -47,13 +47,15 @@
                 @if($fieldError('phone'))<small class="sp-field-error">{{ $fieldError('phone') }}</small>@endif
             </label>
 
-            <label class="sp-field">
-                <span>Email address <em>(optional)</em></span>
-                <input type="email" name="email" value="{{ $old['email'] ?? '' }}" autocomplete="email" @if($fieldError('email')) aria-invalid="true" @endif>
-                @if($fieldError('email'))<small class="sp-field-error">{{ $fieldError('email') }}</small>@endif
-            </label>
+            @if($design['fields']['email'])
+                <label class="sp-field">
+                    <span>Email address <em>(optional)</em></span>
+                    <input type="email" name="email" value="{{ $old['email'] ?? '' }}" autocomplete="email" @if($fieldError('email')) aria-invalid="true" @endif>
+                    @if($fieldError('email'))<small class="sp-field-error">{{ $fieldError('email') }}</small>@endif
+                </label>
+            @endif
 
-            @if($isBusiness)
+            @if($design['fields']['birthday'])
                 <div class="sp-field">
                     <span>Birthday <em>(optional, for a treat on your day)</em></span>
                     <span class="sp-birthday">
@@ -82,7 +84,7 @@
 
             <label class="sp-check">
                 <input type="checkbox" name="marketing_opt_in" value="1" @checked(!empty($old['marketing_opt_in']))>
-                <span>Send me offers and early access to direct deals.</span>
+                <span>{{ rtrim($design['optIn'], '.') }}.</span>
             </label>
         @endif
 
