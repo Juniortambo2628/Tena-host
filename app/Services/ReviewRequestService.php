@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Guest;
 use App\Models\Property;
 use App\Services\Messaging\Messenger;
+use App\Support\SplashDesign;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
@@ -26,7 +27,7 @@ class ReviewRequestService
 
     public static function defaultMessage(Property $property): string
     {
-        return $property->host?->isBusiness() ? self::DEFAULT_BUSINESS_MESSAGE : self::DEFAULT_MESSAGE;
+        return SplashDesign::isBusiness($property) ? self::DEFAULT_BUSINESS_MESSAGE : self::DEFAULT_MESSAGE;
     }
 
     private const CHECKOUT_HOUR = 11;

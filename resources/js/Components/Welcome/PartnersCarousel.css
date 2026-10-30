@@ -1,84 +1,152 @@
 @reference "../../../css/theme.css";
 
-.partners-header {
-    @apply text-center mb-8 md:mb-10 max-w-2xl mx-auto;
+/* "Trusted by": client WiFi pages in phone frames (design: Glen's trusted-by snippet). */
+.trusted-head {
+    @apply flex flex-wrap items-end justify-between gap-x-6 gap-y-4 mb-6;
 }
 
-.partners-title {
-    @apply text-sm font-bold text-gray-500 tracking-wider uppercase;
-    letter-spacing: 0.12em;
+.trusted-title {
+    @apply font-extrabold text-dark;
+    font-size: clamp(28px, 4.2vw, 42px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    max-width: 16em;
 }
 
-.partners-subtitle {
-    @apply text-base text-gray-500 mt-2;
+.trusted-subtitle {
+    @apply mt-2 text-muted;
+    font-size: 17px;
+    max-width: 32em;
 }
 
-.partners-marquee {
-    @apply relative overflow-hidden;
-    mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+.trusted-tabs {
+    @apply flex flex-wrap gap-2;
 }
 
-.partners-track {
-    display: flex;
-    align-items: center;
-    gap: 3.5rem;
-    padding: 1rem 0;
-    width: max-content;
-    list-style: none;
-    margin: 0;
-    animation: partners-marquee 30s linear infinite;
+.trusted-tabs button {
+    @apply rounded-full bg-white text-dark font-semibold cursor-pointer;
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 15px;
+    border: 1.5px solid #E6E7EB;
 }
 
-.partners-marquee:hover .partners-track {
-    animation-play-state: paused;
+.trusted-tabs button[aria-pressed="true"] {
+    @apply bg-dark text-primary;
+    border-color: var(--color-dark);
 }
 
-.partners-item {
-    @apply flex-shrink-0;
+.trusted-list {
+    @apply flex overflow-x-auto list-none m-0;
+    gap: 18px;
+    padding: 6px 4px 26px;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
 }
 
-.partners-link {
-    @apply flex flex-col items-center gap-2 text-center no-underline;
-    width: 168px;
-    transition: transform 0.25s ease;
+.trusted-list::-webkit-scrollbar {
+    display: none;
 }
 
-.partners-link:hover,
-.partners-link:focus-visible {
-    transform: translateY(-2px);
+.trusted-list--few {
+    @apply justify-center;
 }
 
-/* Logos and photos share one card size; photos fill it, logos sit inside. */
-.partners-logo {
-    @apply rounded-2xl bg-gray-50 border border-gray-100;
-    width: 168px;
-    height: 104px;
+.trusted-item {
+    flex: 0 0 auto;
+    width: 172px;
+    scroll-snap-align: start;
+}
+
+@media (min-width: 760px) {
+    .trusted-item {
+        width: 196px;
+    }
+}
+
+.trusted-item figure {
+    @apply m-0 flex flex-col gap-3;
+}
+
+.trusted-phone {
+    border-radius: 30px;
+    background: #141414;
+    padding: 7px;
+    box-shadow: 0 10px 18px rgba(30, 30, 30, 0.16);
+}
+
+/* Portrait screenshots, about 1:2; anything taller is cropped from the bottom so the top always shows. */
+.trusted-phone img {
+    @apply block w-full h-auto;
+    aspect-ratio: 1 / 2;
     object-fit: cover;
+    object-position: top;
+    border-radius: 24px;
+    background: #EDEDED;
 }
 
-.partners-logo--text {
-    @apply flex items-center justify-center text-4xl font-black text-dark bg-primary border-0;
+.trusted-item figcaption {
+    @apply flex flex-col px-1;
+    gap: 3px;
 }
 
-.partners-name {
-    @apply text-sm font-semibold text-dark leading-tight;
+.trusted-item figcaption b {
+    @apply text-dark;
+    font-size: 16px;
+    line-height: 1.25;
 }
 
-@keyframes partners-marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+.trusted-item figcaption a {
+    @apply no-underline;
+}
+
+.trusted-item figcaption a:hover b {
+    @apply underline;
+}
+
+.trusted-item figcaption span {
+    @apply text-muted;
+    font-size: 14px;
+}
+
+.trusted-item figcaption .trusted-tag {
+    @apply self-start rounded-full font-bold text-dark;
+    margin-top: 4px;
+    font-size: 12px;
+    padding: 3px 10px;
+    background: #FFF4BF;
+}
+
+.trusted-item figcaption .trusted-tag--business {
+    background: #E6F1EE;
+}
+
+.trusted-nav {
+    @apply hidden justify-end gap-2;
+}
+
+@media (min-width: 760px) {
+    .trusted-nav {
+        @apply flex;
+    }
+}
+
+.trusted-nav button {
+    @apply flex items-center justify-center rounded-full bg-white text-dark cursor-pointer;
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid #E6E7EB;
+}
+
+.trusted-nav button:disabled {
+    opacity: 0.35;
+    cursor: default;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .partners-track {
-        animation: none;
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-    }
-    .partners-marquee {
-        mask-image: none;
-        -webkit-mask-image: none;
+    .trusted-list {
+        scroll-behavior: auto;
     }
 }

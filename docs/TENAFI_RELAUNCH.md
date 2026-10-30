@@ -8,7 +8,7 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 
 | URL | Sections (in order; `#anchors` match Glen's) |
 | --- | --- |
-| `/` | hero, path_cards `#choose`, comparison__problem `#problem`, how_it_works `#how`, cta_banner__founding |
+| `/` | hero, partners `#trusted` (Trusted by), path_cards `#choose`, comparison__problem `#problem`, how_it_works `#how`, cta_banner__founding |
 | `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
 | `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
@@ -145,8 +145,9 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 - Glen's HTML mockups (the WiFi login card, the guest homepage, WhatsApp and report "phones", the occupancy calendar)
   are image slots in the CMS here: detailed_features images, and stats__problem → "Illustration".
   Export them from his HTML or design files and upload them. Keep the "Illustration only" caption.
-- The old homepage's partners carousel and ROI calculator aren't in Glen's design.
+- The old /hosts partners carousel and ROI calculator aren't in Glen's design.
   They are switched off, not deleted (Admin → Public Pages → Short-term rental operators).
+  The homepage has its own "Trusted by" section (see below).
 - The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
 
 ## WhatsApp button and free trial slots
@@ -161,7 +162,7 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
 
 ## Still needed before launch
 
-- Trusted by strip (main landing page): upload each business's photo or logo under Admin → Public Pages → Main landing page → Trusted by → Media (one slot per row). Add rows in the Partners tab until there are at least 10 businesses. A row without a photo shows its initial on a yellow tile.
+- Trusted by (main landing page, directly below the hero): each client's WiFi page in a phone frame. Per row in the Partners tab: name, link (optional), kind (`hosts` = Short-term rentals, `business` = Business) and "type · area" (e.g. `Café · Westlands`). Upload a phone screenshot of their WiFi page under Media → "Partner N: WiFi page screenshot" (portrait, about 1:2, e.g. 600 × 1200, status bar cropped, under 150 KB). Rows without a screenshot are hidden, and so is an image that isn't portrait (an old logo), so the section only appears once there's at least one. The All / Short-term rentals / Businesses tabs appear once both kinds have a screenshot. Only show clients who've agreed to it.
 
 - Fill in TenaFi's paybill under Admin → M-Pesa: paybill or till number, Daraja consumer key and secret, Lipa na M-Pesa passkey, Production, and the fee on extras. The same paybill takes host subscriptions. The M-Pesa callback URLs (shown on that page) are now exempt from CSRF; before this, Safaricom's subscription callbacks would have been rejected.
 
