@@ -3,8 +3,9 @@
 use App\Models\LandingContent;
 use App\Models\LandingPage;
 use App\Models\LandingSection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 function homeSection(string $key): LandingSection
 {
