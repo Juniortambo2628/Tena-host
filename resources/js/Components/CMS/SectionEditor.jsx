@@ -42,6 +42,7 @@ const FIELD_OPTIONS = {
     reverse: YES_NO,
     show_contact_form: YES_NO,
     highlight: YES_NO,
+    kind: opts({ value: 'hosts', label: 'Short-term rentals' }, { value: 'business', label: 'Business' }),
 };
 
 const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'join_label']);
