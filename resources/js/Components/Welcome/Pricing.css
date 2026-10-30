@@ -211,3 +211,7 @@ a.pricing-card-cta-outline {
 .pricing-card-price .pricing-card-price-unit {
     @apply mt-2 block text-sm;
 }
+
+.pricing-trial-slots {
+    margin: -8px auto 28px;
+}

@@ -6,6 +6,7 @@ import CtaLink from '@/Components/Public/CtaLink';
 import { SkeletonSectionHeader, SkeletonPricingGrid } from './Skeleton';
 import { ArrowRight, Check, ChevronDown, Sparkles, Zap, Award, Clock } from 'lucide-react';
 import LineList from '@/Components/Public/LineList';
+import TrialSlots from '@/Components/Public/TrialSlots';
 import ContactForm from './ContactForm';
 import './Pricing.css';
 
@@ -87,6 +88,8 @@ export default function Pricing({ section }) {
     return (
         <SectionWrapper bg={section.bg || 'gray'}>
             <SectionHeader title={title} subtitle={subtitle} />
+
+            {isTruthy(getContent(section, 'show_slots', '0')) && <TrialSlots className="pricing-trial-slots" />}
 
             {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
 

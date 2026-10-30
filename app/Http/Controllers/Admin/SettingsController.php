@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Support\Brand;
+use App\Support\TrialSlots;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -56,6 +57,8 @@ class SettingsController extends Controller
             'billing_enabled' => 'sometimes|in:auto,enabled,disabled',
             'signup_alert_emails' => 'sometimes|nullable|string|max:500',
             'signup_alert_webhook_url' => 'sometimes|nullable|url|max:500',
+            'trial_slots_total' => 'sometimes|nullable|integer|min:0|max:10000',
+            'trial_slots_since' => 'sometimes|nullable|date',
         ];
 
         $types = [
@@ -91,6 +94,7 @@ class SettingsController extends Controller
         }
 
         Cache::forget('app_settings');
+        TrialSlots::forget();
 
         return back()->with('success', 'Settings updated successfully.');
     }

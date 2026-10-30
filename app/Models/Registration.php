@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\TrialSlots;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -46,4 +47,11 @@ class Registration extends Model
         'answers' => 'array',
         'consented_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        // Every sign-up is a trial booking; the public slot counter must see it straight away.
+        static::saved(fn () => TrialSlots::forget());
+        static::deleted(fn () => TrialSlots::forget());
+    }
 }

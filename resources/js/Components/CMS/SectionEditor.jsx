@@ -42,6 +42,8 @@ const FIELD_OPTIONS = {
     reverse: YES_NO,
     show_contact_form: YES_NO,
     highlight: YES_NO,
+    show_slots: YES_NO,
+    enabled: YES_NO,
     mockup: opts('wifi', 'tent', 'splash', 'guide', 'welcome', 'chat', 'crm'),
 };
 

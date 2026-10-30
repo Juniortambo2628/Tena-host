@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\RateLimiter;
  */
 class TrackController extends Controller
 {
-    private const EVENT_PATTERN = '/^(path_card_[a-z]+|join_click|signup_step_\d|signup_submit|signup_success)$/';
+    private const EVENT_PATTERN = '/^(path_card_[a-z]+|join_click|signup_step_\d|signup_submit|signup_success|whatsapp_click)$/';
 
     public function store(Request $request): Response
     {

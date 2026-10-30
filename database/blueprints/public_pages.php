@@ -192,6 +192,29 @@ return [
                 ],
             ],
         ],
+        'whatsapp_button' => [
+            'title' => 'Floating WhatsApp button',
+            'content' => [
+                'enabled' => '1',
+                'number' => '+254 703 501 597',
+                'label' => 'WhatsApp us',
+                // Pre-filled message, by page.
+                'message_home' => "Hi TenaFi, I\u{2019}d like to find out about your free trial.",
+                'message_hosts' => "Hi TenaFi, I\u{2019}d like to book a free trial for my short-term rental(s).",
+                'message_business' => "Hi TenaFi, I\u{2019}d like to book a free trial for my business.",
+            ],
+        ],
+        'trial_slots' => [
+            // The numbers come from real sign-ups; the total and start date are in Admin -> Settings.
+            'title' => 'Free trial slot counter',
+            'content' => [
+                'taken_text' => '{taken} of {total} free trial slots taken',
+                'left_text' => '{left} slots left',
+                'last_text' => 'Only 1 slot left',
+                'full_text' => 'All {total} free trial slots taken',
+                'full_note' => 'WhatsApp us to join the waitlist',
+            ],
+        ],
         'feature_status' => [
             'title' => 'Feature status ("Coming soon" badges)',
             'content' => [
@@ -516,6 +539,7 @@ return [
                 'subtitle' => 'The device, installation, WiFi page, guest list and support, on a 12-month plan, then month to month.',
                 'footnote' => "Multi-unit operators: 20% off from 10 units, 30% off from 50. Extra devices at the same site: KES 1,500 a month each. Pay quarterly for 5% off, or yearly and get 2 months free. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
                 'show_contact_form' => '0',
+                'show_slots' => '1',
                 'cta_headline' => '',
                 'plans' => $plans('unit', [
                     'basic' => ['Capture guests and collect reviews', "Branded WiFi page and guest list\nA review request to every guest, by SMS and email\nA campaign every quarter"],
@@ -557,6 +581,7 @@ return [
                 'menu_label' => 'Apply',
                 'menu_description' => 'Join the Founding 20. First two months free.',
                 'signup_type' => 'host',
+                'show_slots' => '1',
                 'badge' => 'Founding 20',
                 'title' => "Let\u{2019}s get started",
                 'subtitle' => 'Apply for the Founding 20 for short-term rental operators. First two months free.',
@@ -756,6 +781,7 @@ return [
                 'subtitle' => 'The device, installation, WiFi page, customer list and support. A 12-month plan, then month to month.',
                 'footnote' => "Several locations? We\u{2019}ll quote group pricing. Extra devices at the same site: KES 1,500 a month each. Pay quarterly for 5% off, or yearly and get 2 months free. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
                 'show_contact_form' => '0',
+                'show_slots' => '1',
                 'cta_headline' => '',
                 'plans' => $plans('location', [
                     'basic' => ['Google reviews from every customer', "A Google review request to every customer\nBy SMS and email\nA campaign every quarter"],
@@ -797,6 +823,7 @@ return [
                 'menu_label' => 'Sign up',
                 'menu_description' => 'Join the Founding 20. First two months free.',
                 'signup_type' => 'business',
+                'show_slots' => '1',
                 'badge' => 'Founding 20',
                 'title' => "Let\u{2019}s get started",
                 'subtitle' => 'Apply for the Founding 20 for business owners. First two months free.',

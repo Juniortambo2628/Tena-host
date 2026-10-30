@@ -144,6 +144,8 @@ export default function Index({ settings, logos = [] }) {
             support_email: flattened.support_email || 'support@tena.com',
             signup_alert_emails: flattened.signup_alert_emails || '',
             signup_alert_webhook_url: flattened.signup_alert_webhook_url || '',
+            trial_slots_total: flattened.trial_slots_total ?? '50',
+            trial_slots_since: flattened.trial_slots_since || '',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -315,6 +317,23 @@ export default function Index({ settings, logos = [] }) {
                                             value={data.settings.signup_alert_webhook_url}
                                             placeholder="https://hooks.zapier.com/..."
                                             onChange={(e) => updateSetting('signup_alert_webhook_url', e.target.value)}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Free trial slots" hint="The total behind “X of 50 free trial slots taken” on the public pages. Taken is counted from real sign-ups. 0 hides the counter.">
+                                        <TextInput
+                                            type="number"
+                                            min="0"
+                                            value={data.settings.trial_slots_total}
+                                            onChange={(e) => updateSetting('trial_slots_total', e.target.value)}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Count trial sign-ups from" hint="Sign-ups from this date count as taken slots (marking one inactive frees its slot). Leave empty to count every sign-up, including the old waitlist.">
+                                        <TextInput
+                                            type="date"
+                                            value={data.settings.trial_slots_since}
+                                            onChange={(e) => updateSetting('trial_slots_since', e.target.value)}
                                         />
                                     </FormField>
 
