@@ -74,8 +74,8 @@ it('renders each public page from its own CMS sections', function (string $url, 
         );
 })->with([
     'main' => ['/', 'home', ['seo', 'hero', 'partners', 'path_cards', 'comparison__problem', 'how_it_works', 'cta_banner__founding']],
-    'hosts' => ['/hosts', 'hosts', ['seo', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'stats__commission', 'comparison__party', 'detailed_features', 'features__protect', 'credibility', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
-    'business' => ['/business', 'business', ['seo', 'hero', 'features__why', 'comparison__qr', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
+    'hosts' => ['/hosts', 'hosts', ['seo', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'stats__commission', 'comparison__party', 'detailed_features', 'features__protect', 'credibility', 'journey', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
+    'business' => ['/business', 'business', ['seo', 'hero', 'features__why', 'comparison__qr', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'journey', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
 ]);
 
 it('retires sections of the old homepage that the handoff dropped', function () {
@@ -88,8 +88,8 @@ it('retires sections of the old homepage that the handoff dropped', function () 
 it('shows the same header links on every page, with megamenus built from each page\'s sections', function (string $url) {
     $this->get($url)->assertInertia(fn ($page) => $page
         ->where('site.header.content', fn ($c) => [$c['links.0.href'], $c['links.1.href'], $c['links.2.href']] === ['/hosts', '/business', '/#how'])
-        ->where('menus./hosts', fn ($items) => collect($items)->pluck('label')->all() === ['Occupancy', 'How it works', 'Product', 'Protect your property', 'Pricing', 'Apply'])
-        ->where('menus./business', fn ($items) => collect($items)->pluck('href')->all() === ['/business#b-how', '/business#b-product', '/business#b-reviews', '/business#b-pricing', '/business#signup'])
+        ->where('menus./hosts', fn ($items) => collect($items)->pluck('label')->all() === ['Occupancy', 'How it works', 'Product', 'Protect your property', 'Your first month', 'Pricing', 'Apply'])
+        ->where('menus./business', fn ($items) => collect($items)->pluck('href')->all() === ['/business#b-how', '/business#b-product', '/business#b-reviews', '/business#b-first-month', '/business#b-pricing', '/business#signup'])
     );
 })->with(['/', '/hosts', '/business']);
 

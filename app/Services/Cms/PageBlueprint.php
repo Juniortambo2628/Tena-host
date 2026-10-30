@@ -51,6 +51,46 @@ class PageBlueprint
     }
 
     /**
+     * Create only the named sections of one page (additively, like sync())
+     * and put each directly before another section, keeping the rest of the
+     * page in the order the admin set. For migrations that add a section:
+     * a full sync() would also bring back list rows an admin removed.
+     *
+     * @param  array<string, string>  $placeBefore  new section key => existing section key
+     */
+    public static function addSections(string $slug, array $placeBefore): void
+    {
+        $page = LandingPage::where('slug', $slug)->first();
+        $definitions = static::definitions()[$slug] ?? [];
+        if (! $page) {
+            return;
+        }
+
+        DB::transaction(function () use ($page, $definitions, $placeBefore) {
+            foreach ($placeBefore as $key => $before) {
+                if (! isset($definitions[$key])) {
+                    continue;
+                }
+                static::syncSection($page, $key, $definitions[$key], 0, false);
+
+                $sections = LandingSection::where('page_id', $page->id)->orderBy('sort_order')->orderBy('id')->get();
+                $new = $sections->firstWhere('section_key', $key);
+                $sections = $sections->reject(fn (LandingSection $s) => $s->is($new))->values();
+                $at = $sections->search(fn (LandingSection $s) => $s->section_key === $before);
+                $sections->splice($at === false ? $sections->count() : $at, 0, [$new]);
+
+                foreach ($sections as $i => $section) {
+                    if ($section->sort_order !== $i + 1) {
+                        $section->update(['sort_order' => $i + 1]);
+                    }
+                }
+            }
+        });
+
+        LandingPage::clearCache();
+    }
+
+    /**
      * Flip a feature's "Coming soon" badge (Site-wide → Feature status) once
      * it ships. For data migrations; admins can still change it afterwards.
      */
