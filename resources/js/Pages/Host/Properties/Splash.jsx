@@ -150,6 +150,15 @@ function SectionHead({ title, description, sectionKey, branding, setSection, ext
     );
 }
 
+// Thin and translucent mid-grey, so it reads on light and dark templates alike.
+const PREVIEW_SCROLLBAR = `
+* { scrollbar-width: thin; scrollbar-color: rgba(128, 128, 128, .45) transparent; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(128, 128, 128, .45); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(128, 128, 128, .7); }
+`;
+
 function Preview({ propertyId, data, focusTab, coverFile, logoFile }) {
     const frame = useRef(null);
     const box = useRef(null);
@@ -177,6 +186,13 @@ function Preview({ propertyId, data, focusTab, coverFile, logoFile }) {
     const decorate = () => {
         const doc = frame.current?.contentDocument;
         if (!doc) return;
+        // A slim scrollbar inside the device frame (the studio only; guests' pages are untouched).
+        if (doc.head && !doc.getElementById('studio-scrollbar')) {
+            const style = doc.createElement('style');
+            style.id = 'studio-scrollbar';
+            style.textContent = PREVIEW_SCROLLBAR;
+            doc.head.appendChild(style);
+        }
         if (urls.cover) doc.querySelectorAll('[data-sp-cover]').forEach(el => { el.style.backgroundImage = `url("${urls.cover}")`; el.classList.remove('sp-photo--empty'); });
         if (urls.logo) doc.querySelectorAll('[data-sp-logo]').forEach(el => {
             const old = el.querySelector('.sp-brand__logo, .sp-brand__mono');
