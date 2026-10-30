@@ -1,0 +1,47 @@
+@reference "../../../css/theme.css";
+
+/* Free trial slot counter (design: Glen's tenafi-trial.css). */
+.trial-slots {
+    @apply flex flex-col w-full mx-auto;
+    max-width: 520px;
+    gap: 8px;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.trial-slots__top {
+    @apply flex flex-wrap justify-center items-baseline text-center;
+    gap: 6px 14px;
+}
+
+.trial-slots__top b {
+    font-weight: 800;
+}
+
+.trial-slots__top span {
+    opacity: 0.75;
+    font-size: 14px;
+}
+
+.trial-slots__bar {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(30, 30, 30, 0.12);
+    overflow: hidden;
+}
+
+.trial-slots__bar span {
+    @apply block h-full bg-primary;
+    border-radius: 999px;
+    transition: width 0.8s ease;
+}
+
+.trial-slots--dark .trial-slots__bar {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .trial-slots__bar span {
+        transition: none;
+    }
+}

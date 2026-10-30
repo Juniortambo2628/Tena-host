@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, ArrowLeft, Loader2 } from 'lucide-react';
 import { SectionWrapper, SectionHeader } from './layouts';
-import { getContent, extractItems, stripHtml, baseSectionKey } from '@/lib/cms';
+import { getContent, extractItems, stripHtml, baseSectionKey, isTruthy } from '@/lib/cms';
 import { track } from '@/lib/analytics';
 import { usePublic } from '@/Components/Public/PublicContext';
 import LineList from '@/Components/Public/LineList';
+import TrialSlots from '@/Components/Public/TrialSlots';
 import './SignupForm.css';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -297,6 +298,8 @@ export default function SignupForm({ section }) {
                 title={text('title', 'Apply to join')}
                 subtitle={getContent(section, 'subtitle', '')}
             />
+
+            {isTruthy(getContent(section, 'show_slots', '0')) && <TrialSlots className="signup-trial-slots" />}
 
             <div className="signup-card">
                 <ol className="signup-progress" aria-label="Sign-up steps">

@@ -12,7 +12,7 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 | `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
 | `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
-| Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), footer, feature_status |
+| Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), footer, whatsapp_button, trial_slots, feature_status |
 
 Everything is editable in **Admin → Public Pages**, with one tab per page. The defaults live in `database/blueprints/public_pages.php`.
 
@@ -149,6 +149,11 @@ Flip any of these under Site-wide → Feature status, and every badge on every p
   They are switched off, not deleted (Admin → Public Pages → Short-term rental operators).
   The homepage has its own "Trusted by" section (see below).
 - The brand font (Inter) and colours (ink #1E1E1E, muted #5B6170) follow his brand reference.
+
+## WhatsApp button and free trial slots
+
+- **Floating WhatsApp button**: on every public page, bottom right (an icon only on phones). Site-wide → Floating WhatsApp button holds the number (+254 703 501 597), the label, and the pre-filled message per page (`message_home`, `message_hosts`, `message_business`); `enabled` switches it off. Clicks are counted as `whatsapp_click`.
+- **"X of 50 free trial slots taken"**: shown above the plans and above the sign-up form (each section's `show_slots`). *Taken* is counted from real sign-ups (`registrations`, host and business, not marked inactive) since Admin → Settings → "Count trial sign-ups from"; the total is Admin → Settings → "Free trial slots" (0 hides it). It's never hard-coded, never exceeds the total, and a new sign-up shows straight away. The wording, including the full and waitlist lines, is Site-wide → Free trial slot counter.
 
 ## Branding and editable lists
 

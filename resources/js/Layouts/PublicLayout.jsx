@@ -5,6 +5,7 @@ import { getContent, getMedia, extractItems, stripHtml, titleCase } from '@/lib/
 import { track } from '@/lib/analytics';
 import { PublicContext } from '@/Components/Public/PublicContext';
 import NavMenu from '@/Components/Public/NavMenu';
+import WhatsAppButton from '@/Components/Public/WhatsAppButton';
 import { useBrand } from '@/Components/BrandLogo';
 import CookiesConsent from '@/Components/CookiesConsent';
 import CookieDetailsModal from '@/Components/CookieDetailsModal';
@@ -134,6 +135,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                     </div>
                 </footer>
 
+                <WhatsAppButton />
                 <CookieDetailsModal isOpen={showCookieDetails} onClose={() => setShowCookieDetails(false)} />
                 <CookiesConsent
                     onOpenPrivacy={() => { window.location.href = '/privacy'; }}

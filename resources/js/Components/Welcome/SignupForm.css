@@ -205,3 +205,7 @@
 .signup-next-list {
     @apply list-decimal space-y-2 pl-5 text-sm text-dark;
 }
+
+.signup-trial-slots {
+    margin: -8px auto 24px;
+}

@@ -43,6 +43,8 @@ const FIELD_OPTIONS = {
     show_contact_form: YES_NO,
     highlight: YES_NO,
     kind: opts({ value: 'hosts', label: 'Short-term rentals' }, { value: 'business', label: 'Business' }),
+    show_slots: YES_NO,
+    enabled: YES_NO,
     mockup: opts('wifi', 'tent', 'splash', 'guide', 'welcome', 'chat', 'crm'),
 };
 

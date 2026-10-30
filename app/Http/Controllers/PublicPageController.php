@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LandingPage;
 use App\Models\PolicyDocument;
+use App\Support\TrialSlots;
 use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -51,6 +52,7 @@ class PublicPageController extends Controller
         return Inertia::render($component, $props + [
             'site' => $site,
             'menus' => LandingPage::navMenus(),
+            'trial' => TrialSlots::summary(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path),
         ]);
     }
