@@ -150,3 +150,83 @@
         scroll-behavior: auto;
     }
 }
+
+/* Placeholder WiFi page, until the client's screenshot is uploaded (same 1:2 shape). */
+.trusted-placeholder {
+    @apply flex flex-col overflow-hidden;
+    aspect-ratio: 1 / 2;
+    border-radius: 24px;
+    background: #FFFDF7;
+}
+
+.trusted-placeholder__head {
+    @apply flex flex-col items-center text-center bg-dark text-white;
+    gap: 4px;
+    padding: 22px 10px 16px;
+}
+
+.trusted-placeholder--business .trusted-placeholder__head {
+    background: #1F3B2D;
+}
+
+.trusted-placeholder__mono {
+    @apply flex items-center justify-center rounded-xl bg-primary text-dark;
+    width: 38px;
+    height: 38px;
+    font-weight: 900;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.trusted-placeholder__head b {
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+.trusted-placeholder__head small {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.trusted-placeholder__body {
+    @apply flex flex-col flex-1;
+    gap: 7px;
+    padding: 14px 12px 10px;
+}
+
+.trusted-placeholder__h {
+    @apply text-center text-dark;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.trusted-placeholder__body i {
+    display: block;
+    height: 26px;
+    border-radius: 8px;
+    border: 1px solid #E1DED4;
+    background: #FFF;
+}
+
+.trusted-placeholder__cta {
+    @apply text-center bg-dark text-primary;
+    border-radius: 10px;
+    padding: 8px;
+    font-weight: 800;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+.trusted-placeholder--business .trusted-placeholder__cta {
+    background: #1F3B2D;
+    color: #FFF;
+}
+
+.trusted-placeholder__body small {
+    @apply text-center text-muted;
+    margin-top: auto;
+    font-size: 8px;
+}
