@@ -68,7 +68,7 @@ class WifiPortalController extends Controller
             'splashImageUrl' => SplashDesign::imageUrl($property->splash_image_path),
             'design' => SplashDesign::forProperty($property, $data['template'] ?? null),
             'consentText' => static::consentText($property->name),
-            'isBusiness' => (bool) $property->host?->isBusiness(),
+            'isBusiness' => SplashDesign::isBusiness($property),
             'preview' => true,
             // The studio frames the draft and labels it itself.
             'embedded' => $request->isMethod('post'),
@@ -127,6 +127,15 @@ class WifiPortalController extends Controller
             }
 
             $guestData = $validator->validated();
+
+            // Only keep what the page asked for: clinic pages never collect email or birthdays.
+            $fields = $context['design']['fields'];
+            if (! $fields['email']) {
+                unset($guestData['email']);
+            }
+            if (! $fields['birthday']) {
+                unset($guestData['birthday_month'], $guestData['birthday_day']);
+            }
         }
 
         try {
@@ -163,7 +172,7 @@ class WifiPortalController extends Controller
         }
 
         // Business customers land on the business's homepage (menu, offers).
-        if ($context['property']?->host?->isBusiness()) {
+        if (SplashDesign::isBusiness($context['property'])) {
             return redirect()->route('venue.show', $context['property']);
         }
 
@@ -213,7 +222,7 @@ class WifiPortalController extends Controller
             'deviceMac' => $deviceMac,
             'returningGuest' => $property ? $this->guests->findReturning($property, $deviceMac) : null,
             'consentText' => static::consentText($propertyName),
-            'isBusiness' => (bool) $property?->host?->isBusiness(),
+            'isBusiness' => SplashDesign::isBusiness($property),
         ];
     }
 

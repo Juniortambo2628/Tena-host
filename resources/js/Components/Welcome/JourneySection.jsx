@@ -1,6 +1,7 @@
 import React from 'react';
 import { getContent, extractItems, getText, stripHtml } from '@/lib/cms';
 import { SectionWrapper } from './layouts';
+import { BRAND_COLORS } from '@/constants';
 import './JourneySection.css';
 
 /**
@@ -24,7 +25,7 @@ const readableInk = (hex) => {
     const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
     if (!m) return '#FFFFFF';
     const [r, g, b] = [0, 2, 4].map(i => parseInt(m[1].slice(i, i + 2), 16) / 255).map(c => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.4 ? '#1E1E1E' : '#FFFFFF';
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.4 ? BRAND_COLORS.dark : '#FFFFFF';
 };
 
 function WifiIcon({ color = 'currentColor', bars = 3 }) {
@@ -80,7 +81,7 @@ function Mockup({ type, lines, brand }) {
                     <h4>Wi-Fi</h4>
                     {lines.map((net, i) => (
                         <div key={i} className={`jr-ph__net ${i === 0 ? 'is-on' : ''}`}>
-                            <WifiIcon color={i === 0 ? '#1E1E1E' : '#9A9DA6'} bars={3 - Math.min(i, 2)} />
+                            <WifiIcon color={i === 0 ? BRAND_COLORS.dark : '#9A9DA6'} bars={3 - Math.min(i, 2)} />
                             <div>{net}{i === 0 && <small>Powered by TenaFi</small>}</div>
                             {i === 0 && <span className="jr-ph__tick">✓</span>}
                         </div>
@@ -183,7 +184,7 @@ function Mockup({ type, lines, brand }) {
 export default function JourneySection({ section }) {
     if (!section) return null;
 
-    const color = /^#[0-9a-f]{6}$/i.test(getText(section, 'brand_color')) ? getText(section, 'brand_color') : '#1E1E1E';
+    const color = /^#[0-9a-f]{6}$/i.test(getText(section, 'brand_color')) ? getText(section, 'brand_color') : BRAND_COLORS.dark;
     const brand = { name: getText(section, 'brand_name', 'Your business'), tagline: getText(section, 'brand_tagline'), color, ink: readableInk(color) };
     const steps = extractItems(section, 'steps', ['title', 'text', 'mockup', 'screen']).filter(s => s.title);
     const numbers = extractItems(section, 'numbers', ['value', 'label']).filter(n => n.value);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, useForm, Link, router } from '@inertiajs/react';
+import { Head, useForm, Link, router, usePage } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
@@ -15,7 +15,7 @@ import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import { T } from '@/Components/Dashboard/Terms';
 import SplashEditor from '@/Components/Properties/SplashEditor';
-import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+import { normalizeTemplate, templateGroups, businessTypes, businessType, recommendedTemplate, isBusinessType, applyTemplate, findTemplate } from '@/Components/Properties/splashTemplates';
 import { useConfirm } from '@/hooks/useConfirm';
 import { BRAND_COLORS } from '@/constants';
 
@@ -27,11 +27,15 @@ registerPlugin(FilePondPluginImagePreview);
 
 export default function PropertyIndex({ properties, stats: live = {} }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
+    const accountIsBusiness = usePage().props.auth?.user?.account_type === 'business';
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
+    // Once the owner picks a template or colour themselves, the business type stops choosing for them.
+    const [picked, setPicked] = useState({ template: false, accent: false });
 
     const { data, setData, post, transform, processing, errors, reset, clearErrors } = useForm({
         name: '',
+        business_type: '',
         address: '',
         wifi_ssid: '',
         splash_image_path: '',
@@ -43,15 +47,36 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
 
     const openCreateModal = () => {
         setEditingProperty(null);
+        setPicked({ template: false, accent: false });
         reset();
         clearErrors();
         setShowCreateModal(true);
+    };
+
+    const business = isBusinessType(data.business_type, accountIsBusiness);
+    const recommended = recommendedTemplate(data.business_type);
+
+    const chooseBusinessType = (type) => {
+        const template = recommendedTemplate(type);
+        setData(d => ({
+            ...d,
+            business_type: type,
+            branding_json: template && !picked.template
+                ? applyTemplate(d.branding_json, template, { business: isBusinessType(type, accountIsBusiness), keepAccent: picked.accent })
+                : d.branding_json,
+        }));
+    };
+
+    const chooseTemplate = (template) => {
+        setPicked(p => ({ ...p, template: true }));
+        setData('branding_json', applyTemplate(data.branding_json, template, { business, keepAccent: picked.accent }));
     };
 
     const openEditModal = (property) => {
         setEditingProperty(property);
         setData({
             name: property.name || '',
+            business_type: property.business_type || '',
             address: property.address || '',
             wifi_ssid: property.wifi_ssid || '',
             splash_image_path: property.splash_image_path || '',
@@ -60,6 +85,8 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             branding_json: quickDesign(property.branding_json),
             occupancy_threshold: property.occupancy_threshold || 20,
         });
+        // A saved page already has the owner's template and colour.
+        setPicked({ template: true, accent: true });
         clearErrors();
         setShowCreateModal(true);
     };
@@ -78,7 +105,10 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
         };
 
         // useForm.post doesn't accept replacement data in its options argument.
-        transform(values => editingProperty ? { ...values, _method: 'patch' } : values);
+        // Editing only changes the look; the server swaps template defaults the owner hasn't changed.
+        transform(values => editingProperty
+            ? { ...values, branding_json: { template: values.branding_json.template, accent: values.branding_json.accent }, _method: 'patch' }
+            : values);
         post(url, options);
     };
 
@@ -102,11 +132,29 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             content: (
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1"><T>Property Name</T></label>
+                        <label htmlFor="business_type" className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Business type</label>
+                        <select
+                            id="business_type"
+                            className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
+                            value={data.business_type}
+                            onChange={e => chooseBusinessType(e.target.value)}
+                        >
+                            <option value="">Choose one</option>
+                            {templateGroups.map(group => (
+                                <optgroup key={group.id} label={group.label}>
+                                    {businessTypes.filter(b => b.group === group.id).map(b => <option key={b.id} value={b.id}>{b.label}</option>)}
+                                </optgroup>
+                            ))}
+                        </select>
+                        <p className="text-xs text-black/40 mt-2 ml-1 font-bold">We use it to recommend a WiFi page template.</p>
+                        {errors.business_type && <p className="text-red-500 text-xs mt-2 font-bold uppercase tracking-widest ml-1">{errors.business_type}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">{business ? 'Business name' : <T>Property Name</T>}</label>
                         <input
                             type="text"
                             className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
-                            placeholder="e.g. Blue Haven Apartments"
+                            placeholder={`e.g. ${businessType(data.business_type)?.sample || (business ? 'Kahawa House' : 'Blue Haven Apartments')}`}
                             value={data.name}
                             onChange={e => setData('name', e.target.value)}
                         />
@@ -166,7 +214,21 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             label: 'Brand & Splash',
             content: (
                 <div className="space-y-6">
-                    <SplashEditor value={data.branding_json} onChange={value => setData('branding_json', value)} errors={errors} propertyId={editingProperty?.id} />
+                    {recommended && (
+                        <p className="text-sm font-bold text-black/60 ml-1">
+                            Recommended for {businessType(data.business_type).label.toLowerCase()}: <strong className="text-black">{findTemplate(recommended).name}</strong>. Pick any template you like.
+                        </p>
+                    )}
+                    <SplashEditor
+                        value={data.branding_json}
+                        onChange={value => setData('branding_json', value)}
+                        onTemplate={chooseTemplate}
+                        onAccent={() => setPicked(p => ({ ...p, accent: true }))}
+                        errors={errors}
+                        propertyId={editingProperty?.id}
+                        recommended={recommended}
+                        business={business}
+                    />
                     <div>
                         <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Splash Background</label>
                         <div className="tena-filepond-wrapper">
@@ -311,7 +373,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 show={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 title={editingProperty ? 'Property Config' : 'Quick Onboard'}
-                description={editingProperty ? `Updating ${editingProperty.name}` : 'Setup your new listing in seconds'}
+                description={editingProperty ? `Updating ${editingProperty.name}` : 'Set up your WiFi page in seconds'}
                 tabs={modalTabs}
                 onConfirm={submit}
                 confirmLabel={editingProperty ? 'Update Property' : 'Create Property'}

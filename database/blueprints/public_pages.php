@@ -261,6 +261,23 @@ return [
             ],
             'media' => ['main_image' => $img('Tena-Hero-1.jpg')],
         ],
+        'partners' => [
+            'title' => 'Trusted by',
+            'bg' => 'white',
+            'content' => [
+                'title' => 'Trusted by hosts and local businesses',
+                'subtitle' => 'Every TenaFi client gets a WiFi page in their own brand. Here are some of them.',
+                // Upload each client's WiFi page screenshot under Media (one slot per row);
+                // rows without one are hidden. kind: hosts | business.
+                'partners' => [
+                    ['name' => 'Halo Studios', 'url' => '', 'kind' => 'business', 'type_area' => ''],
+                    ['name' => 'Zero Sips', 'url' => '', 'kind' => 'business', 'type_area' => ''],
+                    ['name' => 'Georgio Lani Pharmacy', 'url' => '', 'kind' => 'business', 'type_area' => ''],
+                    ['name' => 'Stay Awhile Rentals', 'url' => 'https://stayawhilerentals.com', 'kind' => 'hosts', 'type_area' => "Serviced apartments \u{00B7} Nairobi"],
+                    ['name' => 'Luxury Hideaway', 'url' => '', 'kind' => 'hosts', 'type_area' => ''],
+                ],
+            ],
+        ],
         'path_cards' => [
             'title' => 'Which one are you?',
             'content' => [
@@ -275,22 +292,6 @@ return [
             'media' => [
                 'card_0_image' => $img('Tena-Welcome-Divine-1.jpg'),
                 'card_1_image' => $img('Clients-view.jpg'),
-            ],
-        ],
-        'partners' => [
-            'title' => 'Trusted by',
-            'bg' => 'white',
-            'content' => [
-                'title' => 'Trusted by hosts and businesses in Kenya',
-                'subtitle' => '',
-                // Upload each logo or photo under Media (one slot per row).
-                'partners' => [
-                    ['name' => 'Halo Studios', 'url' => ''],
-                    ['name' => 'Zero Sips', 'url' => ''],
-                    ['name' => 'Georgio Lani Pharmacy', 'url' => ''],
-                    ['name' => 'Stay Awhile Rentals', 'url' => 'https://stayawhilerentals.com'],
-                    ['name' => 'Luxury Hideaway', 'url' => ''],
-                ],
             ],
         ],
         'comparison__problem' => [

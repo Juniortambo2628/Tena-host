@@ -1,0 +1,19 @@
+# Changes to these paths need Kevin's approval before merge (see the
+# "High-risk areas" section of CLAUDE.md). Everything else needs only CI.
+
+/app/                     @Juniortambo2628
+/database/                @Juniortambo2628
+/routes/                  @Juniortambo2628
+/config/                  @Juniortambo2628
+/bootstrap/               @Juniortambo2628
+/public/index.php         @Juniortambo2628
+/resources/views/         @Juniortambo2628
+/resources/js/Emails/     @Juniortambo2628
+/scripts/                 @Juniortambo2628
+/.github/                 @Juniortambo2628
+/composer.json            @Juniortambo2628
+/composer.lock            @Juniortambo2628
+/package.json             @Juniortambo2628
+/package-lock.json        @Juniortambo2628
+/CLAUDE.md                @Juniortambo2628
+/.claude/                 @Juniortambo2628
