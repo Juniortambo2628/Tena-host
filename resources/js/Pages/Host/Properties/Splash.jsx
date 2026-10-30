@@ -9,7 +9,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import { notify } from '@/Components/Toast';
 import { csrfHeaders } from '@/Support/csrf';
 import { TemplatePicker, AccentPicker } from '@/Components/Properties/SplashEditor';
-import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
+import { normalizeTemplate, originalTemplates, templateDefaults, applyTemplate, recommendedTemplate, findTemplate, tileIcons, nameAndPhoneOnly } from '@/Components/Properties/splashTemplates';
 import './Splash.css';
 import { BRAND_COLORS } from '@/constants';
 
@@ -36,10 +36,21 @@ const blank = {
     stays: { property_id: '', title: '', detail: '', price: '', url: '' },
 };
 
-function initialBranding(saved = {}) {
-    const sections = { welcome: true, rules: true, emergency: true, nearby: true, review: true, offers: true, stays: true, ...(saved.sections || {}) };
+const tileIconLabels = {
+    menu: 'Menu', list: 'List', cal: 'Calendar', gift: 'Gift', tag: 'Deal', star: 'Star', cart: 'Cart', clock: 'Clock', guide: 'Guide', home: 'Home', wifi: 'WiFi',
+};
+
+function initialBranding(saved = {}, business = false) {
+    const template = normalizeTemplate(saved.template);
+    // Mirrors SplashDesign::forProperty: older designs keep their old fallbacks.
+    const defaults = originalTemplates.includes(template) ? {} : templateDefaults(template, business);
+    const rental = !(business && !originalTemplates.includes(template));
+    const sections = { welcome: true, rules: rental, emergency: rental, nearby: rental, review: true, offers: true, stays: rental, ...(saved.sections || {}) };
     return {
-        template: normalizeTemplate(saved.template),
+        template,
+        fields: nameAndPhoneOnly.includes(template) ? { email: false, birthday: false } : { email: true, birthday: business, ...(defaults.fields || {}), ...(saved.fields || {}) },
+        opt_in: saved.opt_in || '',
+        tiles: business ? (saved.tiles || defaults.tiles || []).map(t => ({ icon: 'star', label: '', url: '', ...t, url: t.url || '' })) : [],
         accent: saved.accent || BRAND_COLORS.primary,
         heading: saved.heading || '', message: saved.message || '', button: saved.button || '',
         welcome_note: saved.welcome_note || '', host_name: saved.host_name || '', review_prompt: saved.review_prompt || '',
@@ -206,10 +217,10 @@ function Preview({ propertyId, data, focusTab, coverFile, logoFile }) {
     );
 }
 
-export default function SplashStudio({ property, otherProperties = [], hostPhone = null }) {
+export default function SplashStudio({ property, otherProperties = [], hostPhone = null, isBusiness = false }) {
     const [step, setStep] = useState('look');
     const { data, setData, post, processing, errors, isDirty } = useForm({
-        branding_json: initialBranding(property.branding_json || {}),
+        branding_json: initialBranding(property.branding_json || {}, isBusiness),
         review_url: property.review_url || '',
         splash_image: null,
         logo: null,
@@ -248,7 +259,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
         stays: b.stays.filter(r => r.title || r.property_id).length,
     };
     const stepErrors = key => Object.keys(errors).some(k => {
-        const map = { look: ['template', 'accent', 'heading', 'message', 'button'], welcome: ['welcome_note', 'host_name', 'heading', 'message', 'button'], house: ['house_rules', 'emergency'], nearby: ['nearby'], review: ['review_prompt'], offers: ['offers'], stays: ['stays'] };
+        const map = { look: ['template', 'accent', 'heading', 'message', 'button'], welcome: ['welcome_note', 'host_name', 'heading', 'message', 'button', 'tiles', 'fields', 'opt_in'], house: ['house_rules', 'emergency'], nearby: ['nearby'], review: ['review_prompt'], offers: ['offers'], stays: ['stays'] };
         if (key === 'look' && (k === 'logo' || k === 'splash_image')) return true;
         if (key === 'review' && k === 'review_url') return true;
         return (map[key] || []).some(f => k.startsWith(`branding_json.${f}`));
@@ -265,6 +276,9 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
     };
 
     const linked = new Set(b.stays.map(s => String(s.property_id)).filter(Boolean));
+    const headlineFallback = originalTemplates.includes(b.template)
+        ? `Welcome to ${property.name}`
+        : (templateDefaults(b.template, isBusiness).heading || '').replace('{name}', property.name);
     const breadcrumbs = [
         { label: 'WiFi Access', href: route('host.properties.index') },
         { label: property.name, href: route('host.properties.show', property.id) },
@@ -275,7 +289,8 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
         look: (
             <>
                 <SectionHead title="Template & colour" description="Pick a layout, then a colour that matches your brand. You can switch any time; your content carries over." />
-                <TemplatePicker value={b.template} accent={b.accent} onChange={t => set('template', t)} />
+                <TemplatePicker value={b.template} accent={b.accent} recommended={recommendedTemplate(property.business_type)}
+                    onChange={t => setData('branding_json', applyTemplate(b, t, { business: isBusiness, keepAccent: true }))} />
                 {err('template') && <p className="studio-field__error">{err('template')}</p>}
                 <Field label="Accent colour" error={err('accent')}><AccentPicker value={b.accent} onChange={c => set('accent', c)} /></Field>
                 <div className="studio-media">
@@ -302,14 +317,53 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
         welcome: (
             <>
                 <SectionHead title="Welcome" description="The headline and the note guests read first." />
-                <Field label="Headline" hint={`Leave empty for “Welcome to ${property.name}”. Your property name is highlighted automatically.`} error={err('heading')} count={<em>{b.heading.length}/100</em>}>
-                    <input type="text" maxLength={100} value={b.heading} placeholder={`Welcome to ${property.name}`} onChange={e => set('heading', e.target.value)} />
+                <Field label="Headline" hint={`Leave empty for “${headlineFallback}”. Your ${isBusiness ? 'business' : 'property'} name is highlighted automatically.`} error={err('heading')} count={<em>{b.heading.length}/100</em>}>
+                    <input type="text" maxLength={100} value={b.heading} placeholder={headlineFallback} onChange={e => set('heading', e.target.value)} />
                 </Field>
                 <Field label="Short intro" error={err('message')} count={<em>{b.message.length}/240</em>}>
                     <textarea rows={2} maxLength={240} value={b.message} placeholder="Connect to the WiFi and stay in touch." onChange={e => set('message', e.target.value)} />
                 </Field>
                 <Field label="Connect button" error={err('button')}>
                     <input type="text" maxLength={40} value={b.button} placeholder="Connect to WiFi" onChange={e => set('button', e.target.value)} />
+                </Field>
+                {isBusiness && (
+                    <>
+                        <div className="studio-subhead"><h3>Quick links</h3></div>
+                        <p className="studio-field__hint">Three tiles above the sign-up form. Without a link, menu and list tiles open your customer homepage, and gift and deal tiles open your offers.</p>
+                        <RowList
+                            rows={b.tiles} max={3} addLabel="Add a tile" empty="No quick links."
+                            onAdd={() => set('tiles', [...b.tiles, { icon: 'star', label: '', url: '' }])}
+                            onChange={rows => set('tiles', rows)}
+                            render={(row, i, update) => (
+                                <>
+                                    <div className="studio-grid-2">
+                                        <Field label="Label" error={rowErr('tiles', i, 'label')}><input type="text" maxLength={30} value={row.label} placeholder="View menu" onChange={e => update({ ...row, label: e.target.value })} /></Field>
+                                        <Field label="Icon" error={rowErr('tiles', i, 'icon')}>
+                                            <select value={row.icon} onChange={e => update({ ...row, icon: e.target.value })}>
+                                                {tileIcons.map(icon => <option key={icon} value={icon}>{tileIconLabels[icon]}</option>)}
+                                            </select>
+                                        </Field>
+                                    </div>
+                                    <Field label="Link" hint="Optional: a booking page, menu or wa.me link." error={rowErr('tiles', i, 'url')}>
+                                        <input type="url" maxLength={500} value={row.url} placeholder="https://wa.me/2547…" onChange={e => update({ ...row, url: e.target.value })} />
+                                    </Field>
+                                </>
+                            )}
+                        />
+                    </>
+                )}
+                <div className="studio-subhead"><h3>Sign-up form</h3></div>
+                <p className="studio-field__hint">First name and WhatsApp number are always asked for.</p>
+                {nameAndPhoneOnly.includes(b.template) ? (
+                    <p className="studio-field__hint">{findTemplate(b.template).name} pages only ask for a first name and phone number. Please don't add health questions to a WiFi page.</p>
+                ) : (
+                    <div className="studio-toggles">
+                        <Toggle checked={!!b.fields.email} onChange={v => set('fields', { ...b.fields, email: v })} label="Ask for email (optional)" />
+                        <Toggle checked={!!b.fields.birthday} onChange={v => set('fields', { ...b.fields, birthday: v })} label="Ask for birthday (optional, for a birthday treat)" />
+                    </div>
+                )}
+                <Field label="Offers checkbox" hint="The optional marketing opt-in next to the sign-up button." error={err('opt_in')} count={<em>{b.opt_in.length}/120</em>}>
+                    <input type="text" maxLength={120} value={b.opt_in} placeholder={templateDefaults(b.template, isBusiness).opt_in || 'Send me offers and early access to direct deals'} onChange={e => set('opt_in', e.target.value)} />
                 </Field>
                 <div className="studio-subhead">
                     <h3>Note from you</h3>
@@ -418,7 +472,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
         ),
         stays: (
             <>
-                <SectionHead title="Cross-sell" description="Promote your other listings, or extras like airport transfers and tours." sectionKey="stays" branding={b} setSection={setSection} />
+                <SectionHead title="Cross-sell" description={isBusiness ? 'Promote your other locations or services.' : 'Promote your other listings, or extras like airport transfers and tours.'} sectionKey="stays" branding={b} setSection={setSection} />
                 {otherProperties.length > 0 && (
                     <div className="studio-picks">
                         <p>Your other properties</p>

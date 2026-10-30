@@ -70,7 +70,7 @@ class PropertyController extends Controller
         return Inertia::render('Host/Properties/Edit', [
             'property' => $property,
             'reviewDefaults' => ['message' => ReviewRequestService::defaultMessage($property)],
-            'venueUrl' => $property->host?->isBusiness() ? route('venue.show', $property) : null,
+            'venueUrl' => SplashDesign::isBusiness($property) ? route('venue.show', $property) : null,
             'reviewStats' => [
                 'requested' => $property->guests()->whereNotNull('review_requested_at')->count(),
                 'clicked' => $property->guests()->whereNotNull('review_clicked_at')->count(),
@@ -86,9 +86,10 @@ class PropertyController extends Controller
         $this->authorize('update', $property);
 
         return Inertia::render('Host/Properties/Splash', [
-            'property' => $property->only(['id', 'name', 'address', 'wifi_ssid', 'review_url', 'logo_path', 'splash_image_path']) + [
+            'property' => $property->only(['id', 'name', 'business_type', 'address', 'wifi_ssid', 'review_url', 'logo_path', 'splash_image_path']) + [
                 'branding_json' => SplashDesign::clean($property->branding_json ?? []),
             ],
+            'isBusiness' => SplashDesign::isBusiness($property),
             'otherProperties' => Auth::user()->properties()->whereKeyNot($property->id)->orderBy('name')
                 ->get(['id', 'name', 'address', 'splash_image_path']),
             'hostPhone' => $property->host?->phone_number,
@@ -113,6 +114,9 @@ class PropertyController extends Controller
         ], ['review_url.required' => 'Automatic review requests are on, so keep a review link (or turn them off on the property page).']);
 
         $changes = ['branding_json' => SplashDesign::clean($validated['branding_json'])];
+        if (! isset($validated['branding_json']['fields']) && ! in_array($changes['branding_json']['template'], SplashDesign::ORIGINAL, true)) {
+            $changes['branding_json'] = SplashDesign::withDefaults($changes['branding_json'], SplashDesign::isBusiness($property));
+        }
         if ($request->has('review_url')) {
             $changes['review_url'] = $validated['review_url'] ?? null;
         }
@@ -132,9 +136,9 @@ class PropertyController extends Controller
     {
         $validated = $request->validate($this->rules());
 
-        if (isset($validated['branding_json'])) {
-            $validated['branding_json'] = SplashDesign::clean($validated['branding_json']);
-        }
+        // A new page starts with its template's headline, sign-up fields and tiles.
+        $business = SplashDesign::isBusiness((new Property(['business_type' => $validated['business_type'] ?? null]))->setRelation('host', Auth::user()));
+        $validated['branding_json'] = SplashDesign::clean(SplashDesign::withDefaults($validated['branding_json'] ?? ['template' => 'bento'], $business));
 
         if ($request->hasFile('splash_image')) {
             $validated['splash_image_path'] = $this->storeImage($request->file('splash_image'), 'properties');
@@ -157,7 +161,9 @@ class PropertyController extends Controller
 
         // The property form only carries the template and colour; keep the studio's content.
         if (isset($validated['branding_json'])) {
-            $validated['branding_json'] = SplashDesign::clean(array_replace($property->branding_json ?? [], $validated['branding_json']));
+            $saved = $property->branding_json ?? [];
+            $business = SplashDesign::isBusiness((clone $property)->fill(['business_type' => array_key_exists('business_type', $validated) ? $validated['business_type'] : $property->business_type]));
+            $validated['branding_json'] = SplashDesign::clean(SplashDesign::switchTemplate($saved, array_replace($saved, $validated['branding_json']), $business));
         }
 
         if ($request->hasFile('splash_image')) {
@@ -194,6 +200,7 @@ class PropertyController extends Controller
     {
         return [
             'name' => 'required|string|max:255',
+            'business_type' => ['nullable', Rule::in(SplashDesign::businessTypes())],
             'address' => 'nullable|string|max:255',
             'wifi_ssid' => 'nullable|string|max:255',
             'occupancy_threshold' => 'integer|min:1',
