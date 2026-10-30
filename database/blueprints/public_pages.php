@@ -52,14 +52,23 @@ $plans = fn (string $unit, array $features) => [
     ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 6,000', 'price_kes' => '6000', 'unit' => "per {$unit}, per month (about \$47)", 'features' => $features['growth'][1], 'cta' => 'Choose Growth', 'variant' => 'outline'],
 ];
 
+// The free trial (live copy, Oct 2026): installs start 16 November, the rest
+// of November is free, then a free month in December. After that it's month
+// to month (cancel with 30 days' notice), and paying yearly gives 2 months free.
+//
+// TODO(Glen): does the KES 2,500 installation fee apply after the trial?
+//   Undecided, so no copy mentions it yet.
+// TODO(Glen): does the multi-unit discount start at 5 or 10 units?
+//   Undecided; the copy and the signup discounts below still say 10.
 $founding = fn (string $who) => [
-    'title' => 'Founding 20',
+    // Section key kept as cta_banner__founding so live content stays attached.
+    'title' => 'Free trial (December)',
     'content' => [
-        'badge' => 'Founding 20',
-        'title' => 'Be one of our Founding 20.',
-        'body' => "10 {$who} get TenaFi installed from December 2026".($who === 'short-term rental operators' ? ', in time for the high season,' : ',').' with the first two months free. In return: honest feedback, results we can share, and referrals if you love it.',
-        'note' => 'Your 12-month plan starts on install day. Billing begins after the two free months.',
-        'buttons' => [['label' => 'Apply for a spot', 'href' => '']],
+        'badge' => 'Free trial',
+        'title' => 'Try TenaFi free for the whole of December.',
+        'body' => 'Installs start 16 November'.($who === 'short-term rental operators' ? ', in time for the high season,' : '')." and the rest of November is free too. From January it\u{2019}s month to month: cancel any time with 30 days\u{2019} notice. Pay yearly and get 2 months free.",
+        'note' => '',
+        'buttons' => [['label' => 'Book my free trial', 'href' => '']],
     ],
 ];
 
@@ -323,11 +332,11 @@ return [
             ],
         ],
         'cta_banner__founding' => [
-            'title' => 'Built by Superhosts / Founding 20',
+            'title' => 'Built by Superhosts / Free trial',
             'content' => [
-                'badge' => 'Founding 20',
+                'badge' => 'Free trial',
                 'title' => 'Built by a 16x Airbnb Superhost team in Nairobi.',
-                'body' => 'TenaFi was born inside Stay Awhile Rentals: 1,400+ reservations, 5,000+ guest nights and 800+ reviews. We built the tool we needed. Now our Founding 20 (10 rentals and 10 businesses) get it from December 2026, with the first two months free.',
+                'body' => 'TenaFi was born inside Stay Awhile Rentals: 1,400+ reservations, 5,000+ guest nights and 800+ reviews. We built the tool we needed. Now you can try it free for the whole of December, with installs from 16 November.',
                 'note' => '',
                 'buttons' => [
                     ['label' => 'I run short-term rentals', 'href' => '/hosts'],
@@ -536,8 +545,9 @@ return [
                 'anchor' => 'h-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per unit. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, guest list and support, on a 12-month plan, then month to month.',
-                'footnote' => "Multi-unit operators: 20% off from 10 units, 30% off from 50. Extra devices at the same site: KES 1,500 a month each. Pay quarterly for 5% off, or yearly and get 2 months free. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
+                'subtitle' => 'The device, installation, WiFi page, guest list and support. Free for December, then month to month.',
+                // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee after the trial?
+                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Extra devices at the same site: KES 1,500 a month each. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
                 'show_contact_form' => '0',
                 'show_slots' => '1',
                 'cta_headline' => '',
@@ -555,10 +565,11 @@ return [
                 'title' => 'Questions operators ask',
                 'items' => [
                     ['question' => 'How does this increase my occupancy?', 'answer' => 'Every stay adds guests to your own list. Each month we send that list offers for your empty dates, holidays and low season. Past guests already know and trust your place, which makes them some of your likeliest bookings. The list grows with every stay, so it can fill more nights over time. TenaFi is designed to help raise occupancy; results vary by property and season.'],
-                    ['question' => 'How soon will I see results?', 'answer' => 'Reviews, upsells and Instagram follows start in the first weeks. Repeat bookings build as your guest list grows, which is why plans run for 12 months.'],
+                    ['question' => 'How soon will I see results?', 'answer' => 'Reviews, upsells and Instagram follows start in the first weeks. Repeat bookings build as your guest list grows, month after month.'],
                     ['question' => 'Do I need new internet?', 'answer' => 'No. The TenaFi device plugs into your existing router and adds a separate guest network. Your own network stays private.'],
                     ['question' => 'Who owns the guest data?', 'answer' => "You do. Guests opt in on your WiFi page, and every contact is collected with consent under Kenya\u{2019}s Data Protection Act, 2019."],
                     ['question' => 'Do I have to write the messages?', 'answer' => 'No. We write, schedule and send every campaign, and you approve anything that goes out under your name.'],
+                    // TODO(Glen): 5 or 10 units for the multi-unit discount?
                     ['question' => 'I manage lots of units.', 'answer' => 'You get 20% off from 10 units and 30% off from 50, and we install building by building. One report covers every unit.'],
                 ],
             ],
@@ -578,22 +589,23 @@ return [
             'title' => 'Sign-up (#join)',
             'content' => [
                 'anchor' => 'join',
-                'menu_label' => 'Apply',
-                'menu_description' => 'Join the Founding 20. First two months free.',
+                'menu_label' => 'Free trial',
+                'menu_description' => 'Book your free trial. December is on us.',
                 'signup_type' => 'host',
                 'show_slots' => '1',
-                'badge' => 'Founding 20',
+                'badge' => 'Free trial',
                 'title' => "Let\u{2019}s get started",
-                'subtitle' => 'Apply for the Founding 20 for short-term rental operators. First two months free.',
-                'submit_label' => 'Submit application',
+                'subtitle' => 'Book a free trial for your short-term rentals. Installs start 16 November; the rest of November and all of December are free.',
+                'submit_label' => 'Book my free trial',
                 'consent_text' => $consent,
                 'success_title' => 'Asante, {firstName}!',
-                'success_message' => "Your application is in. Here\u{2019}s what we have.",
+                'success_message' => "Your free trial booking is in. Here\u{2019}s what we have.",
                 'next_steps_title' => 'What happens next',
                 'next_steps' => "We message you on WhatsApp to book a short setup call.\nWe check your routers and agree install dates, building by building if you have several units.\nYour first guests are captured within 7 days of install.",
                 'error_message' => 'Something went wrong. Please try again or WhatsApp us on +254 703 501 597.',
                 'price_suffix' => 'per unit / month',
                 'discount_field' => 'units',
+                // TODO(Glen): 5 or 10 units? Change the hint and the first discount match together.
                 'discount_hint' => 'Hosts with 10 or more units get 20% off, and 30% off from 50.',
                 'discount_applied' => 'Includes your {percent}% multi-unit discount.',
                 'discounts' => [
@@ -778,8 +790,9 @@ return [
                 'anchor' => 'b-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per location. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, customer list and support. A 12-month plan, then month to month.',
-                'footnote' => "Several locations? We\u{2019}ll quote group pricing. Extra devices at the same site: KES 1,500 a month each. Pay quarterly for 5% off, or yearly and get 2 months free. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
+                'subtitle' => 'The device, installation, WiFi page, customer list and support. Free for December, then month to month.',
+                // TODO(Glen): installation fee after the trial?
+                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Extra devices at the same site: KES 1,500 a month each. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
                 'show_contact_form' => '0',
                 'show_slots' => '1',
                 'cta_headline' => '',
@@ -820,17 +833,17 @@ return [
             'title' => 'Sign-up (#signup)',
             'content' => [
                 'anchor' => 'signup',
-                'menu_label' => 'Sign up',
-                'menu_description' => 'Join the Founding 20. First two months free.',
+                'menu_label' => 'Free trial',
+                'menu_description' => 'Book your free trial. December is on us.',
                 'signup_type' => 'business',
                 'show_slots' => '1',
-                'badge' => 'Founding 20',
+                'badge' => 'Free trial',
                 'title' => "Let\u{2019}s get started",
-                'subtitle' => 'Apply for the Founding 20 for business owners. First two months free.',
-                'submit_label' => 'Submit application',
+                'subtitle' => 'Book a free trial for your business. Installs start 16 November; the rest of November and all of December are free.',
+                'submit_label' => 'Book my free trial',
                 'consent_text' => $consent,
                 'success_title' => 'Asante, {firstName}!',
-                'success_message' => "Your application is in. Here\u{2019}s what we have.",
+                'success_message' => "Your free trial booking is in. Here\u{2019}s what we have.",
                 'next_steps_title' => 'What happens next',
                 'next_steps' => "We message you on WhatsApp to book a short setup call.\nIf you don\u{2019}t have a Google Business Profile yet, we help you set one up.\nYour WiFi page goes live and your first customers join within 7 days of install.",
                 'error_message' => 'Something went wrong. Please try again or WhatsApp us on +254 703 501 597.',

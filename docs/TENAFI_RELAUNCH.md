@@ -30,7 +30,7 @@ Everything is editable in **Admin → Public Pages**, with one tab per page. The
 | `credibility` | Stay Awhile story and stats |
 | `journey` | "What you get in your first month": numbered steps with phone mockups, labelled example numbers, outcomes and a booking bar (see below) |
 | `pricing` | Plan cards; plan buttons link to `#join?plan=<id>` |
-| `cta_banner` | Founding 20 and cross-links between audiences |
+| `cta_banner` | The free trial banner (key `cta_banner__founding`, kept so live content stays attached) and cross-links between audiences |
 | `faq` | Question and answer accordion |
 | `signup` | The CMS-defined sign-up form |
 
