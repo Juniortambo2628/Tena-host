@@ -63,6 +63,91 @@ $founding = fn (string $who) => [
     ],
 ];
 
+// "What you get in your first month" (journey section, above pricing).
+// Each step draws a phone mockup; "screen" holds its lines, one per line,
+// parts split by " | " (see JourneySection.jsx). Numbers are a labelled example.
+$journey = fn (string $audience) => $audience === 'hosts' ? [
+    'title' => 'Your first month',
+    'content' => [
+        'anchor' => 'h-first-month',
+        'menu_label' => 'Your first month',
+        'menu_description' => 'Log on. Opt in. Come back.',
+        'eyebrow' => 'Log on. Opt in. Come back.',
+        'title' => 'What you get in your first month',
+        'subtitle' => 'Your WiFi builds a guest list you own, gives guests a better stay, and brings them back to book direct.',
+        'brand_name' => 'The Loft Nairobi',
+        'brand_tagline' => 'Serviced apartments',
+        'brand_color' => '#0F4C45',
+        'steps' => [
+            ['title' => 'Guest checks in', 'text' => 'They connect to your WiFi on arrival. No password to hunt for.', 'mockup' => 'wifi', 'screen' => "The Loft Nairobi WiFi\nSafaricom-Home-4G\nApt-5B"],
+            ['title' => 'Your branded WiFi page', 'text' => 'Your name and colours. Guests join your list with name, email and phone.', 'mockup' => 'splash', 'screen' => "Welcome home.\nFirst name\nEmail address\n+254 Phone number\n[ ] Send me offers and early access to direct deals"],
+            ['title' => 'Guidebook and extras', 'text' => 'Your house guide, plus extras guests can request: late checkout, transfers, extra nights.', 'mockup' => 'guide', 'screen' => "Welcome to The Loft | Everything for your stay\n\u{1F4D6} | House guide | Check-out, house rules, tips\n\u{1F551} | Late checkout | Stay until 2pm\n\u{1F695} | Airport transfer | JKIA pickup or drop-off\n\u{1F319} | Extra nights | Extend your stay\n\u{1F992} | Local experiences | Tours and things to do"],
+            ['title' => 'Reviews, then a book-direct offer', 'text' => 'A thank-you and review request after checkout. A separate offer to book direct next time.', 'mockup' => 'chat', 'screen' => "Thanks for staying with us, Sarah! If you enjoyed your stay, we\u{2019}d love a review. | Leave a review | Checkout day\nPlanning your next trip to Nairobi? Book direct and save 10% with code KARIBU10. | Book direct | A week later | dark"],
+            ['title' => 'CRM and campaigns', 'text' => 'Past guests hear from you, not the booking sites, and book direct on Tena Direct.', 'mockup' => 'crm', 'screen' => "\u{1F465} | TenaFi CRM | Your guest list, in one place\n\u{2193}\n\u{1F4AC} | WhatsApp \u{00B7} SMS \u{00B7} Email | Offers, quiet-season deals, events\n\u{2193}\nhighlight: \u{1F3E0} | Tena Direct | Book direct. 0% commission."],
+        ],
+        'example_title' => 'Example first month',
+        'example_caption' => '3 apartments at typical Nairobi occupancy (about 44%)',
+        'numbers' => [
+            ['value' => '24', 'label' => 'guests connected to your WiFi'],
+            ['value' => '16', 'label' => 'added to your guest list'],
+            ['value' => '16', 'label' => 'book-direct offers sent'],
+            ['value' => '2', 'label' => 'late checkouts or extra nights'],
+        ],
+        'example_note' => 'About 14 stays in the month; about 2 in 3 guests who connect join your list. Direct bookings usually start from month 2 or 3, as past guests plan their next trip. Your numbers will differ.',
+        'outcome_label' => 'The outcome',
+        'outcomes' => [
+            ['title' => 'Higher occupancy', 'text' => 'Past guests fill the gaps between OTA bookings'],
+            ['title' => 'More repeat stays', 'text' => 'Guests come back to the place they know'],
+            ['title' => 'More reviews', 'text' => 'Every guest is asked, at the right moment'],
+            ['title' => 'Less OTA dependence', 'text' => 'Direct bookings pay no commission'],
+        ],
+        'bar_lead' => 'One product, one team:',
+        'bar_text' => 'device + WiFi page + CRM + done-for-you campaigns.',
+        'cta_label' => 'Book my free trial',
+        'cta_url' => '/hosts#join',
+    ],
+] : [
+    'title' => 'Your first month',
+    'content' => [
+        'anchor' => 'b-first-month',
+        'menu_label' => 'Your first month',
+        'menu_description' => 'Log on. Opt in. Come back.',
+        'eyebrow' => 'Log on. Opt in. Come back.',
+        'title' => 'What you get in your first month',
+        'subtitle' => 'Free WiFi turns every visit into a customer you can reach again, a Google review invite, and a reason to come back.',
+        'brand_name' => 'Kahawa House',
+        'brand_tagline' => "Coffee \u{00B7} Kitchen",
+        'brand_color' => '#4A3123',
+        'steps' => [
+            ['title' => 'Customer sees free WiFi', 'text' => 'A table card and window sticker invite every customer to connect.', 'mockup' => 'tent', 'screen' => "Free WiFi\nConnect to\nKahawa House WiFi"],
+            ['title' => 'Your branded WiFi page', 'text' => 'Your logo and colours. They join with name, phone and birthday.', 'mockup' => 'splash', 'screen' => "Karibu! Free WiFi\nFirst name\n+254 Phone number\nBirthday (day and month)\n[ ] Send me members-only offers and news"],
+            ['title' => 'Value on login', 'text' => "They\u{2019}re online in seconds, with a welcome offer for joining your list.", 'mockup' => 'welcome', 'screen' => "You\u{2019}re connected! | Welcome to the Kahawa list, Brian.\noffer: Your welcome offer | 10% off | your next order | Show at the counter\n\u{2605} | Members\u{2019} list | Offers before anyone else\n\u{1F382} | Birthday treat | On us, in your birthday week\n\u{2615} | See our menu | Coffee, breakfast, lunch"],
+            ['title' => 'Google review request', 'text' => 'Later that day, a thank-you with a one-tap Google review link. No QR code to scan.', 'mockup' => 'chat', 'screen' => 'Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share it on Google. | Review us on Google | 16:05'],
+            ['title' => 'CRM and offers that bring them back', 'text' => 'We send the campaigns for you, so customers come back again and again.', 'mockup' => 'crm', 'screen' => "\u{1F465} | TenaFi CRM | Your customer list, in one place\n\u{2193}\n\u{1F382} | Birthdays | A treat in their birthday week\n\u{1F3F7}\u{FE0F} | New offers | \u{201C}2-for-1 pastries before 10am\u{201D}\n\u{1F44B} | We miss you | For customers who haven\u{2019}t been back\n\u{2193}\nWhatsApp \u{00B7} SMS \u{00B7} Email"],
+        ],
+        'example_title' => 'Example first month',
+        'example_caption' => "A caf\u{00E9} serving about 60 customers a day",
+        'numbers' => [
+            ['value' => '310', 'label' => 'customers on your list'],
+            ['value' => '310', 'label' => 'Google review invites sent'],
+            ['value' => '+12', 'label' => "new Google reviews (42 \u{2192} 54)"],
+            ['value' => "4.4 \u{2192} 4.5", 'label' => 'Google rating'],
+        ],
+        'example_note' => 'About 1 in 4 customers joins the WiFi and roughly 4% of review invites become reviews. Offers to your list start in month one; return visits build from there. Your numbers will differ.',
+        'outcome_label' => 'The outcome',
+        'outcomes' => [
+            ['title' => 'More Google reviews', 'text' => 'Show up higher on Google Maps, so new customers find you'],
+            ['title' => 'More repeat customers', 'text' => 'Offers and birthday treats bring them back'],
+            ['title' => 'Customer data you own', 'text' => "Your list, not a platform\u{2019}s"],
+            ['title' => 'Better remarketing', 'text' => 'The right offer to the right customer at the right time'],
+        ],
+        'bar_lead' => 'One product, one team:',
+        'bar_text' => 'device + WiFi page + CRM + done-for-you campaigns.',
+        'cta_label' => 'Book my free trial',
+        'cta_url' => '/business#signup',
+    ],
+];
+
 return [
 
     // ------------------------------------------------------------------
@@ -420,6 +505,7 @@ return [
                 'stay_awhile_logo' => '/legacy/assets/Tena-logo-square.jpg',
             ],
         ],
+        'journey' => $journey('hosts'),
         'pricing' => [
             'title' => 'Pricing',
             'bg' => 'gray',
@@ -660,6 +746,7 @@ return [
                 ],
             ],
         ],
+        'journey' => $journey('business'),
         'pricing' => [
             'title' => 'Pricing',
             'content' => [

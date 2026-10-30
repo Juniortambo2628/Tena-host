@@ -9,8 +9,8 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 | URL | Sections (in order; `#anchors` match Glen's) |
 | --- | --- |
 | `/` | hero, path_cards `#choose`, comparison__problem `#problem`, how_it_works `#how`, cta_banner__founding |
-| `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
-| `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
+| `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
+| `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
 | Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), footer, feature_status |
 
@@ -28,12 +28,29 @@ Everything is editable in **Admin → Public Pages**, with one tab per page. The
 | `how_it_works` | Step cards |
 | `detailed_features` | Image + text blocks (product mockups) |
 | `credibility` | Stay Awhile story and stats |
+| `journey` | "What you get in your first month": numbered steps with phone mockups, labelled example numbers, outcomes and a booking bar (see below) |
 | `pricing` | Plan cards; plan buttons link to `#join?plan=<id>` |
 | `cta_banner` | Founding 20 and cross-links between audiences |
 | `faq` | Question and answer accordion |
 | `signup` | The CMS-defined sign-up form |
 
 To use one type twice on a page, add a variant suffix (`stats__problem`, `stats__commission`).
+
+### The journey section
+
+Each step has a title, text, a `mockup` style and a `screen` field: the lines shown on that phone, one per line, with parts split by ` | `.
+
+| mockup | screen lines |
+| --- | --- |
+| `wifi` | network names; the first is yours |
+| `tent` | big text, small line, network name (a table card, not a phone) |
+| `splash` | headline, then sign-up fields; `[ ] text` is the opt-in |
+| `guide` | `title \| subtitle` for the header, then `icon \| title \| subtitle` rows |
+| `welcome` | like `guide`, plus `offer: small \| big \| small \| button` |
+| `chat` | `message \| button \| time`; add `\| dark` for a dark button. Keep review requests and offers in separate messages, and never attach a reward to a review |
+| `crm` | `icon \| title \| subtitle` boxes, `↓` for an arrow, `highlight: …` for the box in the brand colour |
+
+`brand_name`, `brand_tagline` and `brand_color` style the mockups. The numbers block always carries an "Example" label. `cta_url` is `/hosts#join` or `/business#signup`.
 
 ### Navigation
 

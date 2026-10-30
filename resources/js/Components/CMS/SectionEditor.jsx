@@ -42,6 +42,7 @@ const FIELD_OPTIONS = {
     reverse: YES_NO,
     show_contact_form: YES_NO,
     highlight: YES_NO,
+    mockup: opts('wifi', 'tent', 'splash', 'guide', 'welcome', 'chat', 'crm'),
 };
 
 const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'join_label']);
@@ -56,7 +57,7 @@ function detectFieldType(key, value) {
     if (lowerKey === 'media_type') return 'select';
     if (lowerKey === 'description' || lowerKey === 'text' || lowerKey === 'body') return 'richtext';
     if (lowerKey === 'subtitle') return 'richtext';
-    if (lowerKey === 'answer') return 'textarea';
+    if (lowerKey === 'answer' || lowerKey === 'screen') return 'textarea';
     if (typeof value === 'string' && value.startsWith('[')) return 'json_array';
     if (typeof value === 'string' && value.includes('<')) return 'html';
     if (typeof value === 'string' && value.length > 120) return 'textarea';
