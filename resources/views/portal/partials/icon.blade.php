@@ -24,6 +24,18 @@
         'prev' => '<path d="m15 18-6-6 6-6"/>',
         'next' => '<path d="m9 18 6-6-6-6"/>',
         'check' => '<path d="M20 6 9 17l-5-5"/>',
+        // Quick tiles on business splash pages (resources/data/splash-templates.json).
+        'tile-guide' => '<path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/>',
+        'tile-clock' => '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+        'tile-home' => '<path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/>',
+        'tile-star' => '<path d="M12 4l2.4 5 5.4.7-4 3.7 1 5.4L12 16.3 7.2 18.8l1-5.4-4-3.7 5.4-.7z"/>',
+        'tile-menu' => '<rect x="6" y="3.5" width="12" height="17" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+        'tile-wifi' => '<path d="M3 9a13 13 0 0 1 18 0"/><path d="M6.5 12.5a8 8 0 0 1 11 0"/><path d="M10 16a3 3 0 0 1 4 0"/><path d="M12 19h.01"/>',
+        'tile-gift' => '<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M4 13h16M12 9v11"/><path d="M12 9c-2-4-6-3-5 0M12 9c2-4 6-3 5 0"/>',
+        'tile-cal' => '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+        'tile-list' => '<path d="M9 7h11M9 12h11M9 17h11"/><path d="M5 7h.01M5 12h.01M5 17h.01"/>',
+        'tile-tag' => '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>',
+        'tile-cart' => '<path d="M3 4h2l2.4 11h10.2L20 8H7"/><circle cx="9" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
     ];
 @endphp
 <svg class="sp-icon {{ $class ?? '' }}" viewBox="0 0 24 24" width="{{ $size ?? 20 }}" height="{{ $size ?? 20 }}" fill="{{ !empty($fill) ? 'currentColor' : 'none' }}" stroke="currentColor" stroke-width="{{ $stroke ?? 1.8 }}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{!! $paths[$name] ?? $paths['other'] !!}</svg>

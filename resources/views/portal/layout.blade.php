@@ -24,6 +24,16 @@
         return $name !== '' && str_contains($safe, $name) ? str_replace($name, '<span class="sp-hl">'.$name.'</span>', $safe) : $safe;
     };
     $heading = $title ?? ($design['heading'] ?: 'Welcome to '.$propertyName);
+    // Business templates draw their own header band (colour, decoration, font) from the catalogue.
+    $look = $design['look'] ?? [];
+    $band = ! in_array($design['template'], \App\Support\SplashDesign::ORIGINAL, true);
+    $bodyClass = implode(' ', array_filter([
+        'sp', 'splash--'.$design['template'], $tabs ? '' : 'sp--solo',
+        $band ? 'sp--band sp--'.($look['theme'] ?? 'light').' sp-font--'.($look['font'] ?? 'sans') : '',
+    ]));
+    $bodyStyle = '--accent: '.$design['accent'].'; --accent-ink: '.$design['ink'].';'
+        .($band ? ' --band: '.($look['header'] ?? '#222').'; --band-ink: '.($look['headerInk'] ?? '#fff').';'.(isset($look['page']) ? ' --page: '.$look['page'].';' : '') : '');
+    $tiles = $design['tiles'] ?? [];
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +46,7 @@
     @include('partials.favicon')
     @include('portal.partials.splash-styles')
 </head>
-<body class="sp splash--{{ $design['template'] }} {{ $tabs ? '' : 'sp--solo' }}" style="--accent: {{ $design['accent'] }}; --accent-ink: {{ $design['ink'] }}">
+<body class="{{ $bodyClass }}" style="{{ $bodyStyle }}">
     @if(!empty($preview) && empty($embedded))
         <p class="sp-preview-notice">Design preview · This page does not connect a device.</p>
     @endif
@@ -45,7 +55,9 @@
         <div class="sp-mark" aria-hidden="true">{{ $initial }}</div>
 
         <div class="sp-side" data-pane="wifi" id="pane-wifi" role="tabpanel" aria-label="Connect to WiFi">
-            <div class="sp-photo {{ $splashImageUrl ? '' : 'sp-photo--empty' }}" data-sp-cover @if($splashImageUrl) style="background-image: url('{{ $splashImageUrl }}')" @endif></div>
+            <div class="sp-photo {{ $splashImageUrl ? '' : 'sp-photo--empty' }}" data-sp-cover @if($splashImageUrl) style="background-image: url('{{ $splashImageUrl }}')" @endif>
+                @if($band && !empty($look['decor']))<i class="sp-decor sp-decor--{{ $look['decor'] }}" aria-hidden="true"></i>@endif
+            </div>
 
             <div class="sp-brand" data-sp-logo>
                 @if($logoUrl)
@@ -63,6 +75,20 @@
             </header>
 
             <section class="sp-connect" aria-labelledby="sp-connect-title">
+                {{-- Business pages: three quick links above the sign-up form. --}}
+                @if($tiles && ($page ?? null) === 'splash')
+                    <nav class="sp-tiles" aria-label="Quick links">
+                        @foreach($tiles as $tile)
+                            @if($tile['url'])
+                                <a class="sp-tile" href="{{ $tile['url'] }}" target="_blank" rel="noopener">@include('portal.partials.icon', ['name' => 'tile-'.$tile['icon'], 'size' => 22])<span>{{ $tile['label'] }}</span></a>
+                            @elseif($tile['goto'])
+                                <a class="sp-tile" href="#pane-{{ $tile['goto'] }}" data-goto="{{ $tile['goto'] }}">@include('portal.partials.icon', ['name' => 'tile-'.$tile['icon'], 'size' => 22])<span>{{ $tile['label'] }}</span></a>
+                            @else
+                                <span class="sp-tile">@include('portal.partials.icon', ['name' => 'tile-'.$tile['icon'], 'size' => 22])<span>{{ $tile['label'] }}</span></span>
+                            @endif
+                        @endforeach
+                    </nav>
+                @endif
                 @yield('connect')
             </section>
         </div>

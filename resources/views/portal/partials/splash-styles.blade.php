@@ -529,5 +529,96 @@
         .splash--nocturne .sp-tab:not([aria-selected=true]) { color: var(--muted); }
     }
 
+    /* ======================= QUICK TILES (business pages) ======================= */
+    .sp-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 18px; }
+    .sp-tile {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-height: 76px;
+        padding: 12px 6px 10px; border-radius: 16px; background: var(--field-bg); color: var(--ink);
+        font-size: 12px; font-weight: 650; line-height: 1.2; text-align: center; text-decoration: none; overflow-wrap: anywhere;
+    }
+    .sp-tile .sp-icon { color: var(--tile-icon, var(--accent-deep)); }
+    a.sp-tile:active { transform: scale(.97); }
+
+    /* ======================= 6–12. BAND TEMPLATES =======================
+       Brew, Bistro, Bloom, Fade, Pulse, Calm, Corner: a coloured header band
+       (from resources/data/splash-templates.json) with a decoration, then one
+       clean card. --band, --band-ink and --page arrive inline on body. */
+    .sp--band { --canvas: var(--page, #fff); --btn-bg: var(--accent); --btn-ink: var(--accent-ink); --r-card: 22px; }
+    .sp-font--serif { --display: Georgia, "Iowan Old Style", "Times New Roman", serif; --title-weight: 400; --title-track: -.02em; }
+    .sp-font--bold { --title-weight: 900; --title-track: -.02em; }
+    .sp-font--bold .sp-title { text-transform: uppercase; }
+    .sp-font--sans { --title-weight: 700; --title-track: -.025em; }
+    .sp--dark {
+        --canvas: #141416; --ink: #f4f4f5; --muted: #a9a9b0; --paper: #1d1d20; --paper-2: #19191c; --field-bg: #26262a;
+        --tabs-bg: rgba(255, 255, 255, .07); --tab-on-bg: var(--accent); --tab-on-ink: var(--accent-ink); --danger: #ff8a80;
+        --shadow: 0 0 0 1px rgba(255, 255, 255, .06), 0 24px 50px -24px rgba(0, 0, 0, .8);
+        --accent-soft: rgba(255, 255, 255, .06); --tile-icon: var(--accent);
+    }
+    @supports (color: color-mix(in srgb, red, blue)) { .sp--dark { --accent-deep: color-mix(in srgb, var(--accent) 75%, #fff); } }
+    .sp--dark input, .sp--dark select { color: var(--ink); }
+    .sp--dark select option { color: #111; }
+    .sp--dark input:focus, .sp--dark select:focus { box-shadow: inset 0 0 0 2px var(--accent); }
+    .sp--dark .sp-check input { accent-color: var(--accent); }
+    .sp--dark .sp-error { background: rgba(255, 90, 80, .14); }
+    .sp--dark .sp-chip { background: rgba(255, 255, 255, .1); }
+    .sp--dark .sp-card--optin .sp-pill { background: var(--accent); color: var(--accent-ink); }
+
+    .sp--band .sp-photo, .sp--band .sp-photo--empty { background-color: transparent; background-image: var(--band); }
+    .sp--band .sp-photo:not(.sp-photo--empty) { background: center / cover no-repeat; }
+    .sp--band .sp-photo { overflow: hidden; }
+    .sp--band .sp-photo::after { content: ""; position: absolute; inset: 0; background: var(--band); opacity: 0; }
+    .sp--band .sp-photo:not(.sp-photo--empty)::after { opacity: .62; }
+    .sp--band .sp-brand, .sp--band .sp-hero { color: var(--band-ink); text-shadow: none; }
+    .sp--band .sp-hero { text-align: center; }
+    .sp--band .sp-lede { margin-inline: auto; }
+    .sp--band .sp-brand { justify-content: center; }
+    .sp--band .sp-hl { color: inherit; }
+    .sp--band .sp-eyebrow { letter-spacing: .24em; }
+    .sp--band .sp-badge-icon { background: var(--accent); color: var(--accent-ink); }
+
+    .sp-decor, .sp-decor::before, .sp-decor::after { position: absolute; pointer-events: none; z-index: 1; }
+    .sp-decor { inset: 0; }
+    .sp-decor::before, .sp-decor::after { content: ""; }
+    .sp-decor--pole::before, .sp-decor--pole::after { top: 0; bottom: 0; width: 26px; background: repeating-linear-gradient(135deg, #C8352B 0 11px, #fff 11px 20px, #1F3A78 20px 31px, #fff 31px 40px); }
+    .sp-decor--pole::before { left: 0; }
+    .sp-decor--pole::after { right: 0; }
+    .sp-decor--awning::before { left: 0; right: 0; top: 0; height: 44px; background: repeating-linear-gradient(90deg, #D9573B 0 38px, #fff 38px 76px); }
+    .sp-decor--awning::after { left: 0; right: 0; top: 44px; height: 16px; background: radial-gradient(circle at 50% 0, #D9573B 0 70%, transparent 71%) 0 0 / 38px 100%; }
+    .sp-decor--slash::before { right: -30px; top: -30%; width: 62px; height: 160%; background: #C6F432; transform: skewX(-18deg); opacity: .9; }
+    .sp-decor--slash::after { right: 44px; top: -30%; width: 12px; height: 160%; background: #C6F432; transform: skewX(-18deg); opacity: .45; }
+    .sp-decor--lights { background: radial-gradient(14% 18% at 18% 30%, rgba(255, 196, 110, .55), transparent 70%), radial-gradient(12% 16% at 60% 16%, rgba(255, 196, 110, .45), transparent 70%), radial-gradient(10% 14% at 86% 36%, rgba(255, 196, 110, .4), transparent 70%); }
+    .sp-decor--plus::before { left: 50%; top: 22px; width: 30px; height: 30px; transform: translateX(-50%); color: var(--band-ink); opacity: .9;
+        background: linear-gradient(currentColor, currentColor) center / 30% 100% no-repeat, linear-gradient(currentColor, currentColor) center / 100% 30% no-repeat; }
+    .sp-decor--arch::before { left: 50%; bottom: -1px; width: 130%; height: 56px; transform: translateX(-50%); background: var(--canvas); border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+    .sp-decor--glow { background: radial-gradient(70% 80% at 85% 0%, rgba(247, 208, 70, .55), transparent 60%); }
+    .sp--band:has(.sp-decor--awning) .sp-brand { padding-top: 72px; }
+    .sp--band:has(.sp-decor--plus) .sp-brand { padding-top: 64px; }
+    .sp--band:has(.sp-decor--pole) .sp-hero, .sp--band:has(.sp-decor--pole) .sp-brand,
+    .sp--band:has(.sp-decor--slash) .sp-hero, .sp--band:has(.sp-decor--slash) .sp-brand { padding-inline: 60px; }
+
+    @media (max-width: 1023.98px) {
+        .sp--band .sp-photo { height: 40vh; min-height: 260px; }
+        .sp--band .sp-hero { min-height: max(calc(40vh - 58px), 202px); padding: 0 22px 64px; }
+        .sp--band .sp-title { font-size: clamp(30px, 8.6vw, 42px); line-height: 1.05; }
+        .sp--band .sp-lede { font-size: 15px; }
+        .sp--band .sp-connect { margin-top: -40px; }
+        .sp--band .sp-tabs { background: rgba(20, 20, 23, .9); }
+    }
+    @media (min-width: 1024px) {
+        .sp--band .sp-app {
+            --gutter: max(32px, 6vw);
+            grid-template-columns: minmax(360px, 430px) minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr);
+            column-gap: 32px; padding: 0 var(--gutter) 28px;
+        }
+        .sp--band .sp-photo { grid-area: 1 / 1 / 3 / 3; margin: 0 calc(-1 * var(--gutter)); position: relative; }
+        .sp--band .sp-brand { grid-area: 1 / 1 / 2 / 3; z-index: 2; padding-top: 28px; }
+        .sp--band .sp-hero { grid-area: 2 / 1 / 3 / 3; z-index: 2; padding: 3vh 0 13vh; }
+        .sp--band .sp-title { font-size: clamp(40px, 4.4vw, 68px); line-height: 1.02; }
+        .sp--band .sp-connect { grid-area: 3 / 1; margin-top: -9vh; z-index: 3; align-self: start; max-height: calc(100% + 9vh); }
+        .sp--band .sp-board { grid-area: 3 / 2; margin-top: -9vh; padding-top: 4px; }
+        .sp--band .sp-tabs { background: var(--paper); box-shadow: var(--shadow); }
+        .sp--band.sp--solo .sp-connect { grid-column: 1 / 3; justify-self: center; width: min(440px, 100%); }
+    }
+
     @media (prefers-reduced-motion: reduce) { .sp * { transition: none !important; scroll-behavior: auto !important; } }
 </style>

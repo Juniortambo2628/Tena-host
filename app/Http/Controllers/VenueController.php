@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Support\SplashDesign;
 
 /**
  * The business customer homepage: menu, offers and events. Customers land
@@ -13,7 +14,7 @@ class VenueController extends Controller
 {
     public function show(Property $property)
     {
-        abort_unless($property->host?->isBusiness(), 404);
+        abort_unless(SplashDesign::isBusiness($property), 404);
 
         return view('portal.venue', [
             'property' => $property,

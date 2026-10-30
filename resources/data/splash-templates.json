@@ -1,0 +1,605 @@
+{
+  "groups": [
+    {
+      "id": "stays",
+      "label": "Stays"
+    },
+    {
+      "id": "food",
+      "label": "Food & drink"
+    },
+    {
+      "id": "beauty",
+      "label": "Beauty & grooming"
+    },
+    {
+      "id": "health",
+      "label": "Health & fitness"
+    },
+    {
+      "id": "retail",
+      "label": "Shops"
+    }
+  ],
+  "businessTypes": [
+    {
+      "id": "apartment",
+      "label": "Apartment or home",
+      "group": "stays",
+      "template": "bento",
+      "sample": "The Loft Nairobi"
+    },
+    {
+      "id": "serviced",
+      "label": "Serviced apartments",
+      "group": "stays",
+      "template": "monogram",
+      "sample": "The Residences"
+    },
+    {
+      "id": "villa",
+      "label": "Villa or lodge",
+      "group": "stays",
+      "template": "horizon",
+      "sample": "Pwani Villa"
+    },
+    {
+      "id": "guesthouse",
+      "label": "Guest house",
+      "group": "stays",
+      "template": "bento",
+      "sample": "Karibu Guest House"
+    },
+    {
+      "id": "hotel",
+      "label": "Boutique hotel",
+      "group": "stays",
+      "template": "clover",
+      "sample": "The Acacia Hotel"
+    },
+    {
+      "id": "cafe",
+      "label": "Café",
+      "group": "food",
+      "template": "brew",
+      "sample": "Kahawa House"
+    },
+    {
+      "id": "bakery",
+      "label": "Bakery",
+      "group": "food",
+      "template": "brew",
+      "sample": "Mkate Bakery"
+    },
+    {
+      "id": "restaurant",
+      "label": "Restaurant",
+      "group": "food",
+      "template": "bistro",
+      "sample": "Tamu Kitchen"
+    },
+    {
+      "id": "bar",
+      "label": "Bar or lounge",
+      "group": "food",
+      "template": "nocturne",
+      "sample": "The Velvet Lounge"
+    },
+    {
+      "id": "salon",
+      "label": "Salon or spa",
+      "group": "beauty",
+      "template": "bloom",
+      "sample": "Glow Studio"
+    },
+    {
+      "id": "nails",
+      "label": "Nails and beauty",
+      "group": "beauty",
+      "template": "bloom",
+      "sample": "Polish Bar"
+    },
+    {
+      "id": "barber",
+      "label": "Barbershop",
+      "group": "beauty",
+      "template": "fade",
+      "sample": "Sharp Cuts"
+    },
+    {
+      "id": "gym",
+      "label": "Gym or studio",
+      "group": "health",
+      "template": "pulse",
+      "sample": "Hustle Gym"
+    },
+    {
+      "id": "clinic",
+      "label": "Clinic",
+      "group": "health",
+      "template": "calm",
+      "sample": "Uzima Clinic"
+    },
+    {
+      "id": "dental",
+      "label": "Dental clinic",
+      "group": "health",
+      "template": "calm",
+      "sample": "Bright Smile Dental"
+    },
+    {
+      "id": "shop",
+      "label": "Shop",
+      "group": "retail",
+      "template": "corner",
+      "sample": "Kona Store"
+    },
+    {
+      "id": "pharmacy",
+      "label": "Pharmacy",
+      "group": "retail",
+      "template": "corner",
+      "sample": "Afya Pharmacy"
+    }
+  ],
+  "templates": [
+    {
+      "id": "bento",
+      "name": "Bento",
+      "for": "Homes & apartments",
+      "group": "stays",
+      "accent": "#151515",
+      "description": "Photo hero with a frosted tray of big, rounded cards.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "linear-gradient(135deg,#B3A68F,#5A4C3E)",
+        "headerInk": "#FFFFFF",
+        "decor": ""
+      },
+      "defaults": {
+        "headline": "Welcome home.",
+        "tiles": [
+          {
+            "icon": "guide",
+            "label": "House guide"
+          },
+          {
+            "icon": "clock",
+            "label": "Late checkout"
+          },
+          {
+            "icon": "home",
+            "label": "Book direct"
+          }
+        ],
+        "fields": {
+          "email": true,
+          "birthday": false
+        },
+        "optIn": "Send me offers and early access to direct deals"
+      }
+    },
+    {
+      "id": "horizon",
+      "name": "Horizon",
+      "for": "Lodges & villas",
+      "group": "stays",
+      "accent": "#151515",
+      "description": "A crisp white panel floating over your best landscape shot.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "linear-gradient(180deg,#E6B27D,#9B6A4C 60%,#3A2826)",
+        "headerInk": "#FFFFFF",
+        "decor": ""
+      },
+      "defaults": {
+        "headline": "Karibu. Your stay starts here.",
+        "tiles": [
+          {
+            "icon": "guide",
+            "label": "Your stay"
+          },
+          {
+            "icon": "star",
+            "label": "Experiences"
+          },
+          {
+            "icon": "home",
+            "label": "Book direct"
+          }
+        ],
+        "fields": {
+          "email": true,
+          "birthday": false
+        },
+        "optIn": "Send me offers and early access to direct deals"
+      }
+    },
+    {
+      "id": "clover",
+      "name": "Clover",
+      "for": "Boutique hotels",
+      "group": "stays",
+      "accent": "#151515",
+      "description": "Editorial split with a coloured headline and a story strip.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "linear-gradient(160deg,#6E73C9,#16173A)",
+        "headerInk": "#FFFFFF",
+        "decor": ""
+      },
+      "defaults": {
+        "headline": "Welcome to {name}.",
+        "tiles": [
+          {
+            "icon": "guide",
+            "label": "Hotel guide"
+          },
+          {
+            "icon": "menu",
+            "label": "Dining"
+          },
+          {
+            "icon": "home",
+            "label": "Book direct"
+          }
+        ],
+        "fields": {
+          "email": true,
+          "birthday": false
+        },
+        "optIn": "Send me offers and early access to direct deals"
+      }
+    },
+    {
+      "id": "monogram",
+      "name": "Monogram",
+      "for": "Luxury & serviced",
+      "group": "stays",
+      "accent": "#151515",
+      "description": "Monochrome stationery with a giant initial. Quietly luxurious.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "#1A1A1A",
+        "headerInk": "#FFFFFF",
+        "decor": "m"
+      },
+      "defaults": {
+        "headline": "Welcome. You’re connected.",
+        "tiles": [
+          {
+            "icon": "star",
+            "label": "Concierge"
+          },
+          {
+            "icon": "guide",
+            "label": "House guide"
+          },
+          {
+            "icon": "home",
+            "label": "Book direct"
+          }
+        ],
+        "fields": {
+          "email": true,
+          "birthday": false
+        },
+        "optIn": "Send me offers and early access to direct deals"
+      }
+    },
+    {
+      "id": "brew",
+      "name": "Brew",
+      "for": "Cafés & bakeries",
+      "group": "food",
+      "accent": "#6B4A35",
+      "description": "Warm coffee-house header, menu and birthday-treat tiles.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "linear-gradient(135deg,#7A5640,#4A3123)",
+        "headerInk": "#FFFFFF",
+        "decor": "",
+        "page": "#FBF6EF"
+      },
+      "defaults": {
+        "headline": "Karibu! Free WiFi.",
+        "tiles": [
+          {
+            "icon": "menu",
+            "label": "View menu"
+          },
+          {
+            "icon": "wifi",
+            "label": "Free WiFi"
+          },
+          {
+            "icon": "gift",
+            "label": "Birthday treat"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": true
+        },
+        "optIn": "Send me offers, news and a birthday treat"
+      }
+    },
+    {
+      "id": "bistro",
+      "name": "Bistro",
+      "for": "Restaurants",
+      "group": "food",
+      "accent": "#1F3B2D",
+      "description": "Deep green under string lights. Menu, tables and offers.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "linear-gradient(180deg,#24432F,#0F1E16)",
+        "headerInk": "#FFFFFF",
+        "decor": "lights",
+        "page": "#FBF8F2"
+      },
+      "defaults": {
+        "headline": "Karibu! Your table’s ready.",
+        "tiles": [
+          {
+            "icon": "menu",
+            "label": "Menu"
+          },
+          {
+            "icon": "cal",
+            "label": "Book a table"
+          },
+          {
+            "icon": "gift",
+            "label": "Offers"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": true
+        },
+        "optIn": "Send me offers, events and a birthday treat"
+      }
+    },
+    {
+      "id": "nocturne",
+      "name": "Nocturne",
+      "for": "Bars, lounges & nightlife",
+      "group": "food",
+      "accent": "#F7D046",
+      "description": "After-dark glass and glow for bars and lounges.",
+      "look": {
+        "font": "sans",
+        "theme": "dark",
+        "header": "linear-gradient(135deg,#26262C,#141418)",
+        "headerInk": "#FFFFFF",
+        "decor": "glow"
+      },
+      "defaults": {
+        "headline": "Welcome in. WiFi’s on us.",
+        "tiles": [
+          {
+            "icon": "star",
+            "label": "Tonight"
+          },
+          {
+            "icon": "cal",
+            "label": "Book a table"
+          },
+          {
+            "icon": "gift",
+            "label": "Members"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": true
+        },
+        "optIn": "Send me events, offers and a birthday treat"
+      }
+    },
+    {
+      "id": "bloom",
+      "name": "Bloom",
+      "for": "Salons & spas",
+      "group": "beauty",
+      "accent": "#C77B86",
+      "description": "Soft blush arch for a calm, pampered welcome.",
+      "look": {
+        "font": "serif",
+        "theme": "light",
+        "header": "linear-gradient(160deg,#F8E5E0,#E6B3AC)",
+        "headerInk": "#4A2E31",
+        "decor": "arch",
+        "page": "#FFFBFA"
+      },
+      "defaults": {
+        "headline": "Relax. You’re connected.",
+        "tiles": [
+          {
+            "icon": "list",
+            "label": "Our services"
+          },
+          {
+            "icon": "cal",
+            "label": "Book again"
+          },
+          {
+            "icon": "gift",
+            "label": "Members"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": true
+        },
+        "optIn": "Send me offers and appointment reminders"
+      }
+    },
+    {
+      "id": "fade",
+      "name": "Fade",
+      "for": "Barbershops",
+      "group": "beauty",
+      "accent": "#C8352B",
+      "description": "Bold black with a barber-pole stripe. Prices and bookings up front.",
+      "look": {
+        "font": "bold",
+        "theme": "dark",
+        "header": "#121212",
+        "headerInk": "#FFFFFF",
+        "decor": "pole"
+      },
+      "defaults": {
+        "headline": "Fresh cut. Free WiFi.",
+        "tiles": [
+          {
+            "icon": "list",
+            "label": "Prices"
+          },
+          {
+            "icon": "cal",
+            "label": "Book a cut"
+          },
+          {
+            "icon": "star",
+            "label": "Loyalty"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": true
+        },
+        "optIn": "Send me offers and a reminder when I’m due a cut"
+      }
+    },
+    {
+      "id": "pulse",
+      "name": "Pulse",
+      "for": "Gyms & studios",
+      "group": "health",
+      "accent": "#C6F432",
+      "description": "High-energy dark with a neon slash. Timetable and memberships.",
+      "look": {
+        "font": "bold",
+        "theme": "dark",
+        "header": "#101012",
+        "headerInk": "#FFFFFF",
+        "decor": "slash"
+      },
+      "defaults": {
+        "headline": "Train hard. Stay connected.",
+        "tiles": [
+          {
+            "icon": "cal",
+            "label": "Timetable"
+          },
+          {
+            "icon": "star",
+            "label": "Memberships"
+          },
+          {
+            "icon": "gift",
+            "label": "Offers"
+          }
+        ],
+        "fields": {
+          "email": true,
+          "birthday": false
+        },
+        "optIn": "Send me class updates and member offers"
+      }
+    },
+    {
+      "id": "calm",
+      "name": "Calm",
+      "for": "Clinics & dental",
+      "group": "health",
+      "accent": "#2F8F7A",
+      "description": "Clean, quiet and clinical. First name and phone only.",
+      "look": {
+        "font": "sans",
+        "theme": "light",
+        "header": "linear-gradient(160deg,#E7F5F1,#CBE9E1)",
+        "headerInk": "#16463C",
+        "decor": "plus"
+      },
+      "defaults": {
+        "headline": "Free WiFi while you wait.",
+        "tiles": [
+          {
+            "icon": "list",
+            "label": "Our services"
+          },
+          {
+            "icon": "cal",
+            "label": "Book a visit"
+          },
+          {
+            "icon": "clock",
+            "label": "Opening hours"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": false
+        },
+        "optIn": "Send me appointment reminders and clinic news"
+      }
+    },
+    {
+      "id": "corner",
+      "name": "Corner",
+      "for": "Shops & pharmacies",
+      "group": "retail",
+      "accent": "#D9573B",
+      "description": "Striped shop awning with deals and members up front.",
+      "look": {
+        "font": "sans",
+        "theme": "light",
+        "header": "#FAF1E4",
+        "headerInk": "#3A2A20",
+        "decor": "awning",
+        "page": "#FFFCF6"
+      },
+      "defaults": {
+        "headline": "Free WiFi while you shop.",
+        "tiles": [
+          {
+            "icon": "tag",
+            "label": "This week’s deals"
+          },
+          {
+            "icon": "cart",
+            "label": "Shop"
+          },
+          {
+            "icon": "gift",
+            "label": "Members"
+          }
+        ],
+        "fields": {
+          "email": false,
+          "birthday": true
+        },
+        "optIn": "Send me weekly deals and news"
+      }
+    }
+  ],
+  "accents": [
+    "#F7D046",
+    "#DFA0B0",
+    "#5B67F0",
+    "#3F8A72",
+    "#D55E3A",
+    "#C4A040",
+    "#111111",
+    "#7357F0"
+  ]
+}
