@@ -28,7 +28,7 @@ if (str_starts_with($content, "\xEF\xBB\xBF")) {
 
 $lines = preg_split("/(\r\n|\n|\r)/", $content);
 $entries = Lines::process($lines);
-$parser = new Parser();
+$parser = new Parser;
 $errors = [];
 $cursor = 0;
 
@@ -56,7 +56,7 @@ foreach ($entries as $entry) {
 }
 
 if ($errors) {
-    fwrite(STDERR, "Invalid .env (".count($errors)." problem(s)):\n  ".implode("\n  ", $errors)."\n");
+    fwrite(STDERR, 'Invalid .env ('.count($errors)." problem(s)):\n  ".implode("\n  ", $errors)."\n");
     fwrite(STDERR, "Fix: keep each KEY=value on one line, use only A-Z 0-9 _ in names, and wrap values containing spaces or # in double quotes.\n");
     exit(1);
 }

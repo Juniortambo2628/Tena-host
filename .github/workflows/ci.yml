@@ -1,3 +1,4 @@
+# deploy.yml runs after this workflow by its name: keep the name unchanged.
 name: Test & Auto-Fix Suite
 
 on:
@@ -8,10 +9,11 @@ on:
 
 jobs:
   test-and-lint:
-    name: Lint, Auto-Fix & Test
+    # The `master` branch ruleset requires this check by name.
+    name: Lint & Test
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     services:
       mysql:
@@ -81,25 +83,10 @@ jobs:
           DB_PASSWORD: root
         run: php artisan migrate --force
 
-      - name: Run Laravel Pint (Auto-Fix Code Style)
-        run: vendor/bin/pint
-
-      - name: Check for Pint Changes
-        id: pint-changes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "has_changes=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_changes=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit Pint Auto-Fixes
-        if: steps.pint-changes.outputs.has_changes == 'true' && github.event_name == 'push'
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "style: auto-fix PHP code style with Laravel Pint"
-          branch: ${{ github.ref_name }}
-          file_pattern: 'app/ config/ database/ routes/ resources/'
+      # master is protected, so style is checked on the pull request instead of
+      # being auto-committed after merge. Run `vendor/bin/pint` locally to fix.
+      - name: Check PHP code style (Laravel Pint)
+        run: vendor/bin/pint --test
 
       - name: Run Pest Test Suite
         env:
