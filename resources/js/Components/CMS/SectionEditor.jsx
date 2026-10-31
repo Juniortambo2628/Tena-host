@@ -58,6 +58,8 @@ const FIELD_OPTIONS = {
         { value: 'dark', label: 'Dark (proof: quote instead of photo)' },
         { value: 'trial', label: 'Trial (banner: ticks, counter, pricing card)' },
     ),
+    // worth_calculator: one calculator, or all three as tabs.
+    mode: opts({ value: '', label: 'All three (tabs)' }, { value: 'hosts', label: 'Rentals only' }, { value: 'business', label: 'Business only' }, { value: 'events', label: 'Events only' }),
     visual: opts({ value: 'image', label: 'Image (main_image)' }, { value: 'splash', label: 'Drawn WiFi page + floating cards' }),
 };
 

@@ -236,6 +236,12 @@ return [
                 'message_home' => "Hi TenaFi, I\u{2019}d like to find out about your free trial.",
                 'message_hosts' => "Hi TenaFi, I\u{2019}d like to book a free trial for my short-term rental(s).",
                 'message_business' => "Hi TenaFi, I\u{2019}d like to book a free trial for my business.",
+                // Optional menu per page: one option per line, "Label | pre-filled message".
+                // Empty = the button opens WhatsApp straight away with the message above.
+                'menu_greeting' => 'Hi there! 👋 What brings you to TenaFi?',
+                'menu_home' => "I run short-term rentals | Hi TenaFi, I run short-term rentals and I’d like to book a free trial.\nI own a business | Hi TenaFi, I own a business and I’d like to book a free trial.\nI’m planning an event | Hi TenaFi, I’m planning an event and I’d like to talk about event WiFi.\nI’m already a TenaFi client | Hi TenaFi, I’m already a client and I need some help.",
+                'menu_hosts' => '',
+                'menu_business' => '',
             ],
         ],
         'trial_slots' => [
@@ -537,6 +543,33 @@ return [
                     ['label' => 'Events & sponsors', 'without' => 'One network for every event', 'with' => 'A sign-in, sponsor slot and attendee tag per event'],
                     ['label' => 'Who runs it', 'without' => 'You, on top of everything else', 'with' => 'Our team, with a monthly report'],
                 ],
+            ],
+        ],
+        'worth_calculator' => [
+            'title' => 'What’s it worth (calculator)',
+            'content' => [
+                'anchor' => 'worth',
+                'badge' => 'What’s it worth to you?',
+                'title' => 'Put in your numbers. See what TenaFi could add.',
+                'subtitle' => 'An estimate, using typical sign-up, review and return rates. Your results will differ.',
+                // Empty shows all three as tabs; hosts, business or events shows one.
+                'mode' => '',
+                'tab_hosts' => 'Short-term rentals',
+                'tab_business' => 'Local business',
+                'tab_events' => 'Events',
+                'estimate_label' => 'Estimate only.',
+                // Assumptions, shown in the note under the results. Rates are percentages.
+                'hosts_avg_stay' => '2.8',
+                'hosts_guests_per_stay' => '1.7',
+                'hosts_join_rate' => '67',
+                'hosts_direct_share' => '5',
+                'hosts_ota_fee' => '15',
+                'business_open_days' => '26',
+                'business_join_rate' => '25',
+                'business_review_rate' => '4',
+                'business_offer_use' => '5',
+                'events_connect_rate' => '50',
+                'events_join_rate' => '60',
             ],
         ],
         'credibility' => [
