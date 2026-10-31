@@ -106,6 +106,10 @@ class BillingTest extends TestCase
 
     public function test_early_renewal_extends_from_the_current_end_date(): void
     {
+        // Mid-month, so month lengths can't shift the expected day (on the 31st,
+        // +1 month twice lands a day after +2 months).
+        $this->travelTo(now()->setDay(15));
+
         $service = app(SubscriptionService::class);
         $quote = app(PlanPricing::class)->quote('basic', 1, 0, 'monthly');
 
