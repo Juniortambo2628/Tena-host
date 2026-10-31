@@ -126,7 +126,8 @@ class SignupConversionService
             'email' => $email,
             'phone_number' => $phone,
             'role' => 'host',
-            'account_type' => $registration->type === Registration::TYPE_BUSINESS ? User::ACCOUNT_BUSINESS : User::ACCOUNT_HOST,
+            // Event organisers and venues use the business dashboard wording (customers, locations).
+            'account_type' => in_array($registration->type, [Registration::TYPE_BUSINESS, Registration::TYPE_EVENT], true) ? User::ACCOUNT_BUSINESS : User::ACCOUNT_HOST,
             'password' => Hash::make(Str::random(40)),
             'billing_plan' => array_key_exists((string) $plan, config('billing.plans')) ? $plan : null,
             'billing_units' => $this->units($registration->units ?? $answers['units'] ?? $answers['locations'] ?? null),

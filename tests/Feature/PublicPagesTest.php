@@ -87,7 +87,7 @@ it('retires sections of the old homepage that the handoff dropped', function () 
 
 it('shows the same header links on every page, with megamenus built from each page\'s sections', function (string $url) {
     $this->get($url)->assertInertia(fn ($page) => $page
-        ->where('site.header.content', fn ($c) => [$c['links.0.href'], $c['links.1.href'], $c['links.2.href'], $c['links.3.href'], $c['links.4.href']] === ['/hosts', '/business', '/#events', '/#how', '/#pricing'])
+        ->where('site.header.content', fn ($c) => [$c['links.0.href'], $c['links.1.href'], $c['links.2.href'], $c['links.3.href'], $c['links.4.href']] === ['/hosts', '/business', '/events', '/#how', '/#pricing'])
         ->where('menus./hosts', fn ($items) => collect($items)->pluck('label')->all() === ['Occupancy', 'How it works', 'Product', 'Protect your property', 'Your first month', 'Pricing', 'Free trial'])
         ->where('menus./business', fn ($items) => collect($items)->pluck('href')->all() === ['/business#b-how', '/business#b-product', '/business#b-reviews', '/business#b-first-month', '/business#b-pricing', '/business#signup'])
     );
@@ -200,7 +200,7 @@ it('lets admins switch between pages in the CMS', function () {
         ->assertInertia(fn ($page) => $page
             ->component('Admin/Landing/Index')
             ->where('currentPage', 'business')
-            ->has('pages', 4)
+            ->has('pages', 5)
             ->where('sections.0.section_key', 'seo')
         );
 });

@@ -29,7 +29,7 @@ it('stores a call-back request as a lead and alerts the team like a sign-up', fu
 
     $lead = Registration::sole();
     expect($lead->phone)->toBe('+254712345678')
-        ->and($lead->type)->toBe('business')
+        ->and($lead->type)->toBe('event')
         ->and($lead->source_page)->toBe('callback')
         ->and($lead->referral_source)->toBe('Call-back form')
         ->and($lead->answers['callbackFor'])->toBe('events')

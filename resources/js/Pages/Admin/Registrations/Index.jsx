@@ -13,6 +13,7 @@ const TYPE_TABS = [
     { value: null, label: 'All' },
     { value: 'host', label: 'Hosts' },
     { value: 'business', label: 'Businesses' },
+    { value: 'event', label: 'Events' },
 ];
 
 // "customersPerDay" / "primary_platform" -> "Customers Per Day" / "Primary Platform"

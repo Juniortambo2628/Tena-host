@@ -14,7 +14,7 @@ import './Mockup.css';
  *               any plain line is a form field          optin: …   sponsor: …
  *   chat        head: Name | WhatsApp     msg: text | button | time | dark | label
  *   rating      name: …   score: 4.5   meta: …   row: BO | text | when
- *   stats       score: 4.5   row: label | value
+ *   stats       head: …   score: 4.5 (optional stars)   row: label | value
  *   attendees   head: …   row: JM | Name | status   tag: …
  *   guide       head: …   row: 📖 | item | price
  *   mpesa       to: Pay KES 2,000 to …?   ok: Paid. Your host has been told.
@@ -131,7 +131,8 @@ function Rating({ p }) {
 function Stats({ p }) {
     return (
         <div className="mk-card mk-stats">
-            <div className="mk-rating__score"><span>{p.props.score}</span><span className="mk-stars" aria-hidden="true">★★★★★</span></div>
+            {p.props.head && <b>{p.props.head}</b>}
+            {p.props.score && <div className="mk-rating__score"><span>{p.props.score}</span><span className="mk-stars" aria-hidden="true">★★★★★</span></div>}
             {p.rows.map(([label, value], i) => <div key={i} className="mk-row"><span>{label}</span><b>{value}</b></div>)}
         </div>
     );

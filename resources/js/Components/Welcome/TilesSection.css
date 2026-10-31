@@ -1,0 +1,30 @@
+@reference "../../../css/theme.css";
+
+.tiles-grid {
+    @apply grid list-none p-0 m-0;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.tiles-item {
+    @apply flex flex-col bg-white text-dark rounded-2xl;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid #E6E7EB;
+}
+
+.tiles-item__icon {
+    font-size: 22px;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.tiles-item b {
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.tiles-item > span:last-child {
+    @apply text-muted;
+    font-size: 13px;
+}

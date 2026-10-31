@@ -176,11 +176,10 @@ return [
             'title' => 'Header & navigation (default)',
             'content' => [
                 'join_label' => 'Book Now',
-                // TODO(events page): /events once it exists.
                 'links' => [
                     ['label' => 'Short-term rentals', 'href' => '/hosts'],
                     ['label' => 'Business owners', 'href' => '/business'],
-                    ['label' => 'Events', 'href' => '/#events'],
+                    ['label' => 'Events', 'href' => '/events'],
                     ['label' => 'How it works', 'href' => '/#how'],
                     ['label' => 'Pricing', 'href' => '/#pricing'],
                 ],
@@ -210,10 +209,9 @@ return [
                 'location' => 'Nairobi, Kenya',
                 'copyright' => 'Tenafi Host Technologies, Nairobi, Kenya',
                 // Grouped columns. links: one per line, "Label | /href".
-                // TODO(events page): /events once it exists.
                 'groups' => [
-                    ['title' => 'Who it’s for', 'links' => "Short-term rentals | /hosts\nCafés & restaurants | /business\nSalons, spas & barbers | /business\nGyms & studios | /business\nClinics & pharmacies | /business\nShops | /business\nEvents, weddings & venues | /#events"],
-                    ['title' => 'What it does', 'links' => "Branded guest WiFi | /#wifi-page\nGuest list (CRM) | /#all-in-one\nGoogle review requests | /#reviews\nWhatsApp, SMS & email campaigns | /#campaigns\nEvent & sponsor WiFi | /#events"],
+                    ['title' => 'Who it’s for', 'links' => "Short-term rentals | /hosts\nCafés & restaurants | /business\nSalons, spas & barbers | /business\nGyms & studios | /business\nClinics & pharmacies | /business\nShops | /business\nEvents, weddings & venues | /events"],
+                    ['title' => 'What it does', 'links' => "Branded guest WiFi | /#wifi-page\nGuest list (CRM) | /#all-in-one\nGoogle review requests | /#reviews\nWhatsApp, SMS & email campaigns | /#campaigns\nEvent & sponsor WiFi | /events"],
                     ['title' => 'Company', 'links' => "How it works | /#how\nFree trial | /#trial\nPrivacy policy | /privacy\nTerms | /terms"],
                 ],
                 // The single "Quick Links" column, used when there are no groups.
@@ -242,6 +240,8 @@ return [
                 'menu_home' => "I run short-term rentals | Hi TenaFi, I run short-term rentals and I’d like to book a free trial.\nI own a business | Hi TenaFi, I own a business and I’d like to book a free trial.\nI’m planning an event | Hi TenaFi, I’m planning an event and I’d like to talk about event WiFi.\nI’m already a TenaFi client | Hi TenaFi, I’m already a client and I need some help.",
                 'menu_hosts' => '',
                 'menu_business' => '',
+                'message_events' => 'Hi TenaFi, I’m planning an event and I’d like to talk about event WiFi.',
+                'menu_events' => '',
             ],
         ],
         'trial_slots' => [
@@ -299,11 +299,10 @@ return [
                 'cta_secondary_url' => '#how',
                 'note' => '',
                 // One link per audience, under the headline.
-                // TODO(events page): point the events link at /events once it exists.
                 'audiences' => [
                     ['label' => 'Short-term rentals', 'href' => '/hosts'],
                     ['label' => 'Cafés, salons, shops & more', 'href' => '/business'],
-                    ['label' => 'Events, weddings & venues', 'href' => '/#events'],
+                    ['label' => 'Events, weddings & venues', 'href' => '/events'],
                 ],
                 // "Get a call back" (shown while Admin -> Settings has the call-back form on).
                 // Options: value|Label; values are hosts, business or events.
@@ -358,8 +357,7 @@ return [
                 'cards' => [
                     ['label' => '01 · Short-term rentals', 'title' => 'Fill more nights with guests who’ve stayed before.', 'description' => 'Build a guest list of the whole party, not just the booker, and bring them back to book direct.', 'cta' => 'Grow your occupancy', 'href' => '/hosts', 'event' => 'path_card_hosts', 'tags' => 'Apartments, Villas, Guest houses, Boutique hotels', 'mockup' => 'chat', 'screen' => "head: The Loft Nairobi | WhatsApp\nmsg: Thanks for staying with us, Sarah! Planning your next trip? Book direct and save 10% with code KARIBU10. | Book direct | A week after checkout | dark\ncolor: #0F4C45"],
                     ['label' => '02 · Local businesses', 'title' => 'More Google reviews. More regulars.', 'description' => 'Every customer who connects gets a review request later that day, then offers that bring them back.', 'cta' => 'Get more reviews', 'href' => '/business', 'event' => 'path_card_business', 'tags' => 'Cafés, Restaurants, Salons & spas, Barbers, Gyms, Clinics, Shops', 'mockup' => 'rating', 'screen' => "name: Kahawa House\nscore: 4.5\nmeta: 54 reviews · +12 this month\nrow: BO | Review request sent | Same day"],
-                    // TODO(events page): href /events once it exists.
-                    ['label' => '03 · Events & venues', 'title' => 'Know who came, not just who bought the ticket.', 'description' => 'From weddings and launches to stadiums: every guest who connects joins your list, with a sponsor-branded sign-in.', 'cta' => 'Plan your event WiFi', 'href' => '/#events', 'event' => 'path_card_events', 'tags' => 'Weddings, Launches, Conferences, Concerts, Festivals, Stadiums', 'mockup' => 'attendees', 'screen' => "head: Kona Design Week\nrow: JM | Joy M. · Day 2 | Opted in\nrow: KO | Kevin O. · Day 1, 2 | Opted in\nrow: AN | Amani N. · Day 2 | Opted in"],
+                    ['label' => '03 · Events & venues', 'title' => 'Know who came, not just who bought the ticket.', 'description' => 'From weddings and launches to stadiums: every guest who connects joins your list, with a sponsor-branded sign-in.', 'cta' => 'Plan your event WiFi', 'href' => '/events', 'event' => 'path_card_events', 'tags' => 'Weddings, Launches, Conferences, Concerts, Festivals, Stadiums', 'mockup' => 'attendees', 'screen' => "head: Kona Design Week\nrow: JM | Joy M. · Day 2 | Opted in\nrow: KO | Kevin O. · Day 1, 2 | Opted in\nrow: AN | Amani N. · Day 2 | Opted in"],
                 ],
             ],
             'media' => [
@@ -490,10 +488,9 @@ return [
                         ],
                     ],
                     [
-                        // TODO(events page): cta_href /events once it exists.
                         'anchor' => 'events', 'label' => 'Events & venues', 'heading' => 'Every event its own sign-in. Every attendee on your list.',
                         'description' => 'Tickets name the buyer, not the friends they bring. Event WiFi tells you who actually came, and gives sponsors a moment every connected guest sees.',
-                        'bg' => 'white', 'reverse' => '0', 'note' => '', 'cta_label' => 'Plan your event WiFi', 'cta_href' => '#trial',
+                        'bg' => 'white', 'reverse' => '0', 'note' => '', 'cta_label' => 'See TenaFi for events', 'cta_href' => '/events',
                         'mockup' => 'splash',
                         'screen' => "color: #3B2C6B\nbrand: Kona Design Week | Expo hall · Day 2\nheadline: Free WiFi, all day.\ntiles: 🗓️ Schedule | 🎤 Speakers | 🎁 Sponsor offer\nFirst name\nEmail address\noptin: Send me next year’s early-bird tickets\nsponsor: WiFi by your sponsor\n---\n@attendees\nhead: Attendees · Day 2\nrow: JM | Joy M. | New\nrow: KO | Kevin O. | Returning\nrow: AN | Amani N. | New\ntag: Tagged: Design Week 2026",
                         'features' => [
@@ -610,19 +607,17 @@ return [
                 'pricing_anchor' => 'pricing',
                 'pricing_title' => 'After the trial',
                 'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
-                // TODO(events page): /events once it exists.
                 'pricing_links' => [
                     ['label' => 'Rental pricing', 'href' => '/hosts#h-pricing'],
                     ['label' => 'Business pricing', 'href' => '/business#b-pricing'],
-                    ['label' => 'Events', 'href' => '/#events'],
+                    ['label' => 'Events', 'href' => '/events'],
                 ],
                 'buttons_title' => 'Book your slot',
                 // An href starting "whatsapp:" opens WhatsApp (Site-wide number) with that message.
-                // TODO(events page): /events#enquire once it exists.
                 'buttons' => [
                     ['label' => 'I run short-term rentals', 'href' => '/hosts#join'],
                     ['label' => 'I own a business', 'href' => '/business#signup'],
-                    ['label' => 'I’m planning an event', 'href' => '/#events'],
+                    ['label' => 'I’m planning an event', 'href' => '/events#enquire'],
                     ['label' => 'Questions? WhatsApp us', 'href' => 'whatsapp:Hi TenaFi, I have a question about the free trial.'],
                 ],
             ],
@@ -1166,4 +1161,269 @@ return [
             ],
         ],
     ],
+
+    // ------------------------------------------------------------------
+    // Events, weddings and venues: /events
+    // ------------------------------------------------------------------
+    'events' => [
+        'seo' => [
+            'title' => 'SEO & social',
+            'content' => [
+                'meta_title' => 'Event WiFi for weddings, launches and stadiums | TenaFi',
+                'meta_description' => 'Event WiFi that turns a crowd into an attendee list you own: a sign-in page in your event’s brand, a sponsor moment every guest sees, and follow-up run for you. From weddings to stadiums.',
+            ],
+        ],
+        'hero' => [
+            'title' => 'Hero',
+            'bg' => 'gray',
+            'content' => [
+                // "dark": the dark hero card (events). Empty keeps the light card.
+                'style' => 'dark',
+                'badge' => 'WiFi for events, venues and stadiums',
+                'title' => 'Know who came, not just who bought the '.$hl('ticket.'),
+                'subtitle' => 'Event WiFi that turns a crowd into an attendee list you own.',
+                'body' => 'Every guest gets a sign-in page in your event’s brand, sponsors get a moment every connected guest sees, and you get to invite them back.',
+                'cta_primary' => 'Plan your event WiFi',
+                'cta_primary_url' => '#enquire',
+                'cta_secondary' => 'See how it works',
+                'cta_secondary_url' => '#e-how',
+                'note' => '',
+                'ticks' => "Sponsor-branded sign-in\nA WiFi page per event\nAttendee list you own\nRun for you on the day",
+                'visual' => 'splash',
+                'visual_screen' => "color: #3B2C6B\nbrand: Kona Design Week | Expo hall · Day 2\nheadline: Free WiFi, all day.\ntiles: 🗓️ Schedule | 🗺️ Floor map | 🎁 Sponsor offer\nFirst name\nEmail address\nWhere are you coming from?\noptin: Send me next year’s early-bird tickets\nsponsor: WiFi by your sponsor",
+                'visual_cards' => [
+                    ['icon' => '👋', 'title' => 'Welcome back, Joy', 'text' => '3rd event this year · opted in'],
+                    ['icon' => '?', 'title' => 'Sponsor question answered', 'text' => 'Coming from: Westlands'],
+                    ['icon' => '✓', 'title' => '2,140 attendees on your list', 'text' => 'Example · Day 2 · Kona Design Week'],
+                ],
+            ],
+            'media' => ['main_image' => $img('Tena-Hero-1.jpg')],
+        ],
+        'tiles' => [
+            'title' => 'Kinds of events',
+            'bg' => 'white',
+            'content' => [
+                'title' => 'From a wedding or a 50-person launch to a stadium.',
+                'subtitle' => '',
+                'items' => [
+                    ['icon' => '🚀', 'title' => 'Launches & activations', 'text' => 'Brand nights, pop-ups'],
+                    ['icon' => '🎤', 'title' => 'Conferences & expos', 'text' => 'Multi-day, multi-hall'],
+                    ['icon' => '🎶', 'title' => 'Concerts & festivals', 'text' => 'Indoor and outdoor'],
+                    ['icon' => '🏟️', 'title' => 'Sports & stadiums', 'text' => 'Match days, tournaments'],
+                    ['icon' => '💍', 'title' => 'Weddings', 'text' => 'Ceremonies and receptions'],
+                    ['icon' => '🥂', 'title' => 'Corporate & private', 'text' => 'Galas, offsites, parties'],
+                    ['icon' => '🏛️', 'title' => 'Venues', 'text' => 'A new page for every event'],
+                ],
+            ],
+        ],
+        'comparison__gap' => [
+            'title' => 'The gap',
+            'content' => [
+                'anchor' => 'e-gap',
+                'style' => 'versus',
+                'badge' => 'The gap',
+                'title' => 'Your ticketing knows who paid. It doesn’t know who came.',
+                'subtitle' => 'One buyer brings three friends, tickets get passed on and guests arrive on someone else’s list. Most of the people in the room never reach your database, and the WiFi tells you nothing about them.',
+                'note' => '',
+                'sources' => '',
+                'columns' => [
+                    ['label' => 'A typical event today', 'stat' => '', 'stat_label' => '', 'points' => "Ticket data names the buyer, not the friends beside them\nSponsors get a banner and a guess at how many saw it\nOne open network and a password on a sign, for every event\nOnce the doors close, you can’t reach most of the crowd", 'text' => '', 'highlight' => '0'],
+                    ['label' => 'With TenaFi', 'stat' => '', 'stat_label' => '', 'points' => "Every attendee who connects signs in with consent, so you know who came\nSponsors get a branded sign-in moment, a question and a link\nEach event gets its own WiFi page and its own tag on your list\nA thank-you and early-bird invite goes out after the event", 'text' => '', 'highlight' => '1'],
+                ],
+            ],
+        ],
+        'features__plays' => [
+            'title' => 'Four plays',
+            'bg' => 'gray',
+            'content' => [
+                'badge' => 'One platform, four plays',
+                'title' => 'Everyone in the room, and every event after it.',
+                'subtitle' => 'Attendee data, sponsor value, event-by-event marketing and the follow-up, run for you by one team.',
+                'items' => [
+                    ['step' => '01 · Attendees', 'icon' => 'fas fa-users', 'title' => 'Know who came through the door', 'description' => 'A sign-in in your event’s colours turns every connected phone into an attendee record you own.', 'feature' => ''],
+                    ['step' => '02 · Sponsors', 'icon' => 'fas fa-chart-line', 'title' => 'Give sponsors something to measure', 'description' => 'Their brand, question and offer on the first screen every connected guest sees.', 'feature' => ''],
+                    ['step' => '03 · Every event', 'icon' => 'fas fa-calendar-alt', 'title' => 'Every event its own sign-in', 'description' => 'Each day, stage or fixture tagged on your list, ready for the next on-sale.', 'feature' => ''],
+                    ['step' => '04 · After the event', 'icon' => 'fas fa-comments', 'title' => 'Keep the crowd after the lights go up', 'description' => 'Thank-yous, photos, feedback and early-bird invites by WhatsApp, SMS and email.', 'feature' => ''],
+                ],
+            ],
+        ],
+        'detailed_features__events' => [
+            'title' => 'Feature rows',
+            'content' => [
+                'anchor' => 'e-product',
+                'menu_label' => 'What you get',
+                'title' => '',
+                'subtitle' => '',
+                'cta_text' => '',
+                'sections' => [
+                    [
+                        'anchor' => 'attendees', 'label' => 'Attendees', 'heading' => 'Turn a crowd into a list you own.',
+                        'description' => 'Guests sign in with a few taps on a page in your event’s brand. No app to download, and consent is recorded for every guest.',
+                        'bg' => 'white', 'reverse' => '0', 'cta_label' => '', 'cta_href' => '',
+                        'note' => 'Add one question to the sign-in and you learn something your ticketing never will, like where people travelled from or what brought them.',
+                        'mockup' => 'attendees',
+                        'screen' => "head: Attendees · Kona Design Week\nrow: JM | Joy M. · Day 1, 2 | Returning\nrow: KO | Kevin O. · Day 2 | New\nrow: AN | Amani N. · Day 2 | New\nrow: WK | Wanjiru K. · Day 1 | Returning\ntag: Tags: Design Week 2026 · Hall B · Westlands",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'Name, phone and email, plus one question of your choice', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Plus-ones and walk-ins counted, not just ticket buyers', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'New and returning attendees, across all your events', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                    [
+                        'anchor' => 'sponsors', 'label' => 'Sponsors', 'heading' => 'Sell sponsors a moment every connected guest sees.',
+                        'description' => 'The sign-in page is the first screen guests look at once they’re inside. Put a sponsor’s brand on it, ask their question and send guests to their offer.',
+                        'bg' => 'gray', 'reverse' => '1', 'note' => '', 'cta_label' => '', 'cta_href' => '',
+                        'mockup' => 'splash',
+                        'screen' => "color: #0E5A3A\nbrand: City Sevens | City ground\nheadline: WiFi’s on us today.\nFirst name\n+254 Phone\nYour favourite team?\nsponsor: Brought to you by your sponsor\n---\n@stats\nhead: Sponsor report · Day 1\nrow: Saw the sponsor screen | 4,812\nrow: Answered the question | 3,066\nrow: Tapped the offer | 912",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'Sponsor logo, colours and offer on the WiFi page', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'A question the sponsor wants answered', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'A report of views, answers and clicks, not a guess', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Change the sponsor by day, stage or match', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                    [
+                        'anchor' => 'every-event', 'label' => 'Every event', 'heading' => 'Every event its own sign-in. Every attendee tagged by what they came for.',
+                        'description' => 'A launch, a conference and a concert draw different crowds. Give each one its own WiFi page, and every attendee’s record carries the events they came to.',
+                        'bg' => 'white', 'reverse' => '0', 'note' => '', 'cta_label' => '', 'cta_href' => '',
+                        'mockup' => 'stats',
+                        'screen' => "head: Your events this year\nrow: Launch night · March | 180\nrow: Design Week · Day 1 | 1,960\nrow: Design Week · Day 2 | 2,140\nrow: Year-end gala · December | 320\nrow: Came to 2 or more | 610",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'A WiFi page per event, day, stage or fixture', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Your next on-sale goes to people who already showed up', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'See who comes back, event after event', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                    [
+                        'anchor' => 'after', 'label' => 'After the event', 'heading' => 'Keep the crowd after the lights go up.',
+                        'description' => 'We write and send the follow-up, so your best audience is waiting when the next event goes on sale.',
+                        'bg' => 'gray', 'reverse' => '1', 'note' => '', 'cta_label' => 'Plan your event WiFi', 'cta_href' => '#enquire',
+                        'mockup' => 'chat',
+                        'screen' => "color: #3B2C6B\nhead: Kona Design Week | WhatsApp\nmsg: Thanks for coming to Kona Design Week, Joy! Here are the photos from Day 2, and a 1-minute survey. | See the photos | | | Next morning\nmsg: Design Week 2027 is coming. As a past attendee, you get early-bird tickets 48 hours before everyone else. | Get early-bird tickets | | dark | Early bird · 3 months later",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'Thank-you, photos and a short survey the next day, or a wedding thank-you with the photo link', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Early-bird tickets for past attendees', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Sponsor offers sent with consent', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'WhatsApp, SMS and email from one attendee list', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'how_it_works' => [
+            'title' => 'How it works',
+            'content' => [
+                'anchor' => 'e-how',
+                'menu_label' => 'How it works',
+                'title' => 'Planned with you. Run for you on the day.',
+                'subtitle' => 'TenaFi works with your venue’s internet. For big crowds, we plan coverage and bandwidth with your venue and internet provider well before the day.',
+                'steps' => [
+                    ['step' => '1', 'icon' => 'fas fa-clipboard-list', 'title' => 'Plan', 'description' => 'Tell us the date, venue, expected crowd and sponsors. We send a plan and a quote.', 'feature' => ''],
+                    ['step' => '2', 'icon' => 'fas fa-tools', 'title' => 'Set up', 'description' => 'We design your WiFi page, add the sponsor, and install and test before the doors open.', 'feature' => ''],
+                    ['step' => '3', 'icon' => 'fas fa-wifi', 'title' => 'On the day', 'description' => 'Guests sign in through your page. We keep an eye on it while the event runs.', 'feature' => ''],
+                    ['step' => '4', 'icon' => 'fas fa-paper-plane', 'title' => 'After', 'description' => 'You get your attendee list and sponsor report, and we send the follow-up.', 'feature' => ''],
+                ],
+                'cards' => [
+                    ['title' => 'Run a venue?', 'text' => 'Install TenaFi once and every event in your space gets its own WiFi page, sponsor slot and attendee tag. Organisers get their list, and you build yours.'],
+                    ['title' => 'Big crowds', 'text' => 'For stadiums and festivals we plan coverage and bandwidth with your venue and internet provider, and tell you honestly what’s possible.'],
+                ],
+            ],
+        ],
+        'comparison_table' => [
+            'title' => 'Open event WiFi vs TenaFi (table)',
+            'bg' => 'gray',
+            'content' => [
+                'badge' => 'More than free WiFi',
+                'title' => 'What open event WiFi gives you, and what TenaFi gives you.',
+                'subtitle' => '',
+                'col_label' => 'What you need',
+                'col_without' => 'Open event WiFi',
+                'col_with' => 'With TenaFi',
+                'rows' => [
+                    ['label' => 'Attendee identity', 'without' => 'Anonymous devices', 'with' => 'A named attendee list, with consent'],
+                    ['label' => 'Sponsor value', 'without' => 'Banners and a guess at reach', 'with' => 'A branded sign-in, a question and a report'],
+                    ['label' => 'Event-by-event marketing', 'without' => 'One network name for everything', 'with' => 'A sign-in and a tag for each event'],
+                    ['label' => 'After the event', 'without' => 'The crowd goes home and you lose them', 'with' => 'Thank-you, survey and early-bird invites'],
+                    ['label' => 'Who runs it', 'without' => 'Your team, on the busiest day', 'with' => 'Our team, before, during and after'],
+                ],
+            ],
+        ],
+        'worth_calculator' => [
+            'title' => 'What’s it worth (events calculator)',
+            'content' => [
+                'anchor' => 'e-worth',
+                'badge' => 'What’s it worth to you?',
+                'title' => 'Put in your crowd. See the list you could build.',
+                'subtitle' => 'An estimate, using typical connect and sign-up rates. Your results will differ.',
+                'mode' => 'events',
+                'tab_hosts' => 'Short-term rentals',
+                'tab_business' => 'Local business',
+                'tab_events' => 'Events',
+                'estimate_label' => 'Estimate only.',
+                'hosts_avg_stay' => '2.8',
+                'hosts_guests_per_stay' => '1.7',
+                'hosts_join_rate' => '67',
+                'hosts_direct_share' => '5',
+                'hosts_ota_fee' => '15',
+                'business_open_days' => '26',
+                'business_join_rate' => '25',
+                'business_review_rate' => '4',
+                'business_offer_use' => '5',
+                'events_connect_rate' => '50',
+                'events_join_rate' => '60',
+            ],
+        ],
+        'signup' => [
+            'title' => 'Get a quote (#enquire)',
+            'content' => [
+                'anchor' => 'enquire',
+                'menu_label' => 'Get a quote',
+                'menu_description' => 'Tell us about your event.',
+                // Quotes land in Admin -> Sign-ups as type "event", with the usual alerts.
+                'signup_type' => 'event',
+                'show_slots' => '0',
+                'badge' => 'Get a quote',
+                'title' => 'Tell us about your event.',
+                'subtitle' => 'We’ll come back with a plan and a quote. Event pricing depends on the size, the venue and how many days it runs. Rather talk? WhatsApp us on +254 703 501 597.',
+                'submit_label' => 'Get my event quote',
+                'consent_text' => 'I agree that TenaFi can contact me on WhatsApp, SMS or email about my event, and I accept the privacy policy.',
+                'success_title' => 'Asante, {firstName}!',
+                'success_message' => 'Your quote request is in. Here’s what we have.',
+                'next_steps_title' => 'What happens next',
+                'next_steps' => "We message you on WhatsApp to talk through the date, venue and crowd.\nWe send a plan and a quote: your WiFi page, sponsor slot and attendee list.\nWe install and test before the doors open.",
+                'error_message' => 'Something went wrong. Please try again or WhatsApp us on +254 703 501 597.',
+                'price_suffix' => '',
+                'discount_field' => '',
+                'discount_hint' => '',
+                'discount_applied' => '',
+                'steps' => [
+                    $detailsStep(),
+                    ['title' => 'Your event', 'heading' => 'Tell us about your event', 'description' => 'So we can plan the WiFi and the sponsor slot.', 'fields' => [
+                        ['key' => 'eventName', 'label' => 'Event name', 'type' => 'text', 'required' => true, 'options' => [], 'placeholder' => '', 'hint' => ''],
+                        ['key' => 'eventType', 'label' => 'Type of event', 'type' => 'select', 'required' => true, 'options' => ['Launch or activation', 'Conference or expo', 'Concert or festival', 'Sports', 'Wedding', 'Corporate or private', 'I run a venue'], 'placeholder' => '', 'hint' => ''],
+                        ['key' => 'eventDate', 'label' => 'Date', 'type' => 'date', 'required' => false, 'options' => [], 'placeholder' => '', 'hint' => ''],
+                        ['key' => 'attendees', 'label' => 'Expected attendees', 'type' => 'select', 'required' => true, 'options' => ['Under 100', '100 to 500', '500 to 2,000', '2,000 to 10,000', '10,000+'], 'placeholder' => '', 'hint' => ''],
+                        ['key' => 'area', 'label' => 'Venue', 'type' => 'text', 'required' => false, 'options' => [], 'placeholder' => 'e.g. a hotel garden in Karen', 'hint' => ''],
+                        ['key' => 'notes', 'label' => 'Sponsors or anything else?', 'type' => 'textarea', 'required' => false, 'options' => [], 'placeholder' => '', 'hint' => '(optional)'],
+                    ]],
+                ],
+            ],
+        ],
+        'faq' => [
+            'title' => 'FAQ',
+            'content' => [
+                'title' => 'Questions, answered.',
+                'subtitle' => '',
+                'items' => [
+                    ['question' => 'How big can you go?', 'answer' => 'From a room to a stadium. For large crowds, we plan coverage and bandwidth with your venue and internet provider well before the day, and tell you honestly what’s possible.'],
+                    ['question' => 'Does it work for weddings?', 'answer' => 'Yes. Guests get a WiFi page in the couple’s names and colours, with the programme, the menu and a link to share photos. The couple gets the guest list and a thank-you message sent after the day.'],
+                    ['question' => 'Do attendees need an app?', 'answer' => 'No. They connect to the WiFi and sign in on your event’s page in a few taps.'],
+                    ['question' => 'Who owns the attendee list?', 'answer' => 'You do. Attendees opt in with consent on your WiFi page, and the list is yours to keep and use for your next event.'],
+                    ['question' => 'Can sponsors have their own branding?', 'answer' => 'Yes. A sponsor can have their logo, a question and an offer on the WiFi page, and you can change the sponsor by day, stage or match. You get a sponsor report after the event.'],
+                    ['question' => 'What does it cost?', 'answer' => 'Event pricing depends on the size, the venue and how many days it runs. Tell us about your event and we’ll send a plan and a quote.'],
+                ],
+            ],
+        ],
+    ],
+
 ];

@@ -55,7 +55,7 @@ const FIELD_OPTIONS = {
     style: opts(
         { value: '', label: 'Standard' },
         { value: 'versus', label: 'Versus (comparison: today vs with TenaFi)' },
-        { value: 'dark', label: 'Dark (proof: quote instead of photo)' },
+        { value: 'dark', label: 'Dark (proof: quote instead of photo; hero: dark card)' },
         { value: 'trial', label: 'Trial (banner: ticks, counter, pricing card)' },
     ),
     // worth_calculator: one calculator, or all three as tabs.
