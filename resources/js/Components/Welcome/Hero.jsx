@@ -5,6 +5,7 @@ import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, getText, i
 import { usePublic } from '@/Components/Public/PublicContext';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import Mockup from '@/Components/Public/Mockup';
+import CallbackForm from './CallbackForm';
 import { SkeletonHero } from './Skeleton';
 import CtaLink from '@/Components/Public/CtaLink';
 import FitText from '@/Components/Public/FitText';
@@ -92,6 +93,7 @@ export default function Hero({ section }) {
                                 )}
                             </div>
                             {note && <p className="hero-note">{note}</p>}
+                            <CallbackForm section={section} />
                             {priceLine && (!priceLine.includes('{price}') || cheapest) && (
                                 <p className="hero-price-line">
                                     {priceLine.replace('{price}', cheapest)}{' '}

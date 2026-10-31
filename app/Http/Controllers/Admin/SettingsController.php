@@ -59,6 +59,7 @@ class SettingsController extends Controller
             'signup_alert_webhook_url' => 'sometimes|nullable|url|max:500',
             'trial_slots_total' => 'sometimes|nullable|integer|min:0|max:10000',
             'trial_slots_since' => 'sometimes|nullable|date',
+            'callbacks_enabled' => 'sometimes|in:0,1',
         ];
 
         $types = [

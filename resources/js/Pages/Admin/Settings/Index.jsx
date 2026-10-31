@@ -146,6 +146,7 @@ export default function Index({ settings, logos = [] }) {
             signup_alert_webhook_url: flattened.signup_alert_webhook_url || '',
             trial_slots_total: flattened.trial_slots_total ?? '50',
             trial_slots_since: flattened.trial_slots_since || '',
+            callbacks_enabled: flattened.callbacks_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -336,6 +337,12 @@ export default function Index({ settings, logos = [] }) {
                                             onChange={(e) => updateSetting('trial_slots_since', e.target.value)}
                                         />
                                     </FormField>
+
+                                    <CheckboxField
+                                        label="“Get a call back” form on the homepage (leads go to Sign-ups, with the usual alerts)"
+                                        checked={data.settings.callbacks_enabled === '1'}
+                                        onChange={() => updateSetting('callbacks_enabled', data.settings.callbacks_enabled === '1' ? '0' : '1')}
+                                    />
 
                                     <CheckboxField
                                         label="Maintenance Mode"
