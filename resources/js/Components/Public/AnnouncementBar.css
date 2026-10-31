@@ -1,0 +1,21 @@
+@reference "../../../css/theme.css";
+
+.announcement-bar {
+    @apply flex flex-wrap items-center justify-center bg-dark text-white text-center;
+    gap: 6px 12px;
+    min-height: 44px;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.announcement-bar p {
+    margin: 0;
+}
+
+.announcement-bar a {
+    @apply text-primary no-underline whitespace-nowrap rounded-lg;
+    font-weight: 800;
+    border: 1.5px solid var(--color-primary);
+    padding: 2px 10px;
+}

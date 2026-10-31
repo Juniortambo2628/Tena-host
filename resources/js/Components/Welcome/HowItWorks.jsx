@@ -26,6 +26,9 @@ export default function HowItWorks({ section }) {
         badge: comingSoonBadge(site, s.feature),
     }));
 
+    // Optional cards under the steps (the homepage's device and managed-service cards).
+    const cards = extractItems(section, 'cards', ['title', 'text']).filter(c => stripHtml(c.title));
+
     return (
         <SectionWrapper bg={section.bg || 'white'}>
             <SectionHeader title={title} subtitle={subtitle} />
@@ -42,6 +45,16 @@ export default function HowItWorks({ section }) {
                     />
                 ))}
             </div>
+            {cards.length > 0 && (
+                <div className="how-cards">
+                    {cards.map((card, i) => (
+                        <div key={i} className="how-card">
+                            <b>{stripHtml(card.title)}</b>
+                            <p>{stripHtml(card.text)}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
         </SectionWrapper>
     );
 }

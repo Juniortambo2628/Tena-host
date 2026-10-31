@@ -93,6 +93,30 @@ class LandingPage extends Model
             ->all());
     }
 
+    /**
+     * The plans on a page's live pricing section (Admin -> Public Pages), so
+     * other pages quote the same names and prices instead of copying them.
+     *
+     * @return list<array{id: string, label: string, price: string, price_kes: int}>
+     */
+    public static function livePlans(string $slug = 'hosts'): array
+    {
+        $pricing = collect(static::publicSections($slug))->firstWhere('section_key', 'pricing');
+        $content = $pricing['content'] ?? [];
+
+        $plans = [];
+        for ($i = 0; isset($content["plans.{$i}.label"]); $i++) {
+            $plans[] = [
+                'id' => strip_tags((string) ($content["plans.{$i}.id"] ?? '')),
+                'label' => strip_tags((string) $content["plans.{$i}.label"]),
+                'price' => strip_tags((string) ($content["plans.{$i}.price"] ?? '')),
+                'price_kes' => (int) preg_replace('/\D/', '', (string) ($content["plans.{$i}.price_kes"] ?? '')),
+            ];
+        }
+
+        return $plans;
+    }
+
     public static function cacheKey(string $slug): string
     {
         return "landing_page:{$slug}";

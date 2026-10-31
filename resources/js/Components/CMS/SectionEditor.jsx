@@ -45,7 +45,20 @@ const FIELD_OPTIONS = {
     kind: opts({ value: 'hosts', label: 'Short-term rentals' }, { value: 'business', label: 'Business' }),
     show_slots: YES_NO,
     enabled: YES_NO,
-    mockup: opts('wifi', 'tent', 'splash', 'guide', 'welcome', 'chat', 'crm'),
+    // Journey steps use wifi…crm; other sections draw with Mockup.jsx (splash, chat, rating, …).
+    mockup: opts(
+        { value: '', label: 'None (use the image)' },
+        'splash', 'chat', 'rating', 'stats', 'attendees', 'guide', 'mpesa',
+        { value: 'wifi', label: 'wifi (journey)' }, { value: 'tent', label: 'tent (journey)' },
+        { value: 'welcome', label: 'welcome (journey)' }, { value: 'crm', label: 'crm (journey)' },
+    ),
+    style: opts(
+        { value: '', label: 'Standard' },
+        { value: 'versus', label: 'Versus (comparison: today vs with TenaFi)' },
+        { value: 'dark', label: 'Dark (proof: quote instead of photo)' },
+        { value: 'trial', label: 'Trial (banner: ticks, counter, pricing card)' },
+    ),
+    visual: opts({ value: 'image', label: 'Image (main_image)' }, { value: 'splash', label: 'Drawn WiFi page + floating cards' }),
 };
 
 const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'join_label']);
@@ -60,7 +73,9 @@ function detectFieldType(key, value) {
     if (lowerKey === 'media_type') return 'select';
     if (lowerKey === 'description' || lowerKey === 'text' || lowerKey === 'body') return 'richtext';
     if (lowerKey === 'subtitle') return 'richtext';
-    if (lowerKey === 'answer' || lowerKey === 'screen') return 'textarea';
+    if (lowerKey === 'answer' || lowerKey === 'screen' || lowerKey.endsWith('_screen')) return 'textarea';
+    // Multi-line fields (ticks, footer link groups, ...) keep their line breaks.
+    if (typeof value === 'string' && value.includes('\n') && !value.includes('<')) return 'textarea';
     if (typeof value === 'string' && value.startsWith('[')) return 'json_array';
     if (typeof value === 'string' && value.includes('<')) return 'html';
     if (typeof value === 'string' && value.length > 120) return 'textarea';

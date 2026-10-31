@@ -6,6 +6,7 @@ import { track } from '@/lib/analytics';
 import { PublicContext } from '@/Components/Public/PublicContext';
 import NavMenu from '@/Components/Public/NavMenu';
 import WhatsAppButton from '@/Components/Public/WhatsAppButton';
+import AnnouncementBar from '@/Components/Public/AnnouncementBar';
 import { useBrand } from '@/Components/BrandLogo';
 import CookiesConsent from '@/Components/CookiesConsent';
 import CookieDetailsModal from '@/Components/CookieDetailsModal';
@@ -31,6 +32,16 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
     const resolveHref = (href) => (href?.startsWith('#') && !hasSections ? `/${href}` : href);
     const navLinks = extractItems(header, 'links', ['label', 'href']);
     const footerLinks = extractItems(footer, 'links', ['label', 'href']);
+    // Grouped footer columns ("Who it's for", ...): links one per line as "Label | /href".
+    const footerGroups = extractItems(footer, 'groups', ['title', 'links'])
+        .map((g) => ({
+            title: stripHtml(g.title),
+            links: String(g.links || '').replace(/<br\s*\/?>|<\/p>/gi, '\n').split('\n')
+                .map((line) => line.split('|').map((part) => stripHtml(part)))
+                .filter(([label, href]) => label && href)
+                .map(([label, href]) => ({ label, href })),
+        }))
+        .filter((g) => g.title && g.links.length);
     const resolvedJoin = resolveHref(joinHref);
 
     const contactEmail = stripHtml(getContent(footer, 'contact_email', ''));
@@ -42,6 +53,7 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                 <Head title={seo.title || siteName} />
 
                 <nav className="welcome-nav">
+                    <AnnouncementBar />
                     <div className="welcome-nav-container">
                         <div className="welcome-nav-inner">
                             <div className="welcome-nav-logo">
@@ -88,20 +100,33 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
                                     {stripHtml(getContent(footer, 'description', "Africa's guest relationship platform."))}
                                 </p>
                             </div>
-                            <div>
-                                <h5 className="welcome-footer-heading-gold">Quick Links</h5>
-                                <ul className="welcome-footer-links">
-                                    {footerLinks.map((link) => (
-                                        <li key={link.href}>
-                                            <a href={resolveHref(link.href)} className="welcome-footer-link">
-                                                <ChevronRight size={12} className="mr-2 inline text-primary" />
-                                                {titleCase(link.label)}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <div>
+                            {footerGroups.length > 0 ? footerGroups.map((group) => (
+                                <div key={group.title}>
+                                    <h5 className="welcome-footer-heading-gold">{group.title}</h5>
+                                    <ul className="welcome-footer-links">
+                                        {group.links.map((link) => (
+                                            <li key={link.label}>
+                                                <a href={resolveHref(link.href)} className="welcome-footer-link">{link.label}</a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )) : (
+                                <div>
+                                    <h5 className="welcome-footer-heading-gold">Quick Links</h5>
+                                    <ul className="welcome-footer-links">
+                                        {footerLinks.map((link) => (
+                                            <li key={link.href}>
+                                                <a href={resolveHref(link.href)} className="welcome-footer-link">
+                                                    <ChevronRight size={12} className="mr-2 inline text-primary" />
+                                                    {titleCase(link.label)}
+                                                </a>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            <div className={footerGroups.length > 0 ? 'welcome-footer-contact-col' : undefined}>
                                 <h5 className="welcome-footer-heading">Talk to us</h5>
                                 <ul className="welcome-footer-links">
                                     {contactEmail && (

@@ -228,3 +228,19 @@
 .welcome-footer-bottom-link {
     @apply hover:text-white transition-colors;
 }
+
+/* Grouped footer: brand, up to three link columns, then contact across the bottom on wide screens. */
+@media (min-width: 768px) {
+    .welcome-footer-grid:has(.welcome-footer-contact-col) {
+        grid-template-columns: 1.3fr repeat(3, minmax(0, 1fr));
+    }
+
+    .welcome-footer-contact-col {
+        grid-column: 1 / -1;
+    }
+}
+
+/* The announcement bar sits inside the fixed header, so push the page down by its height. */
+.welcome-page:has(.announcement-bar) main {
+    padding-top: 44px;
+}

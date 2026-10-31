@@ -57,8 +57,9 @@ class PageBlueprint
      * a full sync() would also bring back list rows an admin removed.
      *
      * @param  array<string, string>  $placeBefore  new section key => existing section key
+     * @param  bool  $active  false adds them hidden, to be switched on in the admin (CLAUDE.md: new features ship off)
      */
-    public static function addSections(string $slug, array $placeBefore): void
+    public static function addSections(string $slug, array $placeBefore, bool $active = true): void
     {
         $page = LandingPage::where('slug', $slug)->first();
         $definitions = static::definitions()[$slug] ?? [];
@@ -66,12 +67,16 @@ class PageBlueprint
             return;
         }
 
-        DB::transaction(function () use ($page, $definitions, $placeBefore) {
+        DB::transaction(function () use ($page, $definitions, $placeBefore, $active) {
             foreach ($placeBefore as $key => $before) {
                 if (! isset($definitions[$key])) {
                     continue;
                 }
+                $exists = LandingSection::where('page_id', $page->id)->where('section_key', $key)->exists();
                 static::syncSection($page, $key, $definitions[$key], 0, false);
+                if (! $exists && ! $active) {
+                    LandingSection::where('page_id', $page->id)->where('section_key', $key)->update(['is_active' => false]);
+                }
 
                 $sections = LandingSection::where('page_id', $page->id)->orderBy('sort_order')->orderBy('id')->get();
                 $new = $sections->firstWhere('section_key', $key);

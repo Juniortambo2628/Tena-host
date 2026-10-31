@@ -51,3 +51,60 @@
 .comparison-sources {
     @apply mt-6 text-center text-xs text-muted max-w-3xl mx-auto;
 }
+
+/* "versus" (homepage): today vs with TenaFi, the TenaFi panel dark. */
+.comparison-grid--versus .comparison-col--highlight {
+    @apply bg-dark text-white border-dark;
+}
+
+.comparison-grid--versus .comparison-col--highlight .comparison-label {
+    @apply text-primary;
+}
+
+.comparison-grid--versus .comparison-col--highlight .comparison-points {
+    @apply text-white;
+}
+
+.comparison-point-icon--no {
+    color: #B42318;
+}
+
+.comparison-grid--versus .comparison-col--highlight .comparison-point-icon {
+    @apply text-primary;
+}
+
+.comparison-stats {
+    @apply grid list-none p-0 max-w-5xl mx-auto;
+    gap: 14px;
+    margin: 28px auto 0;
+}
+
+@media (min-width: 768px) {
+    .comparison-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.comparison-stats li {
+    @apply flex flex-col;
+    gap: 4px;
+    border-top: 3px solid var(--color-primary);
+    padding-top: 10px;
+}
+
+.comparison-stats b {
+    @apply text-dark;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.comparison-stats span {
+    @apply text-muted;
+    font-size: 14px;
+}
+
+.comparison-grid--versus .comparison-col--highlight .comparison-points li {
+    @apply text-white;
+}

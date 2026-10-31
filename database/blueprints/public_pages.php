@@ -176,11 +176,28 @@ return [
             'title' => 'Header & navigation (default)',
             'content' => [
                 'join_label' => 'Book Now',
+                // TODO(events page): /events once it exists.
                 'links' => [
                     ['label' => 'Short-term rentals', 'href' => '/hosts'],
                     ['label' => 'Business owners', 'href' => '/business'],
+                    ['label' => 'Events', 'href' => '/#events'],
                     ['label' => 'How it works', 'href' => '/#how'],
+                    ['label' => 'Pricing', 'href' => '/#pricing'],
                 ],
+            ],
+        ],
+        'announcement' => [
+            'title' => 'Announcement bar',
+            'content' => [
+                'enabled' => '1',
+                // {taken}, {total} and {left} come from the free trial slot counter (Admin -> Settings).
+                'text' => 'Free trial for December · Installs from 16 November · {taken} of {total} slots taken',
+                // Used when the counter is off (no total in Settings).
+                'text_without_slots' => 'Free trial for December · Installs from 16 November',
+                'link_label' => 'Book a slot',
+                'link_href' => '/#trial',
+                // Comma-separated page slugs (home, hosts, business). Empty = every page.
+                'pages' => 'home',
             ],
         ],
         'footer' => [
@@ -192,6 +209,14 @@ return [
                 'whatsapp' => '+254 703 501 597',
                 'location' => 'Nairobi, Kenya',
                 'copyright' => 'Tenafi Host Technologies, Nairobi, Kenya',
+                // Grouped columns. links: one per line, "Label | /href".
+                // TODO(events page): /events once it exists.
+                'groups' => [
+                    ['title' => 'Who it’s for', 'links' => "Short-term rentals | /hosts\nCafés & restaurants | /business\nSalons, spas & barbers | /business\nGyms & studios | /business\nClinics & pharmacies | /business\nShops | /business\nEvents, weddings & venues | /#events"],
+                    ['title' => 'What it does', 'links' => "Branded guest WiFi | /#wifi-page\nGuest list (CRM) | /#all-in-one\nGoogle review requests | /#reviews\nWhatsApp, SMS & email campaigns | /#campaigns\nEvent & sponsor WiFi | /#events"],
+                    ['title' => 'Company', 'links' => "How it works | /#how\nFree trial | /#trial\nPrivacy policy | /privacy\nTerms | /terms"],
+                ],
+                // The single "Quick Links" column, used when there are no groups.
                 'links' => [
                     ['label' => 'For short-term rental operators', 'href' => '/hosts'],
                     ['label' => 'For business owners', 'href' => '/business'],
@@ -250,23 +275,44 @@ return [
         'seo' => [
             'title' => 'SEO & social',
             'content' => [
-                'meta_title' => "TenaFi | Africa\u{2019}s guest relationship platform",
-                'meta_description' => 'Turn your existing WiFi into growth: higher occupancy for short-term rentals and more Google reviews for local businesses, all managed for you.',
+                'meta_title' => 'TenaFi | Africa’s guest relationship platform',
+                'meta_description' => 'One WiFi platform for short-term rentals, local businesses, events and weddings: branded guest WiFi, a guest list you own, Google reviews and campaigns, all managed for you.',
             ],
         ],
         'hero' => [
             'title' => 'Hero',
             'bg' => 'gray',
             'content' => [
-                'badge' => "TenaFi | Africa\u{2019}s guest relationship platform",
+                'badge' => 'Africa’s guest relationship platform',
                 'title' => 'Turn your existing WiFi into '.$hl('growth.'),
-                'subtitle' => '<strong>Higher occupancy for short-term rentals. More Google reviews for local businesses.</strong>',
-                'body' => 'TenaFi turns your existing WiFi into a powerful marketing tool. Capture guest contacts, generate reviews and bring customers back with WhatsApp, SMS and email campaigns, all managed for you.',
-                'cta_primary' => 'Get started',
-                'cta_primary_url' => '#choose',
+                'subtitle' => 'One all-in-one WiFi platform for <strong>short-term rentals</strong>, <strong>local businesses</strong> and <strong>events</strong>.',
+                'body' => 'Guests log in, join your list, review you and come back. We install it and run it for you.',
+                'cta_primary' => 'Book my free trial',
+                'cta_primary_url' => '#trial',
                 'cta_secondary' => 'See how it works',
                 'cta_secondary_url' => '#how',
                 'note' => '',
+                // One link per audience, under the headline.
+                // TODO(events page): point the events link at /events once it exists.
+                'audiences' => [
+                    ['label' => 'Short-term rentals', 'href' => '/hosts'],
+                    ['label' => 'Cafés, salons, shops & more', 'href' => '/business'],
+                    ['label' => 'Events, weddings & venues', 'href' => '/#events'],
+                ],
+                // {price} is the cheapest plan on the live /hosts pricing section.
+                'price_line' => 'Free for December. From {price} a month after that.',
+                'price_link_label' => 'See pricing',
+                'price_link' => '#pricing',
+                'ticks' => "Installed for you\nNo payment to book\nCancel with 30 days’ notice",
+                'show_slots' => '1',
+                // "image" (the hero photo, the default) or "splash" (a drawn WiFi page and floating cards).
+                'visual' => 'splash',
+                'visual_screen' => "color: #4A3123\nbrand: Kahawa House | Café · Westlands\nheadline: Karibu! Free WiFi.\ntiles: ☕ View menu | 📶 Free WiFi | 🎂 Birthday treat\nFirst name\n+254 Phone number\nBirthday (day and month)\noptin: Send me offers, news and a birthday treat",
+                'visual_cards' => [
+                    ['icon' => '👋', 'title' => 'Welcome back, Amina', 'text' => '4th visit · opted in to offers'],
+                    ['icon' => 'G', 'title' => 'New Google review', 'text' => 'Request sent at 16:05, reviewed at 16:40'],
+                    ['icon' => '↺', 'title' => 'Sarah booked direct', 'text' => 'Her 2nd stay · 0% commission'],
+                ],
             ],
             'media' => ['main_image' => $img('Tena-Hero-1.jpg')],
         ],
@@ -275,27 +321,30 @@ return [
             'bg' => 'white',
             'content' => [
                 'title' => 'Trusted by hosts and local businesses',
-                'subtitle' => 'Every TenaFi client gets a WiFi page in their own brand. Here are some of them.',
+                'subtitle' => 'Every client gets a WiFi page in their own brand.',
                 // Upload each client's WiFi page screenshot under Media (one slot per row);
-                // rows without one are hidden. kind: hosts | business.
+                // rows without one show a placeholder. kind: hosts | business.
                 'partners' => [
-                    ['name' => 'Halo Studios', 'url' => '', 'kind' => 'business', 'type_area' => ''],
-                    ['name' => 'Zero Sips', 'url' => '', 'kind' => 'business', 'type_area' => ''],
-                    ['name' => 'Georgio Lani Pharmacy', 'url' => '', 'kind' => 'business', 'type_area' => ''],
-                    ['name' => 'Stay Awhile Rentals', 'url' => 'https://stayawhilerentals.com', 'kind' => 'hosts', 'type_area' => "Serviced apartments \u{00B7} Nairobi"],
-                    ['name' => 'Luxury Hideaway', 'url' => '', 'kind' => 'hosts', 'type_area' => ''],
+                    ['name' => 'Halo Studios', 'url' => '', 'kind' => 'business', 'type_area' => 'Studio · Nairobi'],
+                    ['name' => 'Zero Sips', 'url' => '', 'kind' => 'business', 'type_area' => 'Bottle shop · Nairobi'],
+                    ['name' => 'Georgio Lani Pharmacy', 'url' => '', 'kind' => 'business', 'type_area' => 'Pharmacy · Nairobi'],
+                    ['name' => 'Stay Awhile Rentals', 'url' => 'https://stayawhilerentals.com', 'kind' => 'hosts', 'type_area' => 'Serviced apartments · Nairobi'],
+                    ['name' => 'Luxury Hideaway', 'url' => '', 'kind' => 'hosts', 'type_area' => 'Villa · Kenya'],
                 ],
             ],
         ],
         'path_cards' => [
-            'title' => 'Which one are you?',
+            'title' => 'One platform, three kinds of places',
             'content' => [
                 'anchor' => 'choose',
-                'title' => 'Which one are you?',
-                'subtitle' => '',
+                'title' => 'One platform, three kinds of places',
+                'subtitle' => 'Wherever people use your WiFi, TenaFi turns them into guests who come back.',
+                // tags: comma-separated. mockup + screen draw the card's picture (see Mockup.jsx).
                 'cards' => [
-                    ['label' => 'For short-term rental operators', 'title' => 'Turn your existing WiFi into higher occupancy.', 'description' => 'Turn every stay into reviews, repeat bookings and less dependence on OTAs.', 'cta' => 'Grow your occupancy', 'href' => '/hosts', 'event' => 'path_card_hosts'],
-                    ['label' => 'For business owners', 'title' => 'Turn your existing WiFi into more Google reviews.', 'description' => 'Turn everyday visitors into lasting customer relationships with review requests and follow-up marketing.', 'cta' => 'Get more reviews', 'href' => '/business', 'event' => 'path_card_business'],
+                    ['label' => '01 · Short-term rentals', 'title' => 'Fill more nights with guests who’ve stayed before.', 'description' => 'Build a guest list of the whole party, not just the booker, and bring them back to book direct.', 'cta' => 'Grow your occupancy', 'href' => '/hosts', 'event' => 'path_card_hosts', 'tags' => 'Apartments, Villas, Guest houses, Boutique hotels', 'mockup' => 'chat', 'screen' => "head: The Loft Nairobi | WhatsApp\nmsg: Thanks for staying with us, Sarah! Planning your next trip? Book direct and save 10% with code KARIBU10. | Book direct | A week after checkout | dark\ncolor: #0F4C45"],
+                    ['label' => '02 · Local businesses', 'title' => 'More Google reviews. More regulars.', 'description' => 'Every customer who connects gets a review request later that day, then offers that bring them back.', 'cta' => 'Get more reviews', 'href' => '/business', 'event' => 'path_card_business', 'tags' => 'Cafés, Restaurants, Salons & spas, Barbers, Gyms, Clinics, Shops', 'mockup' => 'rating', 'screen' => "name: Kahawa House\nscore: 4.5\nmeta: 54 reviews · +12 this month\nrow: BO | Review request sent | Same day"],
+                    // TODO(events page): href /events once it exists.
+                    ['label' => '03 · Events & venues', 'title' => 'Know who came, not just who bought the ticket.', 'description' => 'From weddings and launches to stadiums: every guest who connects joins your list, with a sponsor-branded sign-in.', 'cta' => 'Plan your event WiFi', 'href' => '/#events', 'event' => 'path_card_events', 'tags' => 'Weddings, Launches, Conferences, Concerts, Festivals, Stadiums', 'mockup' => 'attendees', 'screen' => "head: Kona Design Week\nrow: JM | Joy M. · Day 2 | Opted in\nrow: KO | Kevin O. · Day 1, 2 | Opted in\nrow: AN | Amani N. · Day 2 | Opted in"],
                 ],
             ],
             'media' => [
@@ -304,17 +353,122 @@ return [
             ],
         ],
         'comparison__problem' => [
-            'title' => 'The problem',
+            'title' => 'The gap',
             'content' => [
                 'anchor' => 'problem',
-                'badge' => 'The problem',
-                'title' => 'Your guests connect. Then leave as strangers.',
-                'subtitle' => 'Every day, guests connect to your WiFi, enjoy your service and leave. Most businesses have no effective way to stay in touch.',
-                'note' => 'The WiFi login is the one moment every guest connects. TenaFi turns it into a relationship, and runs the follow-up for you.',
-                'sources' => 'Airbtics, Nairobi median occupancy 44% (Feb 2025 to Jan 2026); AirDNA puts it at about 50% (August 2026). BrightLocal, Local Consumer Review Survey 2026.',
+                // "versus": two panels, the highlighted one dark with ticks, the other with crosses; stats below.
+                'style' => 'versus',
+                'badge' => 'The gap',
+                'title' => 'Your WiFi meets every guest. Then they leave as strangers.',
+                'subtitle' => 'Bookings sit with the OTA, tickets name only the buyer, and QR review cards wait for a scan. The WiFi login is the one moment everyone connects.',
+                'note' => '',
+                'sources' => 'Sources: Airbtics, Nairobi median occupancy 44% (Feb 2025 to Jan 2026). BrightLocal, Local Consumer Review Survey 2026. Typical OTA guest and host fees.',
                 'columns' => [
-                    ['label' => 'Short-term rentals', 'stat' => '56%', 'stat_label' => 'of nights go unbooked in a typical Nairobi Airbnb', 'points' => "Guests leave as strangers; the OTA keeps the contact\nRepeat guests rebook through the OTA at ~15%\nNo one markets to past guests, so nights sit empty", 'text' => '', 'highlight' => '0'],
-                    ['label' => 'Local businesses', 'stat' => '47%', 'stat_label' => 'of consumers skip a business with fewer than 20 reviews', 'points' => "QR review cards need the customer\u{2019}s own data and effort\nOne chance on the spot, then the customer is gone\nFewer reviews means fewer new customers on Google", 'text' => '', 'highlight' => '0'],
+                    ['label' => 'Guest WiFi today', 'stat' => '', 'stat_label' => '', 'points' => "A password on a card and a router name nobody remembers\nYou don’t know who connected, or how often they come back\nReviews depend on someone scanning a QR code on the spot\nPast guests rebook through the OTA, or not at all", 'text' => '', 'highlight' => '0'],
+                    ['label' => 'With TenaFi', 'stat' => '', 'stat_label' => '', 'points' => "A WiFi page in your brand, with no password to hunt for\nEvery guest who opts in joins a list you own, with consent recorded\nA one-tap Google review request goes to every guest later that day\nWhatsApp, SMS and email campaigns bring them back, sent for you", 'text' => '', 'highlight' => '1'],
+                ],
+                'stats' => [
+                    ['value' => '56%', 'label' => 'of nights go unbooked in a typical Nairobi Airbnb'],
+                    ['value' => '47%', 'label' => 'of consumers skip a business with fewer than 20 reviews'],
+                    ['value' => '~15%', 'label' => 'commission when repeat guests rebook through the OTA'],
+                ],
+            ],
+        ],
+        'features__plays' => [
+            'title' => 'All in one',
+            'bg' => 'gray',
+            'content' => [
+                'anchor' => 'all-in-one',
+                'badge' => 'All in one',
+                'title' => 'One device, one WiFi page, one team running it for you.',
+                'subtitle' => 'Everything you need to turn a WiFi login into a relationship, without another app to learn.',
+                'items' => [
+                    ['step' => '01 · Connect', 'icon' => 'fas fa-wifi', 'title' => 'Branded WiFi login', 'description' => 'Your logo, colours and welcome offer on the first screen every guest sees.', 'feature' => ''],
+                    ['step' => '02 · Capture', 'icon' => 'fas fa-address-book', 'title' => 'A guest list you own', 'description' => 'Names, phones and birthdays, with consent, in your TenaFi CRM. Not the platform’s.', 'feature' => ''],
+                    ['step' => '03 · Review', 'icon' => 'fas fa-star', 'title' => 'Reviews on autopilot', 'description' => 'A one-tap Google or Airbnb review request to every guest, while the visit is fresh.', 'feature' => ''],
+                    ['step' => '04 · Return', 'icon' => 'fas fa-redo', 'title' => 'Campaigns that bring them back', 'description' => 'Birthdays, offers, quiet-season deals and event invites by WhatsApp, SMS and email.', 'feature' => ''],
+                ],
+            ],
+        ],
+        'detailed_features__home' => [
+            'title' => 'Feature rows',
+            'content' => [
+                'title' => '',
+                'subtitle' => '',
+                // Empty: rows show their own button (cta_label / cta_href) or none.
+                'cta_text' => '',
+                // Each row: mockup + screen draw the picture (see Mockup.jsx); "---" starts another panel.
+                'sections' => [
+                    [
+                        'anchor' => 'wifi-page', 'label' => 'Branded WiFi login', 'heading' => 'WiFi that welcomes them, in your brand.',
+                        'description' => 'Guests connect in seconds through a page that looks like you, not like a router.',
+                        'bg' => 'white', 'reverse' => '0', 'note' => '', 'cta_label' => '', 'cta_href' => '',
+                        'mockup' => 'splash',
+                        'screen' => "color: #0F4C45\nbrand: The Loft | Apartments\nheadline: Welcome home.\nFirst name\nEmail address\n---\n@splash\ncolor: #C77B86\nbrand: Glow Studio | Salon & spa\nheadline: Relax. You’re connected.\nFirst name\n+254 Phone\n---\n@splash\ncolor: #3B2C6B\nbrand: Design Week | Nairobi · Day 2\nheadline: Welcome in.\nFirst name\nEmail address\nsponsor: In partnership with your sponsor",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'Templates for rentals, cafés, salons, barbers, gyms, clinics, shops and events', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Your logo, colours, menu, house guide or event schedule', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'A welcome offer for joining your list', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Consent recorded for every guest', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                    [
+                        'anchor' => 'reviews', 'label' => 'Reviews', 'heading' => 'Reviews from every guest, not just the ones who scan.',
+                        'description' => 'A thank-you with a one-tap review link arrives later that day by WhatsApp, SMS or email. No QR code, no awkward ask at the till.',
+                        'bg' => 'gray', 'reverse' => '1', 'cta_label' => '', 'cta_href' => '',
+                        // Keep: reviews are never rewarded, filtered or gated.
+                        'note' => 'Every guest is asked, and no review is ever rewarded or filtered. That keeps your reviews real and within Google’s and Airbnb’s rules.',
+                        'mockup' => 'chat',
+                        'screen' => "color: #4A3123\nhead: Kahawa House | WhatsApp · same day\nmsg: Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share it on Google. | Review us on Google | 16:05\n---\n@stats\nscore: 4.5\nrow: Reviews at start of month | 42\nrow: New this month | +12\nrow: Rating | 4.4 → 4.5",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'Google reviews for businesses, Airbnb and Google for rentals', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Sent automatically while the visit is still fresh', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'More recent reviews help you rank higher on Google Maps', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                    [
+                        'anchor' => 'campaigns', 'label' => 'Campaigns', 'heading' => 'Bring them back, again and again.',
+                        'description' => '“Tena” means again in Swahili. We write, schedule and send the campaigns, so one visit turns into many.',
+                        'bg' => 'white', 'reverse' => '0', 'note' => '', 'cta_label' => '', 'cta_href' => '',
+                        'mockup' => 'chat',
+                        'screen' => "color: #1E1E1E\nhead: Your campaigns | WhatsApp · SMS · email\nmsg: Happy birthday, Amina! 🎂 Your next coffee is on us this week at Kahawa House. | | 09:00 | | Birthday · automatic\nmsg: Hi Brian, it’s been a while! 2-for-1 pastries before 10am for members, this week only. | | 08:30 | | We miss you · after 30 days\nmsg: Back in Nairobi soon, Sarah? Book The Loft direct and save 10% with code KARIBU10. | Book direct | | dark | Book direct · quiet season",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'WhatsApp, SMS and email from one guest list', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Birthdays, win-backs, new offers and quiet-season deals', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Book-direct offers for rentals, at 0% commission on Tena Direct', 'desc' => '', 'feature' => 'tena_direct'],
+                            ['icon' => 'fas fa-check', 'title' => 'A monthly report of what came back', 'desc' => '', 'feature' => 'monthly_report'],
+                        ],
+                    ],
+                    [
+                        // Matches ExtrasPaymentService: an STK prompt on the guest's phone, the host told when it's paid,
+                        // and pay at the property while M-Pesa isn't set up.
+                        'anchor' => 'extras', 'label' => 'Paid by M-Pesa', 'heading' => 'Guests pay for extras straight from the WiFi page.',
+                        'description' => 'Your guest page doubles as a digital concierge: house guide, local tips and extras guests can buy during their stay. They tap, get an M-Pesa prompt on their phone, and you’re told when it’s paid.',
+                        'bg' => 'gray', 'reverse' => '1', 'cta_label' => '', 'cta_href' => '',
+                        'note' => 'Example prices. You set your own.',
+                        'mockup' => 'guide',
+                        'screen' => "color: #0F4C45\nhead: Welcome to The Loft\nrow: 📖 | House guide | Free\nrow: 🕑 | Late checkout, 2pm | KES 2,000\nrow: 🚕 | Airport transfer | KES 3,500\nrow: 🌙 | Extra night | KES 7,000\n---\n@mpesa\nto: Pay KES 2,000 to The Loft Nairobi?\nok: Paid. Your host has been told.",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'Late checkout, extra nights, airport transfers, cleaning and welcome packs', 'desc' => '', 'feature' => 'mpesa_extras'],
+                            ['icon' => 'fas fa-check', 'title' => 'Offered while guests are already connected and in the mood', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'An M-Pesa prompt on their phone, with no card or app', 'desc' => '', 'feature' => 'mpesa_extras'],
+                            ['icon' => 'fas fa-check', 'title' => 'If M-Pesa isn’t set up yet, guests can still request and pay at the property', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
+                    [
+                        // TODO(events page): cta_href /events once it exists.
+                        'anchor' => 'events', 'label' => 'Events & venues', 'heading' => 'Every event its own sign-in. Every attendee on your list.',
+                        'description' => 'Tickets name the buyer, not the friends they bring. Event WiFi tells you who actually came, and gives sponsors a moment every connected guest sees.',
+                        'bg' => 'white', 'reverse' => '0', 'note' => '', 'cta_label' => 'Plan your event WiFi', 'cta_href' => '#trial',
+                        'mockup' => 'splash',
+                        'screen' => "color: #3B2C6B\nbrand: Kona Design Week | Expo hall · Day 2\nheadline: Free WiFi, all day.\ntiles: 🗓️ Schedule | 🎤 Speakers | 🎁 Sponsor offer\nFirst name\nEmail address\noptin: Send me next year’s early-bird tickets\nsponsor: WiFi by your sponsor\n---\n@attendees\nhead: Attendees · Day 2\nrow: JM | Joy M. | New\nrow: KO | Kevin O. | Returning\nrow: AN | Amani N. | New\ntag: Tagged: Design Week 2026",
+                        'features' => [
+                            ['icon' => 'fas fa-check', 'title' => 'A WiFi page for each event, from a wedding to a stadium', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Sponsor logo, question and offer on the first screen', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Attendees tagged by event, ready for the next on-sale', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'A thank-you and early-bird invite after the event', 'desc' => '', 'feature' => ''],
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -322,26 +476,107 @@ return [
             'title' => 'How it works',
             'content' => [
                 'anchor' => 'how',
-                'title' => 'How TenaFi works',
-                'subtitle' => "The same four steps for rentals and local businesses. We don\u{2019}t sell internet; TenaFi plugs into the connection you already have.",
+                'title' => 'Set up for you, on the internet you already have.',
+                'subtitle' => 'We don’t sell internet. TenaFi plugs into your existing connection, and our team does the rest.',
                 'steps' => [
-                    ['step' => '1. Connect', 'icon' => 'fas fa-wifi', 'title' => 'We install your branded WiFi', 'description' => 'Our team installs the TenaFi device on your existing internet connection and sets up your branded guest WiFi.', 'feature' => ''],
-                    ['step' => '2. Capture', 'icon' => 'fas fa-address-card', 'title' => 'Guests opt in', 'description' => 'Guests connect through your branded welcome page and share their details with consent. No app.', 'feature' => ''],
-                    ['step' => '3. Engage', 'icon' => 'fas fa-comments', 'title' => 'We run the follow-up', 'description' => 'We manage your review requests and marketing campaigns on WhatsApp, SMS and email.', 'feature' => ''],
-                    ['step' => '4. Grow', 'icon' => 'fas fa-chart-line', 'title' => 'They come back', 'description' => 'More reviews, more repeat visits and more direct bookings, with results in a monthly report.', 'feature' => ''],
+                    ['step' => '1', 'icon' => 'fas fa-wifi', 'title' => 'We install it', 'description' => 'Our team connects the TenaFi device to your router and sets up your branded WiFi.', 'feature' => ''],
+                    ['step' => '2', 'icon' => 'fas fa-address-card', 'title' => 'Guests opt in', 'description' => 'They connect through your WiFi page and share their details with consent. No app.', 'feature' => ''],
+                    ['step' => '3', 'icon' => 'fas fa-comments', 'title' => 'We follow up', 'description' => 'Review requests and campaigns go out on WhatsApp, SMS and email, managed for you.', 'feature' => ''],
+                    ['step' => '4', 'icon' => 'fas fa-chart-line', 'title' => 'They come back', 'description' => 'More reviews, repeat visits and direct bookings, in a monthly report.', 'feature' => ''],
+                ],
+                // Cards under the steps.
+                'cards' => [
+                    ['title' => 'The TenaFi device', 'text' => 'A small access point that plugs into your existing router and runs your branded guest WiFi.'],
+                    ['title' => 'Fully managed', 'text' => 'We keep it running, update your page and send the campaigns. You see the results.'],
                 ],
             ],
         ],
-        'cta_banner__founding' => [
-            'title' => 'Built by Superhosts / Free trial',
+        'comparison_table' => [
+            'title' => 'Free WiFi vs TenaFi (table)',
+            'bg' => 'gray',
             'content' => [
+                'badge' => 'More than free WiFi',
+                'title' => 'What free WiFi gives you, and what TenaFi gives you.',
+                'subtitle' => 'Same internet connection. What changes is what you know about your guests and what you can do next.',
+                'col_label' => 'What you need',
+                'col_without' => 'Free WiFi',
+                'col_with' => 'With TenaFi',
+                'rows' => [
+                    ['label' => 'Who connected', 'without' => 'Anonymous devices', 'with' => 'A named guest list, with consent'],
+                    ['label' => 'Your brand', 'without' => 'A router name and a password', 'with' => 'A WiFi page in your logo and colours'],
+                    ['label' => 'Reviews', 'without' => 'A QR card that waits for a scan', 'with' => 'A one-tap request to every guest'],
+                    ['label' => 'Repeat visits', 'without' => 'Hope they come back', 'with' => 'Birthday, win-back and book-direct campaigns'],
+                    ['label' => 'Events & sponsors', 'without' => 'One network for every event', 'with' => 'A sign-in, sponsor slot and attendee tag per event'],
+                    ['label' => 'Who runs it', 'without' => 'You, on top of everything else', 'with' => 'Our team, with a monthly report'],
+                ],
+            ],
+        ],
+        'credibility' => [
+            'title' => 'Proof: built by operators',
+            'content' => [
+                // "dark": the founder quote instead of the photo, and the source line under the numbers.
+                'style' => 'dark',
+                'badge' => 'Built by operators',
+                'title' => 'Built inside a 16x Airbnb Superhost business in Nairobi.',
+                'subtitle' => 'TenaFi started at Stay Awhile Rentals. We built the tool we needed to turn guests into regulars, and now run it for hosts, businesses and events across Kenya.',
+                'quote' => '“The WiFi login is the one moment every guest connects. We turned it into a relationship.”',
+                'quote_name' => 'Glen Mwangi, Founder & CEO',
+                'closing_line' => '',
+                'tagline' => '',
+                'stats' => [
+                    ['value' => '16x', 'label' => 'Airbnb Superhost'],
+                    ['value' => '1,400+', 'label' => 'reservations hosted'],
+                    ['value' => '5,000+', 'label' => 'guest nights'],
+                    ['value' => '800+', 'label' => 'guest reviews'],
+                ],
+                // Keep: these are Stay Awhile's figures, not client results.
+                'sources' => 'Figures from Stay Awhile Rentals, TenaFi’s founding portfolio. Client results will be added here as they come in.',
+            ],
+        ],
+        'cta_banner__founding' => [
+            'title' => 'Free trial (December) + pricing',
+            'content' => [
+                'anchor' => 'trial',
+                // "trial": yellow, ticks, slot counter and the after-the-trial pricing card.
+                'style' => 'trial',
                 'badge' => 'Free trial',
-                'title' => 'Built by a 16x Airbnb Superhost team in Nairobi.',
-                'body' => 'TenaFi was born inside Stay Awhile Rentals: 1,400+ reservations, 5,000+ guest nights and 800+ reviews. We built the tool we needed. Now you can try it free for the whole of December, with installs from 16 November.',
+                'title' => 'Try TenaFi free for the whole of December.',
+                'body' => 'Installs start 16 November, and the rest of November is free too. Then it’s month to month.',
                 'note' => '',
+                'ticks' => "No payment to book\nInstalled for you\nCancel with 30 days’ notice",
+                'show_slots' => '1',
+                // Plans come from the live /hosts pricing section, never typed twice.
+                'pricing_anchor' => 'pricing',
+                'pricing_title' => 'After the trial',
+                'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
+                // TODO(events page): /events once it exists.
+                'pricing_links' => [
+                    ['label' => 'Rental pricing', 'href' => '/hosts#h-pricing'],
+                    ['label' => 'Business pricing', 'href' => '/business#b-pricing'],
+                    ['label' => 'Events', 'href' => '/#events'],
+                ],
+                'buttons_title' => 'Book your slot',
+                // An href starting "whatsapp:" opens WhatsApp (Site-wide number) with that message.
+                // TODO(events page): /events#enquire once it exists.
                 'buttons' => [
-                    ['label' => 'I run short-term rentals', 'href' => '/hosts'],
-                    ['label' => 'I own a business', 'href' => '/business'],
+                    ['label' => 'I run short-term rentals', 'href' => '/hosts#join'],
+                    ['label' => 'I own a business', 'href' => '/business#signup'],
+                    ['label' => 'I’m planning an event', 'href' => '/#events'],
+                    ['label' => 'Questions? WhatsApp us', 'href' => 'whatsapp:Hi TenaFi, I have a question about the free trial.'],
+                ],
+            ],
+        ],
+        'faq' => [
+            'title' => 'FAQ',
+            'content' => [
+                'title' => 'Questions, answered.',
+                'subtitle' => '',
+                'items' => [
+                    ['question' => 'Do I need new internet?', 'answer' => 'No. TenaFi plugs into the connection you already have. We install the device and set up your branded WiFi page.'],
+                    ['question' => 'Who runs it day to day?', 'answer' => 'We do. We keep the WiFi running, update your page, and write and send your review requests and campaigns. You get a monthly report.'],
+                    ['question' => 'Who owns the guest list?', 'answer' => 'You do. Guests opt in with consent on your WiFi page, and the list stays yours.'],
+                    ['question' => 'Does it work for events?', 'answer' => 'Yes, from weddings and launch nights to stadiums. Each event gets its own WiFi page and attendee tag, with room for a sponsor. WhatsApp us with your date and expected crowd.'],
+                    ['question' => 'What happens after the free trial?', 'answer' => 'You choose a plan and continue month to month, or cancel with 30 days’ notice. Paying yearly gets you 2 months free.'],
                 ],
             ],
         ],

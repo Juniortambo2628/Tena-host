@@ -1,0 +1,379 @@
+@reference "../../../css/theme.css";
+
+/* Drawn product mockups (Mockup.jsx). Text stays at 12px or more (CLAUDE.md). */
+.mk-stage {
+    @apply relative flex flex-wrap items-end justify-center;
+    gap: 16px;
+    padding-top: 28px;
+    max-width: 100%;
+}
+
+.mk-example {
+    @apply absolute rounded-full bg-white text-muted;
+    top: 0;
+    right: 0;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border: 1px solid #E6E7EB;
+}
+
+.mk-panel {
+    @apply min-w-0;
+    max-width: 100%;
+}
+
+/* phone */
+.mk-phone {
+    width: 250px;
+    max-width: 100%;
+    border-radius: 38px;
+    background: #111;
+    padding: 8px;
+    box-shadow: 0 24px 50px rgba(20, 20, 20, 0.24);
+}
+
+.mk-phone--sm {
+    width: 196px;
+    border-radius: 30px;
+    padding: 6px;
+}
+
+.mk-phone__scr {
+    @apply flex flex-col overflow-hidden text-dark;
+    border-radius: 31px;
+    background: #FFFDF7;
+    min-height: 420px;
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.mk-phone--sm .mk-phone__scr {
+    border-radius: 25px;
+    min-height: 360px;
+}
+
+/* WiFi page */
+.mk-splash__brand {
+    @apply flex flex-col items-center text-center;
+    padding: 30px 12px 18px;
+    gap: 2px;
+}
+
+.mk-splash__brand b {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.15;
+}
+
+.mk-splash__brand i {
+    font-style: normal;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.mk-splash__body {
+    @apply flex flex-col flex-1;
+    gap: 7px;
+    padding: 12px 12px 10px;
+}
+
+.mk-splash__h {
+    @apply text-center;
+    font-family: Georgia, serif;
+    font-size: 17px;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.mk-splash__tiles {
+    @apply grid grid-cols-3;
+    gap: 5px;
+}
+
+.mk-splash__tiles span {
+    @apply text-center rounded-lg;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 6px 2px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.mk-splash__field {
+    @apply text-muted bg-white;
+    border: 1px solid #E1DED4;
+    border-radius: 8px;
+    padding: 7px 9px;
+}
+
+.mk-splash__opt {
+    @apply flex items-start;
+    gap: 6px;
+    color: #4A4E58;
+}
+
+.mk-splash__opt span {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.mk-splash__cta {
+    @apply text-center;
+    border-radius: 10px;
+    padding: 9px;
+    font-weight: 800;
+}
+
+.mk-splash__pw,
+.mk-splash__sponsor {
+    @apply text-center text-muted;
+    margin-top: auto;
+    font-size: 12px;
+}
+
+.mk-splash__sponsor {
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* WhatsApp chat */
+.mk-chat {
+    @apply flex flex-col overflow-hidden bg-white;
+    width: 290px;
+    max-width: 100%;
+    border-radius: 22px;
+    box-shadow: 0 18px 40px rgba(20, 20, 20, 0.16);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.mk-chat__head {
+    @apply flex items-center bg-white;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #E6E7EB;
+}
+
+.mk-chat__head b {
+    @apply block;
+    font-size: 13px;
+}
+
+.mk-chat__head small {
+    @apply block text-muted;
+    font-size: 12px;
+}
+
+.mk-chat__body {
+    @apply flex flex-col;
+    background: #ECE5DD;
+    padding: 10px;
+    gap: 8px;
+}
+
+.mk-bubble {
+    @apply bg-white;
+    border-radius: 4px 14px 14px 14px;
+    padding: 9px 10px;
+}
+
+.mk-bubble__label {
+    @apply block text-muted;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.mk-bubble__btn {
+    @apply flex items-center justify-center bg-white;
+    gap: 6px;
+    margin-top: 7px;
+    border: 1px solid #E6E7EB;
+    border-radius: 9px;
+    padding: 7px;
+    font-weight: 800;
+    color: #1A73E8;
+}
+
+.mk-bubble__btn.is-dark {
+    border-color: transparent;
+}
+
+.mk-g {
+    @apply flex items-center justify-center rounded-full bg-white;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    color: #4285F4;
+    box-shadow: inset 0 0 0 1px #E6E7EB;
+}
+
+.mk-bubble__time {
+    @apply block text-right;
+    color: #8A8D96;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+/* cards: rating, stats, attendees, M-Pesa */
+.mk-card {
+    @apply flex flex-col bg-white text-dark;
+    width: 260px;
+    max-width: 100%;
+    border-radius: 20px;
+    padding: 16px;
+    gap: 8px;
+    box-shadow: 0 16px 34px rgba(20, 20, 20, 0.14);
+    font-size: 13px;
+}
+
+.mk-card > b {
+    font-size: 15px;
+}
+
+.mk-rating__score {
+    @apply flex items-center;
+    gap: 8px;
+}
+
+.mk-rating__score span:first-child {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.mk-stars {
+    color: #F5B400;
+    letter-spacing: 1px;
+}
+
+.mk-card small {
+    @apply text-muted;
+    font-size: 12px;
+}
+
+.mk-row {
+    @apply flex items-center;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #EEEAE0;
+}
+
+.mk-row > span:nth-child(2) {
+    @apply flex-1 min-w-0;
+}
+
+.mk-stats .mk-row {
+    @apply justify-between;
+}
+
+.mk-av {
+    @apply flex items-center justify-center rounded-full shrink-0;
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.mk-av--soft {
+    background: #FFF4BF;
+    color: #1E1E1E;
+}
+
+.mk-pill {
+    @apply rounded-full;
+    background: #E6F1EE;
+    padding: 2px 8px;
+    font-weight: 700;
+}
+
+.mk-attendees__tag {
+    font-weight: 800;
+}
+
+/* guide with prices */
+.mk-guide__head {
+    padding: 22px 14px 16px;
+}
+
+.mk-guide__head b {
+    font-family: Georgia, serif;
+    font-weight: 400;
+    font-size: 17px;
+}
+
+.mk-guide__row {
+    @apply flex items-center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-bottom: 1px solid #EEEAE0;
+}
+
+.mk-guide__row > span:nth-child(2) {
+    @apply flex-1 min-w-0;
+    font-weight: 600;
+}
+
+.mk-guide__ic {
+    @apply flex items-center justify-center shrink-0;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: #FFF4BF;
+}
+
+/* M-Pesa prompt */
+.mk-mpesa__top {
+    @apply flex items-center;
+    gap: 8px;
+    font-weight: 800;
+}
+
+.mk-mpesa__logo {
+    @apply text-white shrink-0;
+    background: #2E9E44;
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.mk-mpesa__pin {
+    border: 1px solid #E1DED4;
+    border-radius: 10px;
+    padding: 10px;
+    color: #8A8D96;
+    letter-spacing: 0.08em;
+}
+
+.mk-mpesa__ok {
+    border-radius: 10px;
+    padding: 10px;
+    background: #E6F1EE;
+    color: #0F6B4E;
+    font-weight: 800;
+}
+
+/* Three phones side by side (e.g. rental, salon, event). */
+.mk-stage--3 .mk-phone--sm {
+    width: 168px;
+}
+
+.mk-stage--3 {
+    gap: 10px;
+}
+
+@media (max-width: 480px) {
+    .mk-stage--2 .mk-phone--sm,
+    .mk-stage--3 .mk-phone--sm {
+        width: 160px;
+    }
+}

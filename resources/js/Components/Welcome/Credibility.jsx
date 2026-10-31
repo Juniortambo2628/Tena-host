@@ -41,12 +41,18 @@ export default function Credibility({ section }) {
     const mainImage = getMedia(section, 'main_image', '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg');
     const stayAwhileLogo = getMedia(section, 'stay_awhile_logo', '/legacy/assets/Tena-logo-square.jpg');
 
+    // Homepage extras: "dark" style, a founder quote in place of the photo, and a source line.
+    const dark = stripHtml(getContent(section, 'style', '')) === 'dark';
+    const quote = stripHtml(getContent(section, 'quote', ''));
+    const quoteName = stripHtml(getContent(section, 'quote_name', ''));
+    const sources = stripHtml(getContent(section, 'sources', ''));
+
     const cmsStats = extractItems(section, 'stats', ['value', 'label']);
     const stats = cmsStats.length > 0 ? cmsStats : defaultStats;
 
     return (
         <SectionWrapper id="credibility" bg={section.bg || 'gray'}>
-            <div className="credibility-card">
+            <div className={`credibility-card ${dark ? 'credibility-card--dark' : ''}`}>
                 <div className="credibility-decoration"></div>
                 <div className="credibility-decoration-bl"></div>
 
@@ -77,6 +83,12 @@ export default function Credibility({ section }) {
                         </ul>
                     </div>
 
+                    {quote ? (
+                        <figure className="credibility-quote">
+                            <blockquote>{quote}</blockquote>
+                            {quoteName && <figcaption>{quoteName}</figcaption>}
+                        </figure>
+                    ) : (
                     <div className="credibility-image-col">
                         <div className="credibility-image-wrap">
                             <img
@@ -87,12 +99,16 @@ export default function Credibility({ section }) {
                             <span className="credibility-image-caption">{badge}</span>
                         </div>
                     </div>
+                    )}
                 </div>
 
-                <div className="credibility-footer">
-                    <p className="credibility-closing" dangerouslySetInnerHTML={{ __html: sanitizeHtml(closingLine) }} />
-                    <p className="credibility-tagline">{tagline}</p>
-                </div>
+                {sources && <p className="credibility-sources">{sources}</p>}
+                {(stripHtml(closingLine) || tagline) && (
+                    <div className="credibility-footer">
+                        <p className="credibility-closing" dangerouslySetInnerHTML={{ __html: sanitizeHtml(closingLine) }} />
+                        <p className="credibility-tagline">{tagline}</p>
+                    </div>
+                )}
             </div>
         </SectionWrapper>
     );
