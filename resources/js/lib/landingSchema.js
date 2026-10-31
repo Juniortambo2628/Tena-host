@@ -68,7 +68,7 @@ export const SECTION_MEDIA_SCHEMA = {
         slots: [],
         // The slot keeps its old key so existing uploads stay attached to their rows.
         dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n}: WiFi page screenshot (portrait, about 1:2)')
-            .map(slot => ({ ...slot, description: 'A phone screenshot of their TenaFi WiFi page, status bar cropped off, e.g. 600 × 1200, under 150 KB. Rows without one are hidden.' })),
+            .map(slot => ({ ...slot, description: 'A phone screenshot of their TenaFi WiFi page, status bar cropped off, e.g. 600 × 1200, under 150 KB. Until then the row shows a placeholder page with their name.' })),
     },
 
     path_cards: {
