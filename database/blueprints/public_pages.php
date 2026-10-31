@@ -299,6 +299,15 @@ return [
                     ['label' => 'Cafés, salons, shops & more', 'href' => '/business'],
                     ['label' => 'Events, weddings & venues', 'href' => '/#events'],
                 ],
+                // "Get a call back" (shown while Admin -> Settings has the call-back form on).
+                // Options: value|Label; values are hosts, business or events.
+                'callback_title' => 'Get a call back',
+                'callback_options' => "hosts|I run rentals\nbusiness|I own a business\nevents|I’m planning an event",
+                'callback_button' => 'Call me back',
+                'callback_note' => 'We’ll call or WhatsApp you about the free trial.',
+                'callback_link_label' => 'Or book your slot now',
+                'callback_link' => '#trial',
+                'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
                 // {price} is the cheapest plan on the live /hosts pricing section.
                 'price_line' => 'Free for December. From {price} a month after that.',
                 'price_link_label' => 'See pricing',

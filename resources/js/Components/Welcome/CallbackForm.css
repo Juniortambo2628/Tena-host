@@ -1,0 +1,91 @@
+@reference "../../../css/theme.css";
+
+.callback-form {
+    @apply flex flex-col bg-white rounded-3xl;
+    gap: 10px;
+    margin-top: 22px;
+    padding: 16px;
+    border: 1.5px solid #E6E7EB;
+}
+
+.callback-form__title {
+    font-size: 16px;
+}
+
+.callback-form__row {
+    @apply grid;
+    gap: 8px;
+}
+
+@media (min-width: 640px) {
+    .callback-form__row {
+        grid-template-columns: 1.2fr 1fr auto;
+    }
+}
+
+.callback-form__phone {
+    @apply flex items-center rounded-xl;
+    background: #F3F4F6;
+}
+
+.callback-form__prefix {
+    @apply text-muted;
+    padding-left: 12px;
+    font-weight: 700;
+}
+
+.callback-form input,
+.callback-form select {
+    @apply w-full rounded-xl text-dark;
+    min-height: 46px;
+    border: 0;
+    background: #F3F4F6;
+    padding: 0 12px;
+    font: inherit;
+    font-size: 16px;
+}
+
+.callback-form__phone input {
+    background: transparent;
+    padding-left: 6px;
+}
+
+.callback-form button {
+    @apply inline-flex items-center justify-center rounded-xl bg-dark text-primary font-extrabold;
+    gap: 8px;
+    min-height: 46px;
+    padding: 0 18px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.callback-form button:disabled {
+    opacity: 0.6;
+}
+
+.callback-form__error {
+    margin: 0;
+    color: #B42318;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.callback-form__note {
+    @apply text-muted;
+    margin: 0;
+    font-size: 14px;
+}
+
+.callback-form__note a {
+    @apply text-dark font-extrabold;
+}
+
+.callback-form--done {
+    @apply flex-row items-center;
+    color: #0F6B4E;
+    font-weight: 700;
+}
+
+.callback-form--done p {
+    margin: 0;
+}

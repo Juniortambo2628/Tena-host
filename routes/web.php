@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\UnifiSettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AmenityController;
 use App\Http\Controllers\Auth\GuestOtpController;
+use App\Http\Controllers\CallbackController;
 use App\Http\Controllers\CampaignTrackingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
@@ -78,6 +79,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/api/signups', [SignupController::class, 'store'])->name('signups.store');
+Route::post('/api/callbacks', [CallbackController::class, 'store'])->middleware('throttle:10,10')->name('callbacks.store');
 Route::post('/api/track', [TrackController::class, 'store'])->name('track');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 

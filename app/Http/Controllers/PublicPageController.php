@@ -55,6 +55,8 @@ class PublicPageController extends Controller
             'trial' => TrialSlots::summary(),
             // Live rental plans, quoted by the homepage hero and trial card.
             'plans' => LandingPage::livePlans('hosts'),
+            // The hero's call-back form shows only when switched on in Settings.
+            'callbacks' => CallbackController::enabled(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path),
         ]);
     }
