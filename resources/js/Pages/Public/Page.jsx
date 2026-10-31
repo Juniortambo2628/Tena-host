@@ -21,6 +21,7 @@ import JourneySection from '@/Components/Welcome/JourneySection';
 import ComparisonTable from '@/Components/Welcome/ComparisonTable';
 import DemoSection from '@/Components/Welcome/DemoSection';
 import WorthCalculator from '@/Components/Welcome/WorthCalculator';
+import TilesSection from '@/Components/Welcome/TilesSection';
 
 /**
  * Section type => component. Any CMS page can use any of these, more than
@@ -48,6 +49,7 @@ const SECTION_COMPONENTS = {
     comparison_table: ComparisonTable,
     demo: DemoSection,
     worth_calculator: WorthCalculator,
+    tiles: TilesSection,
 };
 
 /** "Join" scrolls to this page's sign-up form, or to the path cards on /. */

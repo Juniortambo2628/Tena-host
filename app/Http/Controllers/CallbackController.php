@@ -20,7 +20,7 @@ use Illuminate\Support\Str;
 class CallbackController extends Controller
 {
     /** What the visitor runs => the sign-up type it's filed under. */
-    public const KINDS = ['hosts' => Registration::TYPE_HOST, 'business' => Registration::TYPE_BUSINESS, 'events' => Registration::TYPE_BUSINESS];
+    public const KINDS = ['hosts' => Registration::TYPE_HOST, 'business' => Registration::TYPE_BUSINESS, 'events' => Registration::TYPE_EVENT];
 
     public static function enabled(): bool
     {

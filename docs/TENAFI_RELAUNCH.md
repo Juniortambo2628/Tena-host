@@ -11,6 +11,7 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 | `/` | hero (audience links, price line, ticks, counter, drawn WiFi page), partners `#trusted`, path_cards `#choose` (three audiences), comparison__problem `#problem` (versus), features__plays `#all-in-one`, detailed_features__home (`#wifi-page`, `#reviews`, `#campaigns`, `#extras`, `#events`), how_it_works `#how`, comparison_table, credibility (dark), cta_banner__founding `#trial` (with `#pricing`), faq |
 | `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
 | `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
+| `/events` | hero (dark, drawn event WiFi page), tiles (kinds of events), comparison__gap (versus), features__plays, detailed_features__events (`#attendees`, `#sponsors`, `#every-event`, `#after`), how_it_works `#e-how` (venue and big-crowd cards), comparison_table, worth_calculator (events mode), signup `#enquire` (sign-up type `event`, no trial counter), faq. Created switched off; `tenafi:homepage-copy` switches it on |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
 | Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), announcement, footer (grouped columns), whatsapp_button, trial_slots, feature_status |
 
@@ -20,7 +21,7 @@ Everything is editable in **Admin → Public Pages**, with one tab per page. The
 
 | Type | What it is |
 | --- | --- |
-| `hero` | Badge, headline, subtitle, optional body and trust note, two CTAs |
+| `hero` | Badge, headline, subtitle, optional body and trust note, two CTAs; `style: dark` for a dark card |
 | `path_cards` | Audience chooser cards (tracked clicks) |
 | `stats` | Headline numbers with sources, optional illustration and caption |
 | `comparison` | Side-by-side panels with stat, points and text; one can be highlighted |
@@ -32,6 +33,7 @@ Everything is editable in **Admin → Public Pages**, with one tab per page. The
 | `comparison_table` | Three-column table: what you need, without, with TenaFi (`rows`: label / without / with) |
 | `pricing` | Plan cards; plan buttons link to `#join?plan=<id>` |
 | `cta_banner` | The free trial banner (key `cta_banner__founding`, kept so live content stays attached) and cross-links between audiences |
+| `tiles` | A grid of small emoji tiles with a title and a line of text (`items`: icon / title / text) |
 | `faq` | Question and answer accordion |
 | `signup` | The CMS-defined sign-up form |
 
@@ -98,6 +100,8 @@ Admins and team members sign in by going to `/login` directly. That page is left
   (and have no `units`, `platforms` or `superhost`).
   The form also sends `estimatedPriceKES`, `consentText`, `submittedAt` and `source`.
   Only the "Live" fields are included; the "Proposed" ones are left out until Glen confirms them.
+- The `/events` form posts `type` `event` with `eventName`, `eventType`, `eventDate`, `attendees`, `area` (venue) and `notes`.
+  Event enquiries show under Admin → Sign-ups → Events, raise the usual sign-up alert, and do not count toward the free-trial counter.
 - **Steps**: 1 "Your details", 2 "Your rentals" / "Your business", then a confirmation step.
   The confirmation shows a summary, the estimated price and the next steps.
   It only appears after the server has saved the record. If saving fails, the form stays on step 2 and shows Glen's error message.

@@ -127,7 +127,7 @@ function Field({ field, value, error, onChange, planProps }) {
             </div>
         );
     } else {
-        control = <input type={['email', 'number'].includes(field.type) ? field.type : 'text'} placeholder={field.placeholder} {...common} />;
+        control = <input type={['email', 'number', 'date'].includes(field.type) ? field.type : 'text'} placeholder={field.placeholder} {...common} />;
     }
 
     const wide = ['textarea', 'planCards', ...PILL_TYPES].includes(field.type);

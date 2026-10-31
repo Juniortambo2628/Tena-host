@@ -14,7 +14,13 @@ class Registration extends Model
 
     public const TYPE_BUSINESS = 'business';
 
-    public const TYPES = [self::TYPE_HOST, self::TYPE_BUSINESS];
+    /** Event quote requests from /events (not free-trial sign-ups). */
+    public const TYPE_EVENT = 'event';
+
+    public const TYPES = [self::TYPE_HOST, self::TYPE_BUSINESS, self::TYPE_EVENT];
+
+    /** The free trial is for rentals and businesses; event quotes don't take a slot. */
+    public const TRIAL_TYPES = [self::TYPE_HOST, self::TYPE_BUSINESS];
 
     protected $fillable = [
         'type',

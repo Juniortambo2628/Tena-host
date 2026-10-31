@@ -58,6 +58,8 @@ export default function Hero({ section }) {
     const ticks = textLines(getContent(section, 'ticks', ''), site);
     const showSlots = isTruthy(getContent(section, 'show_slots', '0'));
     const drawn = getText(section, 'visual', 'image') === 'splash';
+    // "dark": the dark hero card (events page).
+    const dark = getText(section, 'style', '') === 'dark';
 
     // Optional feature cards under the hero (none on the relaunch pages).
     const features = extractItems(section, 'features', ['icon', 'title', 'description']).map((f, i) => ({
@@ -68,7 +70,7 @@ export default function Hero({ section }) {
     return (
         <section className="hero-wrapper">
             <div className="hero-container">
-                <div className="hero-main-card">
+                <div className={`hero-main-card ${dark ? 'hero-main-card--dark' : ''}`}>
                     <div className="hero-content">
                         <div className="hero-text">
                             <div className="hero-badge-wrap">

@@ -18,7 +18,7 @@ function menuOptions(settings, kind) {
 /**
  * Floating "WhatsApp us" button on every public page (Site-wide → Floating
  * WhatsApp button). When the page has menu options (menu_home, menu_hosts,
- * menu_business: "Label | message" per line) it opens a small menu, each
+ * menu_business, menu_events: "Label | message" per line) it opens a small menu, each
  * option with its own pre-filled message; otherwise it opens WhatsApp
  * straight away with the page's message.
  */
@@ -47,7 +47,7 @@ export default function WhatsAppButton() {
 
     if (!settings || !isTruthy(getText(settings, 'enabled', '1')) || !number) return null;
 
-    const kind = ['hosts', 'business'].includes(page?.slug) ? page.slug : 'home';
+    const kind = ['hosts', 'business', 'events'].includes(page?.slug) ? page.slug : 'home';
     const message = getText(settings, `message_${kind}`) || getText(settings, 'message_home');
     const label = getText(settings, 'label', 'WhatsApp us');
     const options = menuOptions(settings, kind);

@@ -33,7 +33,7 @@ class TrialSlots
             }
 
             return Registration::query()
-                ->whereIn('type', Registration::TYPES)
+                ->whereIn('type', Registration::TRIAL_TYPES)
                 ->where(fn ($q) => $q->whereNull('status')->orWhere('status', '!=', 'inactive'))
                 ->when($since, fn ($q) => $q->where('created_at', '>=', $since))
                 ->count();

@@ -32,12 +32,16 @@ class HomepageCopyCommand extends Command
     /** page slug => section keys to update ("*" = every section the blueprint lists for that page). */
     private const TARGETS = [
         'home' => '*',
+        'events' => '*',
         LandingPage::SITE => ['header', 'footer', 'announcement', 'whatsapp_button'],
     ];
 
+    /** Pages that go live with the new homepage (its Events links point to /events). */
+    private const PAGES = ['events'];
+
     /** Sections where only some fields belong to the homepage copy (the rest stay as the admin set them). */
     private const ONLY_FIELDS = [
-        'whatsapp_button' => ['menu_greeting', 'menu_home'],
+        'whatsapp_button' => ['menu_greeting', 'menu_home', 'message_events', 'menu_events'],
     ];
 
     public function handle(): int
@@ -109,6 +113,10 @@ class HomepageCopyCommand extends Command
             }
         }
 
+        foreach (LandingPage::whereIn('slug', self::PAGES)->where('is_active', false)->pluck('slug') as $slug) {
+            $sections[] = "page /{$slug}: switch on";
+        }
+
         $home = LandingPage::where('slug', 'home')->first();
         if ($home && $this->homeOrder($home) !== $home->sections()->orderBy('sort_order')->orderBy('id')->pluck('section_key')->all()) {
             $sections[] = 'home: reorder to '.implode(', ', array_keys(PageBlueprint::definitions()['home']));
@@ -132,6 +140,8 @@ class HomepageCopyCommand extends Command
             }
             $section->update(['is_active' => true]);
         }
+
+        LandingPage::whereIn('slug', self::PAGES)->update(['is_active' => true]);
 
         if ($home = LandingPage::where('slug', 'home')->first()) {
             foreach ($this->homeOrder($home) as $i => $key) {
@@ -191,7 +201,11 @@ class HomepageCopyCommand extends Command
             }
         }
 
+        // Whether each page that goes live with the homepage was on.
+        $pages = LandingPage::whereIn('slug', self::PAGES)->pluck('is_active', 'slug')->map(fn ($on) => (bool) $on)->all();
+
         $path = 'cms-backups/homepage-copy-'.now()->format('Ymd-His').'.json';
+        $data = ['sections' => $data, 'pages' => $pages];
         Storage::disk('local')->put($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
         return $path;
@@ -208,7 +222,10 @@ class HomepageCopyCommand extends Command
 
         $data = json_decode(Storage::disk('local')->get($path), true);
         DB::transaction(function () use ($data) {
-            foreach ($data as $slug => $sections) {
+            foreach ($data['pages'] ?? [] as $slug => $on) {
+                LandingPage::where('slug', $slug)->update(['is_active' => $on]);
+            }
+            foreach ($data['sections'] ?? $data as $slug => $sections) {
                 $page = LandingPage::where('slug', $slug)->first();
                 foreach ($page ? $sections : [] as $key => $saved) {
                     $section = LandingSection::where('page_id', $page->id)->where('section_key', $key)->first();
