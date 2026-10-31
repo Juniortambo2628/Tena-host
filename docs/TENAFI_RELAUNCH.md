@@ -8,11 +8,11 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 
 | URL | Sections (in order; `#anchors` match Glen's) |
 | --- | --- |
-| `/` | hero, partners `#trusted` (Trusted by), path_cards `#choose`, comparison__problem `#problem`, how_it_works `#how`, cta_banner__founding |
+| `/` | hero (audience links, price line, ticks, counter, drawn WiFi page), partners `#trusted`, path_cards `#choose` (three audiences), comparison__problem `#problem` (versus), features__plays `#all-in-one`, detailed_features__home (`#wifi-page`, `#reviews`, `#campaigns`, `#extras`, `#events`), how_it_works `#how`, comparison_table, credibility (dark), cta_banner__founding `#trial` (with `#pricing`), faq |
 | `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
 | `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
-| Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), footer, whatsapp_button, trial_slots, feature_status |
+| Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), announcement, footer (grouped columns), whatsapp_button, trial_slots, feature_status |
 
 Everything is editable in **Admin → Public Pages**, with one tab per page. The defaults live in `database/blueprints/public_pages.php`.
 
@@ -29,12 +29,31 @@ Everything is editable in **Admin → Public Pages**, with one tab per page. The
 | `detailed_features` | Image + text blocks (product mockups) |
 | `credibility` | Stay Awhile story and stats |
 | `journey` | "What you get in your first month": numbered steps with phone mockups, labelled example numbers, outcomes and a booking bar (see below) |
+| `comparison_table` | Three-column table: what you need, without, with TenaFi (`rows`: label / without / with) |
 | `pricing` | Plan cards; plan buttons link to `#join?plan=<id>` |
 | `cta_banner` | The free trial banner (key `cta_banner__founding`, kept so live content stays attached) and cross-links between audiences |
 | `faq` | Question and answer accordion |
 | `signup` | The CMS-defined sign-up form |
 
 To use one type twice on a page, add a variant suffix (`stats__problem`, `stats__commission`).
+
+### Homepage options and drawn mockups (Oct 31)
+
+The three-audience homepage adds options to existing section types. Each is off unless its field is filled, so other pages look the same:
+
+- `hero`: `audiences` (links under the headline), `price_line` with `{price}` (the cheapest plan on the live /hosts pricing), `ticks` (one per line), `show_slots`, and `visual` = `splash` with `visual_screen` and `visual_cards` (a drawn WiFi page and three floating cards).
+- `path_cards`: per card `tags` (comma-separated), and `mockup` + `screen` to draw the picture instead of the photo.
+- `comparison`: `style` = `versus` (crosses vs ticks, the highlighted panel dark) and `stats` (value / label) above the sources.
+- `detailed_features`: per row `anchor`, `mockup` + `screen`, `note`, and its own `cta_label` / `cta_href`; an empty `cta_text` means no shared button.
+- `how_it_works`: `cards` (title / text) under the steps.
+- `credibility`: `style` = `dark`, `quote` + `quote_name` in place of the photo, and `sources`.
+- `cta_banner`: `style` = `trial` with `ticks`, `show_slots`, an "After the trial" card listing the live /hosts plans (`pricing_title`, `pricing_note`, `pricing_links`, `pricing_anchor`), and `buttons_title`. A button href `whatsapp:<message>` opens WhatsApp on the Site-wide number.
+- Site-wide `announcement`: `enabled`, `text` with `{taken}` / `{total}` / `{left}` from the trial counter, `text_without_slots`, `link_label`, `link_href`, `pages` (comma-separated slugs, empty = all).
+- Site-wide `footer`: `groups` (title + links, one per line as `Label | /href`) replace the single Quick Links column.
+
+**Drawn mockups** (`resources/js/Components/Public/Mockup.jsx`, reusable on any page): a `mockup` type and a `screen` field, one item per line. `---` starts another panel, and `@type` on its first line picks that panel's type. Types: `splash`, `chat`, `rating`, `stats`, `attendees`, `guide`, `mpesa`; line keys such as `brand:`, `headline:`, `tiles:`, `msg:`, `row:`, `to:` are documented at the top of the file. Every drawing carries an "Example" label. Use made-up names only.
+
+**Moving the live homepage onto this copy** (Kevin, after review): `php artisan migrate` adds the new sections hidden. Then `php artisan tenafi:homepage-copy --dry-run` lists every field it would change; without `--dry-run` it saves a backup to `storage/app/cms-backups/`, applies the copy, switches the homepage sections on and orders them. `--restore=<file>` undoes it.
 
 ### The journey section
 

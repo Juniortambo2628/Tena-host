@@ -18,6 +18,7 @@ import ComparisonSection from '@/Components/Welcome/ComparisonSection';
 import FaqSection from '@/Components/Welcome/FaqSection';
 import CtaBanner from '@/Components/Welcome/CtaBanner';
 import JourneySection from '@/Components/Welcome/JourneySection';
+import ComparisonTable from '@/Components/Welcome/ComparisonTable';
 
 /**
  * Section type => component. Any CMS page can use any of these, more than
@@ -42,6 +43,7 @@ const SECTION_COMPONENTS = {
     faq: FaqSection,
     cta_banner: CtaBanner,
     journey: JourneySection,
+    comparison_table: ComparisonTable,
 };
 
 /** "Join" scrolls to this page's sign-up form, or to the path cards on /. */

@@ -43,3 +43,31 @@
 .path-card:hover .path-card-cta {
     @apply bg-primary text-black;
 }
+
+/* Three audiences (homepage): three across on wide screens. */
+@media (min-width: 1024px) {
+    .path-cards-grid--3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 80rem;
+    }
+}
+
+.path-card-mockup {
+    @apply flex justify-center overflow-hidden;
+    background: #FFFBEA;
+    padding: 20px 16px 24px;
+}
+
+.path-card-tags {
+    @apply flex flex-wrap list-none p-0;
+    gap: 6px;
+    margin: 12px 0 0;
+}
+
+.path-card-tags li {
+    @apply rounded-full text-dark;
+    background: #FFF4BF;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 700;
+}

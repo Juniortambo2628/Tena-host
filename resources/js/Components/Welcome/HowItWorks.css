@@ -11,3 +11,32 @@
 .how-steps-grid--5 {
     @apply lg:grid-cols-5;
 }
+
+.how-cards {
+    @apply grid max-w-5xl mx-auto;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+@media (min-width: 768px) {
+    .how-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.how-card {
+    @apply rounded-3xl bg-dark text-white;
+    padding: 22px 24px;
+}
+
+.how-card b {
+    @apply block text-primary;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+.how-card p {
+    margin: 0;
+    font-size: 15px;
+    opacity: 0.9;
+}

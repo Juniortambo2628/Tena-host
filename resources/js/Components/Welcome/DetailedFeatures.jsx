@@ -3,6 +3,7 @@ import { SectionWrapper, SectionHeader, TwoColumn } from './layouts';
 import { getContent, getMedia, extractJsonItems, comingSoonBadge, stripHtml } from '@/lib/cms';
 import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
+import Mockup from '@/Components/Public/Mockup';
 import { SkeletonTwoColumn } from './Skeleton';
 import './DetailedFeatures.css';
 
@@ -63,9 +64,17 @@ export default function DetailedFeatures({ section }) {
             bg: getContent(section, `sections.${i}.bg`, 'white'),
             reverse: getContent(section, `sections.${i}.reverse`, '0') === '1',
             features,
+            // Optional per row: an anchor, a drawn mockup instead of the image, a note and its own button.
+            anchor: stripHtml(getContent(section, `sections.${i}.anchor`, '')),
+            mockup: stripHtml(getContent(section, `sections.${i}.mockup`, '')),
+            screen: getContent(section, `sections.${i}.screen`, ''),
+            note: stripHtml(getContent(section, `sections.${i}.note`, '')),
+            ctaLabel: stripHtml(getContent(section, `sections.${i}.cta_label`, '')),
+            ctaHref: stripHtml(getContent(section, `sections.${i}.cta_href`, '')),
         });
     }
 
+    // An empty cta_text means rows show only their own button.
     const ctaText = stripHtml(getContent(section, 'cta_text', 'Get started'));
     const heading = stripHtml(getContent(section, 'title', ''));
 
@@ -77,17 +86,24 @@ export default function DetailedFeatures({ section }) {
                 </SectionWrapper>
             )}
             {sections.map((s, i) => (
-                <SectionWrapper key={s.id} id={s.id} bg={s.bg} padding="lg">
+                <SectionWrapper key={s.id} id={s.anchor || s.id} bg={s.bg} padding="lg">
                     <TwoColumn
                         reverse={s.reverse}
                         label={s.label}
                         heading={s.heading}
                         description={s.description}
-                        image={<FeatureImage src={s.image} alt={s.label} defaultSrc={DEFAULT_IMAGES[i % DEFAULT_IMAGES.length]} />}
+                        image={s.mockup
+                            ? <Mockup type={s.mockup} screen={s.screen} className="detailed-features-mockup" />
+                            : <FeatureImage src={s.image} alt={s.label} defaultSrc={DEFAULT_IMAGES[i % DEFAULT_IMAGES.length]} />}
                         features={s.features}
-                        cta={
-                            <CtaLink className="btn-primary">{ctaText}</CtaLink>
-                        }
+                        cta={(s.note || s.ctaLabel || ctaText) && (
+                            <>
+                                {s.note && <p className="detailed-features-note">{s.note}</p>}
+                                {(s.ctaLabel || ctaText) && (
+                                    <CtaLink href={s.ctaHref} className="btn-primary">{s.ctaLabel || ctaText}</CtaLink>
+                                )}
+                            </>
+                        )}
                     />
                 </SectionWrapper>
             ))}

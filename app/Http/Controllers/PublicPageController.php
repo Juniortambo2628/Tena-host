@@ -53,6 +53,8 @@ class PublicPageController extends Controller
             'site' => $site,
             'menus' => LandingPage::navMenus(),
             'trial' => TrialSlots::summary(),
+            // Live rental plans, quoted by the homepage hero and trial card.
+            'plans' => LandingPage::livePlans('hosts'),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path),
         ]);
     }

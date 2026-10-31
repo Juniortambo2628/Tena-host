@@ -139,3 +139,111 @@
 .hero-note {
     @apply mt-6 text-sm text-muted;
 }
+
+/* Homepage extras: audience links, price line, ticks, counter, drawn visual. */
+.hero-audiences {
+    @apply flex flex-wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.hero-audiences a {
+    @apply inline-flex items-center rounded-full bg-white text-dark no-underline font-bold;
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 14px;
+    border: 1.5px solid rgba(30, 30, 30, 0.14);
+}
+
+.hero-audiences a:hover {
+    @apply border-dark;
+}
+
+.hero-price-line {
+    margin-top: 18px;
+    font-size: 16px;
+    color: #3E4250;
+}
+
+.hero-price-line a {
+    @apply font-extrabold text-dark underline;
+}
+
+.hero-ticks {
+    @apply flex flex-wrap list-none p-0;
+    gap: 6px 18px;
+    margin: 14px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.hero-ticks li {
+    @apply inline-flex items-center;
+    gap: 6px;
+}
+
+.hero-ticks svg {
+    @apply shrink-0;
+    color: #0F6B4E;
+}
+
+.hero-slots {
+    margin: 18px 0 0;
+}
+
+.hero-visual {
+    @apply relative flex justify-center;
+    padding: 12px 0 24px;
+}
+
+.hero-visual .mk-example {
+    right: 8px;
+}
+
+.hero-float {
+    @apply absolute flex items-start bg-white text-dark;
+    z-index: 3;
+    gap: 9px;
+    max-width: 210px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    box-shadow: 0 14px 34px rgba(20, 20, 20, 0.14);
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.hero-float b {
+    @apply block;
+    font-size: 13px;
+}
+
+.hero-float small {
+    @apply block text-muted;
+    font-size: 12px;
+}
+
+.hero-float__ic {
+    @apply flex items-center justify-center shrink-0 bg-primary text-dark;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    font-weight: 900;
+}
+
+.hero-float--0 { left: 0; top: 70px; }
+.hero-float--1 { right: 0; top: 190px; }
+.hero-float--2 { left: 4%; bottom: 40px; }
+
+@media (max-width: 639.98px) {
+    /* Phones: the cards stack under the phone instead of floating beside it. */
+    .hero-visual {
+        @apply flex-col items-center;
+        gap: 10px;
+    }
+
+    .hero-float {
+        @apply static;
+        max-width: 100%;
+        width: 100%;
+    }
+}

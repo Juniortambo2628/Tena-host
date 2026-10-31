@@ -97,6 +97,9 @@ export const SECTION_MEDIA_SCHEMA = {
     // Phone mockups are drawn in HTML from the steps' "screen" lines.
     journey: { slots: [] },
 
+    comparison_table: { slots: [] },
+    announcement: { slots: [] },
+
     signup: { slots: [] },
     plans: { slots: [] },
     footer: { slots: [] },
