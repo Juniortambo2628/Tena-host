@@ -22,6 +22,7 @@ use App\Http\Controllers\CallbackController;
 use App\Http\Controllers\CampaignTrackingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestPortalController;
 use App\Http\Controllers\HostDashboardController;
@@ -270,6 +271,10 @@ Route::post('/api/mpesa/extras/callback', [MpesaCallbackController::class, 'extr
 
 // Ubiquiti UniFi external captive portal (public — pre-auth guest devices).
 // Point UniFi "Guest Control -> External Portal Server" at the /portal URL.
+// Try-it-yourself demo of the WiFi page (homepage QR code). Saves nothing.
+Route::get('/demo', [DemoController::class, 'show'])->name('demo');
+Route::post('/demo', [DemoController::class, 'connect'])->middleware('throttle:30,1')->name('demo.connect');
+
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');

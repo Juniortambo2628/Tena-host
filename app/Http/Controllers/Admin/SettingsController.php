@@ -60,6 +60,7 @@ class SettingsController extends Controller
             'trial_slots_total' => 'sometimes|nullable|integer|min:0|max:10000',
             'trial_slots_since' => 'sometimes|nullable|date',
             'callbacks_enabled' => 'sometimes|in:0,1',
+            'demo_enabled' => 'sometimes|in:0,1',
         ];
 
         $types = [

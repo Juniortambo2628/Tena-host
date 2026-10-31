@@ -620,5 +620,15 @@
         .sp--band.sp--solo .sp-connect { grid-column: 1 / 3; justify-self: center; width: min(440px, 100%); }
     }
 
+    /* /demo switcher */
+    .sp-demo-bar {
+        position: sticky; top: 0; z-index: 60; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px 10px; background: rgba(17, 17, 17, .92); color: #fff; font-size: 12px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    }
+    .sp-demo-bar span { width: 100%; text-align: center; opacity: .75; }
+    .sp-demo-bar a { color: #fff; text-decoration: none; font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .12); }
+    .sp-demo-bar a[aria-current=page] { background: #FFD300; color: #111; }
+    @media (min-width: 640px) { .sp-demo-bar span { width: auto; margin-right: 6px; } }
+
     @media (prefers-reduced-motion: reduce) { .sp * { transition: none !important; scroll-behavior: auto !important; } }
 </style>

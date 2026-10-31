@@ -47,6 +47,15 @@
     @include('portal.partials.splash-styles')
 </head>
 <body class="{{ $bodyClass }}" style="{{ $bodyStyle }}">
+    @if(!empty($demo))
+        {{-- /demo: switch between sample places; nothing typed here is saved. --}}
+        <nav class="sp-demo-bar" aria-label="Demo">
+            <span>Demo · nothing you type is saved</span>
+            @foreach($demo['places'] as $key => $label)
+                <a href="{{ route('demo', ['type' => $key]) }}" @if($demo['current'] === $key) aria-current="page" @endif>{{ $label }}</a>
+            @endforeach
+        </nav>
+    @endif
     @if(!empty($preview) && empty($embedded))
         <p class="sp-preview-notice">Design preview · This page does not connect a device.</p>
     @endif

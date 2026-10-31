@@ -57,6 +57,8 @@ class PublicPageController extends Controller
             'plans' => LandingPage::livePlans('hosts'),
             // The hero's call-back form shows only when switched on in Settings.
             'callbacks' => CallbackController::enabled(),
+            // The homepage "Try it yourself" section links to /demo only while it's on.
+            'demo' => DemoController::enabled(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path),
         ]);
     }

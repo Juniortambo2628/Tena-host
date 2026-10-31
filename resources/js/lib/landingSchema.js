@@ -98,6 +98,7 @@ export const SECTION_MEDIA_SCHEMA = {
     journey: { slots: [] },
 
     comparison_table: { slots: [] },
+    demo: { slots: [] },
     announcement: { slots: [] },
 
     signup: { slots: [] },
