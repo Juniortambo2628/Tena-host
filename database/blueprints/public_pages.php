@@ -399,6 +399,25 @@ return [
                 ],
             ],
         ],
+        'demo' => [
+            'title' => 'Live demo (Try it yourself)',
+            'content' => [
+                'anchor' => 'demo',
+                'badge' => 'Try it yourself',
+                'title' => 'See your guests’ first screen, on your own phone.',
+                'subtitle' => 'Scan the code to open a real TenaFi WiFi page, just as your guests will. It’s a demo, so nothing you type is saved.',
+                'checklist' => "Switch between a rental, a café, a salon and an event\nSee the welcome offer, house guide and sign-up",
+                'demo_url' => '/demo',
+                // Phones and tablets see this button instead of the QR code.
+                'button_label' => 'Open the demo WiFi page',
+                'cta_label' => 'Book my free trial',
+                'cta_href' => '#trial',
+                // public/brand/demo-qr.svg encodes https://tena-fi.com/demo; regenerate it if the domain changes.
+                'qr_image' => '/brand/demo-qr.svg',
+                'qr_label' => 'Point your phone camera here',
+                'url_label' => 'tena-fi.com/demo',
+            ],
+        ],
         'detailed_features__home' => [
             'title' => 'Feature rows',
             'content' => [

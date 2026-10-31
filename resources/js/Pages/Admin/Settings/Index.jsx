@@ -147,6 +147,7 @@ export default function Index({ settings, logos = [] }) {
             trial_slots_total: flattened.trial_slots_total ?? '50',
             trial_slots_since: flattened.trial_slots_since || '',
             callbacks_enabled: flattened.callbacks_enabled || '0',
+            demo_enabled: flattened.demo_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -342,6 +343,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="“Get a call back” form on the homepage (leads go to Sign-ups, with the usual alerts)"
                                         checked={data.settings.callbacks_enabled === '1'}
                                         onChange={() => updateSetting('callbacks_enabled', data.settings.callbacks_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Live demo: /demo and the homepage “Try it yourself” section (nothing visitors type is saved)"
+                                        checked={data.settings.demo_enabled === '1'}
+                                        onChange={() => updateSetting('demo_enabled', data.settings.demo_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

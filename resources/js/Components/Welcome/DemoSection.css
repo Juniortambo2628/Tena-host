@@ -1,0 +1,99 @@
+@reference "../../../css/theme.css";
+
+.demo-section {
+    @apply grid bg-primary text-dark rounded-3xl max-w-6xl mx-auto items-center;
+    gap: 28px;
+    padding: 32px 22px;
+}
+
+@media (min-width: 900px) {
+    .demo-section {
+        grid-template-columns: 1.1fr 0.9fr;
+        padding: 48px;
+    }
+}
+
+.demo-section__eyebrow {
+    @apply inline-block rounded-full bg-dark text-primary;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 4px 12px;
+}
+
+.demo-section h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    line-height: 1.08;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 14px 0 10px;
+}
+
+.demo-section__lede {
+    font-size: 17px;
+    color: #3E4250;
+    margin: 0;
+}
+
+.demo-section__checks {
+    @apply list-none p-0 flex flex-col;
+    gap: 8px;
+    margin: 18px 0 0;
+    font-weight: 700;
+}
+
+.demo-section__checks li {
+    @apply flex items-start;
+    gap: 8px;
+}
+
+.demo-section__actions {
+    @apply flex flex-wrap;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.demo-section__open,
+.demo-section__cta {
+    @apply inline-flex items-center rounded-full no-underline font-extrabold;
+    min-height: 48px;
+    padding: 0 20px;
+}
+
+.demo-section__open {
+    @apply bg-dark text-primary;
+}
+
+.demo-section__cta {
+    @apply bg-white text-dark;
+}
+
+.demo-section__qr {
+    @apply flex flex-col items-center bg-white rounded-3xl text-center justify-self-center;
+    gap: 10px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(20, 20, 20, 0.16);
+}
+
+.demo-section__qr img {
+    @apply block;
+    width: 220px;
+    height: 220px;
+}
+
+.demo-section__qr small {
+    @apply text-muted;
+    font-size: 13px;
+}
+
+/* Desktops scan the code; phones and tablets tap the button instead. */
+@media (hover: hover) and (pointer: fine) {
+    .demo-section__open {
+        @apply hidden;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .demo-section__qr {
+        @apply hidden;
+    }
+}

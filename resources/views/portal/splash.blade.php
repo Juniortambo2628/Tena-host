@@ -25,7 +25,7 @@
         <div class="sp-error" role="alert">{{ $error }}</div>
     @endif
 
-    <form method="POST" action="{{ route('portal.connect') }}" novalidate>
+    <form method="POST" action="{{ $formAction ?? route('portal.connect') }}" novalidate>
         @csrf
         @foreach(['id', 'ap', 't', 'ssid', 'url'] as $param)
             <input type="hidden" name="{{ $param }}" value="{{ $params[$param] }}">
