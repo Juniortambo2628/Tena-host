@@ -7,14 +7,33 @@ import './PartnersCarousel.css';
 const KINDS = { hosts: 'Short-term rentals', business: 'Business' };
 const TABS = [['all', 'All'], ['hosts', 'Short-term rentals'], ['business', 'Businesses']];
 
+/** A stand-in WiFi page, drawn until the client's screenshot is uploaded. */
+function PlaceholderPage({ partner }) {
+    return (
+        <div className={`trusted-placeholder trusted-placeholder--${partner.kind === 'hosts' ? 'hosts' : 'business'}`} role="img" aria-label={`${partner.name} WiFi page`}>
+            <div className="trusted-placeholder__head">
+                <span className="trusted-placeholder__mono" aria-hidden="true">{partner.name.trim().charAt(0).toUpperCase()}</span>
+                <b>{partner.name}</b>
+                {partner.type_area && <small>{partner.type_area}</small>}
+            </div>
+            <div className="trusted-placeholder__body" aria-hidden="true">
+                <span className="trusted-placeholder__h">Free WiFi</span>
+                <i /><i /><i />
+                <span className="trusted-placeholder__cta">Connect to WiFi</span>
+                <small>Powered by TenaFi</small>
+            </div>
+        </div>
+    );
+}
+
 const prefersReducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 /**
  * "Trusted by": each client's branded WiFi page in a phone frame.
  * Rows come from Admin → Public Pages (name, url, kind, type_area) with the
- * screenshot in the row's media slot (partner_{i}_logo). Rows without a
- * screenshot, or whose image isn't portrait (an old logo), are left out; with
- * none left the section doesn't render.
+ * screenshot in the row's media slot (partner_{i}_logo). Until a row has a
+ * portrait screenshot (an old square logo doesn't count), its phone shows a
+ * simple branded placeholder page with the client's name instead.
  */
 export default function PartnersCarousel({ section }) {
     const list = useRef(null);
@@ -27,10 +46,11 @@ export default function PartnersCarousel({ section }) {
         if (!section) return [];
         return extractItems(section, 'partners', ['name', 'url', 'kind', 'type_area'])
             .map((partner, i) => ({ ...partner, index: i, image: getMedia(section, `partner_${i}_logo`, '') }))
-            .filter(p => p.name && p.image);
+            .filter(p => p.name);
     }, [section]);
 
-    const shown = partners.filter(p => !failed.has(p.index));
+    // A row whose image is missing, broken or not portrait falls back to the placeholder.
+    const shown = partners.map(p => ({ ...p, image: failed.has(p.index) ? '' : p.image }));
     const visible = shown.filter(p => filter === 'all' || p.kind === filter);
     const bothKinds = shown.some(p => p.kind === 'hosts') && shown.some(p => p.kind === 'business');
 
@@ -104,14 +124,18 @@ export default function PartnersCarousel({ section }) {
                             <li key={partner.index} className="trusted-item" data-kind={partner.kind || undefined}>
                                 <figure>
                                     <div className="trusted-phone">
-                                        <img
-                                            src={partner.image}
-                                            alt={`${partner.name} WiFi login page`}
-                                            width="600" height="1200" loading="lazy" decoding="async"
-                                            onError={() => drop(partner.index)}
-                                            // Screenshots are portrait (about 1:2); an old square logo is left out.
-                                            onLoad={e => { const { naturalWidth: w, naturalHeight: h } = e.currentTarget; if (!w || h / w < 1.3) drop(partner.index); }}
-                                        />
+                                        {partner.image ? (
+                                            <img
+                                                src={partner.image}
+                                                alt={`${partner.name} WiFi login page`}
+                                                width="600" height="1200" loading="lazy" decoding="async"
+                                                onError={() => drop(partner.index)}
+                                                // Screenshots are portrait (about 1:2); an old square logo gets the placeholder.
+                                                onLoad={e => { const { naturalWidth: w, naturalHeight: h } = e.currentTarget; if (!w || h / w < 1.3) drop(partner.index); }}
+                                            />
+                                        ) : (
+                                            <PlaceholderPage partner={partner} />
+                                        )}
                                     </div>
                                     <figcaption>
                                         {linked
