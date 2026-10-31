@@ -99,6 +99,7 @@ export const SECTION_MEDIA_SCHEMA = {
 
     comparison_table: { slots: [] },
     demo: { slots: [] },
+    worth_calculator: { slots: [] },
     announcement: { slots: [] },
 
     signup: { slots: [] },

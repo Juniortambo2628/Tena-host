@@ -32,7 +32,12 @@ class HomepageCopyCommand extends Command
     /** page slug => section keys to update ("*" = every section the blueprint lists for that page). */
     private const TARGETS = [
         'home' => '*',
-        LandingPage::SITE => ['header', 'footer', 'announcement'],
+        LandingPage::SITE => ['header', 'footer', 'announcement', 'whatsapp_button'],
+    ];
+
+    /** Sections where only some fields belong to the homepage copy (the rest stay as the admin set them). */
+    private const ONLY_FIELDS = [
+        'whatsapp_button' => ['menu_greeting', 'menu_home'],
     ];
 
     public function handle(): int
@@ -93,7 +98,7 @@ class HomepageCopyCommand extends Command
                 continue;
             }
             $live = $section->contents()->pluck('value', 'content_key');
-            foreach (PageBlueprint::flatten($definition['content'] ?? []) as $contentKey => $value) {
+            foreach ($this->fields($key, $definition) as $contentKey => $value) {
                 $current = $live[$contentKey] ?? null;
                 if ($current === null || self::plain($current) !== self::plain($value)) {
                     $changes[] = ["{$page->slug}/{$key}", $contentKey, $current, $value];
@@ -119,7 +124,7 @@ class HomepageCopyCommand extends Command
             if (! $section) {
                 continue;
             }
-            foreach (PageBlueprint::flatten($definition['content'] ?? []) as $contentKey => $value) {
+            foreach ($this->fields($key, $definition) as $contentKey => $value) {
                 $section->contents()->updateOrCreate(['content_key' => $contentKey], [
                     'value' => $value,
                     'type' => str_starts_with($value, '[') ? 'json' : (str_contains($value, '<') ? 'html' : 'text'),
@@ -133,6 +138,14 @@ class HomepageCopyCommand extends Command
                 LandingSection::where('page_id', $home->id)->where('section_key', $key)->update(['sort_order' => $i + 1]);
             }
         }
+    }
+
+    /** @return array<string, string> the section's blueprint fields this command owns */
+    private function fields(string $key, array $definition): array
+    {
+        $fields = PageBlueprint::flatten($definition['content'] ?? []);
+
+        return isset(self::ONLY_FIELDS[$key]) ? array_intersect_key($fields, array_flip(self::ONLY_FIELDS[$key])) : $fields;
     }
 
     /** Blueprint order first, then any other live homepage sections in their current order. */

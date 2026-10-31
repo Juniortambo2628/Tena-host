@@ -22,6 +22,8 @@ class TrackController extends Controller
         $data = $request->validate([
             'event' => ['required', 'string', 'regex:'.self::EVENT_PATTERN],
             'page' => ['nullable', 'string', 'regex:/^[a-z0-9-]{1,20}$/'],
+            // Which choice was made, e.g. the WhatsApp menu option ("rentals").
+            'option' => ['nullable', 'string', 'regex:/^[a-z0-9-]{1,20}$/'],
         ]);
 
         $key = 'track:'.$request->ip();
@@ -30,7 +32,7 @@ class TrackController extends Controller
         }
         RateLimiter::hit($key, 60);
 
-        $metric = 'public.'.$data['event'].(isset($data['page']) ? ':'.$data['page'] : '');
+        $metric = 'public.'.$data['event'].(isset($data['page']) ? ':'.$data['page'] : '').(isset($data['option']) ? ':'.$data['option'] : '');
 
         // whereDate: the `date` cast stores a full datetime on some drivers.
         $row = Analytics::where('metric_name', $metric)->whereDate('date_recorded', today())->first()

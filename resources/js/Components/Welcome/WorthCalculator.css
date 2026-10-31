@@ -1,0 +1,96 @@
+@reference "../../../css/theme.css";
+
+.worth {
+    @apply max-w-5xl mx-auto bg-white overflow-hidden rounded-3xl;
+    border: 1px solid #E6E7EB;
+}
+
+.worth__tabs {
+    @apply flex flex-wrap;
+    gap: 6px;
+    padding: 12px;
+    background: #F7F7F8;
+    border-bottom: 1px solid #E6E7EB;
+}
+
+.worth__tabs button {
+    @apply rounded-full bg-white text-dark font-bold cursor-pointer;
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 15px;
+    border: 1.5px solid #E6E7EB;
+}
+
+.worth__tabs button[aria-selected="true"] {
+    @apply bg-dark text-primary border-dark;
+}
+
+.worth__body {
+    @apply grid;
+    gap: 28px;
+    padding: 24px 20px;
+}
+
+@media (min-width: 860px) {
+    .worth__body {
+        grid-template-columns: 0.9fr 1.1fr;
+        padding: 32px;
+    }
+}
+
+.worth__inputs {
+    @apply flex flex-col;
+    gap: 22px;
+}
+
+.worth__label {
+    @apply flex justify-between items-baseline font-bold text-dark;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.worth__label output {
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.worth__inputs input[type="range"] {
+    @apply w-full;
+    accent-color: var(--color-dark);
+}
+
+.worth__outputs {
+    @apply grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.worth__outputs > div {
+    @apply flex flex-col rounded-2xl;
+    gap: 4px;
+    padding: 14px;
+    background: #F7F7F8;
+}
+
+.worth__outputs > div.is-hi {
+    @apply bg-primary;
+}
+
+.worth__outputs b {
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 900;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.worth__outputs span {
+    font-size: 13px;
+    color: #4A4E58;
+}
+
+.worth__note {
+    @apply text-muted;
+    grid-column: 1 / -1;
+    margin: 4px 0 0;
+    font-size: 13px;
+}
