@@ -120,6 +120,20 @@ class BillingTest extends TestCase
         $this->assertSame(1, $this->host->subscriptions()->count());
     }
 
+    public function test_a_month_paid_at_month_end_ends_on_the_last_day_of_the_next_month(): void
+    {
+        $this->travelTo('2027-01-31 10:00:00');
+        $service = app(SubscriptionService::class);
+        $quote = app(PlanPricing::class)->quote('basic', 1, 0, 'monthly');
+
+        $service->activateForUser($this->host, 'mpesa', 'A', $quote['total'], $quote);
+        $this->assertSame('2027-02-28', $this->host->fresh()->subscription('default')->ends_at->toDateString());
+
+        $this->travelTo('2027-10-31 10:00:00');
+        $service->activateForUser($this->host->fresh(), 'mpesa', 'B', $quote['total'], $quote);
+        $this->assertSame('2027-11-30', $this->host->fresh()->subscription('default')->ends_at->toDateString());
+    }
+
     public function test_configured_mpesa_turns_billing_on_in_auto_mode(): void
     {
         Setting::setValue('billing_enabled', 'auto', 'billing', 'string');

@@ -77,7 +77,8 @@ class SubscriptionService
             'stripe_status' => 'active',
             'stripe_price' => $quote['plan'].'_'.$quote['cycle'],
             'quantity' => $quote['units'],
-            'ends_at' => $from->copy()->addMonths($quote['months']),
+            // No overflow: a month paid on 31 Oct runs to 30 Nov, not 1 Dec.
+            'ends_at' => $from->copy()->addMonthsNoOverflow($quote['months']),
         ];
 
         $subscription
