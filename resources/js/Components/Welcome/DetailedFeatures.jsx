@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SectionWrapper, SectionHeader, TwoColumn } from './layouts';
-import { getContent, getMedia, extractJsonItems, comingSoonBadge, stripHtml } from '@/lib/cms';
+import { getContent, getMedia, extractJsonItems, comingSoonBadge, stripHtml, getUpload } from '@/lib/cms';
 import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
 import Mockup from '@/Components/Public/Mockup';
@@ -67,6 +67,7 @@ export default function DetailedFeatures({ section }) {
             // Optional per row: an anchor, a drawn mockup instead of the image, a note and its own button.
             anchor: stripHtml(getContent(section, `sections.${i}.anchor`, '')),
             mockup: stripHtml(getContent(section, `sections.${i}.mockup`, '')),
+            shot: getUpload(section, `section_${i}_shot`),
             screen: getContent(section, `sections.${i}.screen`, ''),
             note: stripHtml(getContent(section, `sections.${i}.note`, '')),
             ctaLabel: stripHtml(getContent(section, `sections.${i}.cta_label`, '')),
@@ -92,8 +93,8 @@ export default function DetailedFeatures({ section }) {
                         label={s.label}
                         heading={s.heading}
                         description={s.description}
-                        image={s.mockup
-                            ? <Mockup type={s.mockup} screen={s.screen} className="detailed-features-mockup" />
+                        image={s.mockup || s.shot
+                            ? <Mockup type={s.mockup} screen={s.screen} shot={s.shot} alt={stripHtml(s.label)} className="detailed-features-mockup" />
                             : <FeatureImage src={s.image} alt={s.label} defaultSrc={DEFAULT_IMAGES[i % DEFAULT_IMAGES.length]} />}
                         features={s.features}
                         cta={(s.note || s.ctaLabel || ctaText) && (

@@ -16,6 +16,7 @@ export const SECTION_MEDIA_SCHEMA = {
     hero: {
         slots: [
             { key: 'main_image', label: 'Main hero image', description: 'Primary hero visual on the right of the headline.' },
+            { key: 'visual_shot', label: 'Screenshot instead of the drawn WiFi page', description: SHOT_HINT },
         ],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'features', 'feature_{i}_image', 'Feature {n} image'),
     },
@@ -47,7 +48,10 @@ export const SECTION_MEDIA_SCHEMA = {
 
     detailed_features: {
         slots: [],
-        dynamic: (contentKeys) => featureSlots(contentKeys, 'sections', 'section_{i}_image', 'Section {n} image'),
+        dynamic: (contentKeys) => [
+            ...featureSlots(contentKeys, 'sections', 'section_{i}_image', 'Section {n} image'),
+            ...shotSlots(contentKeys, 'sections', 'section_{i}_shot', 'Section {n}: screenshot instead of the drawing'),
+        ],
     },
 
     media_showcase: {
@@ -73,7 +77,10 @@ export const SECTION_MEDIA_SCHEMA = {
 
     path_cards: {
         slots: [],
-        dynamic: (contentKeys) => featureSlots(contentKeys, 'cards', 'card_{i}_image', 'Card {n} image'),
+        dynamic: (contentKeys) => [
+            ...featureSlots(contentKeys, 'cards', 'card_{i}_image', 'Card {n} image'),
+            ...shotSlots(contentKeys, 'cards', 'card_{i}_shot', 'Card {n}: screenshot instead of the drawing'),
+        ],
     },
 
     seo: {
@@ -94,8 +101,11 @@ export const SECTION_MEDIA_SCHEMA = {
         ],
     },
 
-    // Phone mockups are drawn in HTML from the steps' "screen" lines.
-    journey: { slots: [] },
+    // Phone mockups are drawn in HTML from the steps' "screen" lines, unless a screenshot is uploaded.
+    journey: {
+        slots: [],
+        dynamic: (contentKeys) => shotSlots(contentKeys, 'steps', 'step_{i}_shot', 'Step {n}: screenshot instead of the drawn phone'),
+    },
 
     comparison_table: { slots: [] },
     demo: { slots: [] },
@@ -108,6 +118,13 @@ export const SECTION_MEDIA_SCHEMA = {
     footer: { slots: [] },
     feature_status: { slots: [] },
 };
+
+/** Drawn pictures (WiFi pages, chats, reports) can be swapped for a real screenshot or photo. */
+const SHOT_HINT = 'Upload a screenshot or photo to show it instead of the drawing. Delete it to bring the drawing back. Real screenshots: use made-up or consenting guests’ names.';
+
+function shotSlots(contentKeys, arrName, keyPattern, labelPattern) {
+    return featureSlots(contentKeys, arrName, keyPattern, labelPattern).map(slot => ({ ...slot, description: SHOT_HINT }));
+}
 
 function featureSlots(contentKeys, arrName, keyPattern, labelPattern) {
     const indices = new Set();

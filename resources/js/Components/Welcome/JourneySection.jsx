@@ -1,5 +1,5 @@
 import React from 'react';
-import { getContent, extractItems, getText, stripHtml } from '@/lib/cms';
+import { getContent, extractItems, getText, stripHtml, getUpload } from '@/lib/cms';
 import { SectionWrapper } from './layouts';
 import { BRAND_COLORS } from '@/constants';
 import './JourneySection.css';
@@ -213,9 +213,15 @@ export default function JourneySection({ section }) {
                                     {step.text && <p>{stripHtml(step.text)}</p>}
                                 </div>
                             </div>
-                            <div className="journey-step__art" aria-hidden="true">
-                                <Mockup type={stripHtml(step.mockup)} lines={screenLines(step.screen)} brand={brand} />
-                            </div>
+                            {getUpload(section, `step_${i}_shot`) ? (
+                                <div className="journey-step__art">
+                                    <img className="journey-step__shot" src={getUpload(section, `step_${i}_shot`)} alt={stripHtml(step.title)} loading="lazy" decoding="async" />
+                                </div>
+                            ) : (
+                                <div className="journey-step__art" aria-hidden="true">
+                                    <Mockup type={stripHtml(step.mockup)} lines={screenLines(step.screen)} brand={brand} />
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ol>
