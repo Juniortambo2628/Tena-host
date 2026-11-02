@@ -662,6 +662,24 @@ return [
                 'cta_secondary' => 'See how it works',
                 'cta_secondary_url' => '#h-how',
                 'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 per unit a month.",
+                // "Get a call back" (shown while Admin -> Settings has the call-back form on).
+                'callback_title' => 'Get a call back',
+                'callback_options' => 'hosts|I run rentals',
+                'callback_button' => 'Call me back',
+                'callback_note' => 'We’ll call or WhatsApp you about the free trial.',
+                'callback_link_label' => 'Or book your slot now',
+                'callback_link' => '#join',
+                'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
+                'ticks' => "Installed for you\nNo payment to book\nCancel with 30 days’ notice",
+                'show_slots' => '1',
+                // "image" (the hero photo) or "splash" (a drawn WiFi page and floating cards).
+                'visual' => 'splash',
+                'visual_screen' => "color: #0F4C45\nbrand: The Loft Nairobi | Kilimani\nheadline: Karibu! You’re home.\ntiles: 📖 Guide | 🕑 Checkout | 🚕 Transfers\nFirst name\nEmail address\n+254 Phone number\noptin: Send me offers and early access to direct deals",
+                'visual_cards' => [
+                    ['icon' => '👥', 'title' => '4 guests joined your list', 'text' => 'Apt 5B · booked under 1 name'],
+                    ['icon' => '★', 'title' => 'Review request sent', 'text' => 'Checkout day · Airbnb and Google'],
+                    ['icon' => '↺', 'title' => 'Sarah booked direct', 'text' => 'Her 2nd stay · 0% commission'],
+                ],
             ],
             'media' => ['main_image' => $img('Branded-Splash-Page.jpg')],
         ],
@@ -711,6 +729,24 @@ return [
                 ],
             ],
         ],
+        'demo' => [
+            'title' => 'Live demo (Try it yourself)',
+            'content' => [
+                'anchor' => 'h-demo',
+                'badge' => 'Try it yourself',
+                'title' => 'See your guests’ first screen, on your own phone.',
+                'subtitle' => 'Scan the code to open a real TenaFi WiFi page, just as your guests will. It’s a demo, so nothing you type is saved.',
+                'checklist' => "See the welcome page, house guide and extras\nSwitch between a rental, a café, a salon and an event",
+                'demo_url' => '/demo?type=rental',
+                'button_label' => 'Open the demo WiFi page',
+                'cta_label' => 'Book my free trial',
+                'cta_href' => '#join',
+                // public/brand/demo-qr.svg encodes https://tena-fi.com/demo; regenerate it if the domain changes.
+                'qr_image' => '/brand/demo-qr.svg',
+                'qr_label' => 'Point your phone camera here',
+                'url_label' => 'tena-fi.com/demo',
+            ],
+        ],
         'stats__commission' => [
             'title' => 'Commission comparison',
             'bg' => 'gray',
@@ -728,6 +764,32 @@ return [
                 ],
             ],
         ],
+        'worth_calculator' => [
+            'title' => 'What’s it worth (calculator)',
+            'content' => [
+                'anchor' => 'h-worth',
+                'badge' => 'What’s it worth to you?',
+                'title' => 'Put in your rentals. See what TenaFi could add.',
+                'subtitle' => 'An estimate, using typical sign-up, review and return rates. Your results will differ.',
+                'mode' => 'hosts',
+                'tab_hosts' => 'Short-term rentals',
+                'tab_business' => 'Local business',
+                'tab_events' => 'Events',
+                'estimate_label' => 'Estimate only.',
+                // Assumptions, shown in the note under the results. Rates are percentages.
+                'hosts_avg_stay' => '2.8',
+                'hosts_guests_per_stay' => '1.7',
+                'hosts_join_rate' => '67',
+                'hosts_direct_share' => '5',
+                'hosts_ota_fee' => '15',
+                'business_open_days' => '26',
+                'business_join_rate' => '25',
+                'business_review_rate' => '4',
+                'business_offer_use' => '5',
+                'events_connect_rate' => '50',
+                'events_join_rate' => '60',
+            ],
+        ],
         'comparison__party' => [
             'title' => 'Every guest, not just the booker',
             'content' => [
@@ -743,6 +805,26 @@ return [
                 ],
             ],
         ],
+        'comparison_table' => [
+            'title' => 'Free WiFi vs TenaFi (table)',
+            'bg' => 'gray',
+            'content' => [
+                'badge' => 'More than free WiFi',
+                'title' => 'What free WiFi gives you, and what TenaFi gives you.',
+                'subtitle' => 'Same internet connection. What changes is what you know about your guests and what you can do next.',
+                'col_label' => 'What you need',
+                'col_without' => 'Free WiFi',
+                'col_with' => 'With TenaFi',
+                'rows' => [
+                    ['label' => 'Who connected', 'without' => 'Anonymous devices', 'with' => 'Every guest in the party, with consent'],
+                    ['label' => 'Your brand', 'without' => 'A router name and a password', 'with' => 'A WiFi page in your logo and colours'],
+                    ['label' => 'Reviews', 'without' => 'Hope guests remember', 'with' => 'A review request after every checkout'],
+                    ['label' => 'Empty nights', 'without' => 'Wait for the OTA', 'with' => 'Offers to past guests for your gaps'],
+                    ['label' => 'Repeat stays', 'without' => 'Back through the OTA, fee and all', 'with' => 'Booked direct with your own code'],
+                    ['label' => 'Who runs it', 'without' => 'You, on top of everything else', 'with' => 'Our team, with a monthly report'],
+                ],
+            ],
+        ],
         'detailed_features' => [
             'title' => 'What your guests see, and what you get',
             'content' => [
@@ -754,6 +836,9 @@ return [
                 'sections' => [
                     [
                         'label' => '1. Your guest homepage',
+                        // Drawn instead of the uploaded image (see Mockup.jsx).
+                        'mockup' => 'guide',
+                        'screen' => "color: #0F4C45\nhead: Welcome to The Loft\nrow: 📖 | House guide | Free\nrow: 📍 | Local tips | Free\nrow: 🕑 | Late checkout, 2pm | KES 2,000\nrow: 🌙 | Extra night | KES 7,000\n---\n@mpesa\nto: Pay KES 2,000 to The Loft Nairobi?\nok: Paid. Your host has been told.",
                         'heading' => 'House guide, local tips and paid extras.',
                         'description' => 'After connecting, guests get the house guide, local tips and paid extras.',
                         'bg' => 'white', 'reverse' => '0',
@@ -765,6 +850,9 @@ return [
                     ],
                     [
                         'label' => '2. Messages we send for you',
+                        // Drawn instead of the uploaded image (see Mockup.jsx).
+                        'mockup' => 'chat',
+                        'screen' => "color: #0F4C45\nhead: The Loft Nairobi | WhatsApp\nmsg: Hi Amina, asante for staying with us in Kilimani! Would you leave us a quick review? | Leave a review | 11:00 | | Checkout day\nmsg: Coming back to Nairobi? Book direct next time with code KARIBU10. | Book direct | | dark | A week later",
                         'heading' => 'Thank-yous, review requests and offers for your empty dates.',
                         'description' => "\u{201C}Hi Amina, asante for staying with us in Kilimani! Would you leave us a quick review? Coming back to Nairobi? Book direct next time with code KARIBU10.\u{201D}",
                         'bg' => 'gray', 'reverse' => '1',
@@ -777,6 +865,9 @@ return [
                     [
                         'label' => '3. Results you can see',
                         'heading' => 'One report every month.',
+                        // Drawn instead of the uploaded image (see Mockup.jsx).
+                        'mockup' => 'stats',
+                        'screen' => "head: Your monthly report · October\nrow: Guests added to your list | 46\nrow: Review requests sent | 18\nrow: Upsells sold | 7\nrow: Nights booked direct | 5\nrow: OTA fees saved | KES 9,300",
                         'description' => 'So you know exactly what TenaFi is doing for your occupancy: guests added to your list, review requests sent, upsells sold, nights booked direct and OTA commission avoided. Example only; your numbers will differ.',
                         'bg' => 'white', 'reverse' => '0',
                         'features' => [
@@ -814,6 +905,12 @@ return [
                 'badge' => 'The experience behind TenaFi',
                 'title' => 'Built inside our own rentals first.',
                 'subtitle' => 'TenaFi was born from Stay Awhile Rentals, our short-term rental business in Nairobi. After years of hosting thousands of guests, we saw how hard it is to fill quiet nights when every guest belongs to the OTA. So we built the tool we needed.',
+                // "dark": the founder quote instead of the photo, and the source line under the numbers.
+                'style' => 'dark',
+                'quote' => '“The WiFi login is the one moment every guest connects. We turned it into a relationship.”',
+                'quote_name' => 'Glen Mwangi, Founder & CEO',
+                // Keep: these are Stay Awhile's figures, not client results.
+                'sources' => 'Figures from Stay Awhile Rentals, TenaFi’s founding portfolio. Client results will be added here as they come in.',
                 'closing_line' => '',
                 'tagline' => '',
                 'stats' => [
@@ -948,6 +1045,24 @@ return [
                 'cta_secondary' => 'Learn how it works',
                 'cta_secondary_url' => '#b-how',
                 'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 a month.",
+                // "Get a call back" (shown while Admin -> Settings has the call-back form on).
+                'callback_title' => 'Get a call back',
+                'callback_options' => 'business|I own a business',
+                'callback_button' => 'Call me back',
+                'callback_note' => 'We’ll call or WhatsApp you about the free trial.',
+                'callback_link_label' => 'Or book your slot now',
+                'callback_link' => '#signup',
+                'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
+                'ticks' => "Installed for you\nNo payment to book\nCancel with 30 days’ notice",
+                'show_slots' => '1',
+                // "image" (the hero photo) or "splash" (a drawn WiFi page and floating cards).
+                'visual' => 'splash',
+                'visual_screen' => "color: #4A3123\nbrand: Kahawa House | Café · Westlands\nheadline: Karibu! Free WiFi.\ntiles: ☕ Menu | 📶 Free WiFi | 🎂 Birthday\nFirst name\n+254 Phone number\nBirthday (day and month)\noptin: Send me offers, news and a birthday treat",
+                'visual_cards' => [
+                    ['icon' => 'G', 'title' => 'New Google review', 'text' => 'Request sent at 16:05, reviewed at 16:40'],
+                    ['icon' => '👋', 'title' => 'Welcome back, Brian', 'text' => '4th visit · opted in to offers'],
+                    ['icon' => '🎂', 'title' => 'Birthday treat sent', 'text' => 'Amina · this week'],
+                ],
             ],
             'media' => ['main_image' => $img('Clients-view.jpg')],
         ],
@@ -964,6 +1079,24 @@ return [
                 ],
             ],
         ],
+        'demo' => [
+            'title' => 'Live demo (Try it yourself)',
+            'content' => [
+                'anchor' => 'b-demo',
+                'badge' => 'Try it yourself',
+                'title' => 'See your customers’ first screen, on your own phone.',
+                'subtitle' => 'Scan the code to open a real TenaFi WiFi page, just as your customers will. It’s a demo, so nothing you type is saved.',
+                'checklist' => "See the welcome page, menu and sign-up\nSwitch between a café, a salon, a rental and an event",
+                'demo_url' => '/demo?type=cafe',
+                'button_label' => 'Open the demo WiFi page',
+                'cta_label' => 'Book my free trial',
+                'cta_href' => '#signup',
+                // public/brand/demo-qr.svg encodes https://tena-fi.com/demo; regenerate it if the domain changes.
+                'qr_image' => '/brand/demo-qr.svg',
+                'qr_label' => 'Point your phone camera here',
+                'url_label' => 'tena-fi.com/demo',
+            ],
+        ],
         'comparison__qr' => [
             'title' => 'QR card vs TenaFi',
             'bg' => 'gray',
@@ -977,6 +1110,26 @@ return [
                 'columns' => [
                     ['label' => 'Today: a QR card on the table', 'stat' => '', 'stat_label' => '', 'points' => "Needs the customer\u{2019}s own mobile data\nNeeds effort: scan, open, write, on the spot\nOne chance; once they leave, it\u{2019}s gone", 'text' => 'Many happy customers never scan, so they never review.', 'highlight' => '0'],
                     ['label' => "TenaFi: a \u{201C}Free WiFi\u{201D} sign", 'stat' => '', 'stat_label' => '', 'points' => "Customers want to connect; it saves their data\nA branded welcome page that looks professional\nFree and VIP WiFi tiers that you control [[vip_wifi]]", 'text' => 'Every customer who connects gets a review request later that day. No scan, no effort.', 'highlight' => '1'],
+                ],
+            ],
+        ],
+        'comparison_table' => [
+            'title' => 'Free WiFi vs TenaFi (table)',
+            'bg' => 'gray',
+            'content' => [
+                'badge' => 'More than free WiFi',
+                'title' => 'What free WiFi gives you, and what TenaFi gives you.',
+                'subtitle' => 'Same internet connection. What changes is what you know about your customers and what you can do next.',
+                'col_label' => 'What you need',
+                'col_without' => 'Free WiFi',
+                'col_with' => 'With TenaFi',
+                'rows' => [
+                    ['label' => 'Who connected', 'without' => 'Anonymous devices', 'with' => 'A named customer list, with consent'],
+                    ['label' => 'Your brand', 'without' => 'A router name and a password', 'with' => 'A WiFi page in your logo and colours'],
+                    ['label' => 'Google reviews', 'without' => 'A QR card that waits for a scan', 'with' => 'A same-day request to every customer'],
+                    ['label' => 'Repeat visits', 'without' => 'Hope they come back', 'with' => 'Birthday, win-back and offer campaigns'],
+                    ['label' => 'Quiet days', 'without' => 'Wait for walk-ins', 'with' => 'Offers to your own list, sent for you'],
+                    ['label' => 'Who runs it', 'without' => 'You, on top of everything else', 'with' => 'Our team, with a monthly report'],
                 ],
             ],
         ],
@@ -1021,6 +1174,9 @@ return [
                 'sections' => [
                     [
                         'label' => '1. Your customer homepage',
+                        // Drawn instead of the uploaded image (see Mockup.jsx).
+                        'mockup' => 'guide',
+                        'screen' => "color: #4A3123\nhead: Welcome to Kahawa House\nrow: ☕ | Menu | Coffee, breakfast, lunch\nrow: 🏷️ | Today’s offer | 2-for-1 pastries\nrow: 🎶 | Live music | Friday, 7pm\nrow: 🎂 | Birthday treat | In your birthday week",
                         'heading' => "Your menu, today\u{2019}s offer and events.",
                         'description' => "After connecting, customers see your menu, today\u{2019}s offer and events.",
                         'bg' => 'white', 'reverse' => '0',
@@ -1030,6 +1186,9 @@ return [
                     ],
                     [
                         'label' => '2. A review request, the same day',
+                        // Drawn instead of the uploaded image (see Mockup.jsx).
+                        'mockup' => 'chat',
+                        'screen' => "color: #4A3123\nhead: Kahawa House | WhatsApp · same day\nmsg: Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share your experience on Google. | Review us on Google | 16:05\n---\n@rating\nname: Kahawa House\nscore: 4.5\nmeta: 54 reviews · +12 this month\nrow: BO | Review request sent | Same day",
                         'heading' => 'Sent to every customer who connected, not just the happy few.',
                         'description' => "\u{201C}Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share your experience on Google.\u{201D}",
                         'bg' => 'gray', 'reverse' => '1',
@@ -1041,6 +1200,9 @@ return [
                     [
                         'label' => '3. Results you can see',
                         'heading' => 'New reviews, your rating trend and return visits, every month.',
+                        // Drawn instead of the uploaded image (see Mockup.jsx).
+                        'mockup' => 'stats',
+                        'screen' => "head: Your monthly report · October\nscore: 4.5\nrow: Customers added to your list | 212\nrow: Review requests sent | 198\nrow: New Google reviews | 12\nrow: Return visits from offers | 31",
                         'description' => 'Customers added to your list, review requests sent, new Google reviews, your rating and return visits from offers. Example only; your numbers will differ.',
                         'bg' => 'white', 'reverse' => '0',
                         'features' => [
@@ -1073,6 +1235,54 @@ return [
                     ['value' => '28%', 'label' => 'always write a review when asked, up from 16% a year earlier'],
                     ['value' => '~70%', 'label' => 'of first-time restaurant guests never come back'],
                 ],
+            ],
+        ],
+        'worth_calculator' => [
+            'title' => 'What’s it worth (calculator)',
+            'content' => [
+                'anchor' => 'b-worth',
+                'badge' => 'What’s it worth to you?',
+                'title' => 'Put in your customers. See what TenaFi could add.',
+                'subtitle' => 'An estimate, using typical sign-up, review and return rates. Your results will differ.',
+                'mode' => 'business',
+                'tab_hosts' => 'Short-term rentals',
+                'tab_business' => 'Local business',
+                'tab_events' => 'Events',
+                'estimate_label' => 'Estimate only.',
+                // Assumptions, shown in the note under the results. Rates are percentages.
+                'hosts_avg_stay' => '2.8',
+                'hosts_guests_per_stay' => '1.7',
+                'hosts_join_rate' => '67',
+                'hosts_direct_share' => '5',
+                'hosts_ota_fee' => '15',
+                'business_open_days' => '26',
+                'business_join_rate' => '25',
+                'business_review_rate' => '4',
+                'business_offer_use' => '5',
+                'events_connect_rate' => '50',
+                'events_join_rate' => '60',
+            ],
+        ],
+        'credibility' => [
+            'title' => 'Proof: built by operators',
+            'content' => [
+                // "dark": the founder quote instead of the photo, and the source line under the numbers.
+                'style' => 'dark',
+                'badge' => 'Built by operators',
+                'title' => 'Built inside a 16x Airbnb Superhost business in Nairobi.',
+                'subtitle' => 'TenaFi started at Stay Awhile Rentals. We built the tool we needed to turn guests into regulars, and now run it for hosts, businesses and events across Kenya.',
+                'quote' => '“The WiFi login is the one moment every guest connects. We turned it into a relationship.”',
+                'quote_name' => 'Glen Mwangi, Founder & CEO',
+                'closing_line' => '',
+                'tagline' => '',
+                'stats' => [
+                    ['value' => '16x', 'label' => 'Airbnb Superhost'],
+                    ['value' => '1,400+', 'label' => 'reservations hosted'],
+                    ['value' => '5,000+', 'label' => 'guest nights'],
+                    ['value' => '800+', 'label' => 'guest reviews'],
+                ],
+                // Keep: these are Stay Awhile's figures, not client results.
+                'sources' => 'Figures from Stay Awhile Rentals, TenaFi’s founding portfolio. Client results will be added here as they come in.',
             ],
         ],
         'journey' => $journey('business'),

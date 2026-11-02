@@ -9,13 +9,15 @@ The copy, sources and sign-up questions are taken from his files. The design is 
 | URL | Sections (in order; `#anchors` match Glen's) |
 | --- | --- |
 | `/` | hero (audience links, price line, ticks, counter, drawn WiFi page), partners `#trusted`, path_cards `#choose` (three audiences), comparison__problem `#problem` (versus), features__plays `#all-in-one`, detailed_features__home (`#wifi-page`, `#reviews`, `#campaigns`, `#extras`, `#events`), how_it_works `#how`, comparison_table, credibility (dark), cta_banner__founding `#trial` (with `#pricing`), faq |
-| `/hosts` | hero, stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, stats__commission, comparison__party `#h-party`, detailed_features `#h-product`, features__protect `#h-protect`, credibility, journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
-| `/business` | hero, features__why, comparison__qr `#b-qr`, features__industries, how_it_works `#b-how`, detailed_features `#b-product`, stats__reviews `#b-reviews`, journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
+| `/hosts` | hero (drawn WiFi page, call back, counter), stats__problem `#h-problem`, features__outcomes, how_it_works `#h-how`, demo `#h-demo`, stats__commission, worth_calculator `#h-worth` (rentals), comparison__party `#h-party`, comparison_table, detailed_features `#h-product` (drawn mockups), features__protect `#h-protect`, credibility (dark), journey `#h-first-month`, pricing `#h-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#join` |
+| `/business` | hero (drawn WiFi page, call back, counter), features__why, demo `#b-demo`, comparison__qr `#b-qr`, comparison_table, features__industries, how_it_works `#b-how`, detailed_features `#b-product` (drawn mockups), stats__reviews `#b-reviews`, worth_calculator `#b-worth` (business), credibility (dark), journey `#b-first-month`, pricing `#b-pricing`, cta_banner__founding, faq, cta_banner__crosssell, signup `#signup` |
 | `/events` | hero (dark, drawn event WiFi page), tiles (kinds of events), comparison__gap (versus), features__plays, detailed_features__events (`#attendees`, `#sponsors`, `#every-event`, `#after`), how_it_works `#e-how` (venue and big-crowd cards), comparison_table, worth_calculator (events mode), signup `#enquire` (sign-up type `event`, no trial counter), faq. Created switched off; `tenafi:homepage-copy` switches it on |
 | `/privacy`, `/terms` | Admin → Policies, in the same layout |
 | Site-wide (not routable) | seo (defaults + og:image), header (logo, default nav), announcement, footer (grouped columns), whatsapp_button, trial_slots, feature_status |
 
 Everything is editable in **Admin → Public Pages**, with one tab per page. The defaults live in `database/blueprints/public_pages.php`.
+
+The new look on `/hosts` and `/business` arrives hidden (migration `2026_11_02_000001`). `php artisan tenafi:audience-pages --dry-run` lists what it adds, and without `--dry-run` it backs up, then writes only the new fields (hero drawing, ticks, counter and call-back form; drawn mockups in the product rows; the dark proof style), switches the new sections on and puts both pages in blueprint order. The pages' existing wording is not touched. `--restore=` undoes it.
 
 ### Section types (all reusable on any page)
 

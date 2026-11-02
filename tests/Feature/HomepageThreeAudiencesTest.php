@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\LandingContent;
 use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Services\Cms\PageBlueprint;
@@ -94,10 +93,7 @@ it('keeps the rules on the new copy', function () {
         ->and($copy)->not->toContain('KES 3,000')->not->toContain('KES 4,500');
 });
 
-it('leaves /hosts and /business looking as before', function (string $slug) {
-    $hero = PageBlueprint::definitions()[$slug]['hero']['content'];
-
-    expect($hero)->not->toHaveKey('visual')->not->toHaveKey('audiences')->not->toHaveKey('price_line');
-    expect(LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'hero')->whereHas('page', fn ($p) => $p->where('slug', $slug)))
-        ->where('content_key', 'visual')->exists())->toBeFalse();
+it('keeps the homepage’s audience links and price line off /hosts and /business', function (string $slug) {
+    // Their new look comes from tenafi:audience-pages (AudiencePagesTest), not the homepage copy.
+    expect(PageBlueprint::definitions()[$slug]['hero']['content'])->not->toHaveKey('audiences')->not->toHaveKey('price_line');
 })->with(['hosts', 'business']);
