@@ -1,3 +1,6 @@
+/** Drawn pictures (WiFi pages, chats, reports) can be swapped for a real screenshot or photo. */
+const SHOT_HINT = 'Upload a screenshot or photo to show it instead of the drawing. Delete it to bring the drawing back. Real screenshots: use made-up or consenting guests’ names.';
+
 /**
  * Landing section media schema.
  *
@@ -118,9 +121,6 @@ export const SECTION_MEDIA_SCHEMA = {
     footer: { slots: [] },
     feature_status: { slots: [] },
 };
-
-/** Drawn pictures (WiFi pages, chats, reports) can be swapped for a real screenshot or photo. */
-const SHOT_HINT = 'Upload a screenshot or photo to show it instead of the drawing. Delete it to bring the drawing back. Real screenshots: use made-up or consenting guests’ names.';
 
 function shotSlots(contentKeys, arrName, keyPattern, labelPattern) {
     return featureSlots(contentKeys, arrName, keyPattern, labelPattern).map(slot => ({ ...slot, description: SHOT_HINT }));
