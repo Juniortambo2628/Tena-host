@@ -67,12 +67,15 @@ export default function CallbackForm({ section }) {
                         aria-invalid={error ? 'true' : undefined} aria-describedby={error ? 'callback-error' : undefined}
                     />
                 </label>
-                <label className="callback-form__kind">
-                    <span className="sr-only">What do you run?</span>
-                    <select value={kind} onChange={e => setKind(e.target.value)}>
-                        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                    </select>
-                </label>
+                {/* One option (the /hosts and /business heroes): nothing to choose. */}
+                {options.length > 1 && (
+                    <label className="callback-form__kind">
+                        <span className="sr-only">What do you run?</span>
+                        <select value={kind} onChange={e => setKind(e.target.value)}>
+                            {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                        </select>
+                    </label>
+                )}
                 <button type="submit" disabled={status === 'sending'}>
                     {status === 'sending' && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
                     {stripHtml(getContent(section, 'callback_button', 'Call me back'))}

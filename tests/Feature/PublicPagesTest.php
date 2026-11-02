@@ -74,8 +74,8 @@ it('renders each public page from its own CMS sections', function (string $url, 
         );
 })->with([
     'main' => ['/', 'home', ['seo', 'hero', 'partners', 'path_cards', 'comparison__problem', 'features__plays', 'demo', 'detailed_features__home', 'how_it_works', 'comparison_table', 'worth_calculator', 'credibility', 'cta_banner__founding', 'faq']],
-    'hosts' => ['/hosts', 'hosts', ['seo', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'stats__commission', 'comparison__party', 'detailed_features', 'features__protect', 'credibility', 'journey', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
-    'business' => ['/business', 'business', ['seo', 'hero', 'features__why', 'comparison__qr', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'journey', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
+    'hosts' => ['/hosts', 'hosts', ['seo', 'hero', 'stats__problem', 'features__outcomes', 'how_it_works', 'demo', 'stats__commission', 'worth_calculator', 'comparison__party', 'comparison_table', 'detailed_features', 'features__protect', 'credibility', 'journey', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
+    'business' => ['/business', 'business', ['seo', 'hero', 'features__why', 'demo', 'comparison__qr', 'comparison_table', 'features__industries', 'how_it_works', 'detailed_features', 'stats__reviews', 'worth_calculator', 'credibility', 'journey', 'pricing', 'cta_banner__founding', 'faq', 'cta_banner__crosssell', 'signup']],
 ]);
 
 it('retires sections of the old homepage that the handoff dropped', function () {

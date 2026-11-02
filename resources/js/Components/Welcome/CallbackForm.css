@@ -21,6 +21,10 @@
     .callback-form__row {
         grid-template-columns: 1.2fr 1fr auto;
     }
+
+    .callback-form__row:not(:has(.callback-form__kind)) {
+        grid-template-columns: 1fr auto;
+    }
 }
 
 .callback-form__phone {
