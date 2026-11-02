@@ -20,6 +20,9 @@ import './Mockup.css';
  *   mpesa       to: Pay KES 2,000 to …?   ok: Paid. Your host has been told.
  *
  * Every drawing carries an "Example" label: names and numbers are made up.
+ *
+ * `shot` (an uploaded screenshot or photo, from the section's Media tab)
+ * replaces the drawing; delete the upload and the drawing comes back.
  */
 export const MOCKUP_TYPES = ['splash', 'chat', 'rating', 'stats', 'attendees', 'guide', 'mpesa'];
 
@@ -174,7 +177,15 @@ function Mpesa({ p }) {
 const PANELS = { splash: Splash, chat: Chat, rating: Rating, stats: Stats, attendees: Attendees, guide: Guide, mpesa: Mpesa };
 
 /** Draws every panel of a screen side by side, with an "Example" label. */
-export default function Mockup({ type, screen, className = '' }) {
+export default function Mockup({ type, screen, shot = '', alt = '', className = '' }) {
+    if (shot) {
+        return (
+            <div className={`mk-stage mk-stage--shot ${className}`}>
+                <img className="mk-shot" src={shot} alt={alt} loading="lazy" decoding="async" />
+            </div>
+        );
+    }
+
     const panels = parseScreen(screen, type).filter(p => PANELS[p.type]);
     if (!panels.length) return null;
     const phones = panels.filter(p => ['splash', 'guide'].includes(p.type)).length;

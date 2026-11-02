@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePage } from '@inertiajs/react';
 import { Check } from 'lucide-react';
-import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, getText, isTruthy, textLines } from '@/lib/cms';
+import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, getText, isTruthy, textLines, getUpload } from '@/lib/cms';
 import { usePublic } from '@/Components/Public/PublicContext';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import Mockup from '@/Components/Public/Mockup';
@@ -23,7 +23,7 @@ function HeroVisual({ section }) {
     const cards = extractItems(section, 'visual_cards', ['icon', 'title', 'text']).filter(c => stripHtml(c.title));
     return (
         <div className="hero-visual" aria-hidden="true">
-            <Mockup type="splash" screen={getContent(section, 'visual_screen', '')} className="hero-visual__phone" />
+            <Mockup type="splash" screen={getContent(section, 'visual_screen', '')} shot={getUpload(section, 'visual_shot')} alt="A TenaFi WiFi page" className="hero-visual__phone" />
             {cards.slice(0, 3).map((card, i) => (
                 <div key={i} className={`hero-float hero-float--${i}`}>
                     <span className="hero-float__ic">{stripHtml(card.icon)}</span>

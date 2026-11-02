@@ -101,6 +101,15 @@
     .journey-step__art { min-height: 330px; }
 }
 
+/* An uploaded screenshot in place of the drawn phone. */
+.journey-step__shot {
+    @apply block w-auto rounded-3xl bg-white;
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    box-shadow: 0 16px 36px rgba(20, 20, 20, 0.16);
+}
+
 .journey-step:not(:last-child)::after {
     content: "";
     position: absolute;
