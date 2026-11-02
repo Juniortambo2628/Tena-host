@@ -29,6 +29,25 @@ class WifiPortalTest extends TestCase
         $response->assertSee('Tena Guest');
     }
 
+    public function test_unifi_guest_path_forwards_to_portal_with_params(): void
+    {
+        $params = [
+            'ap' => '11:22:33:44:55:66',
+            'id' => 'aa:bb:cc:dd:ee:ff',
+            't' => '1730000000',
+            'url' => 'http://example.com/',
+            'ssid' => 'Tena Guest',
+        ];
+
+        $this->get('/guest/s/default?'.http_build_query($params))
+            ->assertRedirect(route('portal.show', $params));
+
+        $this->get('/guest/s/default/?'.http_build_query($params))
+            ->assertRedirect(route('portal.show', $params));
+
+        $this->get('/guest/s/default')->assertRedirect(route('portal.show'));
+    }
+
     public function test_splash_shows_property_name_when_ap_is_known(): void
     {
         $host = User::factory()->create(['role' => 'host']);

@@ -46,6 +46,16 @@ class WifiPortalController extends Controller
     }
 
     /**
+     * UniFi's own redirect path (/guest/s/{site}/), used by controllers that
+     * append it to the external portal address. Forwards to /portal with the
+     * query string unchanged.
+     */
+    public function unifiPath(Request $request)
+    {
+        return redirect()->route('portal.show', $request->query());
+    }
+
+    /**
      * Owner-only preview. GET shows the saved design (optionally in another
      * template); POST renders an unsaved studio draft without storing it.
      */
