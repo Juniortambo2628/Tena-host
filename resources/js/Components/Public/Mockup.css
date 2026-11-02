@@ -377,3 +377,16 @@
         width: 160px;
     }
 }
+
+/* An uploaded screenshot or photo in place of the drawing. */
+.mk-stage--shot {
+    padding-top: 0;
+}
+
+.mk-shot {
+    @apply block w-auto rounded-3xl bg-white;
+    max-width: 100%;
+    max-height: 560px;
+    object-fit: contain;
+    box-shadow: 0 24px 50px rgba(20, 20, 20, 0.18);
+}

@@ -18,6 +18,17 @@ export function getContent(section, key, defaultValue = '') {
  * Does case-insensitive, flexible matching to handle key variations
  * like section_0_image, SECTION_0_IMAGE, SECTIONS_0_IMAGE, etc.
  */
+/**
+ * An upload in exactly this slot, or ''. For slots that replace a drawing
+ * (visual_shot, card_0_shot, ...): getMedia's fuzzy match would otherwise
+ * fall back to that row's old photo and hide the drawing.
+ */
+export function getUpload(section, key) {
+    const value = section?.media?.[key];
+    if (typeof value === 'string') return value;
+    return value?.optimized_path || value?.original_path || '';
+}
+
 export function getMedia(section, key, defaultValue = '') {
     if (!section || !section.media) return defaultValue;
 

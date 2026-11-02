@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { SectionWrapper, SectionHeader } from './layouts';
-import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml } from '@/lib/cms';
+import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, getUpload } from '@/lib/cms';
 import { SkeletonSectionHeader } from './Skeleton';
 import CtaLink from '@/Components/Public/CtaLink';
 import Mockup from '@/Components/Public/Mockup';
@@ -32,9 +32,9 @@ export default function PathCards({ section }) {
             <div className={`path-cards-grid path-cards-grid--${cards.length}`}>
                 {cards.map((card, i) => (
                     <CtaLink key={i} href={card.href} event={card.event} className="path-card">
-                        {stripHtml(card.mockup) ? (
+                        {stripHtml(card.mockup) || getUpload(section, `card_${i}_shot`) ? (
                             <div className="path-card-mockup">
-                                <Mockup type={stripHtml(card.mockup)} screen={card.screen} />
+                                <Mockup type={stripHtml(card.mockup)} screen={card.screen} shot={getUpload(section, `card_${i}_shot`)} alt={stripHtml(card.label)} />
                             </div>
                         ) : (
                             <div className="path-card-image-wrap">
