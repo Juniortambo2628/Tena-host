@@ -280,6 +280,12 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
 });
 
+// UniFi controllers that append their own path (http://<portal>/guest/s/<site>/?id=...)
+// land here; forward to /portal with the UniFi params intact.
+Route::get('/guest/s/{site}', [WifiPortalController::class, 'unifiPath'])
+    ->where('site', '[A-Za-z0-9_-]+')
+    ->name('portal.unifi-path');
+
 // Inbound messaging: STOP/START replies and WhatsApp read receipts.
 Route::get('/api/whatsapp/webhook', [MessagingWebhookController::class, 'verifyWhatsApp'])->name('whatsapp.webhook.verify');
 Route::post('/api/whatsapp/webhook', [MessagingWebhookController::class, 'whatsApp'])->name('whatsapp.webhook');
