@@ -6,7 +6,7 @@ page, and hosts use the dashboard to see guests, run WhatsApp/SMS/email campaign
 sell extras (M-Pesa) and collect reviews. The public marketing site, the host and
 admin dashboards, and the guest WiFi portal all live in this repository.
 
-Two people work on it: **Kevin** (developer, owns the repository) and **Glen**
+Two people work on it: **Kevin** (co-founder and CTO, owns the repository) and **Glen**
 (founder and CEO, non-technical, works through Claude Code). Both use Claude Code
 in this repository, so this file is the shared rulebook. When a request and this
 file disagree, follow this file and say so.
