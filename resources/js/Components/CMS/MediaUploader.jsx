@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
-import { Search } from 'lucide-react';
+import { Search, RefreshCw, Crop, Download, Trash2, AlertTriangle } from 'lucide-react';
 import './MediaUploader.css';
 import { csrfHeaders } from '@/Support/csrf';
+import shrinkImage from './shrinkImage';
+
+/** A readable message for a failed upload response. */
+async function uploadErrorMessage(res) {
+    if (res.status === 413) return 'This file is bigger than the server accepts. Try a smaller photo or a screenshot.';
+    if (res.status === 419) return 'Your session expired. Refresh the page and try again.';
+    const data = await res.json().catch(() => null);
+    return data?.errors?.file?.[0] || data?.error || data?.message || `Upload failed (${res.status}). Please try again.`;
+}
 
 export default function MediaUploader({
     sectionId,
@@ -16,6 +25,10 @@ export default function MediaUploader({
     maxSize = 20 * 1024 * 1024,
     accept = null,
     label = 'Drop file here or click to browse',
+    // A plain name for the slot ("Main hero image"); the key shows underneath.
+    title = '',
+    // Set when the site doesn't show this slot right now (a drawing is shown instead).
+    notice = '',
 }) {
     const [isUploading, setIsUploading] = useState(false);
     const [uploadError, setUploadError] = useState('');
@@ -27,16 +40,28 @@ export default function MediaUploader({
     const fileInputRef = useRef(null);
 
     const handleFileSelect = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        if (file.size > maxSize) {
-            setUploadError(`File exceeds ${(maxSize / 1024 / 1024).toFixed(0)}MB limit`);
-            return;
-        }
+        const picked = e.target.files?.[0];
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        if (!picked) return;
 
         setIsUploading(true);
         setUploadError('');
+
+        // Full-size phone photos are shrunk first, so they fit the server's upload limit.
+        let file;
+        try {
+            file = await shrinkImage(picked);
+        } catch (err) {
+            setUploadError(err.message);
+            setIsUploading(false);
+            return;
+        }
+
+        if (file.size > maxSize) {
+            setUploadError(`File exceeds ${(maxSize / 1024 / 1024).toFixed(0)}MB limit`);
+            setIsUploading(false);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('file', file);
@@ -56,25 +81,19 @@ export default function MediaUploader({
                 body: formData,
             });
 
-            if (res.status === 419) {
-                throw new Error('CSRF token mismatch. Please try uploading again.');
-            }
-
             if (!res.ok) {
-                const data = await res.json().catch(() => null);
-                throw new Error(data?.error || `Upload failed (${res.status})`);
+                throw new Error(await uploadErrorMessage(res));
             }
 
             const data = await res.json();
             setIsUploading(false);
             setIsChanging(false);
+            notify.success('Photo uploaded. It’s on the website now.');
             if (onUpload) onUpload(data.media);
         } catch (err) {
             setUploadError(err.message || 'Upload failed');
             setIsUploading(false);
         }
-
-        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const loadLibrary = async () => {
@@ -175,39 +194,36 @@ export default function MediaUploader({
                             className="cms-media-card__image"
                         />
                     )}
-                    <div className="cms-media-card__overlay">
-                        <button onClick={handleCrop} className="cms-media-card__action" title="Crop & Reposition">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </button>
-                        <button onClick={() => setIsChanging(!isChanging)} className="cms-media-card__action" title="Change Media">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </button>
-                        <a
-                            href={route('admin.landing.media.download', { media: existingMedia.id })}
-                            className="cms-media-card__action"
-                            title="Download"
-                            onClick={handleDownload}
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                        </a>
-                        <button onClick={() => onDelete(existingMedia)} className="cms-media-card__action cms-media-card__action--danger" title="Delete">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </button>
-                    </div>
                 </div>
                 <div className="cms-media-card__info">
-                    <span className="cms-media-card__key">{mediaKey}</span>
+                    <span className="cms-media-card__title">{title || mediaKey}</span>
                     {existingMedia.width && (
-                        <span className="cms-media-card__dims">{existingMedia.width}x{existingMedia.height}</span>
+                        <span className="cms-media-card__dims">{existingMedia.width}×{existingMedia.height}</span>
                     )}
+                </div>
+                {notice && (
+                    <p className="cms-media-card__notice"><AlertTriangle size={14} aria-hidden="true" /> {notice}</p>
+                )}
+                {/* Always visible, so it works on phones and tablets too (no hover needed). */}
+                <div className="cms-media-card__actions">
+                    <button type="button" onClick={() => setIsChanging(!isChanging)} className="cms-media-card__action cms-media-card__action--primary" aria-expanded={isChanging}>
+                        <RefreshCw size={14} aria-hidden="true" /> Replace
+                    </button>
+                    {!isVideo && onCrop && (
+                        <button type="button" onClick={handleCrop} className="cms-media-card__action">
+                            <Crop size={14} aria-hidden="true" /> Crop
+                        </button>
+                    )}
+                    <a
+                        href={route('admin.landing.media.download', { media: existingMedia.id })}
+                        className="cms-media-card__action"
+                        onClick={handleDownload}
+                    >
+                        <Download size={14} aria-hidden="true" /> Download
+                    </a>
+                    <button type="button" onClick={() => onDelete(existingMedia)} className="cms-media-card__action cms-media-card__action--danger">
+                        <Trash2 size={14} aria-hidden="true" /> Delete
+                    </button>
                 </div>
 
                 {isChanging && (
@@ -296,7 +312,7 @@ export default function MediaUploader({
     return (
         <div className="cms-media-slot">
             <div className="cms-media-slot__header">
-                <span className="cms-media-slot__key">{mediaKey}</span>
+                <span className="cms-media-slot__key">{title || mediaKey}</span>
                 <div className="cms-media-slot__toggle">
                     <button
                         onClick={() => setMode('upload')}
@@ -313,6 +329,9 @@ export default function MediaUploader({
                 </div>
             </div>
 
+            {notice && (
+                <p className="cms-media-card__notice"><AlertTriangle size={14} aria-hidden="true" /> {notice}</p>
+            )}
             {mode === 'upload' ? (
                 <div className="cms-uploader">
                     {renderUploadInput()}
