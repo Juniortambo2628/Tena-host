@@ -8,7 +8,7 @@ import ContentField from './ContentField';
 import MediaUploader from './MediaUploader';
 import CropModal from './CropModal';
 import JsonArrayEditor from './JsonArrayEditor';
-import { getExpectedMediaSlots, isSchemaKey, slotNotice } from '@/lib/landingSchema';
+import { getExpectedMediaSlots, isSchemaKey, slotNotice, slotTitle } from '@/lib/landingSchema';
 import './SectionEditor.css';
 import { useConfirm } from '@/hooks/useConfirm';
 
@@ -444,7 +444,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                                         onUpload={handleMediaUpload}
                                         onDelete={handleMediaDelete}
                                         onCrop={handleCropOpen}
-                                        title={slot?.label || ''}
+                                        title={slotTitle(section.section_key, key, slot?.label || '', localContent)}
                                         notice={slotNotice(section.section_key, key, localContent, localMedia)}
                                         label="Tap to choose a photo, or drop one here"
                                     />

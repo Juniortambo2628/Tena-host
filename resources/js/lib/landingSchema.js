@@ -74,8 +74,8 @@ export const SECTION_MEDIA_SCHEMA = {
     partners: {
         slots: [],
         // The slot keeps its old key so existing uploads stay attached to their rows.
-        dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n}: WiFi page screenshot (portrait, about 1:2)')
-            .map(slot => ({ ...slot, description: 'A phone screenshot of their TenaFi WiFi page, status bar cropped off, e.g. 600 × 1200, under 150 KB. Until then the row shows a placeholder page with their name.' })),
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n}: WiFi page screenshot or logo')
+            .map(slot => ({ ...slot, description: 'Best: a phone screenshot of their TenaFi WiFi page (tall, about 600 × 1200, status bar cropped off). A logo works too: it goes on a drawn WiFi page in the logo’s colours.' })),
     },
 
     path_cards: {
@@ -203,11 +203,11 @@ export function slotNotice(sectionKey, mediaKey, content = {}, media = {}) {
         if (mockup) return `Not on the site: ${what.toLowerCase()} shows a drawing. Upload in “${what}: screenshot instead of the drawing” to replace it.`;
     }
 
-    // Trusted by only shows tall phone screenshots; anything squarer keeps the drawn placeholder phone.
+    // Trusted by: a tall phone screenshot fills the phone; anything squarer is used as a logo.
     if (type === 'partners' && /^partner_\d+_logo$/.test(mediaKey)) {
         const { width, height } = media?.[mediaKey] || {};
         if (width && height && height / width < 1.3) {
-            return 'Not on the site: this image isn’t a tall phone screenshot, so the drawn placeholder phone is shown. Upload a portrait screenshot (about twice as tall as it is wide).';
+            return 'Shown as a logo on a drawn WiFi page. To show their real WiFi page, upload a tall phone screenshot of it instead.';
         }
     }
 
@@ -216,4 +216,14 @@ export function slotNotice(sectionKey, mediaKey, content = {}, media = {}) {
     }
 
     return '';
+}
+
+/** A slot's name in the editor; Trusted by slots are named after their client. */
+export function slotTitle(sectionKey, mediaKey, label, content = {}) {
+    const partner = /^partner_(\d+)_logo$/.exec(mediaKey);
+    if (String(sectionKey).split('__')[0] === 'partners' && partner) {
+        const name = plain(content[`partners.${partner[1]}.name`]);
+        if (name) return `${name}: WiFi page screenshot or logo`;
+    }
+    return label;
 }

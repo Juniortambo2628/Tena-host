@@ -2,18 +2,25 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getMedia, extractItems, getText } from '@/lib/cms';
 import EditablePicture from '@/Components/Public/EditablePicture';
+import pictureKind from '@/lib/pictureKind';
 import { SectionWrapper } from './layouts';
 import './PartnersCarousel.css';
 
 const KINDS = { hosts: 'Short-term rentals', business: 'Business' };
 const TABS = [['all', 'All'], ['hosts', 'Short-term rentals'], ['business', 'Businesses']];
 
-/** A stand-in WiFi page, drawn until the client's screenshot is uploaded. */
-function PlaceholderPage({ partner }) {
+/**
+ * A drawn WiFi page for a client without a screenshot. With a logo uploaded
+ * it shows the logo and takes the logo's main colour; otherwise their initial.
+ */
+function PlaceholderPage({ partner, logo = null }) {
+    const brand = logo?.color ? { '--brand-bg': logo.color, '--brand-ink': logo.ink } : undefined;
     return (
-        <div className={`trusted-placeholder trusted-placeholder--${partner.kind === 'hosts' ? 'hosts' : 'business'}`} role="img" aria-label={`${partner.name} WiFi page`}>
+        <div className={`trusted-placeholder trusted-placeholder--${partner.kind === 'hosts' ? 'hosts' : 'business'} ${brand ? 'trusted-placeholder--brand' : ''}`} style={brand} role="img" aria-label={`${partner.name} WiFi page`}>
             <div className="trusted-placeholder__head">
-                <span className="trusted-placeholder__mono" aria-hidden="true">{partner.name.trim().charAt(0).toUpperCase()}</span>
+                {logo
+                    ? <span className="trusted-placeholder__logo" aria-hidden="true"><img src={logo.src} alt="" loading="lazy" decoding="async" /></span>
+                    : <span className="trusted-placeholder__mono" aria-hidden="true">{partner.name.trim().charAt(0).toUpperCase()}</span>}
                 <b>{partner.name}</b>
                 {partner.type_area && <small>{partner.type_area}</small>}
             </div>
@@ -32,13 +39,14 @@ const prefersReducedMotion = () => typeof window !== 'undefined' && window.match
 /**
  * "Trusted by": each client's branded WiFi page in a phone frame.
  * Rows come from Admin → Public Pages (name, url, kind, type_area) with the
- * screenshot in the row's media slot (partner_{i}_logo). Until a row has a
- * portrait screenshot (an old square logo doesn't count), its phone shows a
- * simple branded placeholder page with the client's name instead.
+ * picture in the row's media slot (partner_{i}_logo). A tall phone
+ * screenshot fills the phone; a logo goes on a drawn WiFi page in the logo's
+ * colour; with nothing uploaded the drawn page shows the client's initial.
  */
 export default function PartnersCarousel({ section }) {
     const list = useRef(null);
-    const [failed, setFailed] = useState(() => new Set());
+    // What each uploaded picture is: a phone screenshot, or a logo (and its colour).
+    const [looks, setLooks] = useState(() => new Map());
     const [filter, setFilter] = useState('all');
     const [overflow, setOverflow] = useState({ prev: false, next: false, fits: true });
     const paused = useRef(false);
@@ -50,12 +58,17 @@ export default function PartnersCarousel({ section }) {
             .filter(p => p.name);
     }, [section]);
 
-    // A row whose image is missing, broken or not portrait falls back to the placeholder.
-    const shown = partners.map(p => ({ ...p, image: failed.has(p.index) ? '' : p.image }));
-    const visible = shown.filter(p => filter === 'all' || p.kind === filter);
-    const bothKinds = shown.some(p => p.kind === 'hosts') && shown.some(p => p.kind === 'business');
+    // Checked in the browser once per picture; until then (and on the server) the drawn page shows.
+    const checked = useRef(new Set());
+    useEffect(() => {
+        partners.filter(p => p.image && !checked.current.has(p.image)).forEach(p => {
+            checked.current.add(p.image);
+            pictureKind(p.image).then(look => setLooks(prev => new Map(prev).set(p.image, look)));
+        });
+    }, [partners]);
 
-    const drop = (index) => setFailed(prev => new Set(prev).add(index));
+    const visible = partners.filter(p => filter === 'all' || p.kind === filter);
+    const bothKinds = partners.some(p => p.kind === 'hosts') && partners.some(p => p.kind === 'business');
 
     const measure = useCallback(() => {
         const el = list.current;
@@ -92,7 +105,7 @@ export default function PartnersCarousel({ section }) {
         return () => clearInterval(timer);
     }, []);
 
-    if (!section || shown.length === 0) return null;
+    if (!section || partners.length === 0) return null;
 
     const title = getText(section, 'title', 'Trusted by hosts and local businesses');
     const subtitle = getText(section, 'subtitle', '');
@@ -126,17 +139,17 @@ export default function PartnersCarousel({ section }) {
                                 <figure>
                                     <EditablePicture section={section} slot={`partner_${partner.index}_logo`}>
                                     <div className="trusted-phone">
-                                        {partner.image ? (
+                                        {looks.get(partner.image)?.kind === 'shot' ? (
                                             <img
                                                 src={partner.image}
                                                 alt={`${partner.name} WiFi login page`}
                                                 width="600" height="1200" loading="lazy" decoding="async"
-                                                onError={() => drop(partner.index)}
-                                                // Screenshots are portrait (about 1:2); an old square logo gets the placeholder.
-                                                onLoad={e => { const { naturalWidth: w, naturalHeight: h } = e.currentTarget; if (!w || h / w < 1.3) drop(partner.index); }}
                                             />
                                         ) : (
-                                            <PlaceholderPage partner={partner} />
+                                            <PlaceholderPage
+                                                partner={partner}
+                                                logo={looks.get(partner.image)?.kind === 'logo' ? { src: partner.image, ...looks.get(partner.image) } : null}
+                                            />
                                         )}
                                     </div>
                                     </EditablePicture>
