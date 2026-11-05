@@ -62,6 +62,7 @@ class SettingsController extends Controller
             'callbacks_enabled' => 'sometimes|in:0,1',
             'demo_enabled' => 'sometimes|in:0,1',
             'event_accounts_enabled' => 'sometimes|in:0,1',
+            'teams_enabled' => 'sometimes|in:0,1',
         ];
 
         $types = [

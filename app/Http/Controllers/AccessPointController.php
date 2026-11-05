@@ -30,7 +30,7 @@ class AccessPointController extends Controller
         return Inertia::render('Host/AccessPoints/Index', [
             'accessPoints' => $accessPoints,
             'filters' => $request->only(['search']),
-            'properties' => Auth::user()->properties,
+            'properties' => Auth::user()->sites()->get(),
         ]);
     }
 

@@ -3,6 +3,7 @@ import { Link, usePage, router } from '@inertiajs/react';
 import {
     LayoutDashboard,
     Users,
+    UserCog,
     Wifi,
     Smartphone,
     Megaphone,
@@ -46,15 +47,18 @@ export default function DashboardLayout({ children }) {
     const sidebarRef = useRef(null);
     const userRole = auth.user.role || 'host';
 
+    // Billing, marketing and the team belong to the account owner, not to a manager they invited.
+    const isOwner = !auth.team?.member;
     const hostNavItems = [
         { name: 'Dashboard', icon: LayoutDashboard, route: 'host.dashboard' },
         { name: 'Guests', icon: Users, route: 'host.guests.index', match: ['host.guests.*'] },
         { name: 'WiFi Access', icon: Wifi, route: 'host.properties.index', match: ['host.properties.*', 'host.access-points.*', 'host.amenities.*', 'host.orders.*'] },
-        { name: 'Marketing', icon: Megaphone, route: 'host.marketing.index', match: ['host.marketing.*'] },
-        { name: 'Billing', icon: CreditCard, route: 'host.billing.index' },
+        isOwner && { name: 'Marketing', icon: Megaphone, route: 'host.marketing.index', match: ['host.marketing.*'] },
+        isOwner && auth.team?.enabled && { name: 'Team', icon: UserCog, route: 'host.team.index' },
+        isOwner && { name: 'Billing', icon: CreditCard, route: 'host.billing.index' },
         { name: 'Notifications', icon: Bell, route: 'profile.notifications' },
         { name: 'Settings', icon: Settings, route: 'profile.edit' },
-    ];
+    ].filter(Boolean);
 
     const adminNavItems = [
         { name: 'Overview', icon: LayoutDashboard, route: 'admin.dashboard' },

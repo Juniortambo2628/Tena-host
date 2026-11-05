@@ -36,7 +36,7 @@ class GuestController extends Controller
         return Inertia::render('Host/Guests/Index', [
             'guests' => $guests,
             'filters' => $request->only(['search']),
-            'properties' => Auth::user()->properties,
+            'properties' => Auth::user()->sites()->get(),
         ]);
     }
 

@@ -157,7 +157,8 @@ class SearchController extends Controller
     private function searchHost(string $query, User $user): array
     {
         $results = [];
-        $propertyIds = Property::where('user_id', $user->id)->pluck('id');
+        // An owner's sites, or a team member's assigned ones.
+        $propertyIds = $user->propertyIds();
 
         Guest::whereIn('property_id', $propertyIds)
             ->where(function ($q) use ($query) {
@@ -178,7 +179,7 @@ class SearchController extends Controller
                 ];
             });
 
-        Property::where('user_id', $user->id)
+        $user->sites()
             ->where(function ($q) use ($query) {
                 $q->where('name', 'LIKE', "%{$query}%")
                     ->orWhere('address', 'LIKE', "%{$query}%")

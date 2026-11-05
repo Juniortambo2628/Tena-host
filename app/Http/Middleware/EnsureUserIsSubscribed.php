@@ -24,7 +24,9 @@ class EnsureUserIsSubscribed
             return $next($request);
         }
 
-        if ($request->user() && ! $request->user()->subscribed('default') && ! $request->user()->onTrial()) {
+        // A team member works under the owner's plan.
+        $owner = $request->user()?->accountOwner();
+        if ($owner && ! $owner->subscribed('default') && ! $owner->onTrial()) {
             return redirect()->route('host.billing.index');
         }
 

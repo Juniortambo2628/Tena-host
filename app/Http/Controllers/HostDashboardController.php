@@ -19,7 +19,7 @@ class HostDashboardController extends Controller
         $user = Auth::user();
         $propertyIds = $user->propertyIds();
 
-        $properties = $user->properties()->withCount(['guests', 'accessPoints'])->get();
+        $properties = $user->sites()->withCount(['guests', 'accessPoints'])->get();
 
         $properties = $properties->map(function ($property) {
             $onlineAps = $property->accessPoints()->where('status', 'online')->count();

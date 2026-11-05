@@ -18,7 +18,10 @@ trait BelongsToHost
         $table = $this->getTable();
 
         if ($column === 'user_id') {
-            return $query->where("{$table}.{$column}", $user->id);
+            // A team member sees the owner's sites they were given, not sites of their own.
+            return $user->isTeamMember()
+                ? $query->whereIn("{$table}.id", $user->propertyIds())
+                : $query->where("{$table}.{$column}", $user->id);
         }
 
         return $query->whereIn("{$table}.{$column}", $user->propertyIds());

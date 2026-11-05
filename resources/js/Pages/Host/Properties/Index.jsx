@@ -27,7 +27,9 @@ registerPlugin(FilePondPluginImagePreview);
 
 export default function PropertyIndex({ properties, stats: live = {} }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
-    const account = usePage().props.auth?.account;
+    const { account, team } = usePage().props.auth || {};
+    // A manager the owner invited works on their sites but doesn't add or remove them.
+    const canManageSites = !team?.member;
     // Businesses and event venues start from the business templates (App\Support\AccountType).
     const accountIsBusiness = account?.splash === 'business';
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -120,8 +122,8 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
 
     const actions = [
         { label: 'Export Data', icon: <Download size={16} />, onClick: () => { window.location.href = route('host.properties.export'); } },
-        { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: openCreateModal },
-    ];
+        canManageSites && { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: openCreateModal },
+    ].filter(Boolean);
 
     const stats = [
         { label: 'Active Units', value: properties.length },
@@ -350,7 +352,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                             >
                                 Splash Studio
                             </PillButton>
-                            <button
+                            {canManageSites && <button
                                 onClick={async () => {
                                     const ok = await confirm({
                                         title: 'Delete Property',
@@ -367,13 +369,13 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 className="w-14 h-14 bg-white/40 backdrop-blur-md border border-white/40 rounded-2xl flex items-center justify-center text-black/20 hover:text-red-500 hover:bg-white transition-all active:scale-90"
                             >
                                  <Trash2 size={16}></Trash2>
-                            </button>
+                            </button>}
                         </div>
                     </GlassCard>
                 ))}
 
                 {/* Add Card Placeholder */}
-                <button
+                {canManageSites && <button
                     onClick={openCreateModal}
                     className="host-properties-index-add-card"
                 >
@@ -384,7 +386,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                         <span className="host-properties-index-add-title"><T>Add New Property</T></span>
                         <span className="host-properties-index-add-subtitle">Start onboarding</span>
                     </div>
-                </button>
+                </button>}
             </div>
 
             <TabbedModal
