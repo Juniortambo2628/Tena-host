@@ -62,7 +62,37 @@ class LandingPage extends Model
      */
     public static function siteSections(): array
     {
-        return collect(static::publicSections(self::SITE))->keyBy('section_key')->toArray();
+        $sections = collect(static::publicSections(self::SITE))->keyBy('section_key')->toArray();
+
+        // A feature whose admin switch is on is live on the site too, so its "Coming soon" badge goes.
+        if (isset($sections['feature_status']['content'])) {
+            $content = &$sections['feature_status']['content'];
+            foreach ($content as $key => $feature) {
+                if (preg_match('/^items\.(\d+)\.key$/', $key, $m) && static::featureSwitchedOn(strip_tags((string) $feature))) {
+                    $content["items.{$m[1]}.status"] = 'live';
+                }
+            }
+            unset($content);
+        }
+
+        return $sections;
+    }
+
+    /**
+     * Site features that ship behind an admin switch (Admin -> Settings): once
+     * the switch is on, the site stops calling them "Coming soon".
+     */
+    public const FEATURE_SWITCHES = [
+        'event_sponsors' => 'event_accounts_enabled',
+        'event_question' => 'event_accounts_enabled',
+        'event_tagging' => 'event_accounts_enabled',
+    ];
+
+    public static function featureSwitchedOn(string $feature): bool
+    {
+        $switch = static::FEATURE_SWITCHES[$feature] ?? null;
+
+        return $switch !== null && filter_var(Setting::getValue($switch, '0'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**

@@ -69,7 +69,7 @@ export default function PropertyShow({ property, wifi = {}, staffWifi = null }) 
                         <p className="text-sm my-3">{wifi.guests || 0} WiFi guests · {wifi.visits || 0} visits · {wifi.recentGuests || 0} guests connected in the last 24 hours · {wifi.marketingOptIns || 0} opted in to offers</p>
                         <p className="text-xs mb-4">Visits are counted after controller authorization; reconnects within 6 hours count as one visit. Client count above comes from UniFi and includes devices that may not have completed the form.</p>
                         {(wifi.latestGuests || []).length === 0 && <p className="text-sm">No WiFi guests yet. The first successful connection will appear here.</p>}
-                        {(wifi.latestGuests || []).map(guest => <div key={guest.id} className="border-t py-3 text-sm"><Link className="underline font-bold" href={route('host.guests.show', guest.id)}>{guest.first_name}</Link> · {guest.total_visits} visits · {guest.last_connected ? new Date(guest.last_connected).toLocaleString() : '—'} · {guest.marketing_opt_in ? 'Offers opted in' : 'No offers consent'}</div>)}
+                        {(wifi.latestGuests || []).map(guest => <div key={guest.id} className="border-t py-3 text-sm"><Link className="underline font-bold" href={route('host.guests.show', guest.id)}>{guest.first_name}</Link> · {guest.total_visits} {guest.total_visits === 1 ? 'visit' : 'visits'} · {guest.last_connected ? new Date(guest.last_connected).toLocaleString() : '—'} · {guest.marketing_opt_in ? 'Offers opted in' : 'No offers consent'}</div>)}
                     </GlassCard>
                     {staffWifi && (
                         <GlassCard padding="p-8">
