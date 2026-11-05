@@ -11,6 +11,12 @@ export default function Index({ pages = [], currentPage, sections: initialSectio
     const [sections, setSections] = useState(initialSections);
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+    // "Replace picture" on the public site links here with ?section=<id>&slot=<media key>.
+    const [focus] = useState(() => {
+        if (typeof window === 'undefined') return {};
+        const query = new URLSearchParams(window.location.search);
+        return { section: Number(query.get('section')) || null, slot: query.get('slot') || null };
+    });
 
     // Sync local state whenever Inertia hands us a fresh sections prop
     // (after a toggle, a save, or a manual router.reload). Without this the
@@ -139,6 +145,7 @@ export default function Index({ pages = [], currentPage, sections: initialSectio
                                     onMediaUpload={handleSectionUpdate}
                                     onMediaDelete={handleSectionUpdate}
                                     onToggleActive={applyLocalToggle}
+                                    focusSlot={focus.section === section.id ? focus.slot : null}
                                 />
                             </div>
                         </div>

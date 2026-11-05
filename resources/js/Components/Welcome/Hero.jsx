@@ -5,6 +5,7 @@ import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, getText, i
 import { usePublic } from '@/Components/Public/PublicContext';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import Mockup from '@/Components/Public/Mockup';
+import EditablePicture from '@/Components/Public/EditablePicture';
 import CallbackForm from './CallbackForm';
 import { SkeletonHero } from './Skeleton';
 import CtaLink from '@/Components/Public/CtaLink';
@@ -110,11 +111,13 @@ export default function Hero({ section }) {
                             {showSlots && <TrialSlots className="hero-slots" />}
                         </div>
                         <div className="hero-image-col">
-                            {drawn ? <HeroVisual section={section} /> : (
-                                <div className="hero-image-wrap">
-                                    <img className="hero-image" src={mainImage} alt="TenaFi platform preview" />
-                                </div>
-                            )}
+                            <EditablePicture section={section} slot={drawn ? 'visual_shot' : 'main_image'}>
+                                {drawn ? <HeroVisual section={section} /> : (
+                                    <div className="hero-image-wrap">
+                                        <img className="hero-image" src={mainImage} alt="TenaFi platform preview" />
+                                    </div>
+                                )}
+                            </EditablePicture>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getMedia, extractItems, getText } from '@/lib/cms';
+import EditablePicture from '@/Components/Public/EditablePicture';
 import { SectionWrapper } from './layouts';
 import './PartnersCarousel.css';
 
@@ -123,6 +124,7 @@ export default function PartnersCarousel({ section }) {
                         return (
                             <li key={partner.index} className="trusted-item" data-kind={partner.kind || undefined}>
                                 <figure>
+                                    <EditablePicture section={section} slot={`partner_${partner.index}_logo`}>
                                     <div className="trusted-phone">
                                         {partner.image ? (
                                             <img
@@ -137,6 +139,7 @@ export default function PartnersCarousel({ section }) {
                                             <PlaceholderPage partner={partner} />
                                         )}
                                     </div>
+                                    </EditablePicture>
                                     <figcaption>
                                         {linked
                                             ? <a href={partner.url} target="_blank" rel="noopener noreferrer"><b>{partner.name}</b></a>
