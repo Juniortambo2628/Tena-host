@@ -50,7 +50,11 @@ class SignupConversionService
             $type = self::SIGNUP_BUSINESS_TYPES[$registration->answers['businessType'] ?? ''] ?? null;
             $template = SplashDesign::recommendedTemplate($type);
             $user->properties()->create([
-                'name' => $registration->business_name ?: "{$user->first_name}'s ".($registration->type === Registration::TYPE_BUSINESS ? 'business' : 'property'),
+                'name' => $registration->business_name ?: ($registration->answers['eventName'] ?? null) ?: "{$user->first_name}'s ".match ($registration->type) {
+                    Registration::TYPE_BUSINESS => 'business',
+                    Registration::TYPE_EVENT => 'event',
+                    default => 'property',
+                },
                 'business_type' => $type,
                 'address' => $registration->location,
                 // Start from the template the business type recommends, with its headline, fields and accent.

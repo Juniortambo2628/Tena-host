@@ -2,6 +2,7 @@
 
 namespace App\Services\Cms;
 
+use App\Models\LandingContent;
 use App\Models\LandingPage;
 use App\Models\LandingSection;
 use Illuminate\Support\Arr;
@@ -112,6 +113,66 @@ class PageBlueprint
             $section->contents()->where('content_key', $statusKey)->update(['value' => $status]);
             LandingPage::clearCache();
         }
+    }
+
+    /**
+     * Add a feature to Site-wide → Feature status if it isn't listed yet
+     * (an admin's later status change is never overwritten).
+     */
+    public static function addFeatureStatus(string $feature, string $label, string $status = 'coming_soon'): void
+    {
+        $section = LandingSection::where('section_key', 'feature_status')
+            ->whereHas('page', fn ($q) => $q->where('slug', LandingPage::SITE))
+            ->first();
+        if (! $section || $section->contents()->where('content_key', 'like', 'items.%.key')->where('value', $feature)->exists()) {
+            return;
+        }
+
+        $next = $section->contents()->where('content_key', 'like', 'items.%.key')->pluck('content_key')
+            ->map(fn ($key) => (int) explode('.', $key)[1])->max();
+        $i = $next === null ? 0 : $next + 1;
+        foreach (['key' => $feature, 'label' => $label, 'status' => $status] as $field => $value) {
+            $section->contents()->create(['content_key' => "items.{$i}.{$field}", 'value' => $value, 'type' => 'text']);
+        }
+        LandingPage::clearCache();
+    }
+
+    /**
+     * Tie live list rows to a feature by their title (title => feature key),
+     * so they get its "Coming soon" badge. Covers flat rows (items.0.title)
+     * and the JSON feature lists inside feature rows (sections.0.features).
+     * Rows an admin already tied to a feature, or retitled, are left alone.
+     */
+    public static function tagFeatures(array $titles): void
+    {
+        $rows = LandingContent::where('content_key', 'like', '%.title')->whereIn('value', array_keys($titles))->get();
+        foreach ($rows as $row) {
+            $featureKey = preg_replace('/\.title$/', '.feature', $row->content_key);
+            $feature = LandingContent::firstOrNew(['section_id' => $row->section_id, 'content_key' => $featureKey], ['type' => 'text']);
+            if (blank($feature->value)) {
+                $feature->fill(['value' => $titles[$row->value]])->save();
+            }
+        }
+
+        foreach (LandingContent::where('content_key', 'like', '%.features')->get() as $list) {
+            $items = json_decode((string) $list->value, true);
+            if (! is_array($items)) {
+                continue;
+            }
+            $changed = false;
+            foreach ($items as &$item) {
+                if (is_array($item) && isset($titles[$item['title'] ?? null]) && blank($item['feature'] ?? null)) {
+                    $item['feature'] = $titles[$item['title']];
+                    $changed = true;
+                }
+            }
+            unset($item);
+            if ($changed) {
+                $list->update(['value' => json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)]);
+            }
+        }
+
+        LandingPage::clearCache();
     }
 
     private static function syncSection(LandingPage $page, string $key, array $definition, int $order, bool $relaunch): void

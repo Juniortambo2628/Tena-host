@@ -5,8 +5,12 @@ use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Services\Cms\PageBlueprint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
+
+// The copy commands save backups; keep them off the real disk.
+beforeEach(fn () => Storage::fake('local'));
 
 function whatsappButton(): LandingSection
 {

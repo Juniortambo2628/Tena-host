@@ -57,7 +57,7 @@ The three-audience homepage adds options to existing section types. Each is off 
 
 **Drawn mockups** (`resources/js/Components/Public/Mockup.jsx`, reusable on any page): a `mockup` type and a `screen` field, one item per line. `---` starts another panel, and `@type` on its first line picks that panel's type. Types: `splash`, `chat`, `rating`, `stats`, `attendees`, `guide`, `mpesa`; line keys such as `brand:`, `headline:`, `tiles:`, `msg:`, `row:`, `to:` are documented at the top of the file. Every drawing carries an "Example" label. Use made-up names only.
 
-**Moving the live homepage onto this copy** (Kevin, after review): `php artisan migrate` adds the new sections hidden. Then `php artisan tenafi:homepage-copy --dry-run` lists every field it would change; without `--dry-run` it saves a backup to `storage/app/cms-backups/`, applies the copy, switches the homepage sections on and orders them. `--restore=<file>` undoes it.
+**Moving the live homepage onto this copy** (Kevin, after review): `php artisan migrate` adds the new sections hidden. Then `php artisan tenafi:homepage-copy --dry-run` lists every field it would change; without `--dry-run` it saves a backup to `storage/app/private/cms-backups/`, applies the copy, switches the homepage sections on and orders them. `--restore=<file>` undoes it.
 
 ### The journey section
 

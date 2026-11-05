@@ -269,6 +269,9 @@ return [
                     ['key' => 'business_homepage', 'label' => 'Business customer homepage (menu, offers)', 'status' => 'live'],
                     ['key' => 'tena_direct', 'label' => 'Tena Direct booking page', 'status' => 'coming_soon'],
                     ['key' => 'vip_wifi', 'label' => 'Free and VIP WiFi tiers', 'status' => 'coming_soon'],
+                    ['key' => 'event_sponsors', 'label' => 'Event sponsors: branding, offer and report', 'status' => 'coming_soon'],
+                    ['key' => 'event_question', 'label' => 'An extra question on the WiFi page', 'status' => 'coming_soon'],
+                    ['key' => 'event_tagging', 'label' => 'Events: a page per event or day, attendees tagged across events', 'status' => 'coming_soon'],
                 ],
             ],
         ],
@@ -495,8 +498,8 @@ return [
                         'screen' => "color: #3B2C6B\nbrand: Kona Design Week | Expo hall · Day 2\nheadline: Free WiFi, all day.\ntiles: 🗓️ Schedule | 🎤 Speakers | 🎁 Sponsor offer\nFirst name\nEmail address\noptin: Send me next year’s early-bird tickets\nsponsor: WiFi by your sponsor\n---\n@attendees\nhead: Attendees · Day 2\nrow: JM | Joy M. | New\nrow: KO | Kevin O. | Returning\nrow: AN | Amani N. | New\ntag: Tagged: Design Week 2026",
                         'features' => [
                             ['icon' => 'fas fa-check', 'title' => 'A WiFi page for each event, from a wedding to a stadium', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'Sponsor logo, question and offer on the first screen', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'Attendees tagged by event, ready for the next on-sale', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Sponsor logo, question and offer on the first screen', 'desc' => '', 'feature' => 'event_sponsors'],
+                            ['icon' => 'fas fa-check', 'title' => 'Attendees tagged by event, ready for the next on-sale', 'desc' => '', 'feature' => 'event_tagging'],
                             ['icon' => 'fas fa-check', 'title' => 'A thank-you and early-bird invite after the event', 'desc' => '', 'feature' => ''],
                         ],
                     ],
@@ -1451,8 +1454,8 @@ return [
                 'subtitle' => 'Attendee data, sponsor value, event-by-event marketing and the follow-up, run for you by one team.',
                 'items' => [
                     ['step' => '01 · Attendees', 'icon' => 'fas fa-users', 'title' => 'Know who came through the door', 'description' => 'A sign-in in your event’s colours turns every connected phone into an attendee record you own.', 'feature' => ''],
-                    ['step' => '02 · Sponsors', 'icon' => 'fas fa-chart-line', 'title' => 'Give sponsors something to measure', 'description' => 'Their brand, question and offer on the first screen every connected guest sees.', 'feature' => ''],
-                    ['step' => '03 · Every event', 'icon' => 'fas fa-calendar-alt', 'title' => 'Every event its own sign-in', 'description' => 'Each day, stage or fixture tagged on your list, ready for the next on-sale.', 'feature' => ''],
+                    ['step' => '02 · Sponsors', 'icon' => 'fas fa-chart-line', 'title' => 'Give sponsors something to measure', 'description' => 'Their brand, question and offer on the first screen every connected guest sees.', 'feature' => 'event_sponsors'],
+                    ['step' => '03 · Every event', 'icon' => 'fas fa-calendar-alt', 'title' => 'Every event its own sign-in', 'description' => 'Each day, stage or fixture tagged on your list, ready for the next on-sale.', 'feature' => 'event_tagging'],
                     ['step' => '04 · After the event', 'icon' => 'fas fa-comments', 'title' => 'Keep the crowd after the lights go up', 'description' => 'Thank-yous, photos, feedback and early-bird invites by WhatsApp, SMS and email.', 'feature' => ''],
                 ],
             ],
@@ -1474,9 +1477,9 @@ return [
                         'mockup' => 'attendees',
                         'screen' => "head: Attendees · Kona Design Week\nrow: JM | Joy M. · Day 1, 2 | Returning\nrow: KO | Kevin O. · Day 2 | New\nrow: AN | Amani N. · Day 2 | New\nrow: WK | Wanjiru K. · Day 1 | Returning\ntag: Tags: Design Week 2026 · Hall B · Westlands",
                         'features' => [
-                            ['icon' => 'fas fa-check', 'title' => 'Name, phone and email, plus one question of your choice', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Name, phone and email, plus one question of your choice', 'desc' => '', 'feature' => 'event_question'],
                             ['icon' => 'fas fa-check', 'title' => 'Plus-ones and walk-ins counted, not just ticket buyers', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'New and returning attendees, across all your events', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'New and returning attendees, across all your events', 'desc' => '', 'feature' => 'event_tagging'],
                         ],
                     ],
                     [
@@ -1486,10 +1489,10 @@ return [
                         'mockup' => 'splash',
                         'screen' => "color: #0E5A3A\nbrand: City Sevens | City ground\nheadline: WiFi’s on us today.\nFirst name\n+254 Phone\nYour favourite team?\nsponsor: Brought to you by your sponsor\n---\n@stats\nhead: Sponsor report · Day 1\nrow: Saw the sponsor screen | 4,812\nrow: Answered the question | 3,066\nrow: Tapped the offer | 912",
                         'features' => [
-                            ['icon' => 'fas fa-check', 'title' => 'Sponsor logo, colours and offer on the WiFi page', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'A question the sponsor wants answered', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'A report of views, answers and clicks, not a guess', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'Change the sponsor by day, stage or match', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Sponsor logo, colours and offer on the WiFi page', 'desc' => '', 'feature' => 'event_sponsors'],
+                            ['icon' => 'fas fa-check', 'title' => 'A question the sponsor wants answered', 'desc' => '', 'feature' => 'event_question'],
+                            ['icon' => 'fas fa-check', 'title' => 'A report of views, answers and clicks, not a guess', 'desc' => '', 'feature' => 'event_sponsors'],
+                            ['icon' => 'fas fa-check', 'title' => 'Change the sponsor by day, stage or match', 'desc' => '', 'feature' => 'event_sponsors'],
                         ],
                     ],
                     [
@@ -1499,9 +1502,9 @@ return [
                         'mockup' => 'stats',
                         'screen' => "head: Your events this year\nrow: Launch night · March | 180\nrow: Design Week · Day 1 | 1,960\nrow: Design Week · Day 2 | 2,140\nrow: Year-end gala · December | 320\nrow: Came to 2 or more | 610",
                         'features' => [
-                            ['icon' => 'fas fa-check', 'title' => 'A WiFi page per event, day, stage or fixture', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'Your next on-sale goes to people who already showed up', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'See who comes back, event after event', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'A WiFi page per event, day, stage or fixture', 'desc' => '', 'feature' => 'event_tagging'],
+                            ['icon' => 'fas fa-check', 'title' => 'Your next on-sale goes to people who already showed up', 'desc' => '', 'feature' => 'event_tagging'],
+                            ['icon' => 'fas fa-check', 'title' => 'See who comes back, event after event', 'desc' => '', 'feature' => 'event_tagging'],
                         ],
                     ],
                     [
@@ -1512,7 +1515,7 @@ return [
                         'screen' => "color: #3B2C6B\nhead: Kona Design Week | WhatsApp\nmsg: Thanks for coming to Kona Design Week, Joy! Here are the photos from Day 2, and a 1-minute survey. | See the photos | | | Next morning\nmsg: Design Week 2027 is coming. As a past attendee, you get early-bird tickets 48 hours before everyone else. | Get early-bird tickets | | dark | Early bird · 3 months later",
                         'features' => [
                             ['icon' => 'fas fa-check', 'title' => 'Thank-you, photos and a short survey the next day, or a wedding thank-you with the photo link', 'desc' => '', 'feature' => ''],
-                            ['icon' => 'fas fa-check', 'title' => 'Early-bird tickets for past attendees', 'desc' => '', 'feature' => ''],
+                            ['icon' => 'fas fa-check', 'title' => 'Early-bird tickets for past attendees', 'desc' => '', 'feature' => 'event_tagging'],
                             ['icon' => 'fas fa-check', 'title' => 'Sponsor offers sent with consent', 'desc' => '', 'feature' => ''],
                             ['icon' => 'fas fa-check', 'title' => 'WhatsApp, SMS and email from one attendee list', 'desc' => '', 'feature' => ''],
                         ],

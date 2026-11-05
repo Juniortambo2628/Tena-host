@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import PageShell from '@/Layouts/PageShell';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DataTable from '@/Components/Dashboard/DataTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
+import PillButton from '@/Components/Dashboard/PillButton';
+import GlassModal from '@/Components/GlassModal';
+import { FormField, TextInput, FormActions } from '@/Components/Forms/FormPrimitives';
 import { useConfirm } from '@/hooks/useConfirm';
-import { UserPlus, XCircle, Trash2 } from 'lucide-react';
+import { UserPlus, XCircle, Trash2, PencilLine } from 'lucide-react';
 import './Index.css';
 
 const TYPE_TABS = [
@@ -41,6 +44,22 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
     };
 
     // Create the account and invite by every channel the sign-up gave us.
+    // "Edit details": a call-back lead arrives with a number only; the team adds what they learn on the call.
+    const [editing, setEditing] = useState(null);
+    const details = useForm({ first_name: '', last_name: '', email: '', business_name: '' });
+    const openDetails = (item) => {
+        details.setData({ first_name: item.first_name || '', last_name: item.last_name || '', email: item.email || '', business_name: item.business_name || '' });
+        details.clearErrors();
+        setEditing(item);
+    };
+    const saveDetails = (e) => {
+        e.preventDefault();
+        details.put(route('admin.registrations.update', editing.id), {
+            preserveScroll: true,
+            onSuccess: () => { notify.success('Details saved'); setEditing(null); },
+        });
+    };
+
     const inviteChannels = (item) => [item.email && 'email', item.phone && 'whatsapp'].filter(Boolean);
 
     const convertOne = (item) => new Promise((resolve, reject) => {
@@ -56,6 +75,11 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
     });
 
     const handleConvert = async (item) => {
+        if (!item.first_name) {
+            notify.error('Call them first: add their name, then create the account.');
+            openDetails(item);
+            return;
+        }
         const via = inviteChannels(item).map((c) => (c === 'whatsapp' ? 'WhatsApp' : 'email')).join(' and ');
         const ok = await confirm({
             title: item.user_id ? 'Re-send invite' : 'Create account',
@@ -105,7 +129,9 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
             accessorFn: (item) => `${item.first_name} ${item.last_name}`,
             header: 'Name',
             cell: ({ row: { original: item } }) => (
-                <span className="registrations-page__name">{item.first_name} {item.last_name}</span>
+                item.first_name
+                    ? <span className="registrations-page__name">{item.first_name} {item.last_name}</span>
+                    : <span className="registrations-page__name registrations-page__name--pending">Call-back request</span>
             ),
         },
         {
@@ -196,6 +222,12 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
     ];
 
     const tableActions = [
+        {
+            key: 'details',
+            label: 'Edit details',
+            icon: <PencilLine size={14} />,
+            onClick: openDetails,
+        },
         {
             key: 'convert',
             label: 'Create account',
@@ -318,6 +350,30 @@ export default function RegistrationIndex({ registrations, filters = {}, typeCou
                 onClearSelection={() => setSelectedIds([])}
                 actions={bulkActions}
             />
+
+            <GlassModal isOpen={!!editing} onClose={() => setEditing(null)} title={editing?.first_name ? `Edit ${editing.first_name}` : 'Call-back request'} maxWidth="lg">
+                {editing && (
+                    <form onSubmit={saveDetails} className="registrations-page__details">
+                        <p className="registrations-page__details-phone">{editing.phone || editing.email}</p>
+                        <FormField label="First name" required error={details.errors.first_name}>
+                            <TextInput id="lead-first-name" value={details.data.first_name} onChange={(e) => details.setData('first_name', e.target.value)} required autoComplete="off" />
+                        </FormField>
+                        <FormField label="Last name" error={details.errors.last_name}>
+                            <TextInput id="lead-last-name" value={details.data.last_name} onChange={(e) => details.setData('last_name', e.target.value)} autoComplete="off" />
+                        </FormField>
+                        <FormField label="Email" hint="Optional. The invite goes by WhatsApp without it." error={details.errors.email}>
+                            <TextInput id="lead-email" type="email" value={details.data.email} onChange={(e) => details.setData('email', e.target.value)} autoComplete="off" />
+                        </FormField>
+                        <FormField label={editing.type === 'event' ? 'Event or venue name' : 'Business or property name'} error={details.errors.business_name}>
+                            <TextInput id="lead-business" value={details.data.business_name} onChange={(e) => details.setData('business_name', e.target.value)} autoComplete="off" />
+                        </FormField>
+                        <FormActions>
+                            <PillButton type="button" variant="ghost" onClick={() => setEditing(null)}>Cancel</PillButton>
+                            <PillButton type="submit" disabled={details.processing}>Save details</PillButton>
+                        </FormActions>
+                    </form>
+                )}
+            </GlassModal>
 
             {ConfirmDialogEl}
         </PageShell>

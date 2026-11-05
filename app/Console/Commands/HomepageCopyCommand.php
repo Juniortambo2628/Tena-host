@@ -25,7 +25,7 @@ use Illuminate\Support\Str;
  */
 class HomepageCopyCommand extends Command
 {
-    protected $signature = 'tenafi:homepage-copy {--dry-run : Show the changes without saving anything} {--restore= : Restore a backup file from storage/app/cms-backups}';
+    protected $signature = 'tenafi:homepage-copy {--dry-run : Show the changes without saving anything} {--restore= : Restore a backup file (its name, as printed after applying)}';
 
     protected $description = 'Apply the three-audience homepage copy (with --dry-run diff and a backup first)';
 
@@ -85,7 +85,7 @@ class HomepageCopyCommand extends Command
         }
 
         $backup = $this->backup();
-        $this->info("Backup saved: storage/app/{$backup}");
+        $this->info('Backup saved: '.$this->shown($backup));
 
         DB::transaction(fn () => $this->apply());
         LandingPage::clearCache();
@@ -228,7 +228,7 @@ class HomepageCopyCommand extends Command
     {
         $path = 'cms-backups/'.basename($file);
         if (! Storage::disk('local')->exists($path)) {
-            $this->error("No backup at storage/app/{$path}");
+            $this->error('No backup at '.$this->shown($path));
 
             return self::FAILURE;
         }
@@ -255,9 +255,15 @@ class HomepageCopyCommand extends Command
             }
         });
         LandingPage::clearCache();
-        $this->info("Restored storage/app/{$path}.");
+        $this->info('Restored '.$this->shown($path).'.');
 
         return self::SUCCESS;
+    }
+
+    /** Where a backup really is (Laravel's local disk is storage/app/private), from the app folder. */
+    private function shown(string $path): string
+    {
+        return Str::after(Storage::disk('local')->path($path), base_path().DIRECTORY_SEPARATOR);
     }
 
     /** The rich-text editor may wrap text in <p> or encode quotes; compare the words. */

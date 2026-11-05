@@ -269,12 +269,12 @@ require __DIR__.'/auth.php';
 Route::post('/api/mpesa/callback', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');
 Route::post('/api/mpesa/extras/callback', [MpesaCallbackController::class, 'extras'])->name('mpesa.extras.callback');
 
-// Ubiquiti UniFi external captive portal (public — pre-auth guest devices).
-// Point UniFi "Guest Control -> External Portal Server" at the /portal URL.
 // Try-it-yourself demo of the WiFi page (homepage QR code). Saves nothing.
 Route::get('/demo', [DemoController::class, 'show'])->name('demo');
 Route::post('/demo', [DemoController::class, 'connect'])->middleware('throttle:30,1')->name('demo.connect');
 
+// Ubiquiti UniFi external captive portal (public — pre-auth guest devices).
+// Point UniFi "Guest Control -> External Portal Server" at the /portal URL.
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
