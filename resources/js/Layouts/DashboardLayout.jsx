@@ -4,6 +4,7 @@ import {
     LayoutDashboard,
     Users,
     UserCog,
+    CalendarDays,
     Wifi,
     Smartphone,
     Megaphone,
@@ -51,6 +52,7 @@ export default function DashboardLayout({ children }) {
     const isOwner = !auth.team?.member;
     const hostNavItems = [
         { name: 'Dashboard', icon: LayoutDashboard, route: 'host.dashboard' },
+        auth.account?.type === 'event' && { name: 'Events', icon: CalendarDays, route: 'host.events.index', match: ['host.events.*'] },
         { name: 'Guests', icon: Users, route: 'host.guests.index', match: ['host.guests.*'] },
         { name: 'WiFi Access', icon: Wifi, route: 'host.properties.index', match: ['host.properties.*', 'host.access-points.*', 'host.amenities.*', 'host.orders.*'] },
         isOwner && { name: 'Marketing', icon: Megaphone, route: 'host.marketing.index', match: ['host.marketing.*'] },

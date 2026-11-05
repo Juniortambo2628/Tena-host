@@ -92,6 +92,12 @@ class Property extends Model
         return $this->hasMany(Guest::class);
     }
 
+    /** Events held at this venue (event accounts). */
+    public function events(): HasMany
+    {
+        return $this->hasMany(Event::class);
+    }
+
     /**
      * Get the amenities for the property.
      */

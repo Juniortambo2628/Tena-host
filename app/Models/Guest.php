@@ -6,6 +6,7 @@ use App\Traits\BelongsToHost;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -76,5 +77,11 @@ class Guest extends Model
     public function campaignRecipients()
     {
         return $this->hasMany(CampaignRecipient::class);
+    }
+
+    /** The events this guest attended (event accounts). */
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class)->using(EventAttendance::class)->withPivot(['days', 'answer', 'first_seen_at', 'last_seen_at'])->withTimestamps();
     }
 }

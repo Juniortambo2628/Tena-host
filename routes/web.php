@@ -23,6 +23,7 @@ use App\Http\Controllers\CampaignTrackingController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestPortalController;
 use App\Http\Controllers\HostDashboardController;
@@ -212,6 +213,13 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('/guests/{guest}', [GuestController::class, 'show'])->name('guests.show');
         Route::match(['put', 'patch'], '/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
         Route::delete('/guests/{guest}', [GuestController::class, 'destroy'])->name('guests.destroy');
+
+        // Events (event accounts): a dated event at one of their venues, and who came.
+        Route::get('/events', [EventController::class, 'index'])->name('events.index');
+        Route::post('/events', [EventController::class, 'store'])->name('events.store');
+        Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+        Route::match(['put', 'patch'], '/events/{event}', [EventController::class, 'update'])->name('events.update');
+        Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 
         // Team: people the owner invites, each with their own login and sites (Admin -> Settings switches it on).
         Route::middleware('account.owner')->group(function () {
