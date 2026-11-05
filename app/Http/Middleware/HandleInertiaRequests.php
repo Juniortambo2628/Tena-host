@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\TeamController;
 use App\Models\Notification;
 use App\Support\Brand;
 use Illuminate\Http\Request;
@@ -25,6 +26,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 // What this account calls its people and places (guests/customers/attendees, …).
                 'account' => $request->user()?->accountDefinition(),
+                // Team: a member works on the owner's sites; only the owner sees billing, marketing and the team.
+                'team' => $request->user() ? [
+                    'member' => $request->user()->isTeamMember(),
+                    'role' => $request->user()->team_role,
+                    'enabled' => TeamController::enabled(),
+                ] : null,
                 'notifications' => $request->user()
                     ? Cache::remember(
                         'app_notifications_'.$request->user()->id,

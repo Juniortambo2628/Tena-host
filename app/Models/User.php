@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Support\AccountType;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -43,6 +45,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         'password',
         'role',
         'account_profile',
+        'team_owner_id',
+        'team_role',
         'phone_number',
         'two_factor_enabled',
         'two_factor_secret',
@@ -174,7 +178,8 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     }
 
     /**
-     * Get cached property IDs owned by this user.
+     * Get cached property IDs this user can work with: an owner's own, or for
+     * a team member the owner's sites they were given (staff_property).
      */
     public function propertyIds(): array
     {
@@ -182,7 +187,43 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             return Cache::remember('admin_property_ids', 300, fn () => Property::pluck('id')->toArray());
         }
 
-        return Cache::remember("user_property_ids_{$this->id}", 300, fn () => $this->properties()->pluck('id')->toArray());
+        return Cache::remember("user_property_ids_{$this->id}", 300, fn () => $this->isTeamMember()
+            ? $this->staffProperties()->where('properties.user_id', $this->team_owner_id)->pluck('properties.id')->toArray()
+            : $this->properties()->pluck('id')->toArray());
+    }
+
+    /** The account owner who invited this person (their team), or null for an owner. */
+    public function teamOwner(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'team_owner_id');
+    }
+
+    /** The people this owner invited. */
+    public function teamMembers(): HasMany
+    {
+        return $this->hasMany(self::class, 'team_owner_id');
+    }
+
+    public function isTeamMember(): bool
+    {
+        return $this->team_owner_id !== null;
+    }
+
+    /** Whose account this is: the owner for a team member, else the user. Billing and plans live here. */
+    public function accountOwner(): self
+    {
+        return $this->isTeamMember() ? ($this->teamOwner ?? $this) : $this;
+    }
+
+    /**
+     * The sites (properties) this user can see: an owner's own, or a team
+     * member's assigned ones. Read with this; create sites through properties().
+     */
+    public function sites(): Builder
+    {
+        return $this->isTeamMember()
+            ? Property::query()->whereIn('id', $this->propertyIds())
+            : $this->properties()->getQuery();
     }
 
     /**

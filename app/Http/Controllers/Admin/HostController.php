@@ -15,7 +15,7 @@ class HostController extends Controller
     {
         $type = in_array($request->query('type'), User::ACCOUNT_TYPES, true) ? $request->query('type') : null;
 
-        $hosts = User::where('role', 'host')
+        $hosts = User::where('role', 'host')->whereNull('team_owner_id')
             ->when($type, fn ($q) => $q->where('account_type', $type))
             ->withCount('properties')
             ->latest()
@@ -25,7 +25,7 @@ class HostController extends Controller
         return Inertia::render('Admin/Hosts/Index', [
             'hosts' => $hosts,
             'filters' => ['type' => $type],
-            'typeCounts' => User::where('role', 'host')->selectRaw('account_type, count(*) as total')->groupBy('account_type')->pluck('total', 'account_type'),
+            'typeCounts' => User::where('role', 'host')->whereNull('team_owner_id')->selectRaw('account_type, count(*) as total')->groupBy('account_type')->pluck('total', 'account_type'),
         ]);
     }
 

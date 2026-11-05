@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AccountOwnerOnly;
 use App\Http\Middleware\AdminOnly;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -31,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => AdminOnly::class,
             'staff' => StaffOnly::class,
             'host' => HostOnly::class,
+            'account.owner' => AccountOwnerOnly::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

@@ -40,7 +40,7 @@ class MonthlyReportService
 
     public function recipients()
     {
-        return User::where('role', 'host')
+        return User::where('role', 'host')->whereNull('team_owner_id')
             ->whereHas('properties')
             ->when(PlanPricing::enforced(), fn ($q) => $q
                 ->whereIn('billing_plan', self::PLANS)

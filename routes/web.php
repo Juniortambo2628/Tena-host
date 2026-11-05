@@ -38,6 +38,7 @@ use App\Http\Controllers\ReviewLinkController;
 use App\Http\Controllers\SignupController;
 use App\Http\Controllers\Staff\StaffDashboardController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\WifiPortalController;
@@ -166,11 +167,13 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
     // Global Search
     Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-    // Billing & Payments (Accessible to all authenticated hosts)
-    Route::get('/billing', [SubscriptionController::class, 'index'])->name('billing.index');
-    Route::post('/billing/paystack', [SubscriptionController::class, 'storePaystack'])->name('billing.paystack');
-    Route::post('/billing/mpesa', [SubscriptionController::class, 'storeMpesa'])->name('billing.mpesa');
-    Route::post('/billing/simulate', [SubscriptionController::class, 'simulateMpesa'])->name('billing.simulate');
+    // Billing & Payments (the account owner's; team members work under the owner's plan)
+    Route::middleware('account.owner')->group(function () {
+        Route::get('/billing', [SubscriptionController::class, 'index'])->name('billing.index');
+        Route::post('/billing/paystack', [SubscriptionController::class, 'storePaystack'])->name('billing.paystack');
+        Route::post('/billing/mpesa', [SubscriptionController::class, 'storeMpesa'])->name('billing.mpesa');
+        Route::post('/billing/simulate', [SubscriptionController::class, 'simulateMpesa'])->name('billing.simulate');
+    });
 
     // Protected Host Routes (Requires Subscription)
     Route::middleware([EnsureUserIsSubscribed::class])->group(function () {
@@ -210,18 +213,28 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::match(['put', 'patch'], '/guests/{guest}', [GuestController::class, 'update'])->name('guests.update');
         Route::delete('/guests/{guest}', [GuestController::class, 'destroy'])->name('guests.destroy');
 
-        // Marketing
-        Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
-        Route::get('/marketing/create', [MarketingController::class, 'create'])->name('marketing.builder');
-        Route::get('/marketing/estimate', [MarketingController::class, 'estimate'])->name('marketing.estimate');
-        Route::post('/marketing/preview', [MarketingController::class, 'preview'])->name('marketing.preview');
-        Route::post('/marketing', [MarketingController::class, 'store'])->name('marketing.store');
-        Route::get('/marketing/{id}/edit', [MarketingController::class, 'edit'])->name('marketing.edit');
-        Route::match(['put', 'patch'], '/marketing/{id}', [MarketingController::class, 'update'])->name('marketing.update');
-        Route::delete('/marketing/{id}', [MarketingController::class, 'destroy'])->name('marketing.destroy');
-        Route::get('/marketing/{id}/analytics', [MarketingController::class, 'analytics'])->name('marketing.analytics');
-        Route::post('/marketing/{id}/activate', [MarketingController::class, 'activate'])->name('marketing.activate');
-        Route::post('/marketing/{id}/pause', [MarketingController::class, 'pause'])->name('marketing.pause');
+        // Team: people the owner invites, each with their own login and sites (Admin -> Settings switches it on).
+        Route::middleware('account.owner')->group(function () {
+            Route::get('/team', [TeamController::class, 'index'])->name('team.index');
+            Route::post('/team', [TeamController::class, 'store'])->name('team.store');
+            Route::match(['put', 'patch'], '/team/{member}', [TeamController::class, 'update'])->name('team.update');
+            Route::delete('/team/{member}', [TeamController::class, 'destroy'])->name('team.destroy');
+        });
+
+        // Marketing (the account owner's)
+        Route::middleware('account.owner')->group(function () {
+            Route::get('/marketing', [MarketingController::class, 'index'])->name('marketing.index');
+            Route::get('/marketing/create', [MarketingController::class, 'create'])->name('marketing.builder');
+            Route::get('/marketing/estimate', [MarketingController::class, 'estimate'])->name('marketing.estimate');
+            Route::post('/marketing/preview', [MarketingController::class, 'preview'])->name('marketing.preview');
+            Route::post('/marketing', [MarketingController::class, 'store'])->name('marketing.store');
+            Route::get('/marketing/{id}/edit', [MarketingController::class, 'edit'])->name('marketing.edit');
+            Route::match(['put', 'patch'], '/marketing/{id}', [MarketingController::class, 'update'])->name('marketing.update');
+            Route::delete('/marketing/{id}', [MarketingController::class, 'destroy'])->name('marketing.destroy');
+            Route::get('/marketing/{id}/analytics', [MarketingController::class, 'analytics'])->name('marketing.analytics');
+            Route::post('/marketing/{id}/activate', [MarketingController::class, 'activate'])->name('marketing.activate');
+            Route::post('/marketing/{id}/pause', [MarketingController::class, 'pause'])->name('marketing.pause');
+        });
     });
 });
 

@@ -1,0 +1,71 @@
+@reference "../../../../css/theme.css";
+
+.team-page__person {
+    @apply flex flex-col;
+}
+
+.team-page__person b {
+    @apply text-sm font-black text-dark;
+}
+
+.team-page__person small,
+.team-page__sites {
+    @apply text-xs font-bold text-muted;
+}
+
+.team-page__role {
+    @apply text-xs font-black text-dark;
+}
+
+.team-page__form {
+    @apply flex flex-col gap-4;
+}
+
+.team-page__row {
+    @apply grid gap-4 sm:grid-cols-2;
+}
+
+.team-page__choice {
+    @apply flex flex-col gap-2 border-0 p-0 m-0;
+}
+
+.team-page__choice legend {
+    @apply text-xs font-black uppercase tracking-widest text-muted mb-2;
+}
+
+.team-page__option {
+    @apply flex items-start gap-3 rounded-2xl border border-black/10 px-4 py-3 cursor-pointer;
+}
+
+.team-page__option--on {
+    @apply border-primary bg-primary/10;
+}
+
+.team-page__option input,
+.team-page__site input {
+    @apply mt-1 accent-dark;
+}
+
+.team-page__option span {
+    @apply flex flex-col gap-1;
+}
+
+.team-page__option b {
+    @apply text-sm font-black text-dark;
+}
+
+.team-page__option small {
+    @apply text-xs text-muted leading-snug;
+}
+
+.team-page__site {
+    @apply flex items-start gap-3 text-sm font-bold text-dark cursor-pointer;
+}
+
+.team-page__site small {
+    @apply text-xs text-muted font-medium;
+}
+
+.team-page__error {
+    @apply text-xs font-bold text-red-600;
+}

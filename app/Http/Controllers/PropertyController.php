@@ -19,7 +19,7 @@ class PropertyController extends Controller
 
     public function index(PropertyStats $stats)
     {
-        $properties = Auth::user()->properties()->withCount(['guests', 'accessPoints'])->get();
+        $properties = Auth::user()->sites()->withCount(['guests', 'accessPoints'])->get();
 
         return Inertia::render('Host/Properties/Index', [
             'properties' => $properties,
@@ -32,7 +32,7 @@ class PropertyController extends Controller
      */
     public function export()
     {
-        $properties = Auth::user()->properties()->withCount(['guests', 'accessPoints'])->orderBy('name')->get();
+        $properties = Auth::user()->sites()->withCount(['guests', 'accessPoints'])->orderBy('name')->get();
 
         return response()->streamDownload(function () use ($properties) {
             $out = fopen('php://output', 'w');
@@ -90,7 +90,7 @@ class PropertyController extends Controller
                 'branding_json' => SplashDesign::clean($property->branding_json ?? []),
             ],
             'isBusiness' => SplashDesign::isBusiness($property),
-            'otherProperties' => Auth::user()->properties()->whereKeyNot($property->id)->orderBy('name')
+            'otherProperties' => Auth::user()->sites()->whereKeyNot($property->id)->orderBy('name')
                 ->get(['id', 'name', 'address', 'splash_image_path']),
             'hostPhone' => $property->host?->phone_number,
             'templates' => SplashDesign::TEMPLATES,
@@ -134,6 +134,7 @@ class PropertyController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', Property::class);
         $validated = $request->validate($this->rules());
 
         // A new page starts with its template's headline, sign-up fields and tiles.
