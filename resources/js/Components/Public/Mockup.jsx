@@ -1,4 +1,5 @@
 import React from 'react';
+import { splashFields, SPLASH_CONSENT } from './splashForm';
 import './Mockup.css';
 
 /**
@@ -12,6 +13,7 @@ import './Mockup.css';
  *   all         color: #0F4C45            the brand colour of that panel
  *   splash      brand: Name | Tagline     headline: …   tiles: a | b | c
  *               any plain line is a form field          optin: …   sponsor: …
+ *               (fields are drawn as the real WiFi page asks them: see splashForm.js)
  *   chat        head: Name | WhatsApp     msg: text | button | time | dark | label
  *   rating      name: …   score: 4.5   meta: …   row: BO | text | when
  *   stats       head: …   score: 4.5 (optional stars)   row: label | value
@@ -83,7 +85,8 @@ function Splash({ p, fill, small }) {
                 {tiles.length > 0 && (
                     <div className="mk-splash__tiles">{tiles.map((t, i) => <span key={i}>{t}</span>)}</div>
                 )}
-                {p.fields.map((f, i) => <div key={i} className="mk-splash__field">{f}</div>)}
+                {splashFields(p.fields).map((f, i) => <div key={i} className="mk-splash__field">{f}</div>)}
+                <div className="mk-splash__opt"><span style={{ background: p.color }} />{SPLASH_CONSENT}</div>
                 {p.props.optin && <div className="mk-splash__opt"><span style={{ background: p.color }} />{p.props.optin}</div>}
                 <div className="mk-splash__cta" style={fill}>{p.props.button || 'Connect to WiFi'}</div>
                 {p.props.sponsor
