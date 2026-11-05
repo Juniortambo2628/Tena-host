@@ -1,5 +1,6 @@
 import React from 'react';
 import { getContent, extractItems, getText, stripHtml, getUpload } from '@/lib/cms';
+import { splashFields, SPLASH_CONSENT } from '@/Components/Public/splashForm';
 import { SectionWrapper } from './layouts';
 import { BRAND_COLORS } from '@/constants';
 import './JourneySection.css';
@@ -106,7 +107,8 @@ function Mockup({ type, lines, brand }) {
                 <div className="jr-ph__brand" style={fill}><b>{name}</b><i>{tagline}</i></div>
                 <div className="jr-ph__body">
                     <div className="jr-ph__h">{headline}</div>
-                    {rest.filter(l => l !== optIn).map((f, i) => <div key={i} className="jr-ph__field">{f}</div>)}
+                    {splashFields(rest.filter(l => l !== optIn)).map((f, i) => <div key={i} className="jr-ph__field">{f}</div>)}
+                    <div className="jr-ph__opt"><span style={{ background: color }} />{SPLASH_CONSENT}</div>
                     {optIn && <div className="jr-ph__opt"><span style={{ background: color }} />{optIn.replace('[ ]', '').trim()}</div>}
                     <div className="jr-ph__cta" style={fill}>Connect to WiFi</div>
                     <div className="jr-ph__pw">Powered by TenaFi</div>
