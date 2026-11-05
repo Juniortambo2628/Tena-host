@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Controllers\TeamController;
 use App\Models\Notification;
+use App\Models\Property;
 use App\Support\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -32,6 +33,9 @@ class HandleInertiaRequests extends Middleware
                     'role' => $request->user()->team_role,
                     'enabled' => TeamController::enabled(),
                 ] : null,
+                // Reception visitor log: shown when switched on and one of the user's sites keeps it.
+                'visitorLog' => (bool) $request->user()?->isHost() && Property::visitorLogEnabled()
+                    && $request->user()->sites()->where('visitor_log', true)->exists(),
                 'notifications' => $request->user()
                     ? Cache::remember(
                         'app_notifications_'.$request->user()->id,

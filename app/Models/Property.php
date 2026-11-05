@@ -24,6 +24,7 @@ class Property extends Model
         'region',
         'staff_ssid',
         'staff_email_domain',
+        'visitor_log',
         'description',
         'wifi_ssid',
         'occupancy_threshold',
@@ -47,6 +48,7 @@ class Property extends Model
         'branding_json' => 'array',
         'pms_last_sync_at' => 'datetime',
         'review_requests_enabled' => 'boolean',
+        'visitor_log' => 'boolean',
         'review_request_delay_hours' => 'integer',
         'occupancy_alerted_at' => 'datetime',
     ];
@@ -109,6 +111,24 @@ class Property extends Model
         return filled($this->staff_ssid) && filled($ssid)
             && strcasecmp(trim($this->staff_ssid), trim($ssid)) === 0
             && filter_var(Setting::getValue('staff_wifi_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /** Visits in this site's reception log (Visitor log). */
+    public function visitorVisits(): HasMany
+    {
+        return $this->hasMany(VisitorVisit::class);
+    }
+
+    /** Admin -> Settings -> Visitor log is on (it starts off). */
+    public static function visitorLogEnabled(): bool
+    {
+        return filter_var(Setting::getValue('visitor_log_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /** Whether this site's WiFi sign-in asks who the visitor is here to see. */
+    public function keepsVisitorLog(): bool
+    {
+        return $this->visitor_log && static::visitorLogEnabled();
     }
 
     /** Events held at this venue (event accounts). */
