@@ -76,6 +76,45 @@ class SignupConversionTest extends TestCase
         $this->assertSame('Kahawa House', $user->properties()->sole()->name);
     }
 
+    public function test_a_call_back_lead_needs_a_name_before_it_becomes_an_account(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $lead = $this->signup(['first_name' => '', 'last_name' => '', 'business_name' => null, 'source_page' => 'callback']);
+
+        $this->actingAs($admin)
+            ->post(route('admin.registrations.convert', $lead), ['channels' => ['whatsapp']])
+            ->assertSessionHas('error', 'Call them first: add their name with "Edit details", then create the account.');
+        $this->assertSame(0, User::where('phone_number', '+254712345678')->count());
+
+        // After the call: the team adds what they learned, then converts.
+        $this->actingAs($admin)
+            ->put(route('admin.registrations.update', $lead), ['first_name' => 'Wanjiru', 'last_name' => 'K', 'email' => '', 'business_name' => 'Wanjiru Suites'])
+            ->assertSessionHasNoErrors();
+        $this->assertSame(['Wanjiru', 'Wanjiru Suites', 'active'], [$lead->fresh()->first_name, $lead->fresh()->business_name, $lead->fresh()->status]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.registrations.convert', $lead), ['channels' => ['whatsapp']])
+            ->assertSessionHas('success');
+        $this->assertSame('Wanjiru Suites', User::where('phone_number', '+254712345678')->sole()->properties()->sole()->name);
+    }
+
+    public function test_editing_details_needs_a_first_name(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
+            ->put(route('admin.registrations.update', $this->signup()), ['first_name' => ''])
+            ->assertSessionHasErrors('first_name');
+    }
+
+    public function test_an_event_enquiry_gets_a_location_named_after_the_event(): void
+    {
+        ['user' => $user] = app(SignupConversionService::class)->convert(
+            $this->signup(['type' => 'event', 'business_name' => null, 'units' => null, 'answers' => ['eventName' => 'Kona Design Week']]),
+            ['whatsapp'],
+        );
+
+        $this->assertSame('Kona Design Week', $user->properties()->sole()->name);
+    }
+
     public function test_admin_can_create_a_business_owner(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

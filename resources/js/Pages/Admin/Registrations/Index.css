@@ -32,6 +32,19 @@
     @apply font-semibold text-sm;
 }
 
+/* A call-back lead before anyone has called: no name yet. */
+.registrations-page__name--pending {
+    @apply text-muted italic;
+}
+
+.registrations-page__details {
+    @apply flex flex-col gap-4;
+}
+
+.registrations-page__details-phone {
+    @apply text-sm font-bold text-dark;
+}
+
 .registrations-page__email {
     @apply text-sm font-bold text-black/60;
 }

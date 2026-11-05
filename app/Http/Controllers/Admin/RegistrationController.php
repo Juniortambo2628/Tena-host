@@ -33,7 +33,12 @@ class RegistrationController extends Controller
     public function update(Request $request, Registration $registration)
     {
         $validated = $request->validate([
-            'status' => 'required|in:active,inactive,converted',
+            'status' => 'required_without:first_name|in:active,inactive,converted',
+            // "Edit details": what the team learned on the phone (call-back leads arrive with a number only).
+            'first_name' => 'sometimes|required|string|max:50',
+            'last_name' => 'sometimes|nullable|string|max:50',
+            'email' => 'sometimes|nullable|email|max:100',
+            'business_name' => 'sometimes|nullable|string|max:150',
         ]);
 
         $previousStatus = $registration->status;
@@ -44,7 +49,7 @@ class RegistrationController extends Controller
         // transitions the signup into "converted" from something else —
         // never on the initial signup, and never on repeat updates that
         // leave the status where it was.
-        if ($validated['status'] === 'converted' && $previousStatus !== 'converted' && $registration->email) {
+        if (($validated['status'] ?? null) === 'converted' && $previousStatus !== 'converted' && $registration->email) {
             try {
                 Mail::to($registration->email)->send(
                     new WaitlistWelcomeMail(
@@ -72,6 +77,11 @@ class RegistrationController extends Controller
             'channels' => 'required|array|min:1',
             'channels.*' => 'in:email,whatsapp',
         ]);
+
+        // A call-back request is a phone number only: someone calls first and adds their name.
+        if (blank($registration->first_name)) {
+            return redirect()->back()->with('error', 'Call them first: add their name with "Edit details", then create the account.');
+        }
 
         ['user' => $user, 'sent' => $sent] = $conversion->convert($registration, $validated['channels']);
 
