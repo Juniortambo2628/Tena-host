@@ -620,6 +620,13 @@
         .sp--band.sp--solo .sp-connect { grid-column: 1 / 3; justify-self: center; width: min(440px, 100%); }
     }
 
+    /* An event's sponsor, under the sign-up button. */
+    .sp-sponsor { margin-top: 16px; padding: 14px 16px; border-radius: 16px; background: rgba(127, 127, 127, .1); text-align: center; font-size: 13px; }
+    .sp-sponsor__by { display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+    .sp-sponsor b { display: block; font-size: 15px; margin-top: 2px; }
+    .sp-sponsor p { margin: 6px 0 0; }
+    .sp-sponsor a { display: inline-block; margin-top: 8px; font-weight: 700; color: inherit; }
+
     /* /demo switcher */
     .sp-demo-bar {
         position: sticky; top: 0; z-index: 60; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px;

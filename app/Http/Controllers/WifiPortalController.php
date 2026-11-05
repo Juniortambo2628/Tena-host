@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccessPoint;
+use App\Models\Event;
 use App\Models\Property;
 use App\Services\GuestCaptureService;
 use App\Services\Unifi\UnifiService;
@@ -123,6 +124,8 @@ class WifiPortalController extends Controller
                 'marketing_opt_in' => 'nullable|boolean',
                 'birthday_month' => 'nullable|integer|between:1,12|required_with:birthday_day',
                 'birthday_day' => 'nullable|integer|between:1,31|required_with:birthday_month',
+                // The running event's extra question (optional for the guest).
+                'event_answer' => 'nullable|string|max:255',
             ], [
                 'first_name.required' => 'Please add your first name.',
                 'phone.required' => 'Please add your WhatsApp number.',
@@ -132,7 +135,7 @@ class WifiPortalController extends Controller
             if ($validator->fails()) {
                 return response()->view('portal.splash', $context + [
                     'errors' => $validator->errors(),
-                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in', 'birthday_month', 'birthday_day'),
+                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in', 'birthday_month', 'birthday_day', 'event_answer'),
                 ], 422);
             }
 
@@ -146,6 +149,8 @@ class WifiPortalController extends Controller
             if (! $fields['birthday']) {
                 unset($guestData['birthday_month'], $guestData['birthday_day']);
             }
+            $eventAnswer = $context['event']?->question ? ($guestData['event_answer'] ?? null) : null;
+            unset($guestData['event_answer']);
         }
 
         try {
@@ -164,15 +169,26 @@ class WifiPortalController extends Controller
         if (! $authorized) {
             return response()->view('portal.splash', $context + [
                 'error' => 'We could not connect you to the WiFi. Please try again.',
-                'old' => $request->only('first_name', 'phone', 'email', 'consent', 'marketing_opt_in', 'birthday_month', 'birthday_day'),
+                'old' => $request->only('first_name', 'phone', 'email', 'consent', 'marketing_opt_in', 'birthday_month', 'birthday_day', 'event_answer'),
             ], 503);
         }
 
         // A failed controller request must not create a guest or a successful visit.
+        $guest = null;
         if ($guestData !== null) {
-            $this->guests->capture($context['property'], $guestData, $context['consentText'], $context['deviceMac']);
+            $guest = $this->guests->capture($context['property'], $guestData, $context['consentText'], $context['deviceMac']);
         } elseif ($context['returningGuest']) {
-            $this->guests->recordVisit($context['returningGuest'], $context['deviceMac']);
+            $guest = $context['returningGuest'];
+            $this->guests->recordVisit($guest, $context['deviceMac']);
+        }
+
+        // During an event at this venue, the sign-in joins its attendee list (events must never block the connection).
+        if ($guest && $context['event']) {
+            try {
+                $context['event']->recordAttendance($guest, $eventAnswer ?? null);
+            } catch (\Throwable $e) {
+                Log::error('Event attendance not recorded: '.$e->getMessage(), ['event' => $context['event']->id, 'guest' => $guest->id]);
+            }
         }
 
         // Best-effort: mark the AP as recently seen.
@@ -221,13 +237,23 @@ class WifiPortalController extends Controller
         $deviceMac = ! empty($params['id']) ? $this->unifi->normalizeMac($params['id']) : null;
         $propertyName = $property?->name ?? Brand::name();
 
+        // An event running at this venue today: its welcome, question and sponsor on the page.
+        $event = $property ? Event::runningAt($property) : null;
+        $design = SplashDesign::forProperty($property);
+        if ($event) {
+            $welcome = $event->welcome();
+            $design['heading'] = $welcome['heading'];
+            $design['message'] = $welcome['message'] ?? $design['message'];
+        }
+
         return [
             'params' => $params,
             'property' => $property,
             'propertyName' => $propertyName,
             'logoUrl' => SplashDesign::imageUrl($property?->logo_path),
             'splashImageUrl' => SplashDesign::imageUrl($property?->splash_image_path),
-            'design' => SplashDesign::forProperty($property),
+            'design' => $design,
+            'event' => $event,
             'canConnect' => $property && is_string($params['id']) && (bool) preg_match('/^(?:[0-9a-fA-F]{12}|(?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})$/', $params['id']),
             'deviceMac' => $deviceMac,
             'returningGuest' => $property ? $this->guests->findReturning($property, $deviceMac) : null,

@@ -54,7 +54,7 @@ class EventController extends Controller
         $all = $event->attendees();
 
         return Inertia::render('Host/Events/Show', [
-            'event' => $this->summary($event) + ['question' => $event->question, 'sponsor' => $event->sponsor],
+            'event' => $this->summary($event) + ['question' => $event->question, 'sponsor' => $event->sponsor, 'branding_json' => $event->branding_json],
             'attendees' => $attendees,
             'stats' => [
                 'attendees' => $event->attendees_count,
@@ -109,6 +109,9 @@ class EventController extends Controller
             'starts_on' => 'required|date',
             'ends_on' => 'required|date|after_or_equal:starts_on',
             'question' => 'nullable|string|max:150',
+            // The WiFi page's welcome while the event runs (defaults to "Welcome to <event>").
+            'branding_json.heading' => 'nullable|string|max:80',
+            'branding_json.message' => 'nullable|string|max:200',
             'sponsor.name' => 'nullable|string|max:100',
             'sponsor.message' => 'nullable|string|max:200',
             'sponsor.url' => 'nullable|url:http,https|max:300',
@@ -119,6 +122,8 @@ class EventController extends Controller
 
         $sponsor = array_filter($data['sponsor'] ?? [], fn ($v) => filled($v));
         $data['sponsor'] = $sponsor ?: null;
+        $welcome = array_filter($data['branding_json'] ?? [], fn ($v) => filled($v));
+        $data['branding_json'] = $welcome ?: null;
 
         return $data;
     }

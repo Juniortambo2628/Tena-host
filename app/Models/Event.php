@@ -45,6 +45,46 @@ class Event extends Model
             ->withTimestamps();
     }
 
+    /** The event running at this venue today, if any (the latest to start when they overlap). */
+    public static function runningAt(Property $property, ?Carbon $today = null): ?self
+    {
+        $day = ($today ?? now())->toDateString();
+
+        return static::where('property_id', $property->id)
+            ->whereDate('starts_on', '<=', $day)->whereDate('ends_on', '>=', $day)
+            ->orderByDesc('starts_on')->first();
+    }
+
+    /**
+     * A sign-in during the event: add the attendee (or today to their days)
+     * and keep their latest answer to the event's question.
+     */
+    public function recordAttendance(Guest $guest, ?string $answer = null, ?Carbon $at = null): void
+    {
+        $at ??= now();
+        $existing = $this->attendees()->where('guests.id', $guest->id)->first()?->pivot;
+        $days = collect($existing?->days ?? [])->push($at->toDateString())->unique()->sort()->values()->all();
+        $values = [
+            'days' => $days,
+            'answer' => filled($answer) ? $answer : $existing?->answer,
+            'first_seen_at' => $existing?->first_seen_at ?? $at,
+            'last_seen_at' => $at,
+        ];
+
+        $existing
+            ? $this->attendees()->updateExistingPivot($guest->id, $values)
+            : $this->attendees()->attach($guest->id, $values);
+    }
+
+    /** The WiFi page's welcome during the event: its own heading and message, else "Welcome to <event>". */
+    public function welcome(): array
+    {
+        return [
+            'heading' => ($this->branding_json['heading'] ?? null) ?: "Welcome to {$this->name}",
+            'message' => ($this->branding_json['message'] ?? null) ?: null,
+        ];
+    }
+
     /** upcoming, live (running today) or past. */
     public function status(?Carbon $today = null): string
     {
