@@ -9,11 +9,11 @@ import { Wifi, Users, Radio, MapPin, ArrowLeft, Trash2 } from 'lucide-react';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
 import { useConfirm } from '@/hooks/useConfirm';
 
-export default function PropertyShow({ property, wifi = {} }) {
+export default function PropertyShow({ property, wifi = {}, staffWifi = null }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
     useEffect(() => {
         const timer = setInterval(() => {
-            if (document.visibilityState === 'visible') router.reload({ only: ['property', 'wifi'] });
+            if (document.visibilityState === 'visible') router.reload({ only: ['property', 'wifi', 'staffWifi'] });
         }, 30000);
         return () => clearInterval(timer);
     }, []);
@@ -71,6 +71,15 @@ export default function PropertyShow({ property, wifi = {} }) {
                         {(wifi.latestGuests || []).length === 0 && <p className="text-sm">No WiFi guests yet. The first successful connection will appear here.</p>}
                         {(wifi.latestGuests || []).map(guest => <div key={guest.id} className="border-t py-3 text-sm"><Link className="underline font-bold" href={route('host.guests.show', guest.id)}>{guest.first_name}</Link> · {guest.total_visits} visits · {guest.last_connected ? new Date(guest.last_connected).toLocaleString() : '—'} · {guest.marketing_opt_in ? 'Offers opted in' : 'No offers consent'}</div>)}
                     </GlassCard>
+                    {staffWifi && (
+                        <GlassCard padding="p-8">
+                            <h3 className="font-black text-lg">Staff WiFi</h3>
+                            <p className="text-sm my-3">Network <strong>{staffWifi.ssid}</strong> · {staffWifi.today} staff signed in today</p>
+                            <p className="text-xs mb-4">Staff sign in with their name and work email or staff ID. They are kept apart from your customer list and never get marketing messages.</p>
+                            {staffWifi.latest.length === 0 && <p className="text-sm">No staff sign-ins yet. Join {staffWifi.ssid} from a phone to try it.</p>}
+                            {staffWifi.latest.map(s => <div key={s.id} className="border-t py-3 text-sm break-words"><strong>{s.name}</strong> · {s.identifier || 'No ID'} · {s.visits} {s.visits === 1 ? 'visit' : 'visits'} · {s.last_seen_at ? new Date(s.last_seen_at).toLocaleString() : '—'}</div>)}
+                        </GlassCard>
+                    )}
                     <GlassCard padding="p-8">
                         <div className="host-properties-show-header">
                             <div className="host-properties-show-icon">

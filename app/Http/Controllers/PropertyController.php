@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Property;
+use App\Models\Setting;
 use App\Services\PropertyStats;
 use App\Services\ReviewRequestService;
 use App\Services\Unifi\UnifiService;
@@ -60,6 +61,13 @@ class PropertyController extends Controller
                 'latestGuests' => $property->guests()->whereNotNull('device_mac')->latest('last_connected')->limit(10)
                     ->get(['id', 'first_name', 'last_connected', 'total_visits', 'marketing_opt_in']),
             ],
+            // Staff WiFi: who from staff signed in on this site's staff network.
+            'staffWifi' => filter_var(Setting::getValue('staff_wifi_enabled', '0'), FILTER_VALIDATE_BOOLEAN) && $property->staff_ssid ? [
+                'ssid' => $property->staff_ssid,
+                'today' => $property->staffConnections()->where('last_seen_at', '>=', today())->count(),
+                'latest' => $property->staffConnections()->latest('last_seen_at')->limit(20)
+                    ->get(['id', 'name', 'identifier', 'visits', 'last_seen_at']),
+            ] : null,
         ]);
     }
 
@@ -71,6 +79,7 @@ class PropertyController extends Controller
             'property' => $property,
             'reviewDefaults' => ['message' => ReviewRequestService::defaultMessage($property)],
             'venueUrl' => SplashDesign::isBusiness($property) ? route('venue.show', $property) : null,
+            'staffWifiEnabled' => filter_var(Setting::getValue('staff_wifi_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
             'reviewStats' => [
                 'requested' => $property->guests()->whereNotNull('review_requested_at')->count(),
                 'clicked' => $property->guests()->whereNotNull('review_clicked_at')->count(),
@@ -205,6 +214,9 @@ class PropertyController extends Controller
             'address' => 'nullable|string|max:255',
             // Groups a business's sites ("Nairobi branches"); not used by rental accounts.
             'region' => 'nullable|string|max:80',
+            // Staff WiFi: the site's staff network and, optionally, the work email domain staff sign in with.
+            'staff_ssid' => 'nullable|string|max:64',
+            'staff_email_domain' => ['nullable', 'string', 'max:100', 'regex:/^@?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i'],
             'wifi_ssid' => 'nullable|string|max:255',
             'occupancy_threshold' => 'integer|min:1',
             ...SplashDesign::rules(),

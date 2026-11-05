@@ -6,6 +6,7 @@ use App\Models\AccessPoint;
 use App\Models\Analytics;
 use App\Models\Event;
 use App\Models\Property;
+use App\Models\StaffConnection;
 use App\Services\GuestCaptureService;
 use App\Services\Unifi\UnifiService;
 use App\Support\Brand;
@@ -41,6 +42,11 @@ class WifiPortalController extends Controller
     public function show(Request $request)
     {
         $context = $this->context($request);
+
+        // A site's staff network: the staff sign-in, never the guest page.
+        if ($context['staff']) {
+            return view('portal.staff', $context + ['error' => $request->query('error')]);
+        }
 
         // Sponsor report: a real device (a known access point) saw the sponsor on the page.
         if (! empty($context['event']?->sponsor['name']) && $context['canConnect']) {
@@ -125,6 +131,10 @@ class WifiPortalController extends Controller
             return response()->view('portal.splash', $context + [
                 'error' => 'This access point is not linked to a property yet. Please ask your host to register it.',
             ], 422);
+        }
+
+        if ($context['staff']) {
+            return $this->connectStaff($request, $data, $context);
         }
 
         $guestData = null;
@@ -234,6 +244,60 @@ class WifiPortalController extends Controller
     }
 
     /**
+     * Staff network sign-in: name and staff ID or work email (limited to the
+     * site's email domain when set), then the device goes online. Recorded
+     * as a staff connection, never as a guest.
+     */
+    protected function connectStaff(Request $request, array $data, array $context)
+    {
+        $property = $context['property'];
+        $domain = ltrim(strtolower((string) $property->staff_email_domain), '@');
+
+        $validator = Validator::make($request->all(), [
+            'staff_name' => 'required|string|max:100',
+            'staff_id' => ['required', 'string', 'max:150', function ($attribute, $value, $fail) use ($domain) {
+                if ($domain && ! str_ends_with(strtolower(trim($value)), '@'.$domain)) {
+                    $fail("Use your work email (…@{$domain}).");
+                }
+            }],
+        ], [
+            'staff_name.required' => 'Please add your name.',
+            'staff_id.required' => $domain ? 'Please add your work email.' : 'Please add your staff ID or work email.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->view('portal.staff', $context + [
+                'errors' => $validator->errors(),
+                'old' => $request->only('staff_name', 'staff_id'),
+            ], 422);
+        }
+
+        try {
+            $authorized = $this->unifi->authorizeGuest(clientMac: $data['id'], apMac: $data['ap'] ?? null);
+        } catch (\Throwable $e) {
+            Log::error('WiFi portal staff authorize error: '.$e->getMessage(), ['client_mac' => $data['id']]);
+            $authorized = false;
+        }
+
+        if (! $authorized) {
+            return response()->view('portal.staff', $context + [
+                'error' => 'We could not connect you to the WiFi. Please try again.',
+                'old' => $request->only('staff_name', 'staff_id'),
+            ], 503);
+        }
+
+        $identifier = trim($request->input('staff_id'));
+        $connection = StaffConnection::where('property_id', $property->id)
+            ->where(fn ($q) => $q->where('identifier', $identifier)->when($context['deviceMac'], fn ($q) => $q->orWhere('device_mac', $context['deviceMac'])))
+            ->first();
+        $connection
+            ? $connection->update(['name' => trim($request->input('staff_name')), 'identifier' => $identifier, 'device_mac' => $context['deviceMac'] ?? $connection->device_mac, 'visits' => $connection->visits + 1, 'last_seen_at' => now()])
+            : StaffConnection::create(['property_id' => $property->id, 'name' => trim($request->input('staff_name')), 'identifier' => $identifier, 'device_mac' => $context['deviceMac'], 'first_seen_at' => now(), 'last_seen_at' => now()]);
+
+        return view('portal.connected', $context + ['continueUrl' => null, 'staffConnected' => true]);
+    }
+
+    /**
      * Resolve branding + the UniFi params for the view.
      */
     protected function context(Request $request): array
@@ -256,9 +320,17 @@ class WifiPortalController extends Controller
         $deviceMac = ! empty($params['id']) ? $this->unifi->normalizeMac($params['id']) : null;
         $propertyName = $property?->name ?? Brand::name();
 
+        // A site's staff network gets the staff sign-in: no guest content, events or offers.
+        $staff = (bool) $property?->isStaffNetwork($params['ssid']);
+
         // An event running at this venue today: its welcome, question and sponsor on the page.
-        $event = $property ? Event::runningAt($property) : null;
+        $event = $property && ! $staff ? Event::runningAt($property) : null;
         $design = SplashDesign::forProperty($property);
+        if ($staff) {
+            $design['content'] = array_map(fn ($v) => is_array($v) ? [] : null, $design['content']);
+            $design['tiles'] = [];
+            $design['hasContent'] = false;
+        }
         if ($event) {
             $welcome = $event->welcome();
             $design['heading'] = $welcome['heading'];
@@ -275,7 +347,8 @@ class WifiPortalController extends Controller
             'event' => $event,
             'canConnect' => $property && is_string($params['id']) && (bool) preg_match('/^(?:[0-9a-fA-F]{12}|(?:[0-9a-fA-F]{2}[:-]){5}[0-9a-fA-F]{2})$/', $params['id']),
             'deviceMac' => $deviceMac,
-            'returningGuest' => $property ? $this->guests->findReturning($property, $deviceMac) : null,
+            'returningGuest' => $property && ! $staff ? $this->guests->findReturning($property, $deviceMac) : null,
+            'staff' => $staff,
             'consentText' => static::consentText($propertyName),
             'isBusiness' => SplashDesign::isBusiness($property),
         ];

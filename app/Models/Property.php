@@ -22,6 +22,8 @@ class Property extends Model
         'business_type',
         'address',
         'region',
+        'staff_ssid',
+        'staff_email_domain',
         'description',
         'wifi_ssid',
         'occupancy_threshold',
@@ -90,6 +92,23 @@ class Property extends Model
     public function guests(): HasMany
     {
         return $this->hasMany(Guest::class);
+    }
+
+    /** Staff sign-ins on this site's staff network (Staff WiFi). */
+    public function staffConnections(): HasMany
+    {
+        return $this->hasMany(StaffConnection::class);
+    }
+
+    /**
+     * Whether a device joined this site's staff network (Admin -> Settings ->
+     * Staff WiFi on, and the SSID it came from is the site's staff SSID).
+     */
+    public function isStaffNetwork(?string $ssid): bool
+    {
+        return filled($this->staff_ssid) && filled($ssid)
+            && strcasecmp(trim($this->staff_ssid), trim($ssid)) === 0
+            && filter_var(Setting::getValue('staff_wifi_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /** Events held at this venue (event accounts). */

@@ -4,13 +4,13 @@ import './Edit.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { ArrowLeft, Loader2, Sparkles, Star, Store } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, Star, Store, BadgeCheck } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 import { TemplateThumb } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 import { BRAND_COLORS } from '@/constants';
 
-export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
+export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null, staffWifiEnabled = false }) {
     // Occupancy alerts are for rentals only.
     const { account } = usePage().props.auth || {};
     const isRentals = !account || account.type === 'host';
@@ -26,6 +26,8 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         offers: property.offers || '',
         events: property.events || '',
         birthday_offer: property.birthday_offer || '',
+        staff_ssid: property.staff_ssid || '',
+        staff_email_domain: property.staff_email_domain || '',
         _method: 'patch',
     });
 
@@ -196,6 +198,44 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                 ))}
                                 <p className="host-properties-edit-hint">
                                     Birthday treats go out on WhatsApp on the customer's birthday, to customers who gave a birthday and opted in to offers. Leave it empty to turn them off.
+                                </p>
+                            </fieldset>
+                        )}
+
+                        {staffWifiEnabled && !isRentals && (
+                            <fieldset className="host-properties-edit-section">
+                                <legend className="host-properties-edit-section-title">
+                                    <BadgeCheck size={14} /> Staff WiFi
+                                </legend>
+                                <p className="host-properties-edit-hint">
+                                    If your team has its own network here, name it below. People joining it see a short staff sign-in (name and work email or staff ID) instead of the customer page, and never get marketing messages.
+                                </p>
+                                <div className="host-properties-edit-grid">
+                                    <div>
+                                        <label className="host-properties-edit-label">Staff network name (SSID)</label>
+                                        <input
+                                            type="text"
+                                            className="host-properties-edit-input"
+                                            placeholder="e.g. Acme-Staff"
+                                            value={data.staff_ssid}
+                                            onChange={e => setData('staff_ssid', e.target.value)}
+                                        />
+                                        {errors.staff_ssid && <p className="host-properties-edit-error">{errors.staff_ssid}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="host-properties-edit-label">Work email domain (optional)</label>
+                                        <input
+                                            type="text"
+                                            className="host-properties-edit-input"
+                                            placeholder="e.g. acme.co.ke"
+                                            value={data.staff_email_domain}
+                                            onChange={e => setData('staff_email_domain', e.target.value)}
+                                        />
+                                        {errors.staff_email_domain && <p className="host-properties-edit-error">{errors.staff_email_domain}</p>}
+                                    </div>
+                                </div>
+                                <p className="host-properties-edit-hint">
+                                    With a domain set, only addresses ending in it can sign in to the staff network.
                                 </p>
                             </fieldset>
                         )}

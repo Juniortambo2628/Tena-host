@@ -620,6 +620,9 @@
         .sp--band.sp--solo .sp-connect { grid-column: 1 / 3; justify-self: center; width: min(440px, 100%); }
     }
 
+    /* Staff WiFi: the note under the staff sign-in. */
+    .sp-staff-note { font-size: 12.5px; line-height: 1.45; color: var(--muted); margin: 4px 0 14px; }
+
     /* An event's sponsor, under the sign-up button. */
     .sp-sponsor { margin-top: 16px; padding: 14px 16px; border-radius: 16px; background: rgba(127, 127, 127, .1); text-align: center; font-size: 13px; }
     .sp-sponsor__by { display: block; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
