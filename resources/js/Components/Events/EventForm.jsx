@@ -4,7 +4,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import { FormField, TextInput, Select, FormActions } from '@/Components/Forms/FormPrimitives';
 import './EventForm.css';
 
-const blank = { name: '', property_id: '', starts_on: '', ends_on: '', question: '', sponsor: { name: '', message: '', url: '' } };
+const blank = { name: '', property_id: '', starts_on: '', ends_on: '', question: '', branding_json: { heading: '', message: '' }, sponsor: { name: '', message: '', url: '' } };
 
 /**
  * Create or edit an event: name, venue, dates, an optional extra question
@@ -12,7 +12,7 @@ const blank = { name: '', property_id: '', starts_on: '', ends_on: '', question:
  */
 export default function EventForm({ event = null, venues, onDone, onCancel }) {
     const form = useForm(event
-        ? { ...blank, ...event, question: event.question || '', sponsor: { ...blank.sponsor, ...(event.sponsor || {}) } }
+        ? { ...blank, ...event, question: event.question || '', branding_json: { ...blank.branding_json, ...(event.branding_json || {}) }, sponsor: { ...blank.sponsor, ...(event.sponsor || {}) } }
         : { ...blank, property_id: venues.length === 1 ? venues[0].id : '' });
 
     const submit = (e) => {
@@ -21,6 +21,7 @@ export default function EventForm({ event = null, venues, onDone, onCancel }) {
         event ? form.put(route('host.events.update', event.id), options) : form.post(route('host.events.store'), options);
     };
     const setSponsor = (key, value) => form.setData('sponsor', { ...form.data.sponsor, [key]: value });
+    const setWelcome = (key, value) => form.setData('branding_json', { ...form.data.branding_json, [key]: value });
 
     return (
         <form onSubmit={submit} className="event-form">
@@ -41,6 +42,15 @@ export default function EventForm({ event = null, venues, onDone, onCancel }) {
                     <TextInput id="event-ends" type="date" value={form.data.ends_on} onChange={(e) => form.setData('ends_on', e.target.value)} required />
                 </FormField>
             </div>
+            <fieldset className="event-form__sponsor">
+                <legend>WiFi page while the event runs</legend>
+                <FormField label="Welcome heading" hint={`Leave empty for “Welcome to ${form.data.name || 'your event'}”.`} error={form.errors['branding_json.heading']}>
+                    <TextInput id="event-heading" value={form.data.branding_json.heading} onChange={(e) => setWelcome('heading', e.target.value)} />
+                </FormField>
+                <FormField label="Welcome message" hint="Leave empty to keep the venue’s message." error={form.errors['branding_json.message']}>
+                    <TextInput id="event-message" value={form.data.branding_json.message} onChange={(e) => setWelcome('message', e.target.value)} placeholder="e.g. Free WiFi all day. Join for the schedule." />
+                </FormField>
+            </fieldset>
             <FormField label="Extra question (optional)" hint="Asked on the WiFi sign-in while the event runs, e.g. “Where are you coming from?”" error={form.errors.question}>
                 <TextInput id="event-question" value={form.data.question} onChange={(e) => form.setData('question', e.target.value)} />
             </FormField>

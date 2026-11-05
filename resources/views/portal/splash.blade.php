@@ -5,6 +5,9 @@
     $oldPhone = preg_replace('/^\+?254/', '', (string) ($old['phone'] ?? ''));
     $title = $returningGuest ? 'Welcome back, '.$returningGuest->first_name.'!' : ($property ? null : 'Welcome');
     $page = 'splash';
+    // An event running at this venue today (WifiPortalController): its question and sponsor.
+    $event = $event ?? null;
+    $sponsor = $event?->sponsor ?? [];
 @endphp
 @extends('portal.layout')
 
@@ -76,6 +79,14 @@
                 </div>
             @endif
 
+            @if($event?->question)
+                <label class="sp-field">
+                    <span>{{ $event->question }} <em>(optional)</em></span>
+                    <input type="text" name="event_answer" value="{{ $old['event_answer'] ?? '' }}" maxlength="255" autocomplete="off">
+                    @if($fieldError('event_answer'))<small class="sp-field-error">{{ $fieldError('event_answer') }}</small>@endif
+                </label>
+            @endif
+
             <label class="sp-check">
                 <input type="checkbox" name="consent" value="1" required @checked(!empty($old['consent']))>
                 <span>{{ $consentText }} <a href="{{ url('/privacy') }}" target="_blank" rel="noopener">Read it</a>.</span>
@@ -95,4 +106,14 @@
             @include('portal.partials.icon', ['name' => 'wifi', 'size' => 18])<span>{{ !empty($preview) ? 'Preview only' : ($design['button'] ?: 'Connect to WiFi') }}</span>
         </button>
     </form>
+
+    @if(!empty($sponsor['name']))
+        {{-- The event's sponsor: their name, a short message and a link. --}}
+        <aside class="sp-sponsor" aria-label="Sponsor">
+            <span class="sp-sponsor__by">Brought to you by</span>
+            <b>{{ $sponsor['name'] }}</b>
+            @if(!empty($sponsor['message']))<p>{{ $sponsor['message'] }}</p>@endif
+            @if(!empty($sponsor['url']))<a href="{{ $sponsor['url'] }}" target="_blank" rel="noopener sponsored">See the offer</a>@endif
+        </aside>
+    @endif
 @endsection
