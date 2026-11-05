@@ -357,7 +357,7 @@ export default function Index({ settings, logos = [] }) {
                                     />
 
                                     <CheckboxField
-                                        label="Event accounts: event enquiries become event accounts (attendees and venues) instead of business accounts"
+                                        label="Event accounts: event enquiries become event accounts (attendees and venues) instead of business accounts. Also removes the site's “Coming soon” badges on the event features (sponsors, extra question, attendee lists)"
                                         checked={data.settings.event_accounts_enabled === '1'}
                                         onChange={() => updateSetting('event_accounts_enabled', data.settings.event_accounts_enabled === '1' ? '0' : '1')}
                                     />

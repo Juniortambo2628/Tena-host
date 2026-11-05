@@ -128,7 +128,7 @@ export default function GuestShow({ guest, activity = [] }) {
                     <GlassCard padding="p-0 overflow-hidden">
                         <div className="px-8 py-6 border-b border-black/5 flex justify-between items-center">
                             <h3 className="font-black text-xs uppercase tracking-widest text-black/50">Activity</h3>
-                            <span className="text-xs font-black text-black/30 uppercase tracking-widest">{guest.total_visits || 0} visits</span>
+                            <span className="text-xs font-black text-black/30 uppercase tracking-widest">{guest.total_visits || 0} {(guest.total_visits || 0) === 1 ? 'visit' : 'visits'}</span>
                         </div>
                         {activity.length === 0 ? (
                             <p className="px-8 py-6 text-sm text-black/50">No activity yet.</p>

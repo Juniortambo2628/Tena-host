@@ -129,7 +129,7 @@ export default function GuestIndex({ guests, filters, properties }) {
             accessorKey: 'total_visits',
             cell: ({ row: { original: guest } }) => (
                 <div className="flex flex-col">
-                    <span className="host-guests-visits">{guest.total_visits} visits</span>
+                    <span className="host-guests-visits">{guest.total_visits} {guest.total_visits === 1 ? 'visit' : 'visits'}</span>
                     <span className="host-guests-last-date">
                         {guest.last_connected ? new Date(guest.last_connected).toLocaleDateString() : 'Never'}
                     </span>
