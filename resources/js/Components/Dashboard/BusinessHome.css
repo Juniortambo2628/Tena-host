@@ -1,0 +1,65 @@
+@reference "../../../css/theme.css";
+
+.business-home {
+    @apply flex flex-col gap-6;
+}
+
+.business-home__tiles {
+    @apply grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4;
+}
+
+.business-home__tile {
+    @apply flex flex-col gap-1;
+}
+
+.business-home__tile-icon {
+    @apply mb-2 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary/20 text-dark;
+}
+
+.business-home__tile b {
+    @apply text-3xl font-black text-dark leading-none;
+}
+
+.business-home__tile span {
+    @apply text-sm font-bold text-dark;
+}
+
+.business-home__tile small {
+    @apply text-xs font-medium text-muted;
+}
+
+.business-home__charts {
+    @apply grid gap-6 grid-cols-1 lg:grid-cols-2;
+}
+
+.business-home__regions {
+    @apply grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3;
+}
+
+.business-home__region {
+    @apply flex flex-col gap-1;
+}
+
+.business-home__region b {
+    @apply text-base font-black text-dark;
+}
+
+.business-home__region span {
+    @apply text-sm font-bold text-dark;
+}
+
+.business-home__region small {
+    @apply text-xs text-muted;
+}
+
+.business-home__site {
+    @apply flex flex-col no-underline;
+}
+
+.business-home__site b {
+    @apply text-sm font-black text-dark;
+}
+
+.business-home__site small {
+    @apply text-xs font-bold text-muted;
+}
