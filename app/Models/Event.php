@@ -76,6 +76,34 @@ class Event extends Model
             : $this->attendees()->attach($guest->id, $values);
     }
 
+    /**
+     * The sponsor report: how many saw the sponsor, tapped their link and
+     * answered the question, and the most common answers.
+     *
+     * @return array{views: int, clicks: int, attendees: int, answered: int, topAnswers: list<array{answer: string, count: int}>}
+     */
+    public function sponsorReport(): array
+    {
+        $answers = EventAttendance::where('event_id', $this->id)->whereNotNull('answer')->where('answer', '!=', '')->pluck('answer');
+
+        return [
+            'views' => Analytics::total($this->metric('sponsor_views')),
+            'clicks' => Analytics::total($this->metric('sponsor_clicks')),
+            'attendees' => $this->attendees()->count(),
+            'answered' => $answers->count(),
+            'topAnswers' => $answers->map(fn ($a) => trim($a))
+                ->groupBy(fn ($a) => mb_strtolower($a))
+                ->map(fn ($group) => ['answer' => $group->first(), 'count' => $group->count()])
+                ->sortByDesc('count')->take(5)->values()->all(),
+        ];
+    }
+
+    /** Sponsor report counters: sponsor_views (WiFi page shown with the sponsor) and sponsor_clicks. */
+    public function metric(string $name): string
+    {
+        return "event.{$this->id}.{$name}";
+    }
+
     /** The WiFi page's welcome during the event: its own heading and message, else "Welcome to <event>". */
     public function welcome(): array
     {

@@ -42,7 +42,8 @@ it('shows the running event’s welcome, question and sponsor on the WiFi page',
         ->assertSee('name="event_answer"', false)
         ->assertSee('Brought to you by')
         ->assertSee('Kahawa Co')
-        ->assertSee('https://example.com/offer', false);
+        // The sponsor's link goes through TenaFi so taps are counted for their report.
+        ->assertSee(route('portal.sponsor', $this->event), false);
 });
 
 it('uses the event’s own heading and message when set', function () {

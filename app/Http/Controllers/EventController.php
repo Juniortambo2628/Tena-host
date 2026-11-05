@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -34,7 +36,7 @@ class EventController extends Controller
 
     public function show(Event $event): Response
     {
-        $this->eventAccount();
+        $user = $this->eventAccount();
         $this->authorize('view', $event);
         $event->load('property:id,name')->loadCount('attendees');
 
@@ -63,7 +65,18 @@ class EventController extends Controller
                 'answered' => (clone $all)->whereNotNull('event_guest.answer')->count(),
             ],
             'venues' => Auth::user()->sites()->orderBy('name')->get(['id', 'name']),
+            // A private link for the sponsor: anyone with it can see this event's sponsor report.
+            'sponsorReport' => $event->sponsor ? $event->sponsorReport() + ['url' => URL::signedRoute('events.sponsor-report', $event)] : null,
+            'messageUrl' => $user->isTeamMember() ? null : route('host.marketing.builder', ['event' => $event->id]),
         ]);
+    }
+
+    /** The sponsor report a signed link opens, no login needed (shared with the sponsor). */
+    public function sponsorReport(Event $event): View
+    {
+        $event->load('property:id,name');
+
+        return view('events.sponsor-report', ['event' => $event, 'report' => $event->sponsorReport()]);
     }
 
     public function store(Request $request): RedirectResponse

@@ -290,6 +290,9 @@ require __DIR__.'/auth.php';
 Route::post('/api/mpesa/callback', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');
 Route::post('/api/mpesa/extras/callback', [MpesaCallbackController::class, 'extras'])->name('mpesa.extras.callback');
 
+// An event's sponsor report, opened from a signed link the organiser shares (no login).
+Route::get('/events/{event}/sponsor-report', [EventController::class, 'sponsorReport'])->middleware('signed')->name('events.sponsor-report');
+
 // Try-it-yourself demo of the WiFi page (homepage QR code). Saves nothing.
 Route::get('/demo', [DemoController::class, 'show'])->name('demo');
 Route::post('/demo', [DemoController::class, 'connect'])->middleware('throttle:30,1')->name('demo.connect');
@@ -299,6 +302,8 @@ Route::post('/demo', [DemoController::class, 'connect'])->middleware('throttle:3
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [WifiPortalController::class, 'show'])->name('show');
     Route::post('/connect', [WifiPortalController::class, 'connect'])->name('connect');
+    // An event sponsor's link: counted for their report, then redirected.
+    Route::get('/sponsor/{event}', [WifiPortalController::class, 'sponsor'])->middleware('throttle:60,1')->name('sponsor');
 });
 
 // UniFi controllers that append their own path (http://<portal>/guest/s/<site>/?id=...)

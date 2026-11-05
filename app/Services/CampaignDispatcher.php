@@ -101,6 +101,8 @@ class CampaignDispatcher
         return Guest::query()
             ->whereIn('property_id', $ownProperties)
             ->when($propertyId, fn ($q) => $q->where('property_id', $propertyId))
+            // An event's attendees (event accounts): thank-yous, early-bird tickets.
+            ->when($campaign->audience_event_id, fn ($q) => $q->whereHas('events', fn ($e) => $e->where('events.id', $campaign->audience_event_id)))
             // Campaigns are direct marketing: guests who gave contact consent
             // at WiFi login but didn't opt in to offers are left out (Kenya
             // Data Protection Act, 2019).

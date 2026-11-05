@@ -133,7 +133,7 @@ function MessagePreview({ data, propertyName }) {
     );
 }
 
-export default function MarketingBuilder({ campaign, properties = [], splashOffers = [], channels = {} }) {
+export default function MarketingBuilder({ campaign, properties = [], splashOffers = [], channels = {}, events = [], preselectEvent = null }) {
     const t = useTerms();
     const isEditing = !!campaign;
     const isActive = campaign?.status === 'active';
@@ -150,6 +150,8 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
         trigger_delay: campaign?.trigger_delay || 'Instant',
         target_audience: campaign?.target_audience || 'all_guests',
         audience_property_id: campaign?.audience_property_id || '',
+        // Event accounts: one event's attendees (opened from an event's "Message attendees").
+        audience_event_id: campaign?.audience_event_id || preselectEvent || '',
         audience_from: campaign?.audience_from?.slice(0, 10) || '',
         audience_to: campaign?.audience_to?.slice(0, 10) || '',
         scheduled_at: campaign?.scheduled_at?.slice(0, 16) || '',
@@ -162,12 +164,13 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
                 params: {
                     type: data.type, target_audience: data.target_audience,
                     audience_property_id: data.audience_property_id || null,
+                    audience_event_id: data.audience_event_id || null,
                     audience_from: data.audience_from || null, audience_to: data.audience_to || null,
                 },
             }).then(({ data: res }) => setReach(res.count)).catch(() => setReach(null));
         }, 300);
         return () => clearTimeout(timer);
-    }, [data.type, data.target_audience, data.audience_property_id, data.audience_from, data.audience_to]);
+    }, [data.type, data.target_audience, data.audience_property_id, data.audience_event_id, data.audience_from, data.audience_to]);
 
     const insert = (token) => {
         const el = content.current;
@@ -192,6 +195,7 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
         transform(d => ({
             ...d,
             audience_property_id: d.audience_property_id || null,
+            audience_event_id: d.audience_event_id || null,
             scheduled_at: d.trigger_event === 'Custom Date' ? (d.scheduled_at || null) : null,
             launch,
         }));
@@ -217,7 +221,7 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
         [channels[data.type] !== false, channels[data.type] === false ? `${data.type === 'sms' ? 'SMS' : 'WhatsApp'} isn't connected yet: messages won't send` : 'Channel is connected'],
         [(reach ?? 0) > 0 || !isBroadcast, isBroadcast ? `${reach ?? '…'} guests will receive it` : 'Reaches guests as they qualify'],
     ];
-    const stepErrors = { message: ['name', 'type', 'subject', 'content'], audience: ['target_audience', 'audience_property_id', 'audience_from', 'audience_to'], timing: ['trigger_event', 'trigger_delay', 'scheduled_at'], review: [] };
+    const stepErrors = { message: ['name', 'type', 'subject', 'content'], audience: ['target_audience', 'audience_property_id', 'audience_event_id', 'audience_from', 'audience_to'], timing: ['trigger_event', 'trigger_delay', 'scheduled_at'], review: [] };
     const index = steps.findIndex(s => s.key === step);
 
     const sectionBody = {
@@ -283,6 +287,14 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
                         {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </Field>
+                {events.length > 0 && (
+                    <Field label="Attendees of" error={errors.audience_event_id}>
+                        <select value={data.audience_event_id} onChange={e => setData('audience_event_id', e.target.value)} className="campaign-select">
+                            <option value="">Any event</option>
+                            {events.map(ev => <option key={ev.id} value={ev.id}>{ev.name}</option>)}
+                        </select>
+                    </Field>
+                )}
                 <div className="studio-grid-2">
                     <Field label="First seen from" error={errors.audience_from}><input type="date" value={data.audience_from} onChange={e => setData('audience_from', e.target.value)} className="campaign-date" /></Field>
                     <Field label="First seen until" error={errors.audience_to}><input type="date" value={data.audience_to} onChange={e => setData('audience_to', e.target.value)} className="campaign-date" /></Field>
@@ -326,7 +338,7 @@ export default function MarketingBuilder({ campaign, properties = [], splashOffe
                 </ul>
                 <dl className="campaign-summary">
                     <div><dt>Channel</dt><dd>{CHANNELS.find(c => c.value === data.type)?.label}</dd></div>
-                    <div><dt>Audience</dt><dd>{SEGMENTS.find(s => s[0] === data.target_audience)?.[1]} · {data.audience_property_id ? propertyName : t('All properties')}</dd></div>
+                    <div><dt>Audience</dt><dd>{SEGMENTS.find(s => s[0] === data.target_audience)?.[1]} · {data.audience_property_id ? propertyName : t('All properties')}{data.audience_event_id ? ` · came to ${events.find(ev => String(ev.id) === String(data.audience_event_id))?.name || 'the event'}` : ''}</dd></div>
                     <div><dt>Timing</dt><dd>{timing}</dd></div>
                 </dl>
             </>

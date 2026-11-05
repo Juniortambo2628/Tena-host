@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\CampaignEmail;
 use App\Models\Campaign;
+use App\Models\Event;
 use App\Models\Guest;
 use App\Models\MarketingEvent;
 use App\Services\CampaignAutomation;
@@ -76,6 +77,7 @@ class MarketingController extends Controller
             'type' => 'required|in:email,sms,whatsapp',
             'target_audience' => 'nullable|string|max:32',
             'audience_property_id' => 'nullable|integer',
+            'audience_event_id' => ['nullable', 'integer', Rule::in($this->eventIds())],
             'audience_from' => 'nullable|date',
             'audience_to' => 'nullable|date',
         ]);
@@ -159,6 +161,9 @@ class MarketingController extends Controller
         return [
             'campaign' => $campaign,
             'properties' => $properties->map->only(['id', 'name']),
+            // Event accounts can aim a campaign at one event's attendees; ?event= preselects it.
+            'events' => Event::forHost(Auth::user())->orderByDesc('starts_on')->get(['id', 'name', 'starts_on'])->map->only(['id', 'name']),
+            'preselectEvent' => in_array((int) request()->query('event'), $this->eventIds(), true) ? (int) request()->query('event') : null,
             'splashOffers' => $properties->flatMap(fn ($p) => collect(SplashDesign::forProperty($p)['content']['offers'])
                 ->map(fn ($o) => ['property_id' => $p->id, 'property' => $p->name] + $o))->values(),
             'channels' => [
@@ -209,6 +214,7 @@ class MarketingController extends Controller
             'target_audience' => 'nullable|in:all_guests,property_guests,new_guests,returning_guests,vip_guests',
             'property_id' => ['nullable', 'integer', $own],
             'audience_property_id' => ['nullable', 'integer', $own],
+            'audience_event_id' => ['nullable', 'integer', Rule::in($this->eventIds())],
             'audience_from' => 'nullable|date',
             'audience_to' => 'nullable|date|after_or_equal:audience_from',
             'schedule_trigger' => 'nullable|string|max:255',
@@ -321,5 +327,11 @@ class MarketingController extends Controller
                 'unsubscribes' => '0%',
             ],
         ]);
+    }
+
+    /** @return list<int> the events whose attendees this user may message */
+    protected function eventIds(): array
+    {
+        return Event::forHost(Auth::user())->pluck('id')->all();
     }
 }
