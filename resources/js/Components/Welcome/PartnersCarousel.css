@@ -178,6 +178,35 @@
     margin-bottom: 4px;
 }
 
+/* With a logo: the logo on a white tile, header and button in the logo's main colour. */
+.trusted-placeholder__logo {
+    @apply flex items-center justify-center rounded-xl bg-white;
+    width: 72%;
+    height: 44px;
+    padding: 5px 8px;
+    margin-bottom: 4px;
+}
+
+.trusted-placeholder__head:has(.trusted-placeholder__logo) {
+    padding-top: 14px;
+    padding-bottom: 12px;
+}
+
+.trusted-phone .trusted-placeholder__logo img {
+    @apply block w-full h-full;
+    aspect-ratio: auto;
+    object-fit: contain;
+    border-radius: 0;
+    background: none;
+}
+
+/* Doubled class: beats the hosts/business defaults further down. */
+.trusted-placeholder.trusted-placeholder--brand .trusted-placeholder__head,
+.trusted-placeholder.trusted-placeholder--brand .trusted-placeholder__cta {
+    background: var(--brand-bg);
+    color: var(--brand-ink);
+}
+
 .trusted-placeholder__head b {
     font-size: 15px;
     line-height: 1.2;
@@ -228,4 +257,29 @@
     @apply text-center text-muted;
     margin-top: auto;
     font-size: 12px;
+}
+
+/* Narrow phones: the drawn pages are smaller, so tighten them to keep "Powered by TenaFi" inside. */
+@media (max-width: 480px) {
+    .trusted-placeholder__head {
+        padding: 14px 8px 10px;
+    }
+
+    .trusted-placeholder__head:has(.trusted-placeholder__logo) {
+        padding-top: 10px;
+        padding-bottom: 8px;
+    }
+
+    .trusted-placeholder__logo {
+        height: 36px;
+    }
+
+    .trusted-placeholder__body {
+        gap: 5px;
+        padding: 10px 10px 8px;
+    }
+
+    .trusted-placeholder__body i {
+        height: 20px;
+    }
 }
