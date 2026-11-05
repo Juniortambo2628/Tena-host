@@ -1,0 +1,65 @@
+@reference "../../../css/theme.css";
+
+.event-payment__head {
+    @apply flex items-start gap-3 mb-5 text-dark;
+}
+
+.event-payment__head svg {
+    @apply shrink-0 mt-0.5;
+}
+
+.event-payment__head h3 {
+    @apply text-base font-black text-dark;
+}
+
+.event-payment__head p {
+    @apply text-xs text-muted mt-1;
+}
+
+.event-payment__form {
+    @apply flex flex-col gap-4;
+}
+
+.event-payment__waiting {
+    @apply flex items-center gap-2 rounded-xl bg-primary/15 px-3 py-2 text-xs font-bold text-dark;
+}
+
+.event-payment__pay {
+    @apply grid gap-6 md:grid-cols-2;
+}
+
+.event-payment__price {
+    @apply flex flex-col gap-1 rounded-2xl bg-dark/5 p-5;
+}
+
+.event-payment__price span {
+    @apply text-xs font-black uppercase tracking-widest text-muted;
+}
+
+.event-payment__price b {
+    @apply text-3xl font-black text-dark leading-tight;
+}
+
+.event-payment__price small {
+    @apply text-xs text-muted;
+}
+
+.event-payment__methods {
+    @apply flex flex-col gap-4;
+}
+
+.event-payment__tabs {
+    @apply inline-flex self-start rounded-full bg-dark/5 p-1;
+}
+
+.event-payment__tabs button {
+    @apply rounded-full px-4 py-1.5 text-xs font-black text-muted;
+}
+
+.event-payment__tabs button.is-active {
+    @apply bg-dark text-primary;
+}
+
+.event-payment__hint {
+    @apply text-xs text-muted;
+}

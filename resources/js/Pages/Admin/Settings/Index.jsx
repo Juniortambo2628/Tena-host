@@ -152,6 +152,7 @@ export default function Index({ settings, logos = [] }) {
             teams_enabled: flattened.teams_enabled || '0',
             staff_wifi_enabled: flattened.staff_wifi_enabled || '0',
             visitor_log_enabled: flattened.visitor_log_enabled || '0',
+            event_billing_enabled: flattened.event_billing_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -377,6 +378,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Visitor log: a site's WiFi sign-in asks who the visitor is here to see, and reception gets a dated visitor log with sign-out"
                                         checked={data.settings.visitor_log_enabled === '1'}
                                         onChange={() => updateSetting('visitor_log_enabled', data.settings.visitor_log_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Pay per event: event organisers without a plan ask for a quote (Admin → Event quotes), then pay it by M-Pesa or card to switch the event's WiFi page on"
+                                        checked={data.settings.event_billing_enabled === '1'}
+                                        onChange={() => updateSetting('event_billing_enabled', data.settings.event_billing_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

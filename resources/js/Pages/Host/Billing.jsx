@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { CreditCard, Smartphone, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -48,6 +48,12 @@ export default function Billing({ paystackPublicKey, billingLive, subscription, 
 
             <div className="host-billing-container">
                 <p className="host-billing-subheading">One price per unit. Everything included. Pay by M-Pesa or card.</p>
+
+                {auth.eventBilling && auth.account?.type === 'event' && !isActive && (
+                    <p className="host-billing-event-note">
+                        Running a one-off event instead? Skip the plan and pay per event: <Link href={route('host.events.index')} className="underline font-black">set up your event</Link> and request a quote from its page.
+                    </p>
+                )}
 
                 <div className="host-billing-plan-card">
                     <div className="host-billing-plan-header">
@@ -256,7 +262,7 @@ function Transactions({ transactions }) {
                                 <p className="host-billing-tx-amount">{kes(tx.Amount)}</p>
                                 <p className="host-billing-tx-date">
                                     {formatDate(tx.created_at)}
-                                    {tx.meta && ` · ${tx.meta.plan_name}, ${tx.meta.months} mo`}
+                                    {tx.meta && (tx.meta.type === 'event' ? ` · Event: ${tx.meta.event_name}` : ` · ${tx.meta.plan_name}, ${tx.meta.months} mo`)}
                                 </p>
                             </div>
                         </div>

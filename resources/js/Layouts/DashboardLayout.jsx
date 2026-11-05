@@ -70,13 +70,14 @@ export default function DashboardLayout({ children }) {
         { name: 'Users', icon: Users, route: 'admin.users.index', match: ['admin.users.*'] },
         { name: 'Sign-ups', icon: AlignLeft, route: 'admin.registrations.index', match: ['admin.registrations.*'] },
         { name: 'Payments', icon: CreditCard, route: 'admin.payments.index', match: ['admin.payments.*'] },
+        auth.eventBilling && { name: 'Event quotes', icon: CalendarDays, route: 'admin.event-quotes.index' },
         { name: 'Public Pages', icon: Globe, route: 'admin.landing.index', match: ['admin.landing.*'] },
         { name: 'Policies', icon: FileText, route: 'admin.policies.index', match: ['admin.policies.*'] },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
         { name: 'WiFi Portal', icon: Wifi, route: 'admin.wifi.edit' },
         { name: 'M-Pesa', icon: Smartphone, route: 'admin.mpesa.edit' },
         { name: 'Settings', icon: Settings, route: 'admin.settings.index' },
-    ];
+    ].filter(Boolean);
 
     // An item stays active on every page of its section (e.g. a guest's detail page under Guests).
     const isItemActive = (item) => (item.match ?? [item.route]).some((name) => route().current(name));

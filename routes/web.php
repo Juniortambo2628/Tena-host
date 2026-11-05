@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\EmailImageController;
+use App\Http\Controllers\Admin\EventQuoteController;
 use App\Http\Controllers\Admin\HostController;
 use App\Http\Controllers\Admin\LandingController;
 use App\Http\Controllers\Admin\MpesaSettingsController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventPaymentController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestPortalController;
 use App\Http\Controllers\HostDashboardController;
@@ -107,6 +109,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/system', [SystemController::class, 'index'])->name('system.index');
+
+    // Pay per event: organisers' quote requests and the prices set for them
+    Route::get('/event-quotes', [EventQuoteController::class, 'index'])->name('event-quotes.index');
+    Route::put('/event-quotes/{event}', [EventQuoteController::class, 'update'])->name('event-quotes.update');
 
     // Payments
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
@@ -221,6 +227,10 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
         Route::match(['put', 'patch'], '/events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+        // Pay per event: ask for a quote, then pay it (account owners pay).
+        Route::post('/events/{event}/quote', [EventPaymentController::class, 'requestQuote'])->name('events.quote');
+        Route::post('/events/{event}/pay/mpesa', [EventPaymentController::class, 'payMpesa'])->name('events.pay.mpesa');
+        Route::post('/events/{event}/pay/paystack', [EventPaymentController::class, 'payPaystack'])->name('events.pay.paystack');
 
         // Reception visitor log (Admin -> Settings -> Visitor log): a day's visits, walk-ins and sign-outs.
         Route::get('/visitors', [VisitorController::class, 'index'])->name('visitors.index');

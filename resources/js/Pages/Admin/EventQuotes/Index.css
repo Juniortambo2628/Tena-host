@@ -1,0 +1,21 @@
+@reference "../../../../css/theme.css";
+
+.event-quotes__event {
+    @apply flex flex-col;
+}
+
+.event-quotes__event b {
+    @apply text-sm font-black text-dark;
+}
+
+.event-quotes__event small {
+    @apply text-xs font-bold text-muted break-words;
+}
+
+.event-quotes__form {
+    @apply flex flex-col gap-4;
+}
+
+.event-quotes__summary {
+    @apply text-sm text-muted;
+}
