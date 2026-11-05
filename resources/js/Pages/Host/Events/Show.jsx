@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Head, router } from '@inertiajs/react';
-import { PencilLine, Trash2, Users } from 'lucide-react';
+import { PencilLine, Trash2, Users, Send, Link2, ExternalLink } from 'lucide-react';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import DataTable from '@/Components/Dashboard/DataTable';
 import StatusBadge from '@/Components/Dashboard/StatusBadge';
+import PillButton from '@/Components/Dashboard/PillButton';
 import GlassModal from '@/Components/GlassModal';
 import EventForm from '@/Components/Events/EventForm';
 import { notify } from '@/Components/Toast';
@@ -13,9 +14,18 @@ import { STATUS_LABEL, STATUS_COLORS, dateRange } from '@/Components/Events/even
 import '../Events/Index.css';
 
 /** One event: when and where, its question and sponsor, and who came. */
-export default function EventShow({ event, attendees, stats, venues }) {
+export default function EventShow({ event, attendees, stats, venues, sponsorReport = null, messageUrl = null }) {
     const [editing, setEditing] = useState(false);
     const { confirm, ConfirmDialogEl } = useConfirm();
+
+    const copyReport = async () => {
+        try {
+            await navigator.clipboard.writeText(sponsorReport.url);
+            notify.success('Link copied. Anyone with it can see this sponsor report.');
+        } catch {
+            notify.error('Couldn’t copy. Use “Open report” and copy the address instead.');
+        }
+    };
 
     const remove = async () => {
         const ok = await confirm({
@@ -51,6 +61,7 @@ export default function EventShow({ event, attendees, stats, venues }) {
                 breadcrumbs={[{ label: 'Events', href: route('host.events.index') }, { label: event.name }]}
                 rootRoute="host.dashboard"
                 actions={[
+                    ...(messageUrl ? [{ label: 'Message attendees', icon: <Send size={16} />, href: messageUrl, variant: 'primary' }] : []),
                     { label: 'Edit', icon: <PencilLine size={16} />, onClick: () => setEditing(true) },
                     { label: 'Delete', icon: <Trash2 size={16} />, onClick: remove },
                 ]}
@@ -71,6 +82,27 @@ export default function EventShow({ event, attendees, stats, venues }) {
                 </div>
                 <p className="event-page__note">While the event runs, everyone who signs in to the venue’s WiFi is added to this list.</p>
             </GlassCard>
+
+            {sponsorReport && (
+                <GlassCard padding="p-6">
+                    <div className="event-page__report-head">
+                        <div>
+                            <h3>Sponsor report · {event.sponsor?.name}</h3>
+                            <p>Share the link with the sponsor. It shows these numbers and the top answers, no login needed.</p>
+                        </div>
+                        <div className="event-page__report-actions">
+                            <PillButton variant="ghost" icon={<Link2 size={14} />} onClick={copyReport}>Copy link</PillButton>
+                            <a className="event-page__report-open" href={sponsorReport.url} target="_blank" rel="noopener noreferrer"><ExternalLink size={14} aria-hidden="true" /> Open report</a>
+                        </div>
+                    </div>
+                    <div className="event-page__report">
+                        <div><b>{sponsorReport.views.toLocaleString()}</b><span>Saw the sponsor screen</span></div>
+                        <div><b>{sponsorReport.attendees.toLocaleString()}</b><span>Attendees</span></div>
+                        <div><b>{sponsorReport.answered.toLocaleString()}</b><span>Answered the question</span></div>
+                        <div><b>{sponsorReport.clicks.toLocaleString()}</b><span>Tapped the offer</span></div>
+                    </div>
+                </GlassCard>
+            )}
 
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable

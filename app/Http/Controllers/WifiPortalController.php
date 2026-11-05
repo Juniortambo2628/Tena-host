@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccessPoint;
+use App\Models\Analytics;
 use App\Models\Event;
 use App\Models\Property;
 use App\Services\GuestCaptureService;
@@ -41,9 +42,27 @@ class WifiPortalController extends Controller
     {
         $context = $this->context($request);
 
+        // Sponsor report: a real device (a known access point) saw the sponsor on the page.
+        if (! empty($context['event']?->sponsor['name']) && $context['canConnect']) {
+            rescue(fn () => Analytics::bump($context['event']->metric('sponsor_views')), report: false);
+        }
+
         return view('portal.splash', $context + [
             'error' => $request->query('error'),
         ]);
+    }
+
+    /**
+     * The sponsor's link on the WiFi page: counted for the sponsor report,
+     * then on to the sponsor's own page.
+     */
+    public function sponsor(Event $event)
+    {
+        $url = $event->sponsor['url'] ?? null;
+        abort_unless($url && preg_match('#^https?://#i', $url), 404);
+        rescue(fn () => Analytics::bump($event->metric('sponsor_clicks')), report: false);
+
+        return redirect()->away($url);
     }
 
     /**

@@ -13,6 +13,7 @@ class Campaign extends Model
         'user_id',
         'property_id',
         'audience_property_id',
+        'audience_event_id',
         'name',
         'type',
         'status',

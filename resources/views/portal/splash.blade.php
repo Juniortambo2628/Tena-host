@@ -113,7 +113,7 @@
             <span class="sp-sponsor__by">Brought to you by</span>
             <b>{{ $sponsor['name'] }}</b>
             @if(!empty($sponsor['message']))<p>{{ $sponsor['message'] }}</p>@endif
-            @if(!empty($sponsor['url']))<a href="{{ $sponsor['url'] }}" target="_blank" rel="noopener sponsored">See the offer</a>@endif
+            @if(!empty($sponsor['url']))<a href="{{ route('portal.sponsor', $event) }}" target="_blank" rel="noopener sponsored">See the offer</a>@endif
         </aside>
     @endif
 @endsection
