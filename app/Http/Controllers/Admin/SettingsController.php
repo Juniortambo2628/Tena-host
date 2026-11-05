@@ -63,6 +63,7 @@ class SettingsController extends Controller
             'demo_enabled' => 'sometimes|in:0,1',
             'event_accounts_enabled' => 'sometimes|in:0,1',
             'teams_enabled' => 'sometimes|in:0,1',
+            'staff_wifi_enabled' => 'sometimes|in:0,1',
         ];
 
         $types = [

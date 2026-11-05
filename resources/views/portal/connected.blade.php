@@ -6,7 +6,7 @@
 
 @section('title', $propertyName.': connected')
 @section('eyebrow', 'Online')
-@section('lede')Enjoy the WiFi at {{ $propertyName }}.@if($design['hasContent']) Everything you need for your stay is right here.@endif @endsection
+@section('lede')@if(!empty($staffConnected))You're on the staff WiFi at {{ $propertyName }}.@else Enjoy the WiFi at {{ $propertyName }}.@if($design['hasContent']) Everything you need for your stay is right here.@endif @endif @endsection
 
 @section('connect')
     <div class="sp-done">

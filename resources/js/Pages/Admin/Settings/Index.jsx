@@ -150,6 +150,7 @@ export default function Index({ settings, logos = [] }) {
             demo_enabled: flattened.demo_enabled || '0',
             event_accounts_enabled: flattened.event_accounts_enabled || '0',
             teams_enabled: flattened.teams_enabled || '0',
+            staff_wifi_enabled: flattened.staff_wifi_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -363,6 +364,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Teams: account owners can invite managers and staff, each with their own login and sites"
                                         checked={data.settings.teams_enabled === '1'}
                                         onChange={() => updateSetting('teams_enabled', data.settings.teams_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Staff WiFi: a site's staff network gets a staff sign-in (name and staff ID or work email), kept out of customer lists and campaigns"
+                                        checked={data.settings.staff_wifi_enabled === '1'}
+                                        onChange={() => updateSetting('staff_wifi_enabled', data.settings.staff_wifi_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField
