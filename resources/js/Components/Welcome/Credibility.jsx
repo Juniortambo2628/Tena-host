@@ -2,6 +2,7 @@ import React from 'react';
 import { SectionWrapper } from './layouts';
 import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml } from '@/lib/cms';
 import { SkeletonSectionHeader } from './Skeleton';
+import EditablePicture from '@/Components/Public/EditablePicture';
 import './Credibility.css';
 
 const defaultStats = [
@@ -90,6 +91,7 @@ export default function Credibility({ section }) {
                         </figure>
                     ) : (
                     <div className="credibility-image-col">
+                        <EditablePicture section={section} slot="main_image">
                         <div className="credibility-image-wrap">
                             <img
                                 src={mainImage}
@@ -98,6 +100,7 @@ export default function Credibility({ section }) {
                             />
                             <span className="credibility-image-caption">{badge}</span>
                         </div>
+                        </EditablePicture>
                     </div>
                     )}
                 </div>

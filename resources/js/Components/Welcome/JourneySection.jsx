@@ -1,5 +1,6 @@
 import React from 'react';
 import { getContent, extractItems, getText, stripHtml, getUpload } from '@/lib/cms';
+import EditablePicture from '@/Components/Public/EditablePicture';
 import { SectionWrapper } from './layouts';
 import { BRAND_COLORS } from '@/constants';
 import './JourneySection.css';
@@ -213,6 +214,7 @@ export default function JourneySection({ section }) {
                                     {step.text && <p>{stripHtml(step.text)}</p>}
                                 </div>
                             </div>
+                            <EditablePicture section={section} slot={`step_${i}_shot`}>
                             {getUpload(section, `step_${i}_shot`) ? (
                                 <div className="journey-step__art">
                                     <img className="journey-step__shot" src={getUpload(section, `step_${i}_shot`)} alt={stripHtml(step.title)} loading="lazy" decoding="async" />
@@ -222,6 +224,7 @@ export default function JourneySection({ section }) {
                                     <Mockup type={stripHtml(step.mockup)} lines={screenLines(step.screen)} brand={brand} />
                                 </div>
                             )}
+                            </EditablePicture>
                         </li>
                     ))}
                 </ol>
