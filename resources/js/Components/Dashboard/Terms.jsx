@@ -1,15 +1,24 @@
 import { usePage } from '@inertiajs/react';
 
-// Business accounts talk about customers and locations, hosts about guests
-// and properties. Longest words first so "Properties" isn't half-replaced.
-const BUSINESS_WORDS = [
-    ['Properties', 'Locations'], ['properties', 'locations'],
-    ['Property', 'Location'], ['property', 'location'],
-    ['Guests', 'Customers'], ['guests', 'customers'],
-    ['Guest', 'Customer'], ['guest', 'customer'],
-];
+const cap = (word) => word.charAt(0).toUpperCase() + word.slice(1);
 
-export const toBusinessWording = (text) => BUSINESS_WORDS.reduce(
+/**
+ * The signed-in account's words for "guests" and "properties" (App\Support\AccountType,
+ * shared as auth.account): customers and locations for businesses, attendees
+ * and venues for events. Longest words first so "Properties" isn't half-replaced.
+ */
+function replacements(account) {
+    if (!account || account.type === 'host') return [];
+    const { person, people, place, places } = account;
+    return [
+        ['Properties', cap(places)], ['properties', places],
+        ['Property', cap(place)], ['property', place],
+        ['Guests', cap(people)], ['guests', people],
+        ['Guest', cap(person)], ['guest', person],
+    ];
+}
+
+export const toAccountWording = (text, account) => replacements(account).reduce(
     (out, [from, to]) => out.replace(new RegExp(`\\b${from}\\b`, 'g'), to),
     text,
 );
@@ -19,12 +28,10 @@ export const toBusinessWording = (text) => BUSINESS_WORDS.reduce(
  */
 export function useTerms() {
     const { auth } = usePage().props;
-    const isBusiness = auth?.user?.account_type === 'business';
-
-    return (text) => (isBusiness && typeof text === 'string' ? toBusinessWording(text) : text);
+    return (text) => (typeof text === 'string' ? toAccountWording(text, auth?.account) : text);
 }
 
-/** <T>Total Guests</T> → "Total Customers" for business accounts. */
+/** <T>Total Guests</T> → "Total Customers" for business accounts, "Total Attendees" for events. */
 export function T({ children }) {
     return useTerms()(children);
 }

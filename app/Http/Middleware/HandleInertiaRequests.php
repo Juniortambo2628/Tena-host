@@ -23,6 +23,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                // What this account calls its people and places (guests/customers/attendees, …).
+                'account' => $request->user()?->accountDefinition(),
                 'notifications' => $request->user()
                     ? Cache::remember(
                         'app_notifications_'.$request->user()->id,

@@ -26,7 +26,7 @@ class MonthlyReportMail extends Mailable
 
     public function content(): Content
     {
-        $people = $this->user->isBusiness() ? 'customers' : 'guests';
+        $people = $this->user->accountDefinition()['people'];
 
         return new Content(view: 'emails.monthly-report', with: [
             'heading' => "Your {$this->report['month']} report",

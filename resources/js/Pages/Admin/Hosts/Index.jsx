@@ -8,15 +8,20 @@ import DataTable from '@/Components/Dashboard/DataTable';
 import BulkActions from '@/Components/Dashboard/BulkActions';
 import { Building2, Eye, Trash2 } from 'lucide-react';
 import StatusBadge from '@/Components/Dashboard/StatusBadge';
+import ViewSwitcher from '@/Components/Dashboard/ViewSwitcher';
 import './Index.css';
 
-export default function Index({ hosts, stats }) {
+// Account types (App\Support\AccountType): rentals, businesses and events.
+const TYPE_LABELS = { host: 'Rentals', business: 'Business', event: 'Events' };
+const TYPE_VIEWS = [{ id: 'all', label: 'All' }, ...Object.entries(TYPE_LABELS).map(([id, label]) => ({ id, label }))];
+
+export default function Index({ hosts, stats, filters = {}, typeCounts = {} }) {
     const data = useMemo(() => hosts.data || hosts, [hosts]);
     const [selectedRows, setSelectedRows] = useState([]);
     const { confirm, ConfirmDialogEl } = useConfirm();
 
     const summaryStats = useMemo(() => [
-        { label: 'Total Hosts', value: stats?.total ?? data.length },
+        { label: 'Accounts', value: stats?.total ?? Object.values(typeCounts).reduce((a, b) => a + Number(b), 0) },
         { label: 'Active', value: stats?.active ?? data.filter(h => h.is_active !== false).length },
         { label: 'Properties', value: stats?.properties ?? data.reduce((sum, h) => sum + (h.properties_count || 0), 0) },
         { label: 'New This Month', value: stats?.new_month ?? 0 },
@@ -24,7 +29,7 @@ export default function Index({ hosts, stats }) {
 
     const columns = useMemo(() => [
         {
-            header: 'Host Name',
+            header: 'Account',
             accessorKey: 'name',
             cell: info => (
                 <div className="flex items-center gap-3">
@@ -42,7 +47,7 @@ export default function Index({ hosts, stats }) {
             header: 'Type',
             accessorKey: 'account_type',
             cell: info => (
-                <span className="text-xs font-black">{info.getValue() === 'business' ? 'Business' : 'Host'}</span>
+                <span className="text-xs font-black">{TYPE_LABELS[info.getValue()] || 'Rentals'}</span>
             )
         },
         {
@@ -55,7 +60,7 @@ export default function Index({ hosts, stats }) {
             )
         },
         {
-            header: 'Properties',
+            header: 'Places',
             accessorKey: 'properties_count',
             cell: info => (
                 <span className="text-sm font-black">{info.getValue() ?? 0}</span>
@@ -91,21 +96,21 @@ export default function Index({ hosts, stats }) {
                         <button
                             onClick={async () => {
                                 const result = await confirm({
-                                    title: 'Delete Host',
-                                    message: `Delete host "${host.first_name} ${host.last_name}"?`,
+                                    title: 'Delete account',
+                                    message: `Delete the account "${host.first_name} ${host.last_name}"?`,
                                     confirmLabel: 'Delete',
                                     variant: 'danger',
                                 });
                                 if (result) {
                                     router.delete(route('admin.hosts.destroy', host.id), {
                                         preserveScroll: true,
-                                        onSuccess: () => notify.success('Host deleted'),
-                                        onError: () => notify.error('Failed to delete host'),
+                                        onSuccess: () => notify.success('Account deleted'),
+                                        onError: () => notify.error('Failed to delete account'),
                                     });
                                 }
                             }}
                             className="p-2 hover:bg-red-50 rounded-lg text-black/40 hover:text-red-500 transition-colors"
-                            title="Delete Host"
+                            title="Delete account"
                         >
                             <Trash2 size={14} />
                         </button>
@@ -122,8 +127,8 @@ export default function Index({ hosts, stats }) {
             variant: 'danger',
             onClick: async () => {
                 const result = await confirm({
-                    title: 'Delete Hosts',
-                    message: `Delete ${selectedRows.length} host(s)?`,
+                    title: 'Delete accounts',
+                    message: `Delete ${selectedRows.length} account(s)?`,
                     confirmLabel: 'Delete',
                     variant: 'danger',
                 });
@@ -137,7 +142,7 @@ export default function Index({ hosts, stats }) {
                             });
                         });
                     }
-                    notify.success(`${selectedRows.length} host(s) deleted`);
+                    notify.success(`${selectedRows.length} account(s) deleted`);
                     setSelectedRows([]);
                 }
             },
@@ -146,21 +151,28 @@ export default function Index({ hosts, stats }) {
 
     return (
         <>
-            <Head title="Hosts" />
+            <Head title="Accounts" />
             <DashboardHero
-                title="Hosts Management"
-                subtitle="Manage property hosts and approvals"
-                breadcrumbs={[{ label: 'Hosts', href: route('admin.hosts.index') }]}
+                title="Accounts"
+                subtitle="Rentals, businesses and events"
+                breadcrumbs={[{ label: 'Accounts', href: route('admin.hosts.index') }]}
                 rootRoute="admin.dashboard"
                 stats={summaryStats}
             />
 
+            <ViewSwitcher
+                label="Account type"
+                views={TYPE_VIEWS.map((v) => ({ ...v, label: `${v.label} (${v.id === 'all' ? Object.values(typeCounts).reduce((a, b) => a + Number(b), 0) : (typeCounts[v.id] || 0)})` }))}
+                value={filters.type || 'all'}
+                onChange={(id) => router.get(route('admin.hosts.index'), id === 'all' ? {} : { type: id }, { preserveScroll: true })}
+            />
+
             <GlassCard padding="p-0 overflow-hidden">
                 <DataTable
-                    emptyMessage="No hosts found"
+                    emptyMessage="No accounts yet"
                     data={data}
                     columns={columns}
-                    searchPlaceholder="Search hosts..."
+                    searchPlaceholder="Search accounts..."
                     serverPagination={hosts}
                     enableSelection
                     selectedIds={selectedRows}

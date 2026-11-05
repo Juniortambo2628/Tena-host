@@ -6,6 +6,7 @@ use App\Mail\UserInvitationMail;
 use App\Models\Registration;
 use App\Models\User;
 use App\Services\Messaging\Messenger;
+use App\Support\AccountType;
 use App\Support\Phone;
 use App\Support\SplashDesign;
 use Illuminate\Support\Facades\Hash;
@@ -130,8 +131,8 @@ class SignupConversionService
             'email' => $email,
             'phone_number' => $phone,
             'role' => 'host',
-            // Event organisers and venues use the business dashboard wording (customers, locations).
-            'account_type' => in_array($registration->type, [Registration::TYPE_BUSINESS, Registration::TYPE_EVENT], true) ? User::ACCOUNT_BUSINESS : User::ACCOUNT_HOST,
+            // Event enquiries become event accounts once those are switched on; until then, business accounts.
+            'account_type' => AccountType::forRegistration($registration->type),
             'password' => Hash::make(Str::random(40)),
             'billing_plan' => array_key_exists((string) $plan, config('billing.plans')) ? $plan : null,
             'billing_units' => $this->units($registration->units ?? $answers['units'] ?? $answers['locations'] ?? null),

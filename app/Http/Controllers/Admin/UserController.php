@@ -39,11 +39,15 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            // "business" is a host account with business wording.
-            'role' => 'required|in:admin,host,business,staff,guest',
+            // "business" and "event" are host accounts with their own wording and pages (App\Support\AccountType).
+            'role' => 'required|in:admin,host,business,event,staff,guest',
         ]);
-        $accountType = $validated['role'] === 'business' ? User::ACCOUNT_BUSINESS : User::ACCOUNT_HOST;
-        $validated['role'] = $validated['role'] === 'business' ? 'host' : $validated['role'];
+        $accountType = match ($validated['role']) {
+            'business' => User::ACCOUNT_BUSINESS,
+            'event' => User::ACCOUNT_EVENT,
+            default => User::ACCOUNT_HOST,
+        };
+        $validated['role'] = in_array($validated['role'], ['business', 'event'], true) ? 'host' : $validated['role'];
 
         $user = User::create([
             'first_name' => $validated['first_name'],

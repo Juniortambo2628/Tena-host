@@ -6,20 +6,32 @@ import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { ArrowLeft, Mail, Phone, Calendar, Building2, Trash2, Loader2 } from 'lucide-react';
 import './Show.css';
 import { useConfirm } from '@/hooks/useConfirm';
+import { notify } from '@/Components/Toast';
+import { FormField, Select } from '@/Components/Forms/FormPrimitives';
+
+// App\Support\AccountType: what the account is called and which pages it gets.
+const TYPES = [['host', 'Rentals'], ['business', 'Business'], ['event', 'Events']];
+const PROFILES = [['venue', 'Venue'], ['organiser', 'Organiser'], ['both', 'Venue and organiser']];
 
 export default function HostShow({ host }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
     const { delete: destroy, processing } = useForm();
+    const type = useForm({ account_type: host.account_type || 'host', account_profile: host.account_profile || '' });
+    const saveType = (e) => {
+        e.preventDefault();
+        type.transform((d) => ({ ...d, account_profile: d.account_type === 'event' ? (d.account_profile || null) : null }));
+        type.put(route('admin.hosts.update', host.id), { preserveScroll: true, onSuccess: () => notify.success('Account type saved') });
+    };
 
     const breadcrumbs = [
-        { label: 'Hosts', href: route('admin.hosts.index') },
+        { label: 'Accounts', href: route('admin.hosts.index') },
         { label: `${host.first_name} ${host.last_name}` },
     ];
 
     const handleDelete = async () => {
         const ok = await confirm({
-            title: 'Delete Host',
-            message: `Delete host "${host.first_name} ${host.last_name}"? All their properties will be orphaned.`,
+            title: 'Delete account',
+            message: `Delete the account "${host.first_name} ${host.last_name}"? All their places will be orphaned.`,
             confirmLabel: 'Delete',
             variant: 'danger',
         });
@@ -69,13 +81,32 @@ export default function HostShow({ host }) {
                             </div>
                             <div className="host-info-item">
                                 <Building2 size={16} className="host-info-icon" />
-                                <span className="host-info-text">{host.properties_count} properties</span>
+                                <span className="host-info-text">{host.properties_count} places</span>
                             </div>
                         </div>
                     </GlassCard>
                 </div>
 
                 <div className="host-sidebar">
+                    <GlassCard padding="p-6">
+                        <h4 className="host-actions-title">Account type</h4>
+                        <form onSubmit={saveType} className="host-type-form">
+                            <FormField label="Type" error={type.errors.account_type}>
+                                <Select id="account-type" value={type.data.account_type} onChange={(e) => type.setData('account_type', e.target.value)}>
+                                    {TYPES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                                </Select>
+                            </FormField>
+                            {type.data.account_type === 'event' && (
+                                <FormField label="Runs events as" hint="Changes defaults and wording only." error={type.errors.account_profile}>
+                                    <Select id="account-profile" value={type.data.account_profile} onChange={(e) => type.setData('account_profile', e.target.value)}>
+                                        <option value="">Not set</option>
+                                        {PROFILES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                                    </Select>
+                                </FormField>
+                            )}
+                            <PillButton type="submit" disabled={type.processing || !type.isDirty}>Save</PillButton>
+                        </form>
+                    </GlassCard>
                     <GlassCard padding="p-6">
                         <h4 className="host-actions-title">Actions</h4>
                         <div className="host-actions-list">
@@ -85,7 +116,7 @@ export default function HostShow({ host }) {
                                 className="host-delete-btn"
                             >
                                 {processing ? <Loader2 className="animate-spin" size={14} /> : <Trash2 size={14} />}
-                                Delete Host
+                                Delete account
                             </button>
                         </div>
                     </GlassCard>

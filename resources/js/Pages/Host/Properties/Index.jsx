@@ -27,7 +27,9 @@ registerPlugin(FilePondPluginImagePreview);
 
 export default function PropertyIndex({ properties, stats: live = {} }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
-    const accountIsBusiness = usePage().props.auth?.user?.account_type === 'business';
+    const account = usePage().props.auth?.account;
+    // Businesses and event venues start from the business templates (App\Support\AccountType).
+    const accountIsBusiness = account?.splash === 'business';
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editingProperty, setEditingProperty] = useState(null);
     // Once the owner picks a template or colour themselves, the business type stops choosing for them.
@@ -37,6 +39,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
         name: '',
         business_type: '',
         address: '',
+        region: '',
         wifi_ssid: '',
         splash_image_path: '',
         splash_image: null,
@@ -78,6 +81,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
             name: property.name || '',
             business_type: property.business_type || '',
             address: property.address || '',
+            region: property.region || '',
             wifi_ssid: property.wifi_ssid || '',
             splash_image_path: property.splash_image_path || '',
             splash_image: null,
@@ -170,6 +174,20 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                             onChange={e => setData('address', e.target.value)}
                         />
                     </div>
+                    {account && account.type !== 'host' && (
+                        <div>
+                            <label htmlFor="property-region" className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Region <span className="normal-case tracking-normal">(optional)</span></label>
+                            <input
+                                id="property-region"
+                                type="text"
+                                className="w-full bg-black/5 border-none rounded-2xl px-6 py-4 outline-none font-bold focus:ring-4 focus:ring-black/5 transition-all"
+                                placeholder="e.g. Nairobi branches"
+                                value={data.region}
+                                onChange={e => setData('region', e.target.value)}
+                            />
+                            {errors.region && <p className="text-red-500 text-xs mt-2 font-bold uppercase tracking-widest ml-1">{errors.region}</p>}
+                        </div>
+                    )}
                 </div>
             )
         },

@@ -202,6 +202,8 @@ class PropertyController extends Controller
             'name' => 'required|string|max:255',
             'business_type' => ['nullable', Rule::in(SplashDesign::businessTypes())],
             'address' => 'nullable|string|max:255',
+            // Groups a business's sites ("Nairobi branches"); not used by rental accounts.
+            'region' => 'nullable|string|max:80',
             'wifi_ssid' => 'nullable|string|max:255',
             'occupancy_threshold' => 'integer|min:1',
             ...SplashDesign::rules(),
