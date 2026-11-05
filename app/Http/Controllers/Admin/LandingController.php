@@ -264,14 +264,18 @@ class LandingController extends Controller
             'sort_order' => 'sometimes|integer|min:0',
         ]);
 
-        // Delete existing media with the same section_id and media_key to avoid unique constraint violation
-        LandingMedia::where('section_id', $section->id)
+        // Save the new file first, so a failed upload leaves the current photo in place.
+        $previous = LandingMedia::where('section_id', $section->id)
             ->where('media_key', $request->input('media_key'))
-            ->get()
-            ->each(fn ($m) => $this->mediaService->delete($m));
+            ->get();
 
         try {
-            $media = $this->mediaService->upload($request->file('file'), 'landing', $section->id, $request->input('media_key'));
+            // One upload per slot: the old row goes in the same transaction, so a failure rolls it back.
+            $media = DB::transaction(function () use ($request, $section, $previous) {
+                $previous->each->delete();
+
+                return $this->mediaService->upload($request->file('file'), 'landing', $section->id, $request->input('media_key'));
+            });
         } catch (\Throwable $e) {
             \Log::error('Media upload failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
@@ -279,6 +283,9 @@ class LandingController extends Controller
 
             return response()->json(['error' => $e->getMessage()], 500);
         }
+
+        // The new photo is saved; now remove the old files.
+        $previous->each(fn ($m) => $this->mediaService->delete($m));
 
         if ($request->has('sort_order')) {
             $media->update([

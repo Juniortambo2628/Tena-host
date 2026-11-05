@@ -163,3 +163,57 @@ export function getExpectedMediaSlots(sectionKey, contentKeys = []) {
 export function isSchemaKey(sectionKey, contentKeys, mediaKey) {
     return getExpectedMediaSlots(sectionKey, contentKeys).some((slot) => slot.key === mediaKey);
 }
+
+const plain = (value) => String(value ?? '').replace(/<[^>]*>/g, '').trim();
+
+/**
+ * Why a media slot isn't on the public page right now, or '' when it is.
+ * Several photo slots are covered by a drawing (the hero's drawn WiFi page,
+ * drawn rows and cards, the dark proof style); the editor shows this note
+ * so an upload there doesn't look like it failed.
+ *
+ * @param {string} sectionKey e.g. "detailed_features__home"
+ * @param {string} mediaKey   e.g. "section_2_image"
+ * @param {object} content    the section's content map
+ * @param {object} media      the section's media map (key => upload or null)
+ */
+export function slotNotice(sectionKey, mediaKey, content = {}, media = {}) {
+    const type = String(sectionKey).split('__')[0];
+    const has = (key) => Boolean(media?.[key]);
+
+    if (type === 'hero') {
+        const drawn = plain(content.visual) === 'splash';
+        if (mediaKey === 'main_image' && drawn) {
+            return has('visual_shot')
+                ? 'Not on the site: your screenshot below is shown in this spot instead.'
+                : 'Not on the site: this hero shows a drawn WiFi page. Upload in “Screenshot instead of the drawn WiFi page” to replace the drawing, or set Visual to “image” under Content to show this photo.';
+        }
+        if (mediaKey === 'visual_shot' && !drawn) {
+            return 'Not on the site: this hero shows its main photo. Set Visual to “splash” under Content to use this slot.';
+        }
+    }
+
+    const row = /^(section|card)_(\d+)_image$/.exec(mediaKey);
+    if (row && ((type === 'detailed_features' && row[1] === 'section') || (type === 'path_cards' && row[1] === 'card'))) {
+        const [, kind, i] = row;
+        const mockup = plain(content[`${kind === 'section' ? 'sections' : 'cards'}.${i}.mockup`]);
+        const n = Number(i) + 1;
+        const what = kind === 'section' ? `Section ${n}` : `Card ${n}`;
+        if (has(`${kind}_${i}_shot`)) return `Not on the site: the screenshot in “${what}: screenshot instead of the drawing” is shown instead.`;
+        if (mockup) return `Not on the site: ${what.toLowerCase()} shows a drawing. Upload in “${what}: screenshot instead of the drawing” to replace it.`;
+    }
+
+    // Trusted by only shows tall phone screenshots; anything squarer keeps the drawn placeholder phone.
+    if (type === 'partners' && /^partner_\d+_logo$/.test(mediaKey)) {
+        const { width, height } = media?.[mediaKey] || {};
+        if (width && height && height / width < 1.3) {
+            return 'Not on the site: this image isn’t a tall phone screenshot, so the drawn placeholder phone is shown. Upload a portrait screenshot (about twice as tall as it is wide).';
+        }
+    }
+
+    if (type === 'credibility' && mediaKey === 'main_image' && plain(content.style) === 'dark') {
+        return 'Not on the site: the dark style shows the founder quote in this spot. Clear Style under Content to show this photo.';
+    }
+
+    return '';
+}
