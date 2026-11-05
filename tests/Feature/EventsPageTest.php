@@ -9,8 +9,12 @@ use App\Services\Cms\PageBlueprint;
 use App\Support\TrialSlots;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
+
+// The copy commands save backups; keep them off the real disk.
+beforeEach(fn () => Storage::fake('local'));
 
 /** The live site before /events: no events page. */
 function withoutEventsPage(): void

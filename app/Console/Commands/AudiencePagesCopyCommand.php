@@ -14,7 +14,7 @@ namespace App\Console\Commands;
  */
 class AudiencePagesCopyCommand extends HomepageCopyCommand
 {
-    protected $signature = 'tenafi:audience-pages {--dry-run : Show the changes without saving anything} {--restore= : Restore a backup file from storage/app/cms-backups}';
+    protected $signature = 'tenafi:audience-pages {--dry-run : Show the changes without saving anything} {--restore= : Restore a backup file (its name, as printed after applying)}';
 
     protected $description = 'Apply the new look to /hosts and /business (with --dry-run diff and a backup first)';
 

@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
+// The copy commands save backups; keep them off the real disk.
+beforeEach(fn () => Storage::fake('local'));
+
 function audienceKey(string $slug, string $key): ?LandingSection
 {
     return LandingSection::whereHas('page', fn ($q) => $q->where('slug', $slug))->where('section_key', $key)->first();
