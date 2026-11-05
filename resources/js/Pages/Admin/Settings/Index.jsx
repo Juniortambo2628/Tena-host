@@ -148,6 +148,7 @@ export default function Index({ settings, logos = [] }) {
             trial_slots_since: flattened.trial_slots_since || '',
             callbacks_enabled: flattened.callbacks_enabled || '0',
             demo_enabled: flattened.demo_enabled || '0',
+            event_accounts_enabled: flattened.event_accounts_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -349,6 +350,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Live demo: /demo and the homepage “Try it yourself” section (nothing visitors type is saved)"
                                         checked={data.settings.demo_enabled === '1'}
                                         onChange={() => updateSetting('demo_enabled', data.settings.demo_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Event accounts: event enquiries become event accounts (attendees and venues) instead of business accounts"
+                                        checked={data.settings.event_accounts_enabled === '1'}
+                                        onChange={() => updateSetting('event_accounts_enabled', data.settings.event_accounts_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

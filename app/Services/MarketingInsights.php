@@ -19,8 +19,7 @@ class MarketingInsights
         $propertyIds = $user->properties()->pluck('id');
         $guests = Guest::whereIn('property_id', $propertyIds);
         $campaigns = Campaign::where('user_id', $user->id);
-        $people = $user->isBusiness() ? 'customers' : 'guests';
-        $person = $user->isBusiness() ? 'customer' : 'guest';
+        ['people' => $people, 'person' => $person] = $user->accountDefinition();
         $tips = [];
 
         $consented = (clone $guests)->whereNotNull('consented_at')->count();

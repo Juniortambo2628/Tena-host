@@ -96,7 +96,7 @@ class MonthlyReportService
      */
     public function summary(User $user, array $report): string
     {
-        $people = $user->isBusiness() ? 'customers' : 'guests';
+        $people = $user->accountDefinition()['people'];
 
         return Brand::name()." report for {$report['month']}: {$report['new_guests']} new {$people}, {$report['returning_guests']} returning, "
             ."{$report['messages_sent']} campaign messages sent, {$report['reviews_requested']} review requests ({$report['reviews_opened']} opened). "

@@ -130,7 +130,7 @@ class SplashDesign
     {
         $group = self::groupFor($property?->business_type);
 
-        return $group ? $group !== 'stays' : (bool) $property?->host?->isBusiness();
+        return $group ? $group !== 'stays' : ($property?->host && $property->host->accountDefinition()['splash'] !== 'stays');
     }
 
     /**

@@ -21,6 +21,7 @@ class Property extends Model
         'name',
         'business_type',
         'address',
+        'region',
         'description',
         'wifi_ssid',
         'occupancy_threshold',

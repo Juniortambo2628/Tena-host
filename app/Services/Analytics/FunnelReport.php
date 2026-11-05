@@ -5,6 +5,7 @@ namespace App\Services\Analytics;
 use App\Models\Analytics;
 use App\Models\Registration;
 use App\Models\User;
+use App\Support\AccountType;
 use Illuminate\Support\Carbon;
 
 /**
@@ -88,7 +89,7 @@ class FunnelReport
 
     protected function paying(string $type, Carbon $since): int
     {
-        return User::where('account_type', $type === Registration::TYPE_BUSINESS ? User::ACCOUNT_BUSINESS : User::ACCOUNT_HOST)
+        return User::where('account_type', AccountType::forRegistration($type))
             ->whereIn('id', Registration::where('type', $type)->where('created_at', '>=', $since)->whereNotNull('user_id')->select('user_id'))
             ->whereHas('subscriptions', fn ($q) => $q->where('type', 'default')->where('ends_at', '>', now()))
             ->count();

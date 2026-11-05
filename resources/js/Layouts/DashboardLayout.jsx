@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }) {
 
     const adminNavItems = [
         { name: 'Overview', icon: LayoutDashboard, route: 'admin.dashboard' },
-        { name: 'Hosts', icon: Building2, route: 'admin.hosts.index', match: ['admin.hosts.*'] },
+        { name: 'Accounts', icon: Building2, route: 'admin.hosts.index', match: ['admin.hosts.*'] },
         { name: 'Users', icon: Users, route: 'admin.users.index', match: ['admin.users.*'] },
         { name: 'Sign-ups', icon: AlignLeft, route: 'admin.registrations.index', match: ['admin.registrations.*'] },
         { name: 'Payments', icon: CreditCard, route: 'admin.payments.index', match: ['admin.payments.*'] },
@@ -234,7 +234,7 @@ export default function DashboardLayout({ children }) {
                         </div>
                         <div>
                             <p className="dashboard-layout__user-name">{auth.user.first_name} {auth.user.last_name}</p>
-                            <p className="dashboard-layout__user-role">{auth.user.account_type === 'business' && auth.user.role === 'host' ? 'business' : auth.user.role}</p>
+                            <p className="dashboard-layout__user-role">{auth.user.role === 'host' && auth.account ? auth.account.label : auth.user.role}</p>
                         </div>
                     </div>
                 </div>

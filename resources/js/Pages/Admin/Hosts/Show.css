@@ -59,3 +59,8 @@
 .host-delete-btn {
     @apply w-full py-3 bg-red-50 text-red-600 rounded-xl text-xs font-semibold hover:bg-red-100 transition-colors flex items-center justify-center gap-2;
 }
+
+/* Account type: rentals, business or events (and an event account's profile). */
+.host-type-form {
+    @apply flex flex-col gap-4 mt-4;
+}

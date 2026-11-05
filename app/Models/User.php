@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\AccountType;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +29,10 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 
     public const ACCOUNT_BUSINESS = 'business';
 
-    public const ACCOUNT_TYPES = [self::ACCOUNT_HOST, self::ACCOUNT_BUSINESS];
+    /** Event organisers and venues (see App\Support\AccountType for each type's wording). */
+    public const ACCOUNT_EVENT = 'event';
+
+    public const ACCOUNT_TYPES = [self::ACCOUNT_HOST, self::ACCOUNT_BUSINESS, self::ACCOUNT_EVENT];
 
     protected $fillable = [
         'username',
@@ -38,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         'email',
         'password',
         'role',
+        'account_profile',
         'phone_number',
         'two_factor_enabled',
         'two_factor_secret',
@@ -82,6 +87,21 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     public function isBusiness(): bool
     {
         return $this->account_type === self::ACCOUNT_BUSINESS;
+    }
+
+    public function isEventAccount(): bool
+    {
+        return $this->account_type === self::ACCOUNT_EVENT;
+    }
+
+    /**
+     * What this account calls the people it collects and the places it runs.
+     *
+     * @return array{type: string, label: string, person: string, people: string, place: string, places: string, splash: string}
+     */
+    public function accountDefinition(): array
+    {
+        return AccountType::for($this->account_type);
     }
 
     public function properties(): HasMany
