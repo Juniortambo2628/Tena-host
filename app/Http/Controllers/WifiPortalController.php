@@ -7,6 +7,7 @@ use App\Models\Analytics;
 use App\Models\Event;
 use App\Models\Property;
 use App\Models\StaffConnection;
+use App\Models\VisitorVisit;
 use App\Services\GuestCaptureService;
 use App\Services\Unifi\UnifiService;
 use App\Support\Brand;
@@ -105,6 +106,7 @@ class WifiPortalController extends Controller
             'design' => SplashDesign::forProperty($property, $data['template'] ?? null),
             'consentText' => static::consentText($property->name),
             'isBusiness' => SplashDesign::isBusiness($property),
+            'visitorLog' => $property->keepsVisitorLog(),
             'preview' => true,
             // The studio frames the draft and labels it itself.
             'embedded' => $request->isMethod('post'),
@@ -138,6 +140,9 @@ class WifiPortalController extends Controller
         }
 
         $guestData = null;
+        // Reception visitor log: who they're here to see (asked of new and returning visitors alike).
+        $visitingRules = $context['visitorLog'] ? ['visiting' => 'required|string|max:100'] : [];
+        $visitingMessages = ['visiting.required' => 'Please say who you’re here to see.'];
 
         if ($context['property'] && ! $context['returningGuest']) {
             $request->merge(['phone' => Phone::toE164($request->input('phone'))]);
@@ -155,7 +160,7 @@ class WifiPortalController extends Controller
                 'birthday_day' => 'nullable|integer|between:1,31|required_with:birthday_month',
                 // The running event's extra question (optional for the guest).
                 'event_answer' => 'nullable|string|max:255',
-            ], [
+            ] + $visitingRules, $visitingMessages + [
                 'first_name.required' => 'Please add your first name.',
                 'phone.required' => 'Please add your WhatsApp number.',
                 'consent.accepted' => 'Please tick the box to agree before connecting.',
@@ -164,11 +169,12 @@ class WifiPortalController extends Controller
             if ($validator->fails()) {
                 return response()->view('portal.splash', $context + [
                     'errors' => $validator->errors(),
-                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in', 'birthday_month', 'birthday_day', 'event_answer'),
+                    'old' => $request->only('first_name', 'phone', 'email', 'marketing_opt_in', 'birthday_month', 'birthday_day', 'event_answer', 'visiting'),
                 ], 422);
             }
 
             $guestData = $validator->validated();
+            unset($guestData['visiting']);
 
             // Only keep what the page asked for: clinic pages never collect email or birthdays.
             $fields = $context['design']['fields'];
@@ -180,6 +186,14 @@ class WifiPortalController extends Controller
             }
             $eventAnswer = $context['event']?->question ? ($guestData['event_answer'] ?? null) : null;
             unset($guestData['event_answer']);
+        } elseif ($visitingRules) {
+            $validator = Validator::make($request->all(), $visitingRules, $visitingMessages);
+            if ($validator->fails()) {
+                return response()->view('portal.splash', $context + [
+                    'errors' => $validator->errors(),
+                    'old' => $request->only('visiting'),
+                ], 422);
+            }
         }
 
         try {
@@ -198,7 +212,7 @@ class WifiPortalController extends Controller
         if (! $authorized) {
             return response()->view('portal.splash', $context + [
                 'error' => 'We could not connect you to the WiFi. Please try again.',
-                'old' => $request->only('first_name', 'phone', 'email', 'consent', 'marketing_opt_in', 'birthday_month', 'birthday_day', 'event_answer'),
+                'old' => $request->only('first_name', 'phone', 'email', 'consent', 'marketing_opt_in', 'birthday_month', 'birthday_day', 'event_answer', 'visiting'),
             ], 503);
         }
 
@@ -217,6 +231,15 @@ class WifiPortalController extends Controller
                 $context['event']->recordAttendance($guest, $eventAnswer ?? null);
             } catch (\Throwable $e) {
                 Log::error('Event attendance not recorded: '.$e->getMessage(), ['event' => $context['event']->id, 'guest' => $guest->id]);
+            }
+        }
+
+        // Reception visitor log: the visit goes in the site's log (never blocking the connection).
+        if ($guest && $context['visitorLog']) {
+            try {
+                VisitorVisit::recordSignIn($context['property'], $guest, trim((string) $request->input('visiting')));
+            } catch (\Throwable $e) {
+                Log::error('Visitor visit not recorded: '.$e->getMessage(), ['property' => $context['property']->id, 'guest' => $guest->id]);
             }
         }
 
@@ -349,6 +372,8 @@ class WifiPortalController extends Controller
             'deviceMac' => $deviceMac,
             'returningGuest' => $property && ! $staff ? $this->guests->findReturning($property, $deviceMac) : null,
             'staff' => $staff,
+            // Reception visitor log: the sign-in also asks who they're here to see.
+            'visitorLog' => $property && ! $staff && $property->keepsVisitorLog(),
             'consentText' => static::consentText($propertyName),
             'isBusiness' => SplashDesign::isBusiness($property),
         ];

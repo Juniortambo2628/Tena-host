@@ -4,13 +4,13 @@ import './Edit.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { ArrowLeft, Loader2, Sparkles, Star, Store, BadgeCheck } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, Star, Store, BadgeCheck, DoorOpen } from 'lucide-react';
 import { T } from '@/Components/Dashboard/Terms';
 import { TemplateThumb } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 import { BRAND_COLORS } from '@/constants';
 
-export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null, staffWifiEnabled = false }) {
+export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null, staffWifiEnabled = false, visitorLogEnabled = false }) {
     // Occupancy alerts are for rentals only.
     const { account } = usePage().props.auth || {};
     const isRentals = !account || account.type === 'host';
@@ -28,6 +28,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         birthday_offer: property.birthday_offer || '',
         staff_ssid: property.staff_ssid || '',
         staff_email_domain: property.staff_email_domain || '',
+        visitor_log: !!property.visitor_log,
         _method: 'patch',
     });
 
@@ -237,6 +238,25 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                 <p className="host-properties-edit-hint">
                                     With a domain set, only addresses ending in it can sign in to the staff network.
                                 </p>
+                            </fieldset>
+                        )}
+
+                        {visitorLogEnabled && !isRentals && (
+                            <fieldset className="host-properties-edit-section">
+                                <legend className="host-properties-edit-section-title">
+                                    <DoorOpen size={14} /> Reception visitor log
+                                </legend>
+                                <p className="host-properties-edit-hint">
+                                    Visitors who sign in to the WiFi here are also asked who they're here to see, and each visit goes in your visitor log (Visitors in the menu), where reception can add walk-ins and sign people out.
+                                </p>
+                                <label className="host-properties-edit-toggle">
+                                    <input
+                                        type="checkbox"
+                                        checked={data.visitor_log}
+                                        onChange={e => setData('visitor_log', e.target.checked)}
+                                    />
+                                    <span>Keep a visitor log at this site</span>
+                                </label>
                             </fieldset>
                         )}
 

@@ -42,6 +42,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\VenueController;
+use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\WifiPortalController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\LandingPage;
@@ -220,6 +221,11 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
         Route::match(['put', 'patch'], '/events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+
+        // Reception visitor log (Admin -> Settings -> Visitor log): a day's visits, walk-ins and sign-outs.
+        Route::get('/visitors', [VisitorController::class, 'index'])->name('visitors.index');
+        Route::post('/visitors', [VisitorController::class, 'store'])->name('visitors.store');
+        Route::patch('/visitors/{visit}/leave', [VisitorController::class, 'leave'])->name('visitors.leave');
 
         // Team: people the owner invites, each with their own login and sites (Admin -> Settings switches it on).
         Route::middleware('account.owner')->group(function () {

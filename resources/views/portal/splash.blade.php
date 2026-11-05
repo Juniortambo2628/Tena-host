@@ -87,6 +87,10 @@
                 </label>
             @endif
 
+            @if(!empty($visitorLog))
+                @include('portal.partials.visiting-field')
+            @endif
+
             <label class="sp-check">
                 <input type="checkbox" name="consent" value="1" required @checked(!empty($old['consent']))>
                 <span>{{ $consentText }} <a href="{{ url('/privacy') }}" target="_blank" rel="noopener">Read it</a>.</span>
@@ -97,6 +101,10 @@
                 <input type="checkbox" name="marketing_opt_in" value="1" @checked(!empty($old['marketing_opt_in']))>
                 <span>{{ rtrim($design['optIn'], '.') }}.</span>
             </label>
+        @endif
+
+        @if(!empty($visitorLog) && $returningGuest)
+            @include('portal.partials.visiting-field')
         @endif
 
         @if(!$canConnect && empty($preview) && $property)

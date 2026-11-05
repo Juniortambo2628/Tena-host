@@ -80,6 +80,7 @@ class PropertyController extends Controller
             'reviewDefaults' => ['message' => ReviewRequestService::defaultMessage($property)],
             'venueUrl' => SplashDesign::isBusiness($property) ? route('venue.show', $property) : null,
             'staffWifiEnabled' => filter_var(Setting::getValue('staff_wifi_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
+            'visitorLogEnabled' => Property::visitorLogEnabled(),
             'reviewStats' => [
                 'requested' => $property->guests()->whereNotNull('review_requested_at')->count(),
                 'clicked' => $property->guests()->whereNotNull('review_clicked_at')->count(),
@@ -216,6 +217,8 @@ class PropertyController extends Controller
             'region' => 'nullable|string|max:80',
             // Staff WiFi: the site's staff network and, optionally, the work email domain staff sign in with.
             'staff_ssid' => 'nullable|string|max:64',
+            // Reception visitor log: the WiFi sign-in asks who they're here to see.
+            'visitor_log' => 'sometimes|boolean',
             'staff_email_domain' => ['nullable', 'string', 'max:100', 'regex:/^@?[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i'],
             'wifi_ssid' => 'nullable|string|max:255',
             'occupancy_threshold' => 'integer|min:1',

@@ -1,0 +1,38 @@
+@reference "../../../../css/theme.css";
+
+.visitors-page__who {
+    @apply flex flex-col;
+}
+
+.visitors-page__who b {
+    @apply text-sm font-black text-dark;
+}
+
+.visitors-page__who small {
+    @apply text-xs font-bold text-muted break-all;
+}
+
+.visitors-page__filters {
+    @apply flex flex-wrap items-end gap-3 mb-4;
+}
+
+.visitors-page__filters label {
+    @apply flex flex-col gap-1;
+}
+
+.visitors-page__filters span {
+    @apply text-xs font-black uppercase tracking-widest text-muted;
+}
+
+.visitors-page__filters input,
+.visitors-page__filters select {
+    @apply rounded-xl border border-dark/10 bg-white px-3 py-2 text-sm font-bold text-dark;
+}
+
+.visitors-page__out {
+    @apply whitespace-nowrap;
+}
+
+.visitors-page__form {
+    @apply flex flex-col gap-4;
+}
