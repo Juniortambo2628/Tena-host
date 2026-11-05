@@ -107,8 +107,9 @@
     @apply bg-white rounded-xl border border-black/5 overflow-hidden;
 }
 
+/* The slot's name gets its own line; the Upload / Library switch sits under it. */
 .cms-media-slot__header {
-    @apply flex items-center justify-between px-4 py-3 border-b border-gray-100;
+    @apply flex flex-col items-start gap-2 px-4 py-3 border-b border-gray-100;
 }
 
 .cms-media-slot__key {
