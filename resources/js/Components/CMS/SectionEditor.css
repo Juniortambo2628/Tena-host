@@ -347,3 +347,64 @@
 .editor-tab__item-add {
     @apply mt-4 inline-flex items-center gap-2 rounded-full border-2 border-dashed border-black/20 px-5 py-2.5 text-sm font-bold text-black/70 hover:border-black hover:text-black;
 }
+
+/* Phones and small tablets: the steps become a row of tabs at the top, so
+   the fields and photos start on the first screen and nothing overflows. */
+@media (max-width: 767px) {
+    .editor-modal__container {
+        @apply p-2;
+    }
+
+    .editor-modal__panel {
+        height: 94vh;
+        max-height: 94vh;
+        border-radius: 1.5rem;
+    }
+
+    .editor-modal__close {
+        @apply top-3 right-3;
+    }
+
+    .editor-modal__sidebar {
+        @apply h-auto p-4 pr-16 border-r-0 border-b;
+        border-radius: 1.5rem 1.5rem 0 0;
+    }
+
+    .editor-modal__sidebar-logo {
+        @apply mb-3;
+    }
+
+    .editor-modal__sidebar-tabs {
+        @apply flex-row flex-none overflow-x-auto pl-0 pb-1;
+        gap: 0.5rem;
+    }
+
+    .editor-modal__sidebar-tab {
+        @apply w-auto flex-shrink-0 gap-2 rounded-full bg-white px-3 py-1.5 border border-gray-200;
+    }
+
+    .editor-modal__sidebar-tab--active {
+        @apply border-dark;
+    }
+
+    .editor-modal__sidebar-tab-number {
+        @apply w-6 h-6 text-xs;
+    }
+
+    .editor-modal__sidebar-footer {
+        @apply hidden;
+    }
+
+    .editor-modal__content-inner {
+        @apply p-4;
+    }
+
+    .editor-modal__footer {
+        @apply px-4 pt-3 pb-4 gap-3;
+    }
+}
+
+/* The slot a "Replace picture" button on the website pointed at. */
+.editor-tab__media-slot--focus {
+    @apply rounded-2xl ring-4 ring-primary ring-offset-4;
+}

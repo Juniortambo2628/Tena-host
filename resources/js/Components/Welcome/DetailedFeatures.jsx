@@ -4,6 +4,7 @@ import { getContent, getMedia, extractJsonItems, comingSoonBadge, stripHtml, get
 import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
 import Mockup from '@/Components/Public/Mockup';
+import EditablePicture from '@/Components/Public/EditablePicture';
 import { SkeletonTwoColumn } from './Skeleton';
 import './DetailedFeatures.css';
 
@@ -93,9 +94,13 @@ export default function DetailedFeatures({ section }) {
                         label={s.label}
                         heading={s.heading}
                         description={s.description}
-                        image={s.mockup || s.shot
-                            ? <Mockup type={s.mockup} screen={s.screen} shot={s.shot} alt={stripHtml(s.label)} className="detailed-features-mockup" />
-                            : <FeatureImage src={s.image} alt={s.label} defaultSrc={DEFAULT_IMAGES[i % DEFAULT_IMAGES.length]} />}
+                        image={(
+                            <EditablePicture section={section} slot={s.mockup || s.shot ? `section_${i}_shot` : `section_${i}_image`}>
+                                {s.mockup || s.shot
+                                    ? <Mockup type={s.mockup} screen={s.screen} shot={s.shot} alt={stripHtml(s.label)} className="detailed-features-mockup" />
+                                    : <FeatureImage src={s.image} alt={s.label} defaultSrc={DEFAULT_IMAGES[i % DEFAULT_IMAGES.length]} />}
+                            </EditablePicture>
+                        )}
                         features={s.features}
                         cta={(s.note || s.ctaLabel || ctaText) && (
                             <>

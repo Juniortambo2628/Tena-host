@@ -1,0 +1,30 @@
+@reference "../../../css/theme.css";
+
+/* Admins only: a "Replace picture" button on each picture of the public site. */
+.editable-picture {
+    @apply relative;
+    min-width: 0;
+}
+
+.editable-picture__link {
+    @apply absolute left-2 top-2 z-20 inline-flex items-center gap-1.5 rounded-full bg-dark text-white
+           px-3 py-1.5 text-xs font-bold shadow-lg no-underline hover:bg-primary hover:text-dark transition-colors;
+    min-height: 32px;
+}
+
+.editable-picture__link:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+}
+
+/* Wrappers that stand in for a layout's own child keep its sizing. */
+.path-card-editable {
+    @apply flex;
+}
+
+.path-card-editable > .path-card {
+    @apply flex-1;
+}
+
+.journey-step > .editable-picture {
+    margin-top: auto;
+}

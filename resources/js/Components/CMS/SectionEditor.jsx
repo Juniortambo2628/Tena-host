@@ -8,7 +8,7 @@ import ContentField from './ContentField';
 import MediaUploader from './MediaUploader';
 import CropModal from './CropModal';
 import JsonArrayEditor from './JsonArrayEditor';
-import { getExpectedMediaSlots, isSchemaKey } from '@/lib/landingSchema';
+import { getExpectedMediaSlots, isSchemaKey, slotNotice } from '@/lib/landingSchema';
 import './SectionEditor.css';
 import { useConfirm } from '@/hooks/useConfirm';
 
@@ -106,7 +106,11 @@ function getTabLabel(tabId) {
     return tabId;
 }
 
-export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop, onToggleActive }) {
+/**
+ * `focusSlot`: open straight on the Media tab with this slot highlighted
+ * (the "Replace picture" buttons on the public site link here).
+ */
+export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop, onToggleActive, focusSlot = null }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
@@ -149,6 +153,20 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
             setActiveTab(0);
         }
     }, [isOpen, activeTab, tabs.length]);
+
+    // Arriving from a "Replace picture" button: open on Media and show that slot.
+    useEffect(() => {
+        if (!focusSlot) return;
+        setLocalMedia(prev => (focusSlot in prev ? prev : { ...prev, [focusSlot]: null }));
+        setActiveTab(tabs.findIndex(t => t.id === 'media'));
+        setIsOpen(true);
+        const timer = setTimeout(() => {
+            document.getElementById(`media-slot-${focusSlot}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        }, 400);
+        return () => clearTimeout(timer);
+        // Only when the link brings us here, not on every edit.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [focusSlot]);
 
     const handleContentChange = useCallback((key, value) => {
         setLocalContent(prev => ({ ...prev, [key]: value }));
@@ -417,7 +435,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                         {mediaKeys.map((key) => {
                             const slot = slotByKey.get(key);
                             return (
-                                <div key={key} className="editor-tab__media-slot">
+                                <div key={key} id={`media-slot-${key}`} className={`editor-tab__media-slot ${key === focusSlot ? 'editor-tab__media-slot--focus' : ''}`}>
                                     <MediaUploader
                                         key={`${key}-${localMedia[key]?.id || 'empty'}`}
                                         sectionId={section.id}
@@ -426,7 +444,9 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                                         onUpload={handleMediaUpload}
                                         onDelete={handleMediaDelete}
                                         onCrop={handleCropOpen}
-                                        label={slot?.label ? `Drop file here or click to browse — ${slot.label}` : 'Drop file here or click to browse'}
+                                        title={slot?.label || ''}
+                                        notice={slotNotice(section.section_key, key, localContent, localMedia)}
+                                        label="Tap to choose a photo, or drop one here"
                                     />
                                     {slot?.description && (
                                         <p className="editor-tab__media-hint">{slot.description}</p>
