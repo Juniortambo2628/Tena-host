@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\MpesaTransaction;
 use App\Services\ExtrasPaymentService;
 use App\Services\SubscriptionService;
@@ -77,7 +78,16 @@ class MpesaCallbackController extends Controller
             ]);
 
             $user = $transaction->user;
-            if ($user && $transaction->meta && (float) $amount >= (float) $transaction->Amount) {
+            $paidEnough = (float) $amount >= (float) $transaction->Amount;
+            if (($transaction->meta['type'] ?? null) === 'event') {
+                // Pay per event: the payment switches on that event's WiFi page; no plan is extended.
+                $event = Event::find($transaction->meta['event_id'] ?? null);
+                if ($event && $paidEnough) {
+                    $event->markPaid();
+                } else {
+                    Log::warning('M-Pesa event payment not applied', ['transaction' => $transaction->id, 'paid' => $amount, 'expected' => $transaction->Amount]);
+                }
+            } elseif ($user && $transaction->meta && $paidEnough) {
                 $subscriptionService->extend($user, 'mpesa', (string) $mpesaReceiptNumber, $transaction->meta);
             } elseif ($user) {
                 Log::warning('M-Pesa payment did not cover the quote; plan not extended', [

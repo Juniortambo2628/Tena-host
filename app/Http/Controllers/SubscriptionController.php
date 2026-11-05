@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\MpesaTransaction;
+use App\Services\Billing\PaystackVerifier;
 use App\Services\Billing\PlanPricing;
 use App\Services\MpesaService;
 use App\Services\SubscriptionService;
 use App\Support\Phone;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class SubscriptionController extends Controller
@@ -126,36 +126,6 @@ class SubscriptionController extends Controller
      */
     protected function verifyPaystackTransaction(string $reference, int $expectedKes): bool
     {
-        $secret = config('services.paystack.secret');
-
-        if (! $secret) {
-            return false;
-        }
-
-        $ch = curl_init("https://api.paystack.co/transaction/verify/{$reference}");
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer {$secret}",
-                'Cache-Control: no-cache',
-            ],
-        ]);
-
-        $response = curl_exec($ch);
-        $err = curl_error($ch);
-        curl_close($ch);
-
-        if ($err) {
-            Log::error('Paystack verification error', ['error' => $err]);
-
-            return false;
-        }
-
-        $data = json_decode($response, true);
-
-        return ($data['status'] ?? false) === true
-            && ($data['data']['status'] ?? null) === 'success'
-            && ($data['data']['currency'] ?? null) === config('billing.currency')
-            && (int) ($data['data']['amount'] ?? 0) >= $expectedKes * 100;
+        return app(PaystackVerifier::class)->verify($reference, $expectedKes);
     }
 }

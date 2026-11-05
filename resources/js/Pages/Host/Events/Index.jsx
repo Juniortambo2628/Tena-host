@@ -43,7 +43,7 @@ export default function EventsIndex({ events, venues }) {
             id: 'status',
             header: 'Status',
             accessorFn: (e) => e.status,
-            cell: ({ row: { original: e } }) => <StatusBadge status={STATUS_LABEL[e.status]} colors={STATUS_COLORS} />,
+            cell: ({ row: { original: e } }) => <StatusBadge status={e.needs_payment && e.status !== 'past' ? 'Needs payment' : STATUS_LABEL[e.status]} colors={STATUS_COLORS} />,
         },
     ];
 

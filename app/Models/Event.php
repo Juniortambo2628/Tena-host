@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Billing\PlanPricing;
 use App\Traits\BelongsToHost;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,46 @@ class Event extends Model
         'ends_on' => 'date',
         'branding_json' => 'array',
         'sponsor' => 'array',
+        'expected_attendees' => 'integer',
+        'quote_amount' => 'integer',
+        'quote_requested_at' => 'datetime',
+        'quoted_at' => 'datetime',
+        'paid_at' => 'datetime',
     ];
+
+    /** Admin -> Settings -> Pay per event is on (it starts off). */
+    public static function billingEnabled(): bool
+    {
+        return filter_var(Setting::getValue('event_billing_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Whether this event still has to be paid for before its WiFi page goes
+     * live: pay per event is on, billing is live, the organiser's plan (or
+     * trial) doesn't cover it and it hasn't been paid.
+     */
+    public function needsPayment(): bool
+    {
+        if ($this->paid_at || ! static::billingEnabled() || ! PlanPricing::enforced()) {
+            return false;
+        }
+
+        return ! $this->ownerOnPlan();
+    }
+
+    /** The organiser's monthly plan (or trial) is active. */
+    public function ownerOnPlan(): bool
+    {
+        $owner = $this->owner?->accountOwner();
+
+        return (bool) $owner && ($owner->subscribed('default') || $owner->onTrial());
+    }
+
+    /** A confirmed payment for the quote. */
+    public function markPaid(): void
+    {
+        $this->forceFill(['quote_status' => 'paid', 'paid_at' => now()])->save();
+    }
 
     public function property(): BelongsTo
     {
@@ -50,9 +90,11 @@ class Event extends Model
     {
         $day = ($today ?? now())->toDateString();
 
+        // An event awaiting payment (pay per event) leaves the venue's usual page.
         return static::where('property_id', $property->id)
             ->whereDate('starts_on', '<=', $day)->whereDate('ends_on', '>=', $day)
-            ->orderByDesc('starts_on')->first();
+            ->orderByDesc('starts_on')->get()
+            ->first(fn (self $event) => ! $event->needsPayment());
     }
 
     /**

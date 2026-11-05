@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\TeamController;
+use App\Models\Event;
 use App\Models\Notification;
 use App\Models\Property;
 use App\Support\Brand;
@@ -36,6 +37,8 @@ class HandleInertiaRequests extends Middleware
                 // Reception visitor log: shown when switched on and one of the user's sites keeps it.
                 'visitorLog' => (bool) $request->user()?->isHost() && Property::visitorLogEnabled()
                     && $request->user()->sites()->where('visitor_log', true)->exists(),
+                // Pay per event (admin's Event quotes page and organisers' event payments).
+                'eventBilling' => $request->user() !== null && Event::billingEnabled(),
                 'notifications' => $request->user()
                     ? Cache::remember(
                         'app_notifications_'.$request->user()->id,

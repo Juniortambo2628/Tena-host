@@ -9,6 +9,10 @@
     @apply text-gray-500 font-medium mt-2;
 }
 
+.host-billing-event-note {
+    @apply mt-4 rounded-2xl bg-primary/15 px-4 py-3 text-sm text-dark;
+}
+
 .host-billing-plan-card {
     @apply bg-white/60 backdrop-blur-xl border border-white/40 rounded-[2rem] p-8 shadow-xl;
 }

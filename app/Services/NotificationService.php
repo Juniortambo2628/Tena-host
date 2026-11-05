@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Campaign;
+use App\Models\Event;
 use App\Models\Notification;
 use App\Models\NotificationPreference;
 use App\Models\Order;
@@ -114,6 +115,30 @@ class NotificationService
         ));
     }
 
+    /** Tell every admin an organiser asked for an event quote (pay per event). */
+    public static function eventQuoteRequested(Event $event): void
+    {
+        User::where('role', 'admin')->pluck('id')->each(fn ($adminId) => self::create(
+            $adminId,
+            'event_quote_requested',
+            'Event quote requested',
+            "{$event->name} ({$event->starts_on->format('j M')}, about ".number_format((int) $event->expected_attendees).' attendees) needs a price. Admin -> Event quotes.',
+            ['event_id' => $event->id]
+        ));
+    }
+
+    /** Tell the organiser their event has a price to pay. */
+    public static function eventQuoted(Event $event): void
+    {
+        self::create(
+            $event->user_id,
+            'event_quoted',
+            'Your event quote is ready',
+            "{$event->name}: KES ".number_format($event->quote_amount).'. Pay from the event page to switch on its WiFi page.',
+            ['event_id' => $event->id]
+        );
+    }
+
     private static function create(int $userId, string $type, string $title, string $message, array $data = []): ?Notification
     {
         $user = User::find($userId);
@@ -151,6 +176,8 @@ class NotificationService
             'guest_connected' => 'user',
             'campaign_completed' => 'user',
             'order_placed' => 'user',
+            'event_quote_requested' => 'user',
+            'event_quoted' => 'user',
             'system_alert' => 'system',
             // Property alerts are urgent: they file under system (the
             // category column is an enum).

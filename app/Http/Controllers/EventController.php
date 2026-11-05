@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Services\Billing\PlanPricing;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,7 +68,9 @@ class EventController extends Controller
             'venues' => Auth::user()->sites()->orderBy('name')->get(['id', 'name']),
             // A private link for the sponsor: anyone with it can see this event's sponsor report.
             'sponsorReport' => $event->sponsor ? $event->sponsorReport() + ['url' => URL::signedRoute('events.sponsor-report', $event)] : null,
-            'messageUrl' => $user->isTeamMember() ? null : route('host.marketing.builder', ['event' => $event->id]),
+            // Messaging needs the monthly plan; a pay-per-event organiser without one doesn't get the button.
+            'messageUrl' => $user->isTeamMember() || (PlanPricing::enforced() && ! $event->ownerOnPlan()) ? null : route('host.marketing.builder', ['event' => $event->id]),
+            'payment' => $this->payment($event, $user),
         ]);
     }
 
@@ -141,6 +144,26 @@ class EventController extends Controller
         return $data;
     }
 
+    /** Pay per event: the quote and how to pay it, when this event still needs paying for (or was paid this way). */
+    private function payment(Event $event, User $user): ?array
+    {
+        if (! $event->paid_at && ! $event->needsPayment()) {
+            return null;
+        }
+
+        return [
+            'status' => $event->paid_at ? 'paid' : ($event->quote_status ?: 'none'),
+            'amount' => $event->quote_amount,
+            'note' => $event->quote_note,
+            'expected_attendees' => $event->expected_attendees,
+            'request_note' => $event->request_note,
+            'paid_at' => $event->paid_at?->toIso8601String(),
+            'canPay' => ! $user->isTeamMember(),
+            'paystackPublicKey' => config('services.paystack.public_key'),
+            'currency' => config('billing.currency'),
+        ];
+    }
+
     private function summary(Event $e): array
     {
         return [
@@ -152,6 +175,7 @@ class EventController extends Controller
             'ends_on' => $e->ends_on->toDateString(),
             'status' => $e->status(),
             'attendees' => $e->attendees_count ?? 0,
+            'needs_payment' => $e->needsPayment(),
         ];
     }
 }

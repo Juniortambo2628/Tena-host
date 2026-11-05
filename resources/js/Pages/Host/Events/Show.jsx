@@ -8,13 +8,14 @@ import StatusBadge from '@/Components/Dashboard/StatusBadge';
 import PillButton from '@/Components/Dashboard/PillButton';
 import GlassModal from '@/Components/GlassModal';
 import EventForm from '@/Components/Events/EventForm';
+import EventPayment from '@/Components/Events/EventPayment';
 import { notify } from '@/Components/Toast';
 import { useConfirm } from '@/hooks/useConfirm';
 import { STATUS_LABEL, STATUS_COLORS, dateRange } from '@/Components/Events/eventFormat';
 import '../Events/Index.css';
 
 /** One event: when and where, its question and sponsor, and who came. */
-export default function EventShow({ event, attendees, stats, venues, sponsorReport = null, messageUrl = null }) {
+export default function EventShow({ event, attendees, stats, venues, sponsorReport = null, messageUrl = null, payment = null }) {
     const [editing, setEditing] = useState(false);
     const { confirm, ConfirmDialogEl } = useConfirm();
 
@@ -72,6 +73,8 @@ export default function EventShow({ event, attendees, stats, venues, sponsorRepo
                     ...(event.question ? [{ label: 'Answered the question', value: stats.answered }] : []),
                 ]}
             />
+
+            {payment && <EventPayment event={event} payment={payment} />}
 
             <GlassCard padding="p-6">
                 <div className="event-page__details">
