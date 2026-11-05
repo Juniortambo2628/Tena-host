@@ -14,11 +14,19 @@
 }
 
 .hero-content {
-    @apply flex flex-col lg:flex-row items-center gap-12 p-8 md:p-12 lg:p-16;
+    @apply grid grid-cols-1 items-center gap-10 p-6 sm:p-8 md:p-12 xl:p-16;
+}
+
+/* Two columns from 1024px: the words get a little more room than the picture. */
+@media (min-width: 1024px) {
+    .hero-content {
+        grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+        gap: 3rem;
+    }
 }
 
 .hero-text {
-    @apply w-full lg:w-1/2 min-w-0;
+    @apply w-full min-w-0;
 }
 
 /* The pill always stays on one line inside the text column (FitText
@@ -34,7 +42,8 @@
 .hero-title {
     font-family: system-ui, -apple-system, sans-serif;
     letter-spacing: -0.5px;
-    @apply text-4xl md:text-5xl lg:text-[3.5rem] font-bold text-dark leading-[1.1] mb-6;
+    @apply text-[2.25rem] sm:text-5xl xl:text-[3.5rem] font-bold text-dark leading-[1.08] mb-5;
+    text-wrap: balance;
 }
 
 .hero-title-highlight {
@@ -42,7 +51,8 @@
 }
 
 .hero-subtitle {
-    @apply text-lg text-gray-600 mb-8 leading-relaxed;
+    @apply text-base sm:text-lg text-gray-600 mb-6 leading-relaxed;
+    max-width: 38rem;
     max-width: 100%;
     overflow-wrap: break-word;
 }
@@ -73,7 +83,7 @@
 }
 
 .hero-image-col {
-    @apply w-full lg:w-1/2 min-w-0;
+    @apply w-full min-w-0;
 }
 
 .hero-image-wrap {
@@ -122,7 +132,8 @@
 }
 
 .hero-body {
-    @apply -mt-4 mb-8 text-base text-muted leading-relaxed;
+    @apply -mt-2 mb-7 text-base text-muted leading-relaxed;
+    max-width: 38rem;
 }
 
 /* Rich text from the CMS editor must wrap inside the text column, even
@@ -140,11 +151,26 @@
     @apply mt-6 text-sm text-muted;
 }
 
-/* Homepage extras: audience links, price line, ticks, counter, drawn visual. */
+/* Homepage extras: audience strip, price line, ticks, counter, drawn visual. */
+
+/* "Made for" strip across the bottom of the hero card, so the links don't crowd the buttons. */
 .hero-audiences {
-    @apply flex flex-wrap;
-    gap: 8px;
-    margin-top: 18px;
+    @apply flex flex-wrap items-center border-t border-gray-100;
+    gap: 8px 10px;
+    padding: 18px 24px;
+}
+
+@media (min-width: 768px) {
+    .hero-audiences { padding: 20px 48px; }
+}
+
+@media (min-width: 1280px) {
+    .hero-audiences { padding: 22px 64px; }
+}
+
+.hero-audiences__label {
+    @apply text-xs font-black uppercase tracking-widest text-muted;
+    margin-right: 4px;
 }
 
 .hero-audiences a {
@@ -192,24 +218,38 @@
 }
 
 .hero-visual {
-    @apply relative flex justify-center;
-    padding: 12px 0 24px;
+    @apply relative flex flex-col items-center;
+    gap: 20px;
+    padding: 4px 0 8px;
+}
+
+.hero-visual__phone-wrap {
+    @apply relative shrink-0;
 }
 
 .hero-visual .mk-example {
-    right: 8px;
+    right: -8px;
+}
+
+.hero-visual__cards {
+    @apply flex w-full flex-col list-none m-0 p-0;
+    gap: 12px;
+    max-width: 22rem;
 }
 
 .hero-float {
-    @apply absolute flex items-start bg-white text-dark;
-    z-index: 3;
-    gap: 9px;
-    max-width: 210px;
-    padding: 10px 12px;
+    @apply flex items-start bg-white text-dark;
+    gap: 10px;
+    padding: 12px 14px;
     border-radius: 16px;
-    box-shadow: 0 14px 34px rgba(20, 20, 20, 0.14);
+    border: 1px solid rgba(30, 30, 30, 0.06);
+    box-shadow: 0 14px 34px rgba(20, 20, 20, 0.12);
     font-size: 12px;
     line-height: 1.35;
+}
+
+.hero-float__text {
+    @apply min-w-0;
 }
 
 .hero-float b {
@@ -230,22 +270,22 @@
     font-weight: 900;
 }
 
-.hero-float--0 { left: 0; top: 70px; }
-.hero-float--1 { right: 0; top: 190px; }
-.hero-float--2 { left: 4%; bottom: 40px; }
-
-@media (max-width: 639.98px) {
-    /* Phones: the cards stack under the phone instead of floating beside it. */
-    .hero-visual {
-        @apply flex-col items-center;
-        gap: 10px;
+/* Tablets (one column, plenty of width) and wide screens: the cards stand
+   beside the phone as a slightly staggered stack. In the narrower two-column
+   range (1024-1279px) they sit under it. */
+@media (min-width: 640px) and (max-width: 1023.98px), (min-width: 1280px) {
+    .hero-visual--cards {
+        @apply flex-row justify-center;
+        gap: 24px;
     }
 
-    .hero-float {
-        @apply static;
-        max-width: 100%;
-        width: 100%;
+    .hero-visual__cards {
+        width: 15rem;
+        max-width: none;
+        flex: 0 0 15rem;
     }
+
+    .hero-float--1 { transform: translateX(-18px); }
 }
 
 /* "dark" hero (events page). */
@@ -278,4 +318,12 @@
 
 .hero-main-card--dark .hero-btn-primary {
     @apply bg-primary text-dark border-primary;
+}
+
+.hero-main-card--dark .hero-audiences {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.hero-main-card--dark .hero-audiences__label {
+    color: rgba(255, 255, 255, 0.7);
 }
