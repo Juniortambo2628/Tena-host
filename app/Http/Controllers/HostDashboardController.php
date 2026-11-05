@@ -7,6 +7,8 @@ use App\Models\Campaign;
 use App\Models\Guest;
 use App\Models\Order;
 use App\Models\Property;
+use App\Models\User;
+use App\Services\BusinessInsights;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +68,8 @@ class HostDashboardController extends Controller
                 'guestTrend' => $guestTrend,
             ],
             'analytics' => $this->getAnalytics($user, $propertyIds),
+            // Businesses and events get their own home: visits, repeat customers, reviews, sites side by side.
+            'business' => $user->accountDefinition()['type'] === User::ACCOUNT_HOST ? null : app(BusinessInsights::class)->for($user),
         ]);
     }
 

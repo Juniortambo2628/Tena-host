@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { notify } from '@/Components/Toast';
 import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Wifi, Users, Radio, MapPin, ArrowLeft, Trash2 } from 'lucide-react';
-import { T } from '@/Components/Dashboard/Terms';
+import { T, useTerms } from '@/Components/Dashboard/Terms';
 import { useConfirm } from '@/hooks/useConfirm';
 
 export default function PropertyShow({ property, wifi = {} }) {
@@ -22,11 +22,15 @@ export default function PropertyShow({ property, wifi = {} }) {
         { label: property.name },
     ];
 
+    const t = useTerms();
+    const { account } = usePage().props.auth || {};
+    // Occupancy limits and booking-system (PMS) sync are for rentals only.
+    const isRentals = !account || account.type === 'host';
     const stats = [
-        { label: 'Guests', value: property.guests_count },
+        { label: t('Guests'), value: property.guests_count },
         { label: 'Access Points', value: property.access_points_count },
-        { label: 'Occupancy Limit', value: property.occupancy_threshold + ' guests' },
-    ];
+        isRentals && { label: 'Occupancy Limit', value: property.occupancy_threshold + ' guests' },
+    ].filter(Boolean);
 
     return (
         <>
@@ -86,12 +90,12 @@ export default function PropertyShow({ property, wifi = {} }) {
                                 <span className="host-properties-show-detail-label">WiFi SSID</span>
                                 <span className="host-properties-show-detail-value">{property.wifi_ssid || 'Not configured'}</span>
                             </div>
-                            <div className="host-properties-show-detail-row">
+                            {isRentals && <div className="host-properties-show-detail-row">
                                 <span className="host-properties-show-detail-label">PMS Integration</span>
                                 <span className={`px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                     {property.pms_integration_type || 'None'} — {property.pms_connection_status}
                                 </span>
-                            </div>
+                            </div>}
                         </div>
                     </GlassCard>
 

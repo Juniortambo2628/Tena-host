@@ -13,7 +13,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 // Import FilePond styles
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-import { T } from '@/Components/Dashboard/Terms';
+import { T, useTerms } from '@/Components/Dashboard/Terms';
 import SplashEditor from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate, templateGroups, businessTypes, businessType, recommendedTemplate, isBusinessType, applyTemplate, findTemplate } from '@/Components/Properties/splashTemplates';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -27,9 +27,12 @@ registerPlugin(FilePondPluginImagePreview);
 
 export default function PropertyIndex({ properties, stats: live = {} }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
+    const t = useTerms();
     const { account, team } = usePage().props.auth || {};
     // A manager the owner invited works on their sites but doesn't add or remove them.
     const canManageSites = !team?.member;
+    // Occupancy, guest limits and booking-system (PMS) sync are for rentals only.
+    const isRentals = !account || account.type === 'host';
     // Businesses and event venues start from the business templates (App\Support\AccountType).
     const accountIsBusiness = account?.splash === 'business';
     const [showCreateModal, setShowCreateModal] = useState(false);
@@ -126,11 +129,11 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
     ].filter(Boolean);
 
     const stats = [
-        { label: 'Active Units', value: properties.length },
+        { label: isRentals ? 'Active Units' : t('Properties'), value: properties.length },
         // From PMS bookings; "—" until a PMS is connected.
-        { label: 'Occupancy (30 days)', value: live.occupancy == null ? '—' : `${live.occupancy}%` },
+        isRentals && { label: 'Occupancy (30 days)', value: live.occupancy == null ? '—' : `${live.occupancy}%` },
         { label: 'Access Points Online', value: live.aps_total ? `${live.aps_online} / ${live.aps_total}` : '—' },
-    ];
+    ].filter(Boolean);
 
     const modalTabs = [
         {
@@ -208,7 +211,7 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 onChange={e => setData('wifi_ssid', e.target.value)}
                             />
                         </div>
-                        <div>
+                        {isRentals && <div>
                             <label className="block text-xs font-black uppercase tracking-widest text-black/40 mb-3 ml-1">Occupancy Limit</label>
                             <div className="relative">
                                 <input
@@ -219,12 +222,12 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 />
                                 <span className="absolute right-6 top-1/2 -translate-y-1/2 font-black text-black/20">guests</span>
                             </div>
-                        </div>
+                        </div>}
                     </div>
                     <div className="p-6 bg-black/[0.02] rounded-[2rem] border border-black/5">
                         <p className="text-xs font-bold text-black/50 leading-relaxed">
                             <Info size={16} className="mr-2 inline"></Info>
-                            This is the number of recent WiFi guests that triggers an occupancy alert for the host. Set the same SSID on your UniFi controller, then register the access point under Access Points.
+                            {isRentals && 'This is the number of recent WiFi guests that triggers an occupancy alert for the host. '}Set the same SSID on your UniFi controller, then register the access point under Access Points.
                         </p>
                     </div>
                 </div>
@@ -316,13 +319,13 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                 >
                                      <Home size={24}></Home>
                                 </Link>
-                                <span className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-sm`}>
+                                {isRentals && <span className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest ${property.pms_connection_status === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} shadow-sm`}>
                                     {property.pms_connection_status}
-                                </span>
+                                </span>}
                             </div>
 
                             <h3 className="host-properties-index-card-title"><Link href={route('host.properties.show', property.id)}>{property.name}</Link></h3>
-                            <Link href={route('host.properties.show', property.id)} className="text-sm underline">WiFi setup &amp; guest activity</Link>
+                            <Link href={route('host.properties.show', property.id)} className="text-sm underline">{t('WiFi setup & guest activity')}</Link>
                             <p className="host-properties-index-card-address">{property.address || 'No address set'}</p>
 
                             <div className="host-properties-index-card-details">
@@ -330,10 +333,10 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                                     <span className="host-properties-index-detail-label">WiFi SSID</span>
                                     <span className="host-properties-index-detail-value">{property.wifi_ssid || 'Unset'}</span>
                                 </div>
-                                <div className="host-properties-index-detail-row">
+                                {isRentals && <div className="host-properties-index-detail-row">
                                     <span className="host-properties-index-detail-label">Guest limit</span>
                                     <span className="host-properties-index-detail-value">{property.occupancy_threshold} people</span>
-                                </div>
+                                </div>}
                             </div>
                         </div>
 

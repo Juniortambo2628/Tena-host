@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import './Edit.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
@@ -11,6 +11,9 @@ import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 import { BRAND_COLORS } from '@/constants';
 
 export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null }) {
+    // Occupancy alerts are for rentals only.
+    const { account } = usePage().props.auth || {};
+    const isRentals = !account || account.type === 'host';
     const { data, setData, post, processing, errors } = useForm({
         name: property.name || '',
         address: property.address || '',
@@ -83,7 +86,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                     onChange={e => setData('wifi_ssid', e.target.value)}
                                 />
                             </div>
-                            <div>
+                            {isRentals && <div>
                                 <label className="host-properties-edit-label">Occupancy Limit</label>
                                 <input
                                     type="number"
@@ -91,7 +94,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                     value={data.occupancy_threshold}
                                     onChange={e => setData('occupancy_threshold', e.target.value)}
                                 />
-                            </div>
+                            </div>}
                         </div>
 
                         <div className="host-properties-edit-splash">

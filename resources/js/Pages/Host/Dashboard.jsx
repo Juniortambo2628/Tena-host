@@ -11,6 +11,7 @@ import './Dashboard.css';
 import { T } from '@/Components/Dashboard/Terms';
 import ViewSwitcher from '@/Components/Dashboard/ViewSwitcher';
 import { BRAND_COLORS } from '@/constants';
+import BusinessHome from '@/Components/Dashboard/BusinessHome';
 
 const VIEWS = [
     { id: 'overview', label: 'Overview', icon: <Activity size={14} /> },
@@ -19,8 +20,10 @@ const VIEWS = [
     { id: 'properties', label: 'Properties', icon: <BarChart3 size={14} /> },
 ];
 
-export default function Dashboard({ properties, stats, analytics }) {
+export default function Dashboard({ properties, stats, analytics, business = null }) {
     const [activeView, setActiveView] = useState('overview');
+    // Businesses and events: visits, repeat customers, reviews and sites instead of rental occupancy and extras.
+    if (business) return <BusinessHome data={business} userName={stats.userName} />;
     const guestTrend = stats.guestTrend || 0;
 
     const heroStats = [
