@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\LandingPage;
 use App\Models\PolicyDocument;
+use App\Models\Setting;
 use App\Support\TrialSlots;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,6 +34,31 @@ class PublicPageController extends Controller
         ], $pageSeo, $page->path());
     }
 
+    /**
+     * The v2 landing page (the OKJT kit's design, /v2): a preview while it's
+     * built. Admin -> Settings -> "V2 public pages" opens it to everyone;
+     * admins can always see it. Never indexed by search engines.
+     */
+    public function v2(): Response
+    {
+        abort_unless(static::v2Visible(), 404);
+
+        $sections = LandingPage::publicSections('home');
+        $pageSeo = collect($sections)->firstWhere('section_key', 'seo');
+
+        return $this->render('Public/V2/Home', [
+            'page' => ['slug' => 'v2', 'name' => 'Home (v2)'],
+            'sections' => $sections,
+        ], $pageSeo, '/v2', index: false);
+    }
+
+    /** The v2 pages are open to everyone when switched on, and to admins always. */
+    public static function v2Visible(): bool
+    {
+        return filter_var(Setting::getValue('v2_pages_enabled', '0'), FILTER_VALIDATE_BOOLEAN)
+            || (bool) Auth::user()?->isAdmin();
+    }
+
     public function policy(string $slug): Response
     {
         $document = PolicyDocument::where('slug', $slug)->where('is_published', true)->firstOrFail();
@@ -45,7 +72,7 @@ class PublicPageController extends Controller
         ]], '/'.request()->path());
     }
 
-    private function render(string $component, array $props, ?array $pageSeo, string $path): Response
+    private function render(string $component, array $props, ?array $pageSeo, string $path, bool $index = true): Response
     {
         $site = LandingPage::siteSections();
 
@@ -59,14 +86,14 @@ class PublicPageController extends Controller
             'callbacks' => CallbackController::enabled(),
             // The homepage "Try it yourself" section links to /demo only while it's on.
             'demo' => DemoController::enabled(),
-            'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path),
+            'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path, $index),
         ]);
     }
 
     /**
      * Page SEO falls back to the site-wide defaults, field by field.
      */
-    private function seo(?array $siteSeo, ?array $pageSeo, string $path): array
+    private function seo(?array $siteSeo, ?array $pageSeo, string $path, bool $index = true): array
     {
         $pick = fn (string $key) => Arr::get($pageSeo, "content.{$key}") ?: Arr::get($siteSeo, "content.{$key}");
         $image = Arr::get($pageSeo, 'media.og_image') ?: Arr::get($siteSeo, 'media.og_image');
@@ -77,7 +104,7 @@ class PublicPageController extends Controller
             'site_name' => Arr::get($siteSeo, 'content.site_name', 'TenaFi'),
             'image' => $image ? url($image) : null,
             'url' => url($path),
-            'index' => true,
+            'index' => $index,
         ];
     }
 }

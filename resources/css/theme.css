@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* The OKJT kit's colour names (ink, tint, accent, line, …) for the v2 public
+   pages; generated from okjt.config.js by `npm run theme`. */
+@import "./okjt-theme.css";
 
 /* The brand's shared values. app.css imports this file, and every component
    stylesheet references it (@reference), so `bg-primary`, `text-dark`, ... work
