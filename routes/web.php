@@ -128,6 +128,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/wifi', [UnifiSettingsController::class, 'edit'])->name('wifi.edit');
     Route::post('/wifi', [UnifiSettingsController::class, 'update'])->name('wifi.update');
     Route::post('/wifi/test', [UnifiSettingsController::class, 'test'])->name('wifi.test');
+    Route::post('/wifi/sync', [UnifiSettingsController::class, 'sync'])->name('wifi.sync');
     Route::get('/mpesa', [MpesaSettingsController::class, 'edit'])->name('mpesa.edit');
     Route::post('/mpesa', [MpesaSettingsController::class, 'update'])->name('mpesa.update');
     Route::post('/mpesa/payouts/{user}/settle', [MpesaSettingsController::class, 'settle'])->name('mpesa.settle');

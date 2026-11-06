@@ -1,0 +1,233 @@
+@reference "../../../../css/theme.css";
+
+.wifi-admin__grid {
+    @apply grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem];
+}
+
+.wifi-admin__main,
+.wifi-admin__side {
+    @apply flex min-w-0 flex-col gap-6;
+}
+
+.wifi-admin__head {
+    @apply mb-6 flex items-start gap-3;
+}
+
+.wifi-admin__head-ic {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/20 text-dark;
+}
+
+.wifi-admin__title {
+    @apply text-base font-black text-dark;
+}
+
+.wifi-admin__subtitle {
+    @apply mt-1 text-sm text-muted;
+}
+
+.wifi-admin__form {
+    @apply flex flex-col gap-5;
+}
+
+.wifi-admin__row {
+    @apply grid gap-5 sm:grid-cols-2;
+}
+
+.wifi-admin__advanced summary {
+    @apply cursor-pointer text-sm font-bold text-dark;
+}
+
+.wifi-admin__advanced[open] summary {
+    @apply mb-4;
+}
+
+.wifi-admin__hint {
+    @apply text-xs text-muted;
+}
+
+.wifi-admin__hint--pad {
+    @apply px-6 pb-5;
+}
+
+/* Test result, step by step. */
+.wifi-admin__result {
+    @apply mt-6 rounded-2xl border border-dark/10 bg-dark/[0.03] p-5;
+}
+
+.wifi-admin__result.is-ok {
+    @apply border-green-200 bg-green-50;
+}
+
+.wifi-admin__result.is-fail {
+    @apply border-red-200 bg-red-50;
+}
+
+.wifi-admin__result-title {
+    @apply flex items-center gap-2 text-sm font-black text-dark;
+}
+
+.wifi-admin__checks {
+    @apply mt-4 flex list-none flex-col gap-3 p-0;
+}
+
+.wifi-admin__checks li,
+.wifi-admin__steps li {
+    @apply flex items-start gap-3;
+}
+
+.wifi-admin__checks span,
+.wifi-admin__steps span {
+    @apply flex min-w-0 flex-col gap-0.5;
+}
+
+.wifi-admin__checks b,
+.wifi-admin__steps b {
+    @apply text-sm font-bold text-dark;
+}
+
+.wifi-admin__checks small,
+.wifi-admin__steps small {
+    @apply break-words text-xs text-muted;
+}
+
+.wifi-admin__checks em {
+    @apply mt-1 rounded-lg bg-white px-3 py-2 text-xs font-semibold not-italic text-dark;
+}
+
+.wifi-admin__checks li.is-skip {
+    @apply opacity-60;
+}
+
+.wifi-admin__step-ic {
+    @apply mt-0.5 shrink-0 text-muted;
+}
+
+.wifi-admin__step-ic--done {
+    @apply text-green-700;
+}
+
+.wifi-admin__step-ic--fail {
+    @apply text-red-600;
+}
+
+.wifi-admin__step-ic--todo {
+    @apply text-dark/25;
+}
+
+/* Controller how-to and copyable values. */
+.wifi-admin__howto {
+    @apply flex list-decimal flex-col gap-3 pl-5 text-sm text-dark;
+}
+
+.wifi-admin__copy {
+    @apply mt-1 inline-flex max-w-full items-center gap-1 rounded-lg bg-dark/5 py-1 pl-2.5 pr-1 align-middle;
+}
+
+.wifi-admin__copy code {
+    @apply break-all text-xs font-bold;
+}
+
+.wifi-admin__copy button {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted hover:bg-dark/10 hover:text-dark;
+}
+
+.wifi-admin__side-title {
+    @apply mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-muted;
+}
+
+.wifi-admin__steps {
+    @apply flex list-none flex-col gap-4 p-0;
+}
+
+.wifi-admin__last {
+    @apply mt-5 rounded-xl px-3 py-2 text-xs font-semibold;
+}
+
+.wifi-admin__last.is-ok {
+    @apply bg-green-50 text-green-800;
+}
+
+.wifi-admin__last.is-fail {
+    @apply bg-red-50 text-red-700;
+}
+
+.wifi-admin__tips {
+    @apply flex list-disc flex-col gap-2 pl-4 text-sm text-muted;
+}
+
+/* Monitoring. */
+.wifi-admin__tiles {
+    @apply mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4;
+}
+
+.wifi-admin__tile {
+    @apply flex flex-col gap-1;
+}
+
+.wifi-admin__tile-ic {
+    @apply mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-dark/5 text-dark;
+}
+
+.wifi-admin__tile--good .wifi-admin__tile-ic {
+    @apply bg-green-100 text-green-700;
+}
+
+.wifi-admin__tile--bad .wifi-admin__tile-ic {
+    @apply bg-red-100 text-red-700;
+}
+
+.wifi-admin__tile-label {
+    @apply text-xs font-black uppercase tracking-widest text-muted;
+}
+
+.wifi-admin__tile b {
+    @apply text-lg font-black text-dark;
+}
+
+.wifi-admin__tile small {
+    @apply text-xs text-muted;
+}
+
+.wifi-admin__alert {
+    @apply mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800;
+}
+
+.wifi-admin__alert span {
+    @apply min-w-0 flex-1;
+}
+
+.wifi-admin__toolbar {
+    @apply flex flex-col gap-3 border-b border-dark/5 px-6 py-5 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.wifi-admin__toolbar h3 {
+    @apply text-base font-black text-dark;
+}
+
+.wifi-admin__toolbar p {
+    @apply text-xs text-muted;
+}
+
+.wifi-admin__log-actions {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.wifi-admin__log-actions select {
+    @apply rounded-xl border border-dark/10 bg-white px-3 py-2 text-sm font-bold text-dark;
+}
+
+.wifi-admin__ap {
+    @apply flex flex-col;
+}
+
+.wifi-admin__ap b {
+    @apply text-sm font-black text-dark;
+}
+
+.wifi-admin__ap small {
+    @apply text-xs text-muted;
+}
+
+.wifi-admin__msg {
+    @apply block max-w-md whitespace-normal break-words;
+}

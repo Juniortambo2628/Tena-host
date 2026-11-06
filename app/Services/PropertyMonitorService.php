@@ -5,7 +5,9 @@ namespace App\Services;
 use App\Models\AccessPoint;
 use App\Models\Guest;
 use App\Models\Property;
+use App\Models\Setting;
 use App\Models\User;
+use App\Models\WifiEvent;
 use App\Services\Unifi\UnifiService;
 use Illuminate\Support\Facades\Log;
 
@@ -57,15 +59,27 @@ class PropertyMonitorService
             $devices = collect($this->unifi->devices())->keyBy('mac');
         } catch (\Throwable $e) {
             Log::warning('Outage check could not reach UniFi: '.$e->getMessage());
+            // Logged at most once an hour while it keeps failing (the check runs every 5 minutes).
+            if (! WifiEvent::where('type', 'device_sync_failed')->where('created_at', '>=', now()->subHour())->exists()) {
+                WifiEvent::record('device_sync_failed', 'The access point check couldn\'t reach the controller: '.UnifiService::shortError($e->getMessage()), [], 'error');
+            }
 
             return 0;
         }
 
+        Setting::setValue('unifi_last_sync_at', now()->toIso8601String(), 'unifi');
+
         $synced = 0;
-        AccessPoint::whereIn('mac_address', $devices->keys())->each(function (AccessPoint $ap) use ($devices, &$synced) {
+        AccessPoint::with('property:id,name')->whereIn('mac_address', $devices->keys())->each(function (AccessPoint $ap) use ($devices, &$synced) {
             $device = $devices[$ap->mac_address];
+            $status = $device['online'] ? 'online' : 'offline';
+            if ($ap->status !== $status && in_array($ap->status, ['online', 'offline'], true)) {
+                WifiEvent::record($status === 'online' ? 'ap_online' : 'ap_offline',
+                    "{$ap->name} at {$ap->property?->name} is ".($status === 'online' ? 'back online.' : 'offline.'),
+                    ['ap' => $ap->mac_address], $status === 'online' ? 'info' : 'warning', $ap->property_id);
+            }
             $ap->update([
-                'status' => $device['online'] ? 'online' : 'offline',
+                'status' => $status,
                 'last_seen' => $device['online'] ? now() : ($device['last_seen'] ?? $ap->last_seen),
                 'connected_clients_count' => $device['clients'],
             ]);
