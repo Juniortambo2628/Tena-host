@@ -145,7 +145,7 @@ export default function OrderIndex({ orders, filters }) {
                         <button
                             key={status}
                             onClick={() => handleStatusFilter(status === 'all' ? '' : status)}
-                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${filters.status === status || (status === 'all' && !filters.status) ? 'bg-black text-primary' : 'bg-black/5 text-black hover:bg-black/10'}`}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${filters.status === status || (status === 'all' && !filters.status) ? 'bg-black dark:bg-[#2b2e35] text-primary' : 'bg-black/5 text-black hover:bg-black/10'}`}
                         >
                             {status}
                         </button>

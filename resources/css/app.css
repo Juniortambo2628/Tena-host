@@ -267,7 +267,7 @@ html {
     }
 
     .tena-btn-secondary {
-        @apply bg-primary text-black shadow-sm hover:shadow-md hover:-translate-y-0.5;
+        @apply bg-primary text-black dark:text-[#1b1b1b] shadow-sm hover:shadow-md hover:-translate-y-0.5;
     }
 
     .tena-btn-white {

@@ -60,7 +60,7 @@
 }
 
 .dashboard-layout__nav-link--active {
-    @apply bg-black text-primary shadow-xl shadow-black/10;
+    @apply bg-black dark:bg-[#2b2e35] text-primary shadow-xl shadow-black/10;
 }
 
 .dashboard-layout__nav-icon {
@@ -92,7 +92,7 @@
 }
 
 .dashboard-layout__user-avatar {
-    @apply w-10 h-10 rounded-full bg-black text-primary flex items-center justify-center font-bold;
+    @apply w-10 h-10 rounded-full bg-black dark:bg-[#2b2e35] text-primary flex items-center justify-center font-bold;
 }
 
 .dashboard-layout__user-name {
@@ -254,7 +254,7 @@
 }
 
 .dashboard-layout__profile-button {
-    @apply w-12 h-12 rounded-2xl bg-black flex items-center justify-center text-primary font-bold text-xs shadow-xl shadow-black/20 hover:scale-110 transition-transform cursor-pointer focus:outline-none;
+    @apply w-12 h-12 rounded-2xl bg-black dark:bg-[#2b2e35] flex items-center justify-center text-primary font-bold text-xs shadow-xl shadow-black/20 hover:scale-110 transition-transform cursor-pointer focus:outline-none;
 }
 
 .dashboard-layout__profile-header {
@@ -499,4 +499,8 @@
 
 @utility animate-fade-in {
     animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dashboard-layout__help-item--current {
+    @apply text-black;
 }

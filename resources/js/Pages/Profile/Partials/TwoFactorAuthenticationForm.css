@@ -73,7 +73,7 @@
 }
 
 .twofa-setup-card {
-    @apply p-8 bg-black text-white rounded-[2rem] space-y-6 shadow-2xl shadow-black/20;
+    @apply p-8 bg-black dark:bg-[#2b2e35] dark:text-[#f1f0eb] text-white rounded-[2rem] space-y-6 shadow-2xl shadow-black/20;
 }
 
 .twofa-setup-header {

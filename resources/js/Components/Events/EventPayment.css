@@ -57,7 +57,7 @@
 }
 
 .event-payment__tabs button.is-active {
-    @apply bg-dark text-primary;
+    @apply bg-dark dark:bg-[#2b2e35] text-primary;
 }
 
 .event-payment__hint {

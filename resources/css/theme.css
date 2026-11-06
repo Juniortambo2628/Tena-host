@@ -13,3 +13,31 @@
     /* The warm off-white behind the dashboard. */
     --color-canvas: #FDFCF7;
 }
+
+/* Dark mode (dashboards only: DashboardLayout puts .dark on <html> when the
+   user picks it). The base colours flip, so every bg-white surface, text-black
+   word, black/5 overlay and gray turns dark without touching each page.
+   bg-dark / text-white pairs invert too (light button, dark text). The brand
+   yellow stays the same; places that put yellow on black or black on yellow
+   pin their colours with dark: classes. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+    color-scheme: dark;
+    --color-white: #1a1c21;
+    --color-black: #f1f0eb;
+    --color-dark: #ecebe5;
+    --color-light: #23262c;
+    --color-canvas: #0f1013;
+    --color-muted: #a3a9b5;
+    --color-gray-50: #1e2025;
+    --color-gray-100: #25282e;
+    --color-gray-200: #2f3239;
+    --color-gray-300: #3c4048;
+    --color-gray-400: #6a7080;
+    --color-gray-500: #9298a5;
+    --color-gray-600: #b3b8c2;
+    --color-gray-700: #ced2d9;
+    --color-gray-800: #e2e5ea;
+    --color-gray-900: #f1f2f5;
+}

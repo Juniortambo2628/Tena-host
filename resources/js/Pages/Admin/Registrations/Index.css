@@ -118,7 +118,7 @@
 }
 
 .registrations-page__page-link--active {
-    @apply bg-black text-primary;
+    @apply bg-black dark:bg-[#2b2e35] text-primary;
 }
 
 .registrations-page__page-link--inactive {

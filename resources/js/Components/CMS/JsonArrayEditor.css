@@ -30,7 +30,7 @@
 }
 
 .json-array-editor__item-num {
-    @apply w-7 h-7 rounded-full bg-black text-primary flex items-center justify-center
+    @apply w-7 h-7 rounded-full bg-black dark:bg-[#2b2e35] text-primary flex items-center justify-center
            text-xs font-bold flex-shrink-0;
 }
 
