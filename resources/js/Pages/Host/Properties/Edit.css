@@ -13,7 +13,9 @@
 }
 
 .host-properties-edit-actions {
-    @apply flex gap-3 pt-4;
+    /* Save stays in reach on this long form. */
+    @apply flex gap-3 dashboard-sticky-actions;
+    width: 100%;
 }
 
 .host-properties-edit-label {
