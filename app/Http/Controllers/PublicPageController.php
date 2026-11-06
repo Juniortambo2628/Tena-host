@@ -55,6 +55,66 @@ class PublicPageController extends Controller
         ], $pageSeo, '/v2', index: false);
     }
 
+    /**
+     * The v2 audience pages (/v2/hosts, /v2/business, /v2/events), on Naoa's
+     * journey template. Their sections are their own CMS page; the sign-up
+     * form is the live page's (one form definition, validated by the server).
+     */
+    public function v2Audience(string $audience): Response
+    {
+        abort_unless(static::v2Visible(), 404);
+
+        $sections = LandingPage::publicSections(V2Pages::audienceSlug($audience)) ?: LandingPage::publicSections($audience);
+        $live = collect(LandingPage::publicSections($audience));
+        $pageSeo = collect($sections)->firstWhere('section_key', 'seo');
+
+        return $this->render('Public/V2/Audience', [
+            'page' => ['slug' => V2Pages::audienceSlug($audience), 'name' => ucfirst($audience).' (v2)'],
+            'audience' => $audience,
+            'sections' => $sections,
+            // The live page's sign-up form, and the plans it prices from.
+            'signup' => [
+                'page' => $audience,
+                'sections' => $live->filter(fn ($s) => in_array($s['section_key'], ['signup', 'pricing'], true))->values(),
+            ],
+            'others' => collect(array_keys(V2Pages::AUDIENCES))->reject(fn ($a) => $a === $audience)
+                ->map(fn ($a) => static::audienceCard($a))->filter()->values(),
+        ], $pageSeo, "/v2/{$audience}", index: false);
+    }
+
+    /**
+     * A link card to another v2 audience page: that audience's card on the
+     * v2 homepage ("One platform, three kinds of places"), else its hero.
+     */
+    private static function audienceCard(string $audience): ?array
+    {
+        $home = collect(LandingPage::publicSections(V2Pages::HOME) ?: LandingPage::publicSections('home'))->firstWhere('section_key', 'path_cards');
+        $plain = fn ($value) => trim(strip_tags((string) $value));
+        foreach (array_keys($home['content'] ?? []) as $key) {
+            if (preg_match('/^cards\.(\d+)\.href$/', $key, $m) && preg_match("#^(/v2)?/{$audience}(\#.*)?$#", $plain($home['content'][$key]))) {
+                $i = $m[1];
+
+                return [
+                    'to' => "/v2/{$audience}",
+                    'badge' => preg_replace('/^\d+\s*·\s*/u', '', $plain($home['content']["cards.{$i}.label"] ?? '')),
+                    'title' => $plain($home['content']["cards.{$i}.title"] ?? ''),
+                    'text' => $plain($home['content']["cards.{$i}.description"] ?? ''),
+                    'image' => $home['media']["card_{$i}_image"] ?? null,
+                ];
+            }
+        }
+
+        $hero = collect(LandingPage::publicSections(V2Pages::audienceSlug($audience)) ?: LandingPage::publicSections($audience))->firstWhere('section_key', 'hero');
+
+        return $hero ? [
+            'to' => "/v2/{$audience}",
+            'badge' => $plain($hero['content']['badge'] ?? ''),
+            'title' => $plain($hero['content']['title'] ?? ''),
+            'text' => '',
+            'image' => null,
+        ] : null;
+    }
+
     /** The v2 pages are open to everyone when switched on, and to admins always. */
     public static function v2Visible(): bool
     {

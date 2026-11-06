@@ -49,6 +49,7 @@ use App\Http\Controllers\VisitorController;
 use App\Http\Controllers\WifiPortalController;
 use App\Http\Middleware\EnsureUserIsSubscribed;
 use App\Models\LandingPage;
+use App\Services\Cms\V2Pages;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -57,6 +58,8 @@ use Inertia\Inertia;
 Route::get('/', [PublicPageController::class, 'show'])->name('home');
 // The v2 public pages (the OKJT kit's design), previewed behind Admin -> Settings.
 Route::get('/v2', [PublicPageController::class, 'v2'])->name('v2.home');
+Route::get('/v2/{audience}', [PublicPageController::class, 'v2Audience'])
+    ->whereIn('audience', array_keys(V2Pages::AUDIENCES))->name('v2.audience');
 
 foreach (config('public_pages.policies') as $path => $slug) {
     Route::get("/{$path}", [PublicPageController::class, 'policy'])->defaults('slug', $slug)->name("public.{$path}");

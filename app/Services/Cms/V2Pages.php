@@ -27,6 +27,34 @@ class V2Pages
         'how_it_works', 'comparison_table', 'credibility', 'faq', 'cta_banner__founding',
     ];
 
+    /**
+     * The audience pages (/v2/hosts, /v2/business, /v2/events): their slug is
+     * "v2-" + the live page's, and they copy these sections of it, in its order.
+     * Never the sign-up form: SignupFormSchema finds the form by type on any
+     * page, so the v2 pages show the live page's own form instead of a copy.
+     */
+    public const AUDIENCES = [
+        'hosts' => ['seo', 'hero', 'stats__problem', 'how_it_works', 'journey', 'detailed_features', 'comparison__party', 'comparison_table', 'credibility', 'pricing', 'cta_banner__founding', 'faq'],
+        'business' => ['seo', 'hero', 'stats__reviews', 'how_it_works', 'journey', 'detailed_features', 'comparison__qr', 'comparison_table', 'credibility', 'pricing', 'cta_banner__founding', 'faq'],
+        'events' => ['seo', 'hero', 'comparison__gap', 'detailed_features__events', 'how_it_works', 'comparison_table', 'faq'],
+    ];
+
+    public static function audienceSlug(string $audience): string
+    {
+        return self::HOME.'-'.$audience;
+    }
+
+    /** Where a v2 page is served (/v2, /v2/hosts, ...), or null for any other page. */
+    public static function url(string $slug): ?string
+    {
+        if ($slug === self::HOME) {
+            return '/v2';
+        }
+        $audience = str_starts_with($slug, self::HOME.'-') ? substr($slug, strlen(self::HOME) + 1) : null;
+
+        return $audience && isset(self::AUDIENCES[$audience]) ? "/v2/{$audience}" : null;
+    }
+
     /** Real screens, at the paths a fresh install ships them (public/legacy/assets/v2). */
     public const SHOWCASE = [
         ['title' => 'Your WiFi page, in your brand', 'text' => 'Guests join the WiFi and land on a page with your logo, colours and welcome. Name and WhatsApp number, and they’re online.', 'tags' => 'WiFi page', 'shot' => 'screen-wifi-page.webp'],
@@ -68,6 +96,38 @@ class V2Pages
                 static::copySection('home', $key, $page, ++$order);
             }
         });
+
+        LandingPage::clearCache();
+    }
+
+    /**
+     * Create /v2/hosts, /v2/business and /v2/events from the live pages, once
+     * each. A page that already exists is left alone, so an admin's edits stay.
+     */
+    public static function createAudiences(): void
+    {
+        foreach (self::AUDIENCES as $audience => $keys) {
+            $live = LandingPage::where('slug', $audience)->first();
+            if (! $live || LandingPage::where('slug', static::audienceSlug($audience))->exists()) {
+                continue;
+            }
+
+            DB::transaction(function () use ($audience, $keys, $live) {
+                $page = LandingPage::create([
+                    'slug' => static::audienceSlug($audience),
+                    'name' => ucfirst($audience).' (v2 design)',
+                    'is_routable' => false,
+                    'is_active' => true,
+                    'sort_order' => (int) LandingPage::max('sort_order') + 1,
+                ]);
+
+                $order = 0;
+                $present = $live->sections()->whereIn('section_key', $keys)->orderBy('sort_order')->pluck('section_key');
+                foreach ($present as $key) {
+                    static::copySection($audience, $key, $page, ++$order);
+                }
+            });
+        }
 
         LandingPage::clearCache();
     }

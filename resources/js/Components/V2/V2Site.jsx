@@ -76,6 +76,11 @@ function navigate(to, replace) {
     router.visit(next.pathname + next.search + next.hash, { replace });
 }
 
+/** A link to a live audience page ("/hosts#join") goes to its v2 version while previewing v2. */
+export function v2Link(href) {
+    return /^\/(hosts|business|events)(?=$|[#?])/.test(href || '') ? `/v2${href}` : href;
+}
+
 /** Kept stable, so the site settings aren't rebuilt on every render. */
 const NONE = {};
 
@@ -113,11 +118,11 @@ function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
 
         return {
             brand: { name: brand.name, logo: { light: brand.dark || brand.footer, dark: brand.header } },
-            // The live header's links, with on-page #anchors pointing at the live homepage.
+            // The live header's links, pointing at the v2 pages (#anchors at the v2 homepage).
             nav: extractItems(header, 'links', ['label', 'href'])
                 .map((l) => ({ label: stripHtml(l.label), to: stripHtml(l.href) }))
                 .filter((l) => l.label && l.to)
-                .map((l) => ({ ...l, to: l.to.startsWith('#') ? `/${l.to}` : l.to })),
+                .map((l) => ({ ...l, to: l.to.startsWith('#') ? `/v2${l.to}` : v2Link(l.to) })),
             useAccount: () => ({ signedIn }),
             // TenaFi has no public sign-in (it's fully managed): the quieter link is a WhatsApp chat.
             accountLinks: {
