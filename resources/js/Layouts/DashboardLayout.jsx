@@ -15,6 +15,8 @@ import {
     Search,
     Bell,
     HelpCircle,
+    BookOpen,
+    LifeBuoy,
     User,
     LogOut,
     CheckCircle2,
@@ -349,18 +351,18 @@ export default function DashboardLayout({ children }) {
                                                 <div className="dashboard-layout__menu-list">
                                                     <Menu.Item>
                                                         {({ active }) => (
-                                                            <button className={`dashboard-layout__help-item ${active ? 'dashboard-layout__help-item--active' : ''}`}>
-                                                                <div className="dashboard-layout__help-item-icon"><Search size={14} className="dashboard-layout__help-item-icon-svg" /></div>
-                                                                Knowledge Base
-                                                            </button>
+                                                            <Link href={route('help')} className={`dashboard-layout__help-item ${active ? 'dashboard-layout__help-item--active' : ''}`}>
+                                                                <div className="dashboard-layout__help-item-icon"><BookOpen size={14} className="dashboard-layout__help-item-icon-svg" /></div>
+                                                                Help Center
+                                                            </Link>
                                                         )}
                                                     </Menu.Item>
                                                     <Menu.Item>
                                                         {({ active }) => (
-                                                            <button className={`dashboard-layout__help-item ${active ? 'dashboard-layout__help-item--active' : ''}`}>
-                                                                <div className="dashboard-layout__help-item-icon"><Bell size={14} className="dashboard-layout__help-item-icon-svg" /></div>
+                                                            <Link href={`${route('help')}?a=contact`} className={`dashboard-layout__help-item ${active ? 'dashboard-layout__help-item--active' : ''}`}>
+                                                                <div className="dashboard-layout__help-item-icon"><LifeBuoy size={14} className="dashboard-layout__help-item-icon-svg" /></div>
                                                                 Contact Support
-                                                            </button>
+                                                            </Link>
                                                         )}
                                                     </Menu.Item>
                                                 </div>

@@ -1,0 +1,145 @@
+@reference "../../../css/theme.css";
+
+.help-page {
+    @apply grid gap-6 lg:grid-cols-[17rem_minmax(0,1fr)];
+}
+
+.help-page__side {
+    @apply flex min-w-0 flex-col gap-4 lg:sticky lg:top-24 lg:self-start;
+}
+
+.help-page__search {
+    @apply flex items-center gap-2 rounded-2xl border border-dark/10 bg-white px-4 py-3 text-muted;
+}
+
+.help-page__search input {
+    @apply w-full min-w-0 border-0 bg-transparent p-0 text-sm font-semibold text-dark outline-none focus:ring-0;
+}
+
+/* Topics: a list on wide screens; hidden on phones, where the home list does the job. */
+.help-page__toc {
+    @apply hidden flex-col gap-5 lg:flex lg:max-h-[calc(100vh-12rem)] lg:overflow-y-auto lg:pr-2;
+}
+
+.help-page__toc-group p {
+    @apply mb-1.5 text-xs font-black uppercase tracking-widest text-muted;
+}
+
+.help-page__toc-group ul {
+    @apply flex list-none flex-col p-0;
+}
+
+.help-page__toc-group button {
+    @apply w-full rounded-lg px-2 py-1.5 text-left text-sm font-semibold text-dark/80 hover:bg-dark/5 hover:text-dark;
+}
+
+.help-page__toc-group button[aria-current='page'] {
+    @apply bg-primary/25 text-dark;
+}
+
+.help-page__main {
+    @apply flex min-w-0 flex-col gap-6;
+}
+
+.help-page__h2 {
+    @apply mb-4 text-base font-black text-dark;
+}
+
+.help-page__list {
+    @apply flex list-none flex-col p-0;
+}
+
+.help-page__list li + li {
+    @apply border-t border-dark/5;
+}
+
+.help-page__list button {
+    @apply flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left text-dark hover:bg-dark/[0.03];
+}
+
+.help-page__list svg {
+    @apply shrink-0 text-muted;
+}
+
+.help-page__list span {
+    @apply flex min-w-0 flex-1 flex-col;
+}
+
+.help-page__list b {
+    @apply text-sm font-bold;
+}
+
+.help-page__list small {
+    @apply text-xs text-muted;
+}
+
+.help-page__back {
+    @apply mb-5 inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-muted hover:text-dark;
+}
+
+.help-article {
+    @apply flex max-w-3xl flex-col gap-4 text-[0.95rem] leading-relaxed text-dark;
+}
+
+.help-article h3 {
+    @apply mt-2 text-sm font-black uppercase tracking-widest text-muted;
+}
+
+.help-article ol {
+    @apply flex list-none flex-col gap-3 p-0;
+    counter-reset: step;
+}
+
+.help-article ol li {
+    @apply relative pl-10;
+    counter-increment: step;
+}
+
+.help-article ol li::before {
+    @apply absolute left-0 top-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-black text-dark;
+    content: counter(step);
+}
+
+.help-article__tips {
+    @apply rounded-2xl bg-primary/10 p-5;
+}
+
+.help-article__tips > p {
+    @apply mb-2 flex items-center gap-2 text-sm font-black text-dark;
+}
+
+.help-article__tips ul {
+    @apply flex list-disc flex-col gap-1.5 pl-5 text-sm;
+}
+
+.help-article__links {
+    @apply mt-6 flex flex-wrap gap-2 border-t border-dark/5 pt-5;
+}
+
+.help-article__link {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-dark px-4 py-2 text-xs font-black text-primary no-underline hover:opacity-90;
+}
+
+.help-support {
+    @apply flex items-start gap-4;
+}
+
+.help-support__ic {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/20 text-dark;
+}
+
+.help-support p {
+    @apply text-sm text-muted;
+}
+
+.help-support__actions {
+    @apply mt-4 flex flex-wrap gap-2;
+}
+
+.help-support__btn {
+    @apply inline-flex items-center gap-2 rounded-full border border-dark/10 bg-white px-4 py-2 text-sm font-bold text-dark no-underline hover:border-dark;
+}
+
+.help-support__btn--wa {
+    @apply border-green-600 bg-green-600 text-white hover:border-green-700 hover:bg-green-700;
+}

@@ -28,6 +28,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventPaymentController;
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\GuestPortalController;
+use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HostDashboardController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\MessagingWebhookController;
@@ -290,6 +291,8 @@ Route::prefix('g')->name('guest.')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // Help Center: how-to guides for every feature and how to reach support.
+    Route::get('/help', [HelpController::class, 'index'])->middleware('verified')->name('help');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
