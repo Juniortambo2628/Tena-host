@@ -207,7 +207,7 @@ export default function DashboardLayout({ children }) {
             >
                 <div className="dashboard-layout__brand">
                     <Link href="/" className="dashboard-layout__brand-link">
-                        <BrandLogo variant={dark ? 'footer' : 'header'} className="dashboard-layout__logo" />
+                        <BrandLogo variant={dark ? 'dark' : 'header'} className="dashboard-layout__logo" />
                     </Link>
                     <button
                         type="button"
