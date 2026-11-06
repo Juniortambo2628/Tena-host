@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LandingPage;
 use App\Models\PolicyDocument;
 use App\Models\Setting;
+use App\Services\Cms\V2Pages;
 use App\Support\TrialSlots;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -43,11 +44,13 @@ class PublicPageController extends Controller
     {
         abort_unless(static::v2Visible(), 404);
 
-        $sections = LandingPage::publicSections('home');
+        // Its own CMS page (Admin -> Public Pages -> "Home (v2 design)"), or the
+        // live homepage's sections until that page exists.
+        $sections = LandingPage::publicSections(V2Pages::HOME) ?: LandingPage::publicSections('home');
         $pageSeo = collect($sections)->firstWhere('section_key', 'seo');
 
         return $this->render('Public/V2/Home', [
-            'page' => ['slug' => 'v2', 'name' => 'Home (v2)'],
+            'page' => ['slug' => V2Pages::HOME, 'name' => 'Home (v2)'],
             'sections' => $sections,
         ], $pageSeo, '/v2', index: false);
     }

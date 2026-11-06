@@ -110,7 +110,7 @@ function getTabLabel(tabId) {
  * `focusSlot`: open straight on the Media tab with this slot highlighted
  * (the "Replace picture" buttons on the public site link here).
  */
-export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop, onToggleActive, focusSlot = null }) {
+export default function SectionEditor({ section, onUpdate, onMediaUpload, onMediaDelete, onMediaCrop, onToggleActive, focusSlot = null, pageSlug = null }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState(0);
@@ -121,7 +121,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
         // required placements before uploading anything.
         const initial = { ...(section.media || {}) };
         const contentKeys = Object.keys(section.content || {});
-        for (const slot of getExpectedMediaSlots(section.section_key, contentKeys)) {
+        for (const slot of getExpectedMediaSlots(section.section_key, contentKeys, pageSlug)) {
             if (!(slot.key in initial)) initial[slot.key] = null;
         }
         return initial;
@@ -227,7 +227,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
 
     const handleMediaDelete = async (media) => {
         const contentKeys = Object.keys(localContent);
-        const belongsToSchema = isSchemaKey(section.section_key, contentKeys, media.media_key);
+        const belongsToSchema = isSchemaKey(section.section_key, contentKeys, media.media_key, pageSlug);
         const confirmMessage = belongsToSchema
             ? `Remove the uploaded file for "${media.media_key}"? The slot will stay so you can re-upload.`
             : `Remove the custom media slot "${media.media_key}"? This cannot be undone.`;
@@ -281,8 +281,8 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
     };
 
     const expectedMediaSlots = useMemo(
-        () => getExpectedMediaSlots(section.section_key, Object.keys(localContent)),
-        [section.section_key, localContent],
+        () => getExpectedMediaSlots(section.section_key, Object.keys(localContent), pageSlug),
+        [section.section_key, localContent, pageSlug],
     );
 
     // A row added in a list tab gets its media slot (e.g. partner_5_logo) straight away.
@@ -349,7 +349,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                 setLocalContent(data.content || {});
                 setLocalMedia(() => {
                     const next = { ...(data.media || {}) };
-                    for (const slot of getExpectedMediaSlots(section.section_key, Object.keys(data.content || {}))) {
+                    for (const slot of getExpectedMediaSlots(section.section_key, Object.keys(data.content || {}), pageSlug)) {
                         if (!(slot.key in next)) next[slot.key] = null;
                     }
                     return next;
@@ -445,7 +445,7 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                                         onDelete={handleMediaDelete}
                                         onCrop={handleCropOpen}
                                         title={slotTitle(section.section_key, key, slot?.label || '', localContent)}
-                                        notice={slotNotice(section.section_key, key, localContent, localMedia)}
+                                        notice={slotNotice(section.section_key, key, localContent, localMedia, pageSlug)}
                                         label="Tap to choose a photo, or drop one here"
                                     />
                                     {slot?.description && (

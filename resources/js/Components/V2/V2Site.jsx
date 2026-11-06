@@ -19,7 +19,7 @@ import './V2Site.css';
  *    pages (Admin -> Public Pages -> Site-wide), so header, footer and SEO are
  *    edited in one place for both.
  */
-export default function V2Site({ children }) {
+export default function V2Site({ places, media, joinHref = '#paths', children }) {
     const { url } = usePage();
     const location = useInertiaLocation(url);
     const navigator = useMemo(() => ({
@@ -29,7 +29,7 @@ export default function V2Site({ children }) {
         push: (to) => navigate(to, false),
         replace: (to) => navigate(to, true),
     }), []);
-    const site = useV2SiteConfig();
+    const site = useV2SiteConfig({ places, media, joinHref });
 
     return (
         <Router location={location} navigator={navigator}>
@@ -76,11 +76,18 @@ function navigate(to, replace) {
     router.visit(next.pathname + next.search + next.hash, { replace });
 }
 
+/** Kept stable, so the site settings aren't rebuilt on every render. */
+const NONE = {};
+
 /** A photo "key" is its URL: the CMS stores uploaded pictures as paths. */
 const PHOTOS = { url: (key) => key || '', alt: () => '' };
 
-/** The kit's `site` settings, from the CMS's site-wide sections. */
-function useV2SiteConfig() {
+/**
+ * The kit's `site` settings, from the CMS's site-wide sections. A page adds
+ * its own pictures: `places` (photo by name, e.g. "group-reviews") and
+ * `media` (screens shown in a phone or browser frame, by key).
+ */
+function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
     const { site = {}, seo = {}, auth } = usePage().props;
     const brand = useBrand();
     const signedIn = Boolean(auth?.user);
@@ -115,12 +122,12 @@ function useV2SiteConfig() {
             // TenaFi has no public sign-in (it's fully managed): the quieter link is a WhatsApp chat.
             accountLinks: {
                 signIn: whatsapp ? { to: `https://wa.me/${whatsapp}`, label: 'WhatsApp us' } : { to: '/hosts#faq', label: 'Questions' },
-                signUp: { to: '#paths', label: stripHtml(getContent(header, 'join_label', 'Book now')) || 'Book now' },
+                signUp: { to: joinHref, label: stripHtml(getContent(header, 'join_label', 'Book now')) || 'Book now' },
                 home: { to: '/dashboard', label: 'Your dashboard' },
             },
             usePhotos: () => PHOTOS,
-            usePlaces: () => (place) => place,
-            media: {},
+            usePlaces: () => (place) => places[place] ?? place,
+            media,
             footer: {
                 about: stripHtml(getContent(footer, 'description', 'Africa’s guest relationship platform.')),
                 columns: [...groups, ...(contact.length ? [{ title: 'Talk to us', links: contact }] : [])].slice(0, 3),
@@ -145,5 +152,5 @@ function useV2SiteConfig() {
                 pages: {},
             },
         };
-    }, [site, seo, brand, signedIn]);
+    }, [site, seo, brand, signedIn, places, media, joinHref]);
 }

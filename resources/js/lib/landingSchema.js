@@ -20,6 +20,7 @@ export const SECTION_MEDIA_SCHEMA = {
         slots: [
             { key: 'main_image', label: 'Main hero image', description: 'Primary hero visual on the right of the headline.' },
             { key: 'visual_shot', label: 'Screenshot instead of the drawn WiFi page', description: SHOT_HINT },
+            { key: 'phone_image', label: 'Hero photo for phones', description: 'Shown instead of the main photo on phones held upright. Tall, about 900 × 1600. Empty: phones show the main photo.', v2: true },
         ],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'features', 'feature_{i}_image', 'Feature {n} image'),
     },
@@ -110,6 +111,25 @@ export const SECTION_MEDIA_SCHEMA = {
         dynamic: (contentKeys) => shotSlots(contentKeys, 'steps', 'step_{i}_shot', 'Step {n}: screenshot instead of the drawn phone'),
     },
 
+    comparison: {
+        slots: [
+            { key: 'image', label: 'Photo above the two columns (optional)', description: 'Wide, about 2100 × 900. Empty: no photo.', v2: true },
+        ],
+    },
+
+    cta_banner: {
+        slots: [
+            { key: 'image', label: 'Background photo', description: 'Wide, about 1800 × 900; the words sit over its left side. Empty: a bundled photo.', v2: true },
+        ],
+    },
+
+    // "See it in action" (v2 pages): one real screen per item. Items without a screen are left out.
+    showcase: {
+        slots: [],
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'items', 'item_{i}_shot', 'Screen {n}')
+            .map(slot => ({ ...slot, description: 'A phone or computer screenshot (use made-up or consenting guests’ names). Tall phone screens show in a phone frame.' })),
+    },
+
     comparison_table: { slots: [] },
     demo: { slots: [] },
     worth_calculator: { slots: [] },
@@ -138,16 +158,21 @@ function featureSlots(contentKeys, arrName, keyPattern, labelPattern) {
     }));
 }
 
+/** The v2 design's pages ("v2", and later "v2-hosts", ...). Slots marked v2 show only there. */
+export function isV2Page(pageSlug) {
+    return pageSlug === 'v2' || String(pageSlug || '').startsWith('v2-');
+}
+
 /**
  * Return the expected media slots for a section, deduplicated.
  * Each slot is { key, label, description? }.
  */
-export function getExpectedMediaSlots(sectionKey, contentKeys = []) {
+export function getExpectedMediaSlots(sectionKey, contentKeys = [], pageSlug = null) {
     // "stats__problem" uses the "stats" schema.
     const entry = SECTION_MEDIA_SCHEMA[String(sectionKey).split('__')[0]];
     if (!entry) return [];
     const dynamic = entry.dynamic ? entry.dynamic(contentKeys) : [];
-    const merged = [...(entry.slots || []), ...dynamic];
+    const merged = [...(entry.slots || []), ...dynamic].filter((slot) => !slot.v2 || isV2Page(pageSlug));
     const seen = new Set();
     return merged.filter((slot) => {
         if (seen.has(slot.key)) return false;
@@ -160,8 +185,8 @@ export function getExpectedMediaSlots(sectionKey, contentKeys = []) {
  * True when a key belongs to the section's declared schema (static or
  * dynamic). Custom/ad-hoc keys return false and remain removable.
  */
-export function isSchemaKey(sectionKey, contentKeys, mediaKey) {
-    return getExpectedMediaSlots(sectionKey, contentKeys).some((slot) => slot.key === mediaKey);
+export function isSchemaKey(sectionKey, contentKeys, mediaKey, pageSlug = null) {
+    return getExpectedMediaSlots(sectionKey, contentKeys, pageSlug).some((slot) => slot.key === mediaKey);
 }
 
 const plain = (value) => String(value ?? '').replace(/<[^>]*>/g, '').trim();
@@ -177,8 +202,14 @@ const plain = (value) => String(value ?? '').replace(/<[^>]*>/g, '').trim();
  * @param {object} content    the section's content map
  * @param {object} media      the section's media map (key => upload or null)
  */
-export function slotNotice(sectionKey, mediaKey, content = {}, media = {}) {
+export function slotNotice(sectionKey, mediaKey, content = {}, media = {}, pageSlug = null) {
     const type = String(sectionKey).split('__')[0];
+    // The v2 design shows every photo slot it lists (no drawings), except as noted here.
+    if (isV2Page(pageSlug)) {
+        if (type === 'hero' && mediaKey === 'visual_shot') return 'Not on the v2 design: it shows the main photo.';
+        if (/^(section|card)_\d+_shot$/.test(mediaKey) && type === 'path_cards') return 'Not on the v2 design: the cards show their photo.';
+        return '';
+    }
     const has = (key) => Boolean(media?.[key]);
 
     if (type === 'hero') {

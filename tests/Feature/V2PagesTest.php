@@ -1,8 +1,15 @@
 <?php
 
+use App\Models\LandingContent;
+use App\Models\LandingMedia;
+use App\Models\LandingPage;
+use App\Models\LandingSection;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\Cms\V2Pages;
+use App\Services\MediaUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -43,4 +50,71 @@ it('saves the switch from Admin -> Settings', function () {
         ->assertSessionHasNoErrors();
 
     expect(Setting::getValue('v2_pages_enabled'))->toBe('1');
+});
+
+function v2Section(string $key): LandingSection
+{
+    return LandingSection::whereHas('page', fn ($q) => $q->where('slug', V2Pages::HOME))->where('section_key', $key)->firstOrFail();
+}
+
+it('makes /v2 its own CMS page, copied from the live homepage, kept out of menus and the sitemap', function () {
+    $page = LandingPage::where('slug', V2Pages::HOME)->sole();
+    expect($page->is_routable)->toBeFalse();
+
+    $keys = $page->sections()->orderBy('sort_order')->pluck('section_key')->all();
+    expect($keys)->toBe([
+        'seo', 'hero', 'partners', 'path_cards', 'comparison__problem', 'detailed_features__home',
+        'showcase', 'how_it_works', 'comparison_table', 'credibility', 'pricing', 'faq', 'cta_banner__founding',
+    ]);
+
+    // Same words and pictures as the live sections they came from.
+    $liveHero = LandingSection::whereHas('page', fn ($q) => $q->where('slug', 'home'))->where('section_key', 'hero')->with('contents')->sole();
+    expect(v2Section('hero')->contents()->pluck('value', 'content_key')->all())
+        ->toEqual($liveHero->contents->pluck('value', 'content_key')->all());
+    expect(v2Section('showcase')->media()->count())->toBe(count(V2Pages::SHOWCASE));
+
+    // Running it again changes nothing.
+    V2Pages::createHome();
+    expect(LandingPage::where('slug', V2Pages::HOME)->count())->toBe(1)
+        ->and($page->sections()->count())->toBe(count($keys));
+
+    expect(collect(LandingPage::navMenus())->keys())->not->toContain('/v2');
+    $this->get('/sitemap.xml')->assertDontSee('/v2');
+    $this->get('/v2-anything')->assertNotFound();
+});
+
+it('serves the v2 page’s own sections, and editing them leaves the live homepage alone', function () {
+    Setting::setValue('v2_pages_enabled', '1', 'general', 'boolean');
+
+    LandingContent::where('section_id', v2Section('hero')->id)->where('content_key', 'badge')->update(['value' => 'Only on v2']);
+    LandingPage::clearCache();
+
+    $this->get('/v2')->assertInertia(fn ($page) => $page
+        ->where('sections', fn ($sections) => collect($sections)->firstWhere('section_key', 'hero')['content']['badge'] === 'Only on v2'
+            && collect($sections)->pluck('section_key')->contains('showcase')
+            && collect($sections)->pluck('section_key')->contains('pricing')));
+
+    $this->get('/')->assertInertia(fn ($page) => $page
+        ->where('sections', fn ($sections) => collect($sections)->firstWhere('section_key', 'hero')['content']['badge'] !== 'Only on v2'));
+});
+
+it('opens the v2 page from Admin -> Public Pages', function () {
+    $this->actingAs(User::factory()->admin()->create())->get(route('admin.landing.index', ['page' => V2Pages::HOME]))
+        ->assertInertia(fn ($page) => $page->where('currentPage', V2Pages::HOME)
+            ->where('pages', fn ($pages) => collect($pages)->firstWhere('slug', V2Pages::HOME)['url'] === '/v2'));
+});
+
+it('keeps a picture file while another page still shows it', function () {
+    Storage::fake('public');
+    Storage::disk('public')->put('landing/shared.jpg', 'x');
+    $row = fn (string $key) => LandingMedia::create([
+        'section_id' => v2Section('hero')->id, 'media_key' => $key, 'original_path' => '/landing/shared.jpg', 'mime_type' => 'image/jpeg', 'file_size' => 1,
+    ]);
+    [$live, $copy] = [$row('test_a'), $row('test_b')];
+
+    app(MediaUploadService::class)->delete($copy);
+    Storage::disk('public')->assertExists('landing/shared.jpg');
+
+    app(MediaUploadService::class)->delete($live);
+    Storage::disk('public')->assertMissing('landing/shared.jpg');
 });

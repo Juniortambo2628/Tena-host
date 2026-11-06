@@ -158,6 +158,12 @@ class MediaUploadService
         ]);
 
         foreach ($paths as $path) {
+            // The v2 pages start with the live pages' pictures (App\Services\Cms\V2Pages):
+            // keep a file another section still shows.
+            if (LandingMedia::whereKeyNot($media->id)->where(fn ($q) => $q->where('original_path', $path)
+                ->orWhere('optimized_path', $path)->orWhere('thumbnail_path', $path))->exists()) {
+                continue;
+            }
             $relativePath = ltrim($path, '/');
             if (Storage::disk('public')->exists($relativePath)) {
                 Storage::disk('public')->delete($relativePath);

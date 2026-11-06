@@ -7,6 +7,7 @@ use App\Models\LandingContent;
 use App\Models\LandingMedia;
 use App\Models\LandingPage;
 use App\Models\LandingSection;
+use App\Services\Cms\V2Pages;
 use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,7 +62,8 @@ class LandingController extends Controller
             'pages' => $pages->map(fn ($p) => [
                 'slug' => $p->slug,
                 'name' => $p->name,
-                'url' => $p->is_routable ? $p->path() : null,
+                // The v2 pages aren't routable themselves; /v2 serves the v2 homepage.
+                'url' => $p->is_routable ? $p->path() : ($p->slug === V2Pages::HOME ? '/v2' : null),
             ]),
             'currentPage' => $currentPage?->slug,
             'sections' => $sections,

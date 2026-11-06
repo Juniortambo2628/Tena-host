@@ -1,48 +1,146 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Head } from '@inertiajs/react';
-import { Check } from 'lucide-react';
-import { SiteLayout, PhotoHero, ImageCard, Container, Eyebrow, PillLink, SectionHeading } from '@okjt/site';
+import { ArrowUpRight, Check, X } from 'lucide-react';
+import {
+    SiteLayout, PhotoHero, ImageCard, Photo, Container, Eyebrow, PillLink, SectionHeading,
+    SectionNav, SECTION_OFFSET, FeatureExplorer, ShowcaseCarousel, PricingSection, FaqSection,
+} from '@okjt/site';
 import V2Site from '@/Components/V2/V2Site';
-import { getContent, getMedia, extractItems, sanitizeHtml, stripHtml, textLines } from '@/lib/cms';
+import {
+    getContent, getMedia, getUpload, getText, extractItems, extractJsonItems, sanitizeHtml, stripHtml,
+    textLines, baseSectionKey, comingSoonBadge,
+} from '@/lib/cms';
 import { useCheapestPrice } from '@/Components/Welcome/Hero';
 
 /**
- * The v2 landing page (/v2), in the OKJT kit's design. This first version
- * shows the frame (nav, footer), the hero and the three audiences, using the
- * live homepage's words and pictures from the CMS; the rest of the page
- * follows as its own CMS page.
+ * The v2 landing page (/v2), in the OKJT kit's design. Its sections are the
+ * CMS page "Home (v2 design)" (Admin -> Public Pages), copied from the live
+ * homepage and edited separately; they show in the order set there. Each
+ * section type has a kit-styled version below; types without one are skipped.
  */
 export default function V2Home({ sections = [], site = {}, seo = {} }) {
-    const section = (key) => sections.find((s) => s.section_key === key);
-    const hero = section('hero');
-    const paths = section('path_cards');
+    const find = (type) => sections.find((s) => baseSectionKey(s.section_key) === type);
+    const trial = find('cta_banner');
+    const places = usePlaces(find('detailed_features'));
+    const media = useScreens(find('detailed_features'), find('showcase'));
+    const shown = sections.filter((s) => RENDERERS[baseSectionKey(s.section_key)]);
+    const chips = shown
+        .filter((s) => !['hero', 'partners', 'path_cards'].includes(baseSectionKey(s.section_key)))
+        .map((s) => ({ id: sectionId(s), label: navLabel(s) }));
+    const navAfter = shown.find((s) => baseSectionKey(s.section_key) === 'path_cards') ? 'path_cards' : 'hero';
+    const paths = find('path_cards');
+    const pathsHref = paths ? `#${sectionId(paths)}` : '/#choose';
+    const joinHref = trial ? `#${sectionId(trial)}` : pathsHref;
 
     return (
-        <V2Site>
+        <V2Site places={places} media={media} joinHref={joinHref}>
             <Head title={seo.title || 'TenaFi'} />
-            <SiteLayout overlay>
-                <Hero hero={hero} site={site} />
-                {paths && <Audiences section={paths} />}
+            <SiteLayout overlay cta={false}>
+                {shown.map((section) => {
+                    const type = baseSectionKey(section.section_key);
+                    const Section = RENDERERS[type];
+                    return (
+                        <React.Fragment key={section.id ?? section.section_key}>
+                            <Section section={section} site={site} id={sectionId(section)} joinHref={joinHref} pathsHref={pathsHref} />
+                            {type === navAfter && chips.length > 1 && <SectionNav sections={chips} label="On this page" />}
+                        </React.Fragment>
+                    );
+                })}
             </SiteLayout>
         </V2Site>
     );
 }
 
+/** Where a section's in-page links point: its CMS anchor, or its type. */
+const DEFAULT_IDS = { path_cards: 'paths', detailed_features: 'features', comparison_table: 'compare', credibility: 'about', faq: 'faq', comparison: 'gap' };
+function sectionId(section) {
+    const type = baseSectionKey(section.section_key);
+    return stripHtml(getContent(section, 'anchor', '')) || DEFAULT_IDS[type] || type;
+}
+
+/** The section's chip in the "On this page" bar. */
+const NAV_LABELS = {
+    comparison: 'The gap', detailed_features: 'Features', showcase: 'In action', how_it_works: 'How it works',
+    comparison_table: 'Compared', credibility: 'Who we are', pricing: 'Pricing', faq: 'FAQ', cta_banner: 'Free trial',
+};
+function navLabel(section) {
+    const type = baseSectionKey(section.section_key);
+    return stripHtml(getContent(section, 'menu_label', '')) || NAV_LABELS[type] || stripHtml(section.title);
+}
+
+/** Bundled photos used until a section's own photo is uploaded. */
+const PHOTOS = [
+    '/legacy/assets/Tena-Landing/Tena-Welcome-Divine.jpg',
+    '/legacy/assets/Tena-Landing/Clients-view.jpg',
+    '/legacy/assets/Tena-Landing/Tena-Features-1.jpg',
+    '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg',
+    '/legacy/assets/Tena-Landing/Tena-Welcome-Divine-1.jpg',
+];
+
+/** Real screens shipped with the app (public/legacy/assets/v2), by the feature row they show. */
+const SCREENS = {
+    'wifi-page': 'screen-wifi-page.webp',
+    reviews: 'screen-reviews-dashboard.webp',
+    campaigns: 'screen-whatsapp-campaign.webp',
+    extras: 'screen-mpesa-extras.webp',
+    events: 'screen-event-wifi-page.webp',
+};
+// The bundled screens taller than a phone's width x 1.6 sit in a phone frame; the rest in a browser frame.
+const WIDE_SCREENS = /screen-(mpesa-extras|reviews-dashboard)/;
+const screen = (src, alt) => ({ src, alt, url: 'tena-fi.com', phone: !WIDE_SCREENS.test(src) });
+
+/** Feature rows: rows (and their photos) by index, for FeatureExplorer's place(`group-…`). */
+function featureRows(section) {
+    const count = Object.keys(section?.content || {}).filter((k) => /^sections\.\d+\.label$/.test(k)).length;
+    return Array.from({ length: count }, (_, i) => ({
+        i,
+        id: stripHtml(getContent(section, `sections.${i}.anchor`, '')) || `feature-${i}`,
+    }));
+}
+
+function usePlaces(features) {
+    return useMemo(() => Object.fromEntries(featureRows(features).map(({ i, id }) => [
+        `group-${id}`, getUpload(features, `section_${i}_image`) || PHOTOS[i % PHOTOS.length],
+    ])), [features]);
+}
+
+function useScreens(features, showcase) {
+    return useMemo(() => {
+        const media = {};
+        featureRows(features).forEach(({ i, id }) => {
+            const shot = getUpload(features, `section_${i}_shot`) || (SCREENS[id] ? `/legacy/assets/v2/${SCREENS[id]}` : '');
+            if (shot) media[`feature-${i}`] = screen(shot, stripHtml(getContent(features, `sections.${i}.label`, '')));
+        });
+        extractItems(showcase, 'items', ['title']).forEach((item, i) => {
+            const shot = getUpload(showcase, `item_${i}_shot`);
+            if (shot) media[`showcase-${i}`] = screen(shot, stripHtml(item.title));
+        });
+        return media;
+    }, [features, showcase]);
+}
+
+const Html = ({ html, as: Tag = 'span', className }) => (
+    <Tag className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />
+);
+
 /** The homepage hero's words over its picture, with an "about" panel overlapping it. */
-function Hero({ hero, site }) {
+function Hero({ section: hero, site, joinHref }) {
     const title = getContent(hero, 'title', 'Turn your existing WiFi into <span>growth.</span>');
     const ticks = textLines(getContent(hero, 'ticks', ''), site);
     // "From {price} a month": the cheapest live plan, as on the live hero.
     const cheapest = useCheapestPrice();
     const priceLine = stripHtml(getContent(hero, 'price_line', 'Book a free trial. We install it for you.'));
+    const primary = stripHtml(getContent(hero, 'cta_primary', 'Book my free trial'));
+    const primaryHref = stripHtml(getContent(hero, 'cta_primary_url', '')) || joinHref;
 
     return (
         <PhotoHero
             tall
             image={getMedia(hero, 'main_image', '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg')}
+            phoneImage={getUpload(hero, 'phone_image') || undefined}
             eyebrow={stripHtml(getContent(hero, 'badge', ''))}
-            title={<span className="v2-hero-title" dangerouslySetInnerHTML={{ __html: sanitizeHtml(title) }} />}
-            text={<span dangerouslySetInnerHTML={{ __html: sanitizeHtml(getContent(hero, 'subtitle', '')) }} />}
+            title={<Html html={title} className="v2-hero-title" />}
+            text={<Html html={getContent(hero, 'subtitle', '')} />}
             after={(
                 <div className="grid gap-4 rounded-[2rem] bg-white/85 p-4 shadow-[0_40px_90px_-40px_color-mix(in_srgb,var(--color-ink)_60%,transparent)] backdrop-blur-xl sm:p-6 lg:grid-cols-5">
                     <div className="flex flex-col justify-between rounded-3xl bg-gradient-to-br from-white to-tint p-6 sm:p-8 lg:col-span-3">
@@ -61,23 +159,64 @@ function Hero({ hero, site }) {
                         <p className="!font-display text-2xl !font-light leading-snug !text-white">
                             {priceLine.includes('{price}') && !cheapest ? 'Book a free trial. We install it for you.' : priceLine.replace('{price}', cheapest)}
                         </p>
-                        <div className="mt-2"><PillLink to="#paths" variant="light">{stripHtml(getContent(hero, 'cta_primary', 'Book my free trial'))}</PillLink></div>
+                        <div className="mt-2"><PillLink to={primaryHref} variant="light">{primary}</PillLink></div>
                     </div>
                 </div>
             )}
         >
-            <PillLink to="#paths" variant="light" size="lg">{stripHtml(getContent(hero, 'cta_primary', 'Book my free trial'))}</PillLink>
-            <PillLink to="/#how-it-works" variant="glass" size="lg" arrow>{stripHtml(getContent(hero, 'cta_secondary', 'See how it works'))}</PillLink>
+            <PillLink to={primaryHref} variant="light" size="lg">{primary}</PillLink>
+            <PillLink to={stripHtml(getContent(hero, 'cta_secondary_url', '')) || '#how'} variant="glass" size="lg" arrow>
+                {stripHtml(getContent(hero, 'cta_secondary', 'See how it works'))}
+            </PillLink>
         </PhotoHero>
     );
 }
 
-/** "Which one are you?": one photo card per audience page. */
-function Audiences({ section }) {
-    const cards = extractItems(section, 'cards', ['label', 'title', 'description', 'href', 'tags']);
+/** "Trusted by": each client's name, with their WiFi page screenshot when uploaded. */
+function Partners({ section }) {
+    const partners = extractItems(section, 'partners', ['name', 'url', 'type_area'])
+        .map((p, i) => ({ name: stripHtml(p.name), url: stripHtml(p.url), area: stripHtml(p.type_area), shot: getUpload(section, `partner_${i}_logo`) }))
+        .filter((p) => p.name);
+    if (!partners.length) return null;
 
     return (
-        <section id="paths" className="scroll-mt-24 py-24">
+        <section className="pb-12 pt-20">
+            <Container>
+                <div className="text-center">
+                    <Eyebrow>{stripHtml(getContent(section, 'title', 'Trusted by'))}</Eyebrow>
+                    <p className="mt-2 text-sm text-soft">{stripHtml(getContent(section, 'subtitle', ''))}</p>
+                </div>
+                <ul className="mt-8 flex flex-wrap justify-center gap-3">
+                    {partners.map((p) => {
+                        const inner = (
+                            <>
+                                {p.shot && <img src={p.shot} alt="" loading="lazy" className="h-12 w-8 rounded-md object-cover object-top" />}
+                                <span className="text-left">
+                                    <span className="block text-sm font-semibold text-ink">{p.name}</span>
+                                    {p.area && <span className="block text-xs text-muted">{p.area}</span>}
+                                </span>
+                            </>
+                        );
+                        return (
+                            <li key={p.name}>
+                                {p.url
+                                    ? <a href={p.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-full bg-white px-5 py-2.5 shadow-sm transition-colors hover:bg-paper">{inner}</a>
+                                    : <span className="flex items-center gap-3 rounded-full bg-white px-5 py-2.5 shadow-sm">{inner}</span>}
+                            </li>
+                        );
+                    })}
+                </ul>
+            </Container>
+        </section>
+    );
+}
+
+/** "Which one are you?": one photo card per audience page. */
+function Audiences({ section, id }) {
+    const cards = extractItems(section, 'cards', ['label', 'title', 'description', 'href']);
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} py-24`}>
             <Container>
                 <SectionHeading
                     eyebrow="Who it’s for"
@@ -88,8 +227,8 @@ function Audiences({ section }) {
                     {cards.map((card, i) => (
                         <ImageCard
                             key={i}
-                            to={stripHtml(card.href) || '#paths'}
-                            image={getMedia(section, `card_${i}_image`, '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg')}
+                            to={stripHtml(card.href) || `#${id}`}
+                            image={getMedia(section, `card_${i}_image`, PHOTOS[i % PHOTOS.length])}
                             tags={[stripHtml(card.label)].filter(Boolean)}
                             title={stripHtml(card.title)}
                             text={stripHtml(card.description)}
@@ -101,3 +240,377 @@ function Audiences({ section }) {
         </section>
     );
 }
+
+/** The gap: today vs with TenaFi, side by side, and the numbers behind it. */
+function Gap({ section, id }) {
+    const columns = extractItems(section, 'columns', ['label', 'points', 'text', 'highlight']);
+    const stats = extractItems(section, 'stats', ['value', 'label']).filter((s) => stripHtml(s.value));
+    const image = getUpload(section, 'image');
+    const sources = stripHtml(getContent(section, 'sources', ''));
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} py-24`}>
+            <Container>
+                <SectionHeading
+                    eyebrow={stripHtml(getContent(section, 'badge', ''))}
+                    title={stripHtml(getContent(section, 'title', ''))}
+                    text={stripHtml(getContent(section, 'subtitle', ''))}
+                />
+                {image && (
+                    <div className="relative mt-12 aspect-[21/9] overflow-hidden rounded-[2rem]">
+                        <Photo image={image} />
+                    </div>
+                )}
+                <div className="mx-auto mt-12 grid max-w-5xl gap-5 md:grid-cols-2">
+                    {columns.map((col, i) => {
+                        const dark = String(col.highlight).trim() === '1';
+                        const Icon = dark ? Check : X;
+                        const points = textLines(col.points);
+                        return (
+                            <div key={i} className={`rounded-[2rem] p-8 sm:p-10 ${dark ? 'bg-ink text-white' : 'border border-line bg-white'}`}>
+                                <div className={`text-xs font-semibold uppercase tracking-[0.2em] ${dark ? 'text-accent-soft' : 'text-muted'}`}>{stripHtml(col.label)}</div>
+                                {stripHtml(col.text) && <p className={`mt-4 text-sm ${dark ? 'text-white/80' : 'text-soft'}`}>{stripHtml(col.text)}</p>}
+                                <ul className="mt-6 space-y-4 text-sm leading-relaxed">
+                                    {points.map((p, j) => (
+                                        <li key={j} className="flex gap-3">
+                                            <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${dark ? 'bg-white/10 text-accent-soft' : 'bg-tint text-faint'}`}>
+                                                <Icon className="h-3 w-3" aria-hidden="true" />
+                                            </span>
+                                            <span className={dark ? 'text-white/90' : 'text-soft'}>{p.text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        );
+                    })}
+                </div>
+                {stats.length > 0 && (
+                    <dl className="mx-auto mt-14 grid max-w-5xl gap-8 sm:grid-cols-3">
+                        {stats.map((s, i) => (
+                            <div key={i} className="border-t border-line-strong pt-5">
+                                <dd className="font-display text-5xl font-light tracking-tight text-ink">{stripHtml(s.value)}</dd>
+                                <dt className="mt-2 text-sm text-soft">{stripHtml(s.label)}</dt>
+                            </div>
+                        ))}
+                    </dl>
+                )}
+                {sources && <p className="mx-auto mt-10 max-w-5xl text-xs text-faint">{sources}</p>}
+            </Container>
+        </section>
+    );
+}
+
+/** Feature rows as one explorer: a tab per row, its photo, its screen and its ticks. */
+function Features({ section, site, id, pathsHref }) {
+    const groups = featureRows(section).map(({ i, id: rowId }) => {
+        const ticks = extractJsonItems(section, `sections.${i}.features`)
+            .map((f) => ({ text: stripHtml(f.title), badge: comingSoonBadge(site, f.feature) }))
+            .filter((f) => f.text);
+        const note = stripHtml(getContent(section, `sections.${i}.note`, ''));
+        return {
+            id: rowId,
+            eyebrow: stripHtml(getContent(section, `sections.${i}.label`, '')),
+            title: stripHtml(getContent(section, `sections.${i}.heading`, '')),
+            to: stripHtml(getContent(section, `sections.${i}.cta_href`, '')) || pathsHref,
+            media: `feature-${i}`,
+            stats: [],
+            features: ticks,
+            summary: (
+                <>
+                    <p>{stripHtml(getContent(section, `sections.${i}.description`, ''))}</p>
+                    {ticks.length > 0 && (
+                        <ul className="mt-4 space-y-2">
+                            {ticks.map((t, j) => (
+                                <li key={j} className="flex gap-2">
+                                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-positive" aria-hidden="true" />
+                                    <span>{t.text}{t.badge && <span className="ml-2 rounded-full bg-tint px-2 py-0.5 text-xs font-semibold text-accent">{t.badge}</span>}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    {note && <p className="mt-4 text-xs text-muted">{note}</p>}
+                </>
+            ),
+        };
+    }).filter((g) => g.eyebrow);
+    if (!groups.length) return null;
+
+    const title = stripHtml(getContent(section, 'title', ''));
+    return (
+        <section id={id} className={`${SECTION_OFFSET} py-24`}>
+            <Container>
+                <SectionHeading
+                    eyebrow="What you get"
+                    title={title || 'Everything a WiFi login can do for you.'}
+                    text={stripHtml(getContent(section, 'subtitle', ''))}
+                />
+                <div className="mt-14">
+                    <FeatureExplorer groups={groups} href={(g) => g.to} linkLabel="Find your plan" countLabel="included" label="What TenaFi does" />
+                </div>
+            </Container>
+        </section>
+    );
+}
+
+/** "See it in action": real screens, one at a time. */
+function Showcase({ section, id }) {
+    const items = extractItems(section, 'items', ['title', 'text', 'tags'])
+        .map((item, i) => ({
+            media: `showcase-${i}`,
+            title: stripHtml(item.title),
+            text: stripHtml(item.text),
+            tags: stripHtml(item.tags).split(',').map((t) => t.trim()).filter(Boolean),
+        }))
+        .filter((item, i) => item.title && getUpload(section, `item_${i}_shot`));
+    if (!items.length) return null;
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} bg-white py-24`}>
+            <Container>
+                <ShowcaseCarousel
+                    eyebrow={stripHtml(getContent(section, 'badge', ''))}
+                    title={stripHtml(getContent(section, 'title', ''))}
+                    text={stripHtml(getContent(section, 'subtitle', ''))}
+                    items={items}
+                />
+            </Container>
+        </section>
+    );
+}
+
+/** How it works: four numbered steps, and the cards under them. */
+function HowItWorks({ section, site, id }) {
+    const steps = extractItems(section, 'steps', ['step', 'title', 'description', 'feature']).filter((s) => stripHtml(s.title));
+    const cards = extractItems(section, 'cards', ['title', 'text']).filter((c) => stripHtml(c.title));
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} py-24`}>
+            <Container>
+                <SectionHeading
+                    eyebrow={stripHtml(getContent(section, 'badge', '')) || 'How it works'}
+                    title={stripHtml(getContent(section, 'title', 'How TenaFi works'))}
+                    text={stripHtml(getContent(section, 'subtitle', ''))}
+                />
+                <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    {steps.map((s, i) => {
+                        const image = getUpload(section, `step_${i}_image`);
+                        const badge = comingSoonBadge(site, s.feature);
+                        return (
+                            <li key={i} className="flex flex-col overflow-hidden rounded-[1.75rem] border border-line bg-white">
+                                {image && <img src={image} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" />}
+                                <div className="flex flex-1 flex-col p-6 sm:p-7">
+                                    <span className="font-display text-5xl font-extralight tabular-nums text-accent">{String(stripHtml(s.step) || i + 1).padStart(2, '0')}</span>
+                                    <h3 className="mt-4 !font-display text-xl !font-normal tracking-tight !text-ink">{stripHtml(s.title)}</h3>
+                                    <p className="mt-2 text-sm leading-relaxed text-soft">{stripHtml(s.description)}</p>
+                                    {badge && <span className="mt-4 self-start rounded-full bg-tint px-3 py-1 text-xs font-semibold text-accent">{badge}</span>}
+                                </div>
+                            </li>
+                        );
+                    })}
+                </ol>
+                {cards.length > 0 && (
+                    <div className="mt-5 grid gap-5 md:grid-cols-2">
+                        {cards.map((c, i) => (
+                            <div key={i} className="rounded-[1.75rem] bg-ink p-7 text-white sm:p-8">
+                                <h3 className="!font-display text-xl !font-normal !text-white">{stripHtml(c.title)}</h3>
+                                <p className="mt-2 text-sm leading-relaxed text-white/75">{stripHtml(c.text)}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </Container>
+        </section>
+    );
+}
+
+/** Free WiFi vs TenaFi, row by row (stacked on phones). */
+function CompareTable({ section, id }) {
+    const rows = extractItems(section, 'rows', ['label', 'without', 'with']).filter((r) => stripHtml(r.label));
+    const without = stripHtml(getContent(section, 'col_without', 'Free WiFi'));
+    const withLabel = stripHtml(getContent(section, 'col_with', 'With TenaFi'));
+    if (!rows.length) return null;
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} bg-white py-24`}>
+            <Container>
+                <SectionHeading
+                    eyebrow={stripHtml(getContent(section, 'badge', ''))}
+                    title={stripHtml(getContent(section, 'title', ''))}
+                    text={stripHtml(getContent(section, 'subtitle', ''))}
+                />
+                <div className="mx-auto mt-14 max-w-5xl overflow-hidden rounded-[2rem] border border-line bg-paper">
+                    <div className="hidden grid-cols-3 gap-6 border-b border-line px-8 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-muted md:grid">
+                        <span>{stripHtml(getContent(section, 'col_label', ''))}</span>
+                        <span>{without}</span>
+                        <span className="text-accent">{withLabel}</span>
+                    </div>
+                    {rows.map((r, i) => (
+                        <div key={i} className="grid gap-3 border-b border-line px-6 py-5 last:border-b-0 md:grid-cols-3 md:gap-6 md:px-8">
+                            <span className="font-medium text-ink">{stripHtml(r.label)}</span>
+                            <span className="flex gap-2 text-sm text-soft">
+                                <X className="mt-0.5 h-4 w-4 shrink-0 text-faint" aria-hidden="true" />
+                                <span><span className="sr-only md:hidden">{without}: </span>{stripHtml(r.without)}</span>
+                            </span>
+                            <span className="flex gap-2 text-sm text-ink">
+                                <Check className="mt-0.5 h-4 w-4 shrink-0 text-positive" aria-hidden="true" />
+                                <span><span className="sr-only md:hidden">{withLabel}: </span>{stripHtml(r.with)}</span>
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </Container>
+        </section>
+    );
+}
+
+/** Who we are: the founder's words, and the numbers behind them. */
+function Credibility({ section, id }) {
+    const stats = extractItems(section, 'stats', ['value', 'label']).filter((s) => stripHtml(s.value));
+    const quote = stripHtml(getContent(section, 'quote', ''));
+    const image = getUpload(section, 'main_image');
+    const sources = stripHtml(getContent(section, 'sources', ''));
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} py-24`}>
+            <Container className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-14">
+                <div className="group relative isolate flex min-h-[24rem] flex-col justify-end overflow-hidden rounded-[2rem] bg-ink p-8 text-white sm:p-10">
+                    {image && <><Photo image={image} className="-z-10" /><div className="absolute inset-0 -z-10 bg-gradient-to-t from-ink-deep/90 via-ink-deep/40 to-transparent" /></>}
+                    {quote && <blockquote className="!font-display text-3xl !font-light leading-snug tracking-tight !text-white sm:text-4xl">{quote}</blockquote>}
+                    {stripHtml(getContent(section, 'quote_name', '')) && <p className="mt-6 text-sm text-white/70">{stripHtml(getContent(section, 'quote_name', ''))}</p>}
+                </div>
+                <div className="flex flex-col justify-center">
+                    <SectionHeading
+                        align="left"
+                        eyebrow={stripHtml(getContent(section, 'badge', ''))}
+                        title={stripHtml(getContent(section, 'title', ''))}
+                        text={stripHtml(getContent(section, 'subtitle', ''))}
+                    />
+                    {stats.length > 0 && (
+                        <dl className="mt-10 grid grid-cols-2 gap-6">
+                            {stats.map((s, i) => (
+                                <div key={i} className="border-t border-line-strong pt-4">
+                                    <dd className="font-display text-4xl font-light tracking-tight text-ink">{stripHtml(s.value)}</dd>
+                                    <dt className="mt-1 text-sm text-soft">{stripHtml(s.label)}</dt>
+                                </div>
+                            ))}
+                        </dl>
+                    )}
+                    {sources && <p className="mt-8 text-xs text-faint">{sources}</p>}
+                </div>
+            </Container>
+        </section>
+    );
+}
+
+/** The rentals plans (copied from the live /hosts page when /v2 was made). */
+function Pricing({ section, site, id, joinHref }) {
+    const plans = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'unit', 'features', 'cta', 'variant'])
+        .filter((p) => stripHtml(p.label))
+        .map((p, i) => ({
+            id: stripHtml(p.id) || String(i),
+            name: stripHtml(p.label),
+            price: (
+                <>
+                    {stripHtml(p.price)}
+                    {stripHtml(p.unit) && <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">{stripHtml(p.unit)}</span>}
+                </>
+            ),
+            tagline: stripHtml(p.tagline),
+            lines: textLines(p.features, site).map((l) => (l.badge ? `${l.text} (${l.badge})` : l.text)),
+            cta: { to: joinHref, label: stripHtml(p.cta) || 'Book my free trial' },
+            highlight: stripHtml(p.variant) === 'dark',
+        }));
+    if (!plans.length) return null;
+
+    return (
+        <div className={plans.length > 2 ? 'v2-pricing v2-pricing--wide' : 'v2-pricing'}>
+            <PricingSection
+                id={id}
+                eyebrow={stripHtml(getContent(section, 'menu_label', '')) || 'Pricing'}
+                title={stripHtml(getContent(section, 'title', ''))}
+                text={stripHtml(getContent(section, 'subtitle', ''))}
+                plans={plans}
+                footnote={stripHtml(getContent(section, 'footnote', ''))}
+            />
+        </div>
+    );
+}
+
+function Faq({ section, id }) {
+    const items = extractItems(section, 'items', ['question', 'answer'])
+        .filter((item) => stripHtml(item.question))
+        .map((item) => ({ q: stripHtml(item.question), a: <Html html={item.answer} /> }));
+    if (!items.length) return null;
+
+    return (
+        <div className="bg-white">
+            <FaqSection
+                id={id}
+                items={items}
+                title={stripHtml(getContent(section, 'title', 'Questions, answered'))}
+                text={stripHtml(getContent(section, 'subtitle', '')) || undefined}
+            />
+        </div>
+    );
+}
+
+/** The free trial band: words and ticks over a photo, a button per audience. */
+function Trial({ section, site, id }) {
+    const whatsapp = getText(site.whatsapp_button, 'number').replace(/\D/g, '');
+    const ticks = textLines(getContent(section, 'ticks', ''), site);
+    const buttons = extractItems(section, 'buttons', ['label', 'href'])
+        .map((b) => ({ label: stripHtml(b.label), href: stripHtml(b.href) }))
+        .filter((b) => b.label)
+        .map((b) => (b.href.startsWith('whatsapp:')
+            ? { ...b, href: whatsapp ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(b.href.slice(9).trim())}` : '' }
+            : b))
+        .filter((b) => b.href);
+
+    return (
+        <section id={id} className={`${SECTION_OFFSET} py-16`}>
+            <Container>
+                <div className="group relative isolate overflow-hidden rounded-[2rem] px-6 py-16 text-center sm:px-12 lg:py-24">
+                    <Photo image={getUpload(section, 'image') || '/legacy/assets/Tena-Landing/Tena-Welcome-Divine.jpg'} width={1800} className="-z-20" />
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-r from-tint via-tint/90 to-tint/40" />
+                    <Eyebrow>{stripHtml(getContent(section, 'badge', '')) || 'Free trial'}</Eyebrow>
+                    <h2 className="mx-auto mt-4 max-w-3xl !font-display text-4xl !font-light leading-tight tracking-tight !text-ink sm:text-5xl lg:text-6xl">
+                        {stripHtml(getContent(section, 'title', ''))}
+                    </h2>
+                    <p className="mx-auto mt-4 max-w-xl text-soft">{stripHtml(getContent(section, 'body', ''))}</p>
+                    {ticks.length > 0 && (
+                        <ul className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-body">
+                            {ticks.map((t, i) => <li key={i} className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-positive" aria-hidden="true" />{t.text}</li>)}
+                        </ul>
+                    )}
+                    {buttons.length > 0 && (
+                        <div className="mx-auto mt-9 flex max-w-3xl flex-col flex-wrap justify-center gap-3 sm:flex-row">
+                            {buttons.map((b, i) => (b.href.startsWith('https://wa.me/')
+                                ? (
+                                    <a key={i} href={b.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.08em] text-ink shadow-[0_10px_30px_-12px_color-mix(in_srgb,var(--color-ink)_35%,transparent)] hover:bg-tint">
+                                        {b.label} <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                                    </a>
+                                )
+                                : <PillLink key={i} to={b.href} size="lg">{b.label}</PillLink>))}
+                        </div>
+                    )}
+                </div>
+            </Container>
+        </section>
+    );
+}
+
+/** Section type (the part of its key before "__") => its v2 version. */
+const RENDERERS = {
+    hero: Hero,
+    partners: Partners,
+    path_cards: Audiences,
+    comparison: Gap,
+    detailed_features: Features,
+    showcase: Showcase,
+    how_it_works: HowItWorks,
+    comparison_table: CompareTable,
+    credibility: Credibility,
+    pricing: Pricing,
+    faq: Faq,
+    cta_banner: Trial,
+};
