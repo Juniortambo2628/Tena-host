@@ -1,16 +1,18 @@
 import React, { useState, useMemo } from 'react';
-import { Head, useForm, Link, router } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import './Index.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
 import DataTable from '@/Components/Dashboard/DataTable';
-import { Plus, Wifi, WifiOff } from 'lucide-react';
+import { Plus, Wifi, WifiOff, Eye, Trash2 } from 'lucide-react';
+import { useConfirm } from '@/hooks/useConfirm';
 import { T } from '@/Components/Dashboard/Terms';
 
 export default function AccessPointIndex({ accessPoints, filters, properties }) {
     const [showModal, setShowModal] = useState(false);
+    const { confirm, ConfirmDialogEl } = useConfirm();
     const { data, setData, post, processing, errors, reset } = useForm({
         property_id: properties[0]?.id || '',
         name: '',
@@ -66,24 +68,21 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                 <span className="host-accesspoints-clients">{info.getValue()}</span>
             )
         },
-        {
-            header: 'Actions',
-            id: 'actions',
-            cell: info => {
-                const ap = info.row.original;
-                return (
-                    <div className="flex items-center gap-1">
-                        <Link
-                            href={route('host.access-points.show', ap.id)}
-                            className="host-accesspoints-view-link"
-                        >
-                            View
-                        </Link>
-                    </div>
-                );
-            }
-        }
     ], []);
+
+    const remove = async (ap) => {
+        const ok = await confirm({
+            title: 'Remove access point',
+            message: `Remove “${ap.name}” (${ap.mac_address})? Guests on it will see the “link this access point” page until it’s added to a property again.`,
+            confirmLabel: 'Remove',
+        });
+        if (ok) router.delete(route('host.access-points.destroy', ap.id), { preserveScroll: true });
+    };
+
+    const rowActions = [
+        { key: 'view', label: 'View', icon: <Eye size={14} />, onClick: (ap) => router.visit(route('host.access-points.show', ap.id)) },
+        { key: 'remove', label: 'Remove', icon: <Trash2 size={14} />, variant: 'danger', onClick: remove },
+    ];
 
     const modalTabs = [
         {
@@ -153,6 +152,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                     searchPlaceholder="Search access points..."
                     serverPagination={accessPoints}
                     onSearch={handleSearch}
+                    rowActions={rowActions}
                 />
             </GlassCard>
 
@@ -166,6 +166,7 @@ export default function AccessPointIndex({ accessPoints, filters, properties }) 
                 confirmLabel="Add Access Point"
                 processing={processing}
             />
+            {ConfirmDialogEl}
         </>
     );
 }
