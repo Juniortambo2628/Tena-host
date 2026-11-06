@@ -121,7 +121,13 @@
 
 .dashboard-layout__header {
     min-height: var(--dashboard-header-h);
-    @apply px-4 sm:px-8 py-4 flex justify-between items-center sticky top-0 z-[60] bg-canvas/60 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+    @apply px-4 sm:px-8 py-4 flex justify-between items-center sticky top-0 z-[60] border-b border-black/5 transition-all duration-300;
+    background: color-mix(in srgb, var(--color-white) 40%, var(--color-canvas));
+}
+
+/* Bottom actions on dashboard pages stay in reach (dialogs keep theirs as they are). */
+.dashboard-layout__scroller .form-actions {
+    @apply dashboard-sticky-actions;
 }
 
 .dashboard-layout__header-left {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from '@inertiajs/react';
 import PillButton from './PillButton';
 import { useTerms } from './Terms';
@@ -12,9 +12,31 @@ export default function DashboardHero({
     rootRoute = 'host.dashboard',
 }) {
     const t = useTerms();
+    const ref = useRef(null);
+
+    // While pinned, tell the page how tall the hero is (--dashboard-hero-h on
+    // the scroller), so side columns stick just below it.
+    useEffect(() => {
+        const hero = ref.current;
+        const scroller = hero?.closest('.dashboard-layout__scroller');
+        if (!hero || !scroller || typeof ResizeObserver === 'undefined') return undefined;
+        const update = () => {
+            const pinned = getComputedStyle(hero).position === 'sticky';
+            scroller.style.setProperty('--dashboard-hero-h', pinned ? `${Math.round(hero.getBoundingClientRect().height)}px` : '0px');
+        };
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(hero);
+        window.addEventListener('resize', update);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', update);
+            scroller.style.removeProperty('--dashboard-hero-h');
+        };
+    }, []);
 
     return (
-        <div className="dashboard-hero">
+        <div className="dashboard-hero" ref={ref}>
             {/* Top Row: Breadcrumbs & Title */}
             <div className="dashboard-hero__header">
                 <div className="dashboard-hero__title-block">
