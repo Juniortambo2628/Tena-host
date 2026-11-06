@@ -54,7 +54,9 @@ class AccessPointController extends Controller
 
         AccessPoint::create($validated);
 
-        return redirect()->back()->with('success', 'Access point added successfully.');
+        // Straight to the list, not back(): "back" is the last page the session saw,
+        // which isn't always a dashboard page.
+        return redirect()->route('host.access-points.index')->with('success', 'Access point added successfully.');
     }
 
     /**
@@ -90,7 +92,7 @@ class AccessPointController extends Controller
 
         $accessPoint->update($validated);
 
-        return redirect()->back()->with('success', 'Access point updated successfully.');
+        return redirect()->route('host.access-points.show', $accessPoint)->with('success', 'Access point updated successfully.');
     }
 
     /**
@@ -101,6 +103,6 @@ class AccessPointController extends Controller
         $this->authorize('delete', $accessPoint);
         $accessPoint->delete();
 
-        return redirect()->back()->with('success', 'Access point deleted successfully.');
+        return redirect()->route('host.access-points.index')->with('success', 'Access point removed.');
     }
 }

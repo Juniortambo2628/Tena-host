@@ -67,10 +67,18 @@ router.on('error', (event) => {
     }
 });
 
+// A reply that isn't an Inertia page (an error page, an expired session, a
+// download). Inertia 2 passes the response, not a URL: say what went wrong and
+// stay on the page, or reload it when the session has expired.
 router.on('invalid', (event) => {
     event.preventDefault();
-    notify.error('This page is no longer available. Redirecting...');
-    setTimeout(() => {
-        window.location.href = event.detail.url;
-    }, 1500);
+    const status = event.detail?.response?.status;
+    if (status === 419) {
+        notify.error('Your session expired. Reloading the page…');
+        setTimeout(() => window.location.reload(), 1500);
+        return;
+    }
+    notify.error(status === 403
+        ? 'You don’t have permission to do that.'
+        : `Something went wrong${status ? ` (error ${status})` : ''}. Please try again.`);
 });

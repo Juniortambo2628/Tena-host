@@ -4,11 +4,22 @@ import './Show.css';
 import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
-import { Wifi, WifiOff, ArrowLeft, Building2 } from 'lucide-react';
+import { Wifi, WifiOff, ArrowLeft, Building2, Trash2 } from 'lucide-react';
+import { useConfirm } from '@/hooks/useConfirm';
 import { T } from '@/Components/Dashboard/Terms';
 
 export default function AccessPointShow({ accessPoint }) {
     const [processing, setProcessing] = useState(false);
+    const { confirm, ConfirmDialogEl } = useConfirm();
+
+    const remove = async () => {
+        const ok = await confirm({
+            title: 'Remove access point',
+            message: `Remove “${accessPoint.name}” (${accessPoint.mac_address})? Guests on it will see the “link this access point” page until it’s added to a property again.`,
+            confirmLabel: 'Remove',
+        });
+        if (ok) router.delete(route('host.access-points.destroy', accessPoint.id));
+    };
 
     const toggleStatus = () => {
         router.patch(route('host.access-points.update', accessPoint.id), {
@@ -32,6 +43,7 @@ export default function AccessPointShow({ accessPoint }) {
                         variant: accessPoint.status === 'online' ? 'white' : 'primary',
                         onClick: toggleStatus,
                     },
+                    { label: 'Remove', variant: 'white', icon: <Trash2 size={16} />, onClick: remove },
                 ]}
             />
 
@@ -93,6 +105,7 @@ export default function AccessPointShow({ accessPoint }) {
                     </Link>
                 </div>
             </div>
+            {ConfirmDialogEl}
         </>
     );
 }
