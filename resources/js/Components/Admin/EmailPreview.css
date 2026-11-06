@@ -25,7 +25,7 @@
 }
 
 .email-preview__template-button--active {
-    @apply bg-black text-primary shadow-lg shadow-black/10;
+    @apply bg-black dark:bg-[#2b2e35] text-primary shadow-lg shadow-black/10;
 }
 
 .email-preview__view-tabs {
@@ -57,7 +57,7 @@
 }
 
 .email-preview__sender-avatar {
-    @apply w-10 h-10 rounded-full bg-black flex items-center justify-center text-primary;
+    @apply w-10 h-10 rounded-full bg-black dark:bg-[#2b2e35] flex items-center justify-center text-primary;
 }
 
 .email-preview__sender-info {

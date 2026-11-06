@@ -185,7 +185,7 @@
 }
 
 .host-dashboard-guard-card {
-    @apply bg-black text-white relative overflow-hidden;
+    @apply bg-black dark:bg-[#2b2e35] dark:text-[#f1f0eb] text-white relative overflow-hidden;
 }
 
 .host-dashboard-guard-bg {

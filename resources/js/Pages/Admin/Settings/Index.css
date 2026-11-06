@@ -13,7 +13,7 @@
 }
 
 .settings-page__tab--active {
-    @apply bg-black text-primary shadow-xl shadow-black/10;
+    @apply bg-black dark:bg-[#2b2e35] text-primary shadow-xl shadow-black/10;
 }
 
 .settings-page__status {

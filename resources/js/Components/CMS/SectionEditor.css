@@ -91,7 +91,7 @@
 }
 
 .editor-modal__sidebar-logo-icon {
-    @apply w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-dark;
+    @apply w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-dark dark:text-[#1b1b1b];
 }
 
 .editor-modal__sidebar-logo-text {
@@ -116,7 +116,7 @@
 }
 
 .editor-modal__sidebar-tab-number--active {
-    @apply bg-black text-primary shadow-lg scale-110;
+    @apply bg-black dark:bg-[#2b2e35] text-primary shadow-lg scale-110;
 }
 
 .editor-modal__sidebar-tab-number--completed {
@@ -178,7 +178,7 @@
 }
 
 .editor-tab__item-number {
-    @apply w-7 h-7 rounded-full bg-black text-primary flex items-center justify-center
+    @apply w-7 h-7 rounded-full bg-black dark:bg-[#2b2e35] text-primary flex items-center justify-center
            text-xs font-bold flex-shrink-0;
 }
 
@@ -225,7 +225,7 @@
 }
 
 .editor-tab__add-media-btn {
-    @apply px-5 py-2.5 text-sm font-semibold bg-black text-primary rounded-xl
+    @apply px-5 py-2.5 text-sm font-semibold bg-black dark:bg-[#2b2e35] text-primary rounded-xl
            hover:bg-gray-800 active:scale-95 transition-all whitespace-nowrap;
 }
 
@@ -317,7 +317,7 @@
 }
 
 .editor-modal__save {
-    @apply bg-primary text-black px-8 py-3 rounded-xl font-bold hover:bg-[#ffc107]
+    @apply bg-primary text-black dark:text-[#1b1b1b] px-8 py-3 rounded-xl font-bold hover:bg-[#ffc107]
            transition-all hover:shadow-lg hover:-translate-y-1;
 }
 

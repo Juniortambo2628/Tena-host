@@ -17,7 +17,7 @@
 }
 
 .users-pagination-link-active {
-    @apply bg-black text-primary;
+    @apply bg-black dark:bg-[#2b2e35] text-primary;
 }
 
 .users-pagination-link-inactive {

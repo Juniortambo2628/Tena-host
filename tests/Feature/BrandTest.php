@@ -24,6 +24,7 @@ class BrandTest extends TestCase
             ->where('brand.name', 'TenaFi')
             ->where('brand.header', '/brand/tenafi-logo-header.png')
             ->where('brand.footer', '/brand/tenafi-logo-footer.png')
+            ->where('brand.dark', '/brand/tenafi-logo-dark.png')
             ->where('brand.favicon', '/brand/tenafi-favicon-512.png'));
         $this->get('/login')->assertSee('/brand/tenafi-favicon-512.png', false);
         foreach (Brand::LOGOS as [, $default]) {

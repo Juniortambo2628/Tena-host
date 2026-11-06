@@ -10,7 +10,8 @@ export const useBrand = () => {
 
 /**
  * variant: header (light backgrounds, the default), footer (dark
- * backgrounds), logo (the official yellow logo) or favicon (square icon).
+ * backgrounds), dark (dashboards in dark mode), logo (the official yellow
+ * logo) or favicon (square icon).
  */
 export default function BrandLogo({ variant = 'header', className = '', ...props }) {
     const brand = useBrand();

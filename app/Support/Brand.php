@@ -23,6 +23,7 @@ class Brand
         'logo_url' => ['Official logo', '/brand/tenafi-logo.png', 'Emails and link previews (yellow background)'],
         'logo_header_url' => ['Header logo', '/brand/tenafi-logo-header.png', 'Website header, sign-in pages, dashboards and WiFi pages (transparent, dark text)'],
         'logo_footer_url' => ['Footer logo', '/brand/tenafi-logo-footer.png', 'Website footer and dark backgrounds (transparent, light text)'],
+        'logo_dark_url' => ['Dark mode logo', '/brand/tenafi-logo-dark.png', 'Dashboards in dark mode (transparent, light text)'],
         'favicon_url' => ['Favicon', '/brand/tenafi-favicon-512.png', 'Browser tab and home-screen icon (square)'],
     ];
 
@@ -43,7 +44,7 @@ class Brand
     }
 
     /**
-     * @return array{name: string, logo: string, header: string, footer: string, favicon: string}
+     * @return array{name: string, logo: string, header: string, footer: string, dark: string, favicon: string}
      */
     public static function toArray(): array
     {
@@ -52,6 +53,7 @@ class Brand
             'logo' => self::asset('logo_url'),
             'header' => self::asset('logo_header_url'),
             'footer' => self::asset('logo_footer_url'),
+            'dark' => self::asset('logo_dark_url'),
             'favicon' => self::asset('favicon_url'),
         ];
     }

@@ -1,5 +1,5 @@
 .splash-editor { display: grid; gap: 22px; min-width: 0; }
-.splash-editor__label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; color: rgba(0, 0, 0, .4); margin: 0 0 10px 4px; }
+.splash-editor__label { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; color: color-mix(in srgb, var(--color-black) 40%, transparent); margin: 0 0 10px 4px; }
 .splash-editor__error { color: #dc2626; font-size: 12px; font-weight: 700; margin-top: 8px; }
 .splash-editor__studio { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 20px; background: #fff8d6; font-size: 13px; line-height: 1.5; }
 .splash-editor__studio svg { flex: none; margin-top: 2px; }
@@ -8,15 +8,15 @@
 /* template cards */
 .splash-templates { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .splash-templates--compact { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
-.splash-template { position: relative; display: grid; gap: 10px; padding: 8px; border-radius: 22px; background: rgba(0, 0, 0, .035); cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s; }
+.splash-template { position: relative; display: grid; gap: 10px; padding: 8px; border-radius: 22px; background: color-mix(in srgb, var(--color-black) 3.5%, transparent); cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s; }
 .splash-template:hover { transform: translateY(-2px); }
 .splash-template input { position: absolute; opacity: 0; pointer-events: none; }
-.splash-template:has(input:checked) { background: #fff; box-shadow: 0 0 0 2px #151515, 0 14px 30px -16px rgba(0, 0, 0, .35); }
+.splash-template:has(input:checked) { background: var(--color-white); box-shadow: 0 0 0 2px var(--color-black), 0 14px 30px -16px rgba(0, 0, 0, .35); }
 .splash-template:has(input:focus-visible) { box-shadow: 0 0 0 3px var(--color-primary); }
 .splash-template__text { display: grid; gap: 2px; padding: 0 6px 6px; }
 .splash-template__text strong { font-size: 14px; font-weight: 800; }
-.splash-template__text small { font-size: 11.5px; line-height: 1.4; color: rgba(0, 0, 0, .55); }
-.splash-template__text em { font-style: normal; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(0, 0, 0, .35); }
+.splash-template__text small { font-size: 11.5px; line-height: 1.4; color: color-mix(in srgb, var(--color-black) 55%, transparent); }
+.splash-template__text em { font-style: normal; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-black) 35%, transparent); }
 
 /* thumbnails: a tiny layout sketch per template */
 .splash-thumb { --thumb-accent: var(--color-primary); position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 15px; overflow: hidden; background: #f3efe9; }
@@ -74,7 +74,7 @@
 
 /* group headings + recommended badge */
 .splash-template-groups { display: grid; gap: 16px; }
-.splash-template-group__label { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: rgba(0, 0, 0, .45); margin: 0 0 8px 4px; }
+.splash-template-group__label { font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--color-black) 45%, transparent); margin: 0 0 8px 4px; }
 .splash-template__badge {
     position: absolute; top: 14px; left: 14px; z-index: 2; padding: 3px 8px; border-radius: 999px;
     background: var(--color-primary); color: #111; font-size: 12px; font-weight: 800; line-height: 1.3; box-shadow: 0 2px 6px rgba(0, 0, 0, .15);

@@ -55,11 +55,11 @@
 }
 
 .wifi-admin__result.is-ok {
-    @apply border-green-200 bg-green-50;
+    @apply border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/40;
 }
 
 .wifi-admin__result.is-fail {
-    @apply border-red-200 bg-red-50;
+    @apply border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/40;
 }
 
 .wifi-admin__result-title {
@@ -144,11 +144,11 @@
 }
 
 .wifi-admin__last.is-ok {
-    @apply bg-green-50 text-green-800;
+    @apply bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300;
 }
 
 .wifi-admin__last.is-fail {
-    @apply bg-red-50 text-red-700;
+    @apply bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300;
 }
 
 .wifi-admin__tips {
@@ -169,11 +169,11 @@
 }
 
 .wifi-admin__tile--good .wifi-admin__tile-ic {
-    @apply bg-green-100 text-green-700;
+    @apply bg-green-100 text-green-700 dark:bg-green-950/60 dark:text-green-300;
 }
 
 .wifi-admin__tile--bad .wifi-admin__tile-ic {
-    @apply bg-red-100 text-red-700;
+    @apply bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300;
 }
 
 .wifi-admin__tile-label {
@@ -189,7 +189,7 @@
 }
 
 .wifi-admin__alert {
-    @apply mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800;
+    @apply mb-6 flex flex-wrap items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-200;
 }
 
 .wifi-admin__alert span {

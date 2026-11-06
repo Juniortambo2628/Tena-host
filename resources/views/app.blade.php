@@ -19,6 +19,16 @@
         {{-- Only public pages (PublicPageController sets seo.index) are indexed; sign-in, dashboards and portals stay out of search. --}}
         <meta name="robots" content="{{ empty($seo['index']) ? 'noindex, nofollow' : 'index, follow' }}">
         <meta name="theme-color" content="#FFD300">
+        {{-- Dashboard dark mode (useTheme.js): set before the first paint so the page doesn't flash light. --}}
+        <script>
+            (function () {
+                try {
+                    if (!/^\/(host|admin|staff|profile|help)(\/|$)/.test(location.pathname)) return;
+                    var t = localStorage.getItem('tenafi-theme');
+                    if (t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+                } catch (e) {}
+            })();
+        </script>
 
         <meta property="og:type" content="website">
         <meta property="og:url" content="{{ $metaUrl }}">

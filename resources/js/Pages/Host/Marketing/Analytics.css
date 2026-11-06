@@ -138,7 +138,7 @@
 }
 
 .host-analytics-ai-card {
-    @apply bg-black text-white;
+    @apply bg-black dark:bg-[#2b2e35] dark:text-[#f1f0eb] text-white;
 }
 
 .host-analytics-ai-icon {

@@ -75,7 +75,7 @@
 }
 
 .cms-icon-picker__icon--active {
-    @apply bg-primary text-black shadow-md scale-110;
+    @apply bg-primary text-black dark:text-[#1b1b1b] shadow-md scale-110;
 }
 
 .cms-icon-picker__no-results {

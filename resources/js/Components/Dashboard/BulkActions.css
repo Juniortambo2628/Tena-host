@@ -5,7 +5,7 @@
 }
 
 .bulk-actions__inner {
-    @apply flex items-center gap-4 px-6 py-3 bg-dark text-white rounded-2xl shadow-2xl shadow-black/20;
+    @apply flex items-center gap-4 px-6 py-3 bg-dark dark:bg-[#2b2e35] text-white dark:text-[#f1f0eb] rounded-2xl shadow-2xl shadow-black/20;
     @apply border border-white/10 backdrop-blur-xl;
 }
 

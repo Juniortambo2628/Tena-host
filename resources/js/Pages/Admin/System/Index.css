@@ -45,7 +45,7 @@
 }
 
 .system-page__logs {
-    @apply bg-black text-white p-6 rounded-2xl font-mono text-xs h-64 overflow-y-auto;
+    @apply bg-black dark:bg-[#2b2e35] dark:text-[#f1f0eb] text-white p-6 rounded-2xl font-mono text-xs h-64 overflow-y-auto;
 }
 
 .system-page__logs-command {

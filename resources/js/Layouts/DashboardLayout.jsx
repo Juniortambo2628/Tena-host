@@ -15,6 +15,10 @@ import {
     Search,
     Bell,
     HelpCircle,
+    Sun,
+    Moon,
+    Monitor,
+    Check,
     BookOpen,
     LifeBuoy,
     User,
@@ -37,6 +41,7 @@ import './DashboardLayout.css';
 import { useTerms } from '@/Components/Dashboard/Terms';
 import BrandLogo from '@/Components/BrandLogo';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useTheme } from '@/hooks/useTheme';
 
 // Mounted once as the persistent layout of every dashboard page (see app.jsx), so
 // the sidebar, header and search keep their state while only the page swaps.
@@ -46,6 +51,7 @@ export default function DashboardLayout({ children }) {
     const { component, url } = usePage();
     // Wide screens collapse the sidebar in place; narrower ones open it as a drawer.
     const isWide = useMediaQuery('(min-width: 1024px)');
+    const { theme, setTheme, dark } = useTheme();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const sidebarRef = useRef(null);
@@ -203,7 +209,7 @@ export default function DashboardLayout({ children }) {
             >
                 <div className="dashboard-layout__brand">
                     <Link href="/" className="dashboard-layout__brand-link">
-                        <BrandLogo className="dashboard-layout__logo" />
+                        <BrandLogo variant={dark ? 'dark' : 'header'} className="dashboard-layout__logo" />
                     </Link>
                     <button
                         type="button"
@@ -327,6 +333,40 @@ export default function DashboardLayout({ children }) {
                                                 </div>
                                                 <div className="dashboard-layout__menu-footer">
                                                     <button className="dashboard-layout__menu-footer-link">View All Notifications</button>
+                                                </div>
+                                            </Menu.Items>
+                                        </Transition>
+                                    </Menu>
+
+                                    {/* Theme: light, dark or follow the device (remembered on this device). */}
+                                    <Menu as="div" className="dashboard-layout__menu">
+                                        <Menu.Button className="dashboard-layout__menu-button" aria-label={`Theme: ${theme}`}>
+                                            {dark ? <Moon size={14} /> : <Sun size={14} />}
+                                            <span className="dashboard-layout__action-label">Theme</span>
+                                        </Menu.Button>
+                                        <Transition
+                                            as={React.Fragment}
+                                            enter="transition ease-out duration-200"
+                                            enterFrom="opacity-0 translate-y-1"
+                                            enterTo="opacity-100 translate-y-0"
+                                            leave="transition ease-in duration-150"
+                                            leaveFrom="opacity-100 translate-y-0"
+                                            leaveTo="opacity-0 translate-y-1"
+                                        >
+                                            <Menu.Items className="dashboard-layout__menu-items--narrow">
+                                                <div className="dashboard-layout__menu-list">
+                                                    {[['light', 'Light', Sun], ['dark', 'Dark', Moon], ['system', 'Match device', Monitor]].map(([value, label, Icon]) => (
+                                                        <Menu.Item key={value}>
+                                                            {({ active }) => (
+                                                                <button type="button" onClick={() => setTheme(value)} aria-pressed={theme === value}
+                                                                    className={`dashboard-layout__help-item ${active ? 'dashboard-layout__help-item--active' : ''} ${theme === value ? 'dashboard-layout__help-item--current' : ''}`}>
+                                                                    <div className="dashboard-layout__help-item-icon"><Icon size={14} className="dashboard-layout__help-item-icon-svg" /></div>
+                                                                    {label}
+                                                                    {theme === value && <Check size={14} className="ml-auto" aria-hidden="true" />}
+                                                                </button>
+                                                            )}
+                                                        </Menu.Item>
+                                                    ))}
                                                 </div>
                                             </Menu.Items>
                                         </Transition>

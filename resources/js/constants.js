@@ -4,6 +4,7 @@ export const BRAND_DEFAULTS = {
     logo: '/brand/tenafi-logo.png',
     header: '/brand/tenafi-logo-header.png',
     footer: '/brand/tenafi-logo-footer.png',
+    dark: '/brand/tenafi-logo-dark.png',
     favicon: '/brand/tenafi-favicon-512.png',
 };
 // For values JavaScript needs as plain colours (charts, saved accents, the
