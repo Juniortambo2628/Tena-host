@@ -55,6 +55,8 @@ use Inertia\Inertia;
 // Public CMS pages: / here, /hosts and /business via the catch-all at the
 // bottom of this file (so it never shadows an app route).
 Route::get('/', [PublicPageController::class, 'show'])->name('home');
+// The v2 public pages (the OKJT kit's design), previewed behind Admin -> Settings.
+Route::get('/v2', [PublicPageController::class, 'v2'])->name('v2.home');
 
 foreach (config('public_pages.policies') as $path => $slug) {
     Route::get("/{$path}", [PublicPageController::class, 'policy'])->defaults('slug', $slug)->name("public.{$path}");

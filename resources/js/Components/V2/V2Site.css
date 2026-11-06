@@ -1,0 +1,17 @@
+@reference "../../../css/theme.css";
+
+/* The v2 public pages (OKJT kit). Scoped here so the rest of the app keeps
+   its own fonts: the kit sets `font-sans`, which reads this variable. */
+.v2-site {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* TenaFi's rule: no text smaller than 12px. The kit's small labels are 11px. */
+.v2-site .text-\[11px\] {
+    font-size: 12px;
+}
+
+/* The highlighted word in a hero headline ("growth.") in the brand yellow. */
+.v2-hero-title span {
+    color: var(--color-accent-soft);
+}
