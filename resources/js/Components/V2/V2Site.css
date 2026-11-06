@@ -15,3 +15,14 @@
 .v2-hero-title span {
     color: var(--color-accent-soft);
 }
+
+/* The kit's pricing grid is two plans wide; TenaFi has three. */
+@media (min-width: 1024px) {
+    .v2-pricing--wide .max-w-5xl {
+        max-width: 80rem;
+    }
+
+    .v2-pricing--wide .md\:grid-cols-2 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

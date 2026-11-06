@@ -141,6 +141,7 @@ export default function Index({ pages = [], currentPage, sections: initialSectio
                             <div className="landing-cms__section-editor">
                                 <SectionEditor
                                     section={section}
+                                    pageSlug={currentPage}
                                     onUpdate={handleSectionUpdate}
                                     onMediaUpload={handleSectionUpdate}
                                     onMediaDelete={handleSectionUpdate}
