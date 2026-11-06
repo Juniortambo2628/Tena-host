@@ -13,3 +13,37 @@
     /* The warm off-white behind the dashboard. */
     --color-canvas: #FDFCF7;
 }
+
+/* Dashboard page structure: the header and the page hero stay put, and only
+   the content between them scrolls. DashboardHero measures itself into
+   --dashboard-hero-h (0 when it isn't pinned) on the scroller. */
+
+/* An in-page side column (settings tabs, a page's side cards) that stays in
+   view below the hero from 1024px, scrolling on its own if it's taller. */
+@utility dashboard-sticky-side {
+    @media (min-width: 1024px) {
+        position: sticky;
+        top: calc(var(--dashboard-header-h, 0px) + var(--dashboard-hero-h, 0px) + 1rem);
+        align-self: start;
+        max-height: calc(100dvh - var(--dashboard-header-h, 0px) - var(--dashboard-hero-h, 0px) - 3.5rem);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+    }
+}
+
+/* A page's bottom actions (Save, Cancel): a small bar that stays at the
+   bottom of the screen while its form is on screen. */
+@utility dashboard-sticky-actions {
+    position: sticky;
+    bottom: 1rem;
+    z-index: 30;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.625rem;
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--color-white) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border: 1px solid color-mix(in srgb, var(--color-black) 7%, transparent);
+    box-shadow: 0 14px 34px -14px rgb(0 0 0 / 0.3);
+}

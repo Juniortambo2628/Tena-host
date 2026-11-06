@@ -9,7 +9,7 @@
 }
 
 .host-orders-show-sidebar {
-    @apply space-y-6;
+    @apply space-y-6 dashboard-sticky-side;
 }
 
 .host-orders-show-sidebar-header {

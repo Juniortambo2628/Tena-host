@@ -9,7 +9,7 @@
 }
 
 .host-accesspoints-show-sidebar {
-    @apply space-y-6;
+    @apply space-y-6 dashboard-sticky-side;
 }
 
 .host-accesspoints-status-icon-online {

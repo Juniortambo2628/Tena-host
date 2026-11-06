@@ -3,7 +3,19 @@
 .dashboard-hero {
     /* Pinned only from md: on phones the stacked hero would cover half the screen.
        The offset must follow it: on a relative element `top` would shift it over the content. */
-    @apply relative md:sticky md:top-(--dashboard-header-h) z-20 -mx-4 px-4 sm:-mx-8 sm:px-8 py-4 mb-6 bg-canvas/80 backdrop-blur-md border-b border-black/5 transition-all duration-300;
+    @apply relative z-20 -mx-4 px-4 sm:-mx-8 sm:px-8 py-4 mb-6 border-b border-black/5 transition-all duration-300;
+    /* Solid, the same colour as the frosted panel, so content scrolling
+       underneath never shows through. */
+    background: color-mix(in srgb, var(--color-white) 40%, var(--color-canvas));
+}
+
+/* Pinned under the header from 768px wide on screens tall enough to keep room
+   for the content (on phones the stacked hero would cover half the screen). */
+@media (min-width: 768px) and (min-height: 640px) {
+    .dashboard-hero {
+        position: sticky;
+        top: var(--dashboard-header-h);
+    }
 }
 
 .dashboard-hero__header {

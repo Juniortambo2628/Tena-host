@@ -45,7 +45,7 @@
 }
 
 .host-sidebar {
-    @apply space-y-6;
+    @apply space-y-6 dashboard-sticky-side;
 }
 
 .host-actions-title {
