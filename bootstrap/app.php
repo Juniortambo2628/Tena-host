@@ -95,10 +95,21 @@ return Application::configure(basePath: dirname(__DIR__))
                 503 => 'Maintenance Mode',
             ];
 
-            return response()->view('errors.'.$status, [
+            // Not every status has its own page (e.g. 410, 422): fall back to the
+            // shared layout instead of throwing "View [errors.xxx] not found",
+            // which turned those responses into 500s.
+            if (view()->exists('errors.'.$status)) {
+                return response()->view('errors.'.$status, [
+                    'status' => $status,
+                    'title' => $titles[$status] ?? 'Error',
+                    'message' => $e->getMessage(),
+                ], $status);
+            }
+
+            return response()->view('errors.layout', [
                 'status' => $status,
-                'title' => $titles[$status] ?? 'Error',
-                'message' => $e->getMessage(),
+                'title' => $titles[$status] ?? 'Something went wrong',
+                'message' => 'We couldn\'t complete that request. Go back and try again, or head to the home page.',
             ], $status);
         });
     })->create();
