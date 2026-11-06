@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChevronRight, Mail, MapPin, Menu, MessageCircle, X } from 'lucide-react';
 import { getContent, getMedia, extractItems, stripHtml, titleCase } from '@/lib/cms';
 import { track } from '@/lib/analytics';
@@ -21,6 +21,20 @@ import './PublicLayout.css';
 export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#paths', hasSections = true, sections = [], children }) {
     const [showCookieDetails, setShowCookieDetails] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
+
+    // The fixed header grows when the announcement bar wraps (phones), so push
+    // the page down by what it really measures beyond the usual 80px.
+    const navRef = useRef(null);
+    const pageRef = useRef(null);
+    useEffect(() => {
+        const nav = navRef.current;
+        if (!nav || typeof ResizeObserver === 'undefined') return undefined;
+        const update = () => pageRef.current?.style.setProperty('--nav-extra', `${Math.max(0, Math.round(nav.offsetHeight - 80))}px`);
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(nav);
+        return () => observer.disconnect();
+    }, []);
 
     const header = site.header;
     const footer = site.footer;
@@ -49,10 +63,10 @@ export default function PublicLayout({ site = {}, page, seo = {}, joinHref = '#p
 
     return (
         <PublicContext.Provider value={{ site, page, sections, joinHref: resolvedJoin }}>
-            <div className="welcome-page">
+            <div className="welcome-page" ref={pageRef}>
                 <Head title={seo.title || siteName} />
 
-                <nav className="welcome-nav">
+                <nav className="welcome-nav" ref={navRef}>
                     <AnnouncementBar />
                     <div className="welcome-nav-container">
                         <div className="welcome-nav-inner">

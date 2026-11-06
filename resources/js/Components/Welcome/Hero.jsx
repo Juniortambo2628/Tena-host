@@ -19,18 +19,28 @@ export function useCheapestPrice() {
     return priced[0]?.price || '';
 }
 
-/** The drawn hero picture: a WiFi page on a phone with floating cards around it. */
+/**
+ * The drawn hero picture: a WiFi page on a phone, with up to three
+ * "what happens next" cards stacked beside it (under it on narrower
+ * screens). The cards never cover the phone.
+ */
 function HeroVisual({ section }) {
     const cards = extractItems(section, 'visual_cards', ['icon', 'title', 'text']).filter(c => stripHtml(c.title));
     return (
-        <div className="hero-visual" aria-hidden="true">
-            <Mockup type="splash" screen={getContent(section, 'visual_screen', '')} shot={getUpload(section, 'visual_shot')} alt="A TenaFi WiFi page" className="hero-visual__phone" />
-            {cards.slice(0, 3).map((card, i) => (
-                <div key={i} className={`hero-float hero-float--${i}`}>
-                    <span className="hero-float__ic">{stripHtml(card.icon)}</span>
-                    <span><b>{stripHtml(card.title)}</b><small>{stripHtml(card.text)}</small></span>
-                </div>
-            ))}
+        <div className={`hero-visual ${cards.length ? 'hero-visual--cards' : ''}`} aria-hidden="true">
+            <div className="hero-visual__phone-wrap">
+                <Mockup type="splash" screen={getContent(section, 'visual_screen', '')} shot={getUpload(section, 'visual_shot')} alt="A TenaFi WiFi page" className="hero-visual__phone" />
+            </div>
+            {cards.length > 0 && (
+                <ul className="hero-visual__cards">
+                    {cards.slice(0, 3).map((card, i) => (
+                        <li key={i} className={`hero-float hero-float--${i}`}>
+                            <span className="hero-float__ic">{stripHtml(card.icon)}</span>
+                            <span className="hero-float__text"><b>{stripHtml(card.title)}</b><small>{stripHtml(card.text)}</small></span>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }
@@ -80,11 +90,6 @@ export default function Hero({ section }) {
                             <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: sanitizeHtml(title) }} />
                             <p className="hero-subtitle" dangerouslySetInnerHTML={{ __html: sanitizeHtml(subtitle) }} />
                             {stripHtml(body) && <p className="hero-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(body) }} />}
-                            {audiences.length > 0 && (
-                                <nav className="hero-audiences" aria-label="Who it's for">
-                                    {audiences.map((a, i) => <a key={i} href={stripHtml(a.href)}>{stripHtml(a.label)}</a>)}
-                                </nav>
-                            )}
                             <div className="hero-cta-group">
                                 <CtaLink href={ctaPrimaryUrl} className="hero-btn-primary">
                                     {ctaPrimary}
@@ -120,6 +125,12 @@ export default function Hero({ section }) {
                             </EditablePicture>
                         </div>
                     </div>
+                    {audiences.length > 0 && (
+                        <nav className="hero-audiences" aria-label="Who it's for">
+                            <span className="hero-audiences__label">{getText(section, 'audiences_label', 'Made for')}</span>
+                            {audiences.map((a, i) => <a key={i} href={stripHtml(a.href)}>{stripHtml(a.label)}</a>)}
+                        </nav>
+                    )}
                 </div>
 
                 {features.length > 0 && <div className="hero-features-row">
