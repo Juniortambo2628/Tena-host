@@ -38,7 +38,9 @@ export const SECTION_MEDIA_SCHEMA = {
     },
 
     how_it_works: {
-        slots: [],
+        slots: [
+            { key: 'chapter_shot', label: 'Screen beside this chapter', description: 'On the v2 audience pages, this section is a chapter of the journey with a screen beside it. A tall phone screenshot shows in a phone frame. Empty: a bundled screen.', v2: true },
+        ],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'steps', 'step_{i}_image', 'Step {n} image'),
     },
 
@@ -107,7 +109,9 @@ export const SECTION_MEDIA_SCHEMA = {
 
     // Phone mockups are drawn in HTML from the steps' "screen" lines, unless a screenshot is uploaded.
     journey: {
-        slots: [],
+        slots: [
+            { key: 'chapter_shot', label: 'Screen beside this chapter', description: 'On the v2 audience pages, this section is a chapter of the journey with a screen beside it. Empty: step 2’s screenshot if there is one, else a bundled screen.', v2: true },
+        ],
         dynamic: (contentKeys) => shotSlots(contentKeys, 'steps', 'step_{i}_shot', 'Step {n}: screenshot instead of the drawn phone'),
     },
 

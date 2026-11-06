@@ -6,6 +6,7 @@ use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\Cms\SignupFormSchema;
 use App\Services\Cms\V2Pages;
 use App\Services\MediaUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -117,4 +118,51 @@ it('keeps a picture file while another page still shows it', function () {
 
     app(MediaUploadService::class)->delete($live);
     Storage::disk('public')->assertMissing('landing/shared.jpg');
+});
+
+it('makes /v2/hosts, /v2/business and /v2/events their own CMS pages, without copying the sign-up forms', function () {
+    foreach (V2Pages::AUDIENCES as $audience => $keys) {
+        $page = LandingPage::where('slug', V2Pages::audienceSlug($audience))->sole();
+        $copied = $page->sections()->orderBy('sort_order')->pluck('section_key')->all();
+        $live = LandingPage::where('slug', $audience)->sole()->sections()->orderBy('sort_order')->pluck('section_key')
+            ->intersect($keys)->values()->all();
+
+        expect($page->is_routable)->toBeFalse()
+            ->and($copied)->toBe($live)
+            ->and($copied)->not->toContain('signup');
+    }
+
+    // The server still validates each sign-up against the live page's form.
+    expect(SignupFormSchema::forType('host')->pageSlug)->toBe('hosts')
+        ->and(SignupFormSchema::forType('business')->pageSlug)->toBe('business')
+        ->and(SignupFormSchema::forType('event')->pageSlug)->toBe('events');
+
+    V2Pages::createAudiences();
+    expect(LandingPage::where('slug', 'like', 'v2-%')->count())->toBe(3);
+});
+
+it('serves the audience pages behind the switch, with the live sign-up form and links to the others', function () {
+    $this->get('/v2/hosts')->assertNotFound();
+    Setting::setValue('v2_pages_enabled', '1', 'general', 'boolean');
+
+    $this->get('/v2/hosts')->assertOk()->assertSee('noindex, nofollow', false)
+        ->assertInertia(fn ($page) => $page->component('Public/V2/Audience')
+            ->where('audience', 'hosts')
+            ->where('seo.index', false)
+            ->where('sections', fn ($sections) => collect($sections)->pluck('section_key')->contains('journey'))
+            ->where('signup.page', 'hosts')
+            ->where('signup.sections', fn ($sections) => collect($sections)->pluck('section_key')->sort()->values()->all() === ['pricing', 'signup'])
+            ->has('others', 2)
+            ->where('others.0.to', '/v2/business'));
+
+    $this->get('/v2/events')->assertOk()->assertInertia(fn ($page) => $page->where('signup.page', 'events')
+        ->where('signup.sections', fn ($sections) => collect($sections)->pluck('section_key')->all() === ['signup']));
+    $this->get('/v2/somewhere')->assertNotFound();
+});
+
+it('opens each audience page from Admin -> Public Pages', function () {
+    $this->actingAs(User::factory()->admin()->create())->get(route('admin.landing.index', ['page' => 'v2-events']))
+        ->assertInertia(fn ($page) => $page->where('currentPage', 'v2-events')
+            ->where('pages', fn ($pages) => collect($pages)->firstWhere('slug', 'v2-events')['url'] === '/v2/events'
+                && collect($pages)->firstWhere('slug', 'events')['url'] === '/events'));
 });

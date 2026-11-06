@@ -62,8 +62,8 @@ class LandingController extends Controller
             'pages' => $pages->map(fn ($p) => [
                 'slug' => $p->slug,
                 'name' => $p->name,
-                // The v2 pages aren't routable themselves; /v2 serves the v2 homepage.
-                'url' => $p->is_routable ? $p->path() : ($p->slug === V2Pages::HOME ? '/v2' : null),
+                // The v2 pages aren't routable themselves: /v2 and /v2/{audience} serve them.
+                'url' => $p->is_routable ? $p->path() : V2Pages::url($p->slug),
             ]),
             'currentPage' => $currentPage?->slug,
             'sections' => $sections,
