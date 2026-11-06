@@ -166,3 +166,18 @@ it('opens each audience page from Admin -> Public Pages', function () {
             ->where('pages', fn ($pages) => collect($pages)->firstWhere('slug', 'v2-events')['url'] === '/v2/events'
                 && collect($pages)->firstWhere('slug', 'events')['url'] === '/events'));
 });
+
+it('puts the bundled TenaFi photos in the v2 pages’ picture slots', function () {
+    $paths = LandingMedia::where('original_path', 'like', '/legacy/assets/v2/photos/%')->pluck('original_path');
+
+    expect($paths)->not->toBeEmpty();
+    foreach ($paths->unique() as $path) {
+        expect(file_exists(public_path($path)))->toBeTrue("{$path} is missing");
+    }
+    expect(v2Section('hero')->media()->where('media_key', 'main_image')->value('original_path'))
+        ->toBe('/legacy/assets/v2/photos/home-hero.webp');
+
+    // The live pages keep their own pictures.
+    expect(LandingMedia::whereHas('section.page', fn ($q) => $q->whereIn('slug', ['home', 'hosts', 'business', 'events']))
+        ->where('original_path', 'like', '/legacy/assets/v2/photos/%')->exists())->toBeFalse();
+});
