@@ -23,6 +23,14 @@ html {
     scrollbar-gutter: stable;
 }
 
+/* Dashboards scroll inside their own panel (themed scrollbar), so the page
+   itself never scrolls: no reserved gutter there, or it shows as a blank
+   strip down the right edge next to the panel's own scrollbar. */
+html:has(.dashboard-layout) {
+    scrollbar-gutter: auto;
+    overflow: hidden;
+}
+
 * {
     scrollbar-width: thin;
     scrollbar-color: rgba(27, 27, 27, 0.5) rgba(27, 27, 27, 0.05);

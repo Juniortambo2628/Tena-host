@@ -149,6 +149,7 @@ export default function Index({ settings, logos = [] }) {
             callbacks_enabled: flattened.callbacks_enabled || '0',
             demo_enabled: flattened.demo_enabled || '0',
             v2_pages_enabled: flattened.v2_pages_enabled || '0',
+            v2_live: flattened.v2_live ?? '1',
             event_accounts_enabled: flattened.event_accounts_enabled || '0',
             teams_enabled: flattened.teams_enabled || '0',
             staff_wifi_enabled: flattened.staff_wifi_enabled || '0',
@@ -362,6 +363,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Live demo: /demo and the homepage “Try it yourself” section (nothing visitors type is saved)"
                                         checked={data.settings.demo_enabled === '1'}
                                         onChange={() => updateSetting('demo_enabled', data.settings.demo_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="V2 design on the live site: /, /hosts, /business and /events show the v2 pages (/v2 links redirect there). Untick to bring back the previous design."
+                                        checked={data.settings.v2_live === '1'}
+                                        onChange={() => updateSetting('v2_live', data.settings.v2_live === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

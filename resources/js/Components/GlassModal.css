@@ -1,7 +1,7 @@
 @reference "../../css/theme.css";
 
 .glass-modal__header {
-    @apply px-6 py-5 sm:px-10 sm:py-8 border-b border-black/5 flex justify-between items-center bg-white/50;
+    @apply px-6 py-5 sm:px-8 sm:py-6 border-b border-black/5 flex justify-between items-center gap-4 bg-white/50 flex-none;
 }
 
 .glass-modal__title {
@@ -13,7 +13,12 @@
 }
 
 .glass-modal__body {
-    @apply p-6 sm:p-10 max-h-[80vh] overflow-y-auto bg-white/30 text-black;
+    @apply p-6 sm:p-8 flex-1 min-h-0 overflow-y-auto bg-white/30 text-black;
+}
+
+/* A form's Save/Cancel row stays at the bottom of the dialog while the fields scroll. */
+.glass-modal__body .form-actions {
+    @apply sticky z-10 -bottom-6 sm:-bottom-8 -mx-6 sm:-mx-8 px-6 sm:px-8 py-4 mt-2 bg-white border-t border-black/5;
 }
 
 .glass-modal__body::-webkit-scrollbar {

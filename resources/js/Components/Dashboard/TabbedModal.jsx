@@ -12,7 +12,7 @@ export default function TabbedModal({
     onConfirm,
     confirmLabel = "Save Changes",
     processing = false,
-    maxWidth = '2xl'
+    maxWidth = '5xl'
 }) {
     const [activeTab, setActiveTab] = useState(0);
 
@@ -78,6 +78,9 @@ export default function TabbedModal({
                         </div>
 
                         <div className="tabbed-modal__actions">
+                            <PillButton onClick={onClose} variant="ghost" className="tabbed-modal__cancel-inline">
+                                Cancel
+                            </PillButton>
                             {activeTab > 0 && (
                                 <PillButton onClick={() => setActiveTab(activeTab - 1)} variant="white">
                                     Previous

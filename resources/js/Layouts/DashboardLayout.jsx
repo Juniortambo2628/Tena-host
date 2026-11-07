@@ -170,6 +170,58 @@ export default function DashboardLayout({ children }) {
         router.get(result.url);
     };
 
+    // Search list: results while typing, otherwise recent picks and quick actions.
+    // One flat list so the arrow keys move through every row in order.
+    const [activeIndex, setActiveIndex] = useState(0);
+    const quickActions = (userRole === 'admin'
+        ? [
+            { title: 'Manage hosts', Icon: Building2, href: safeRoute('admin.hosts.index') },
+            { title: 'Manage users', Icon: Users, href: safeRoute('admin.users.index') },
+            { title: 'Public pages', Icon: Globe, href: safeRoute('admin.landing.index') },
+            { title: 'WiFi portal', Icon: Wifi, href: safeRoute('admin.wifi.edit') },
+        ]
+        : [
+            { title: t('Guests'), Icon: Users, href: safeRoute('host.guests.index') },
+            { title: 'Properties', Icon: Home, href: safeRoute('host.properties.index') },
+            { title: 'Marketing', Icon: Megaphone, href: safeRoute('host.marketing.index') },
+        ]).filter(a => a.href && a.href !== '#');
+    const searchGroups = [];
+    let flatIndex = 0;
+    const addGroup = (title, items) => {
+        if (items.length) searchGroups.push({ title, items: items.map(item => ({ item, index: flatIndex++ })) });
+    };
+    if (searchQuery.length >= 2) {
+        addGroup('Results', searchResults);
+    } else {
+        addGroup('Recent', recentSearches.map(r => ({ ...r, recent: true, type: null })));
+        addGroup('Go to', quickActions);
+    }
+    const searchItems = searchGroups.flatMap(g => g.items.map(({ item }) => item));
+
+    const runSearchItem = (item) => {
+        if (item.href) {
+            setIsSearchOpen(false);
+            router.get(item.href);
+        } else {
+            handleSearchSelect(item);
+        }
+    };
+
+    const onSearchKeyDown = (e) => {
+        if (!searchItems.length) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const step = e.key === 'ArrowDown' ? 1 : -1;
+            const next = (activeIndex + step + searchItems.length) % searchItems.length;
+            setActiveIndex(next);
+            document.getElementById(`dashboard-search-item-${next}`)?.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            const item = searchItems[Math.min(activeIndex, searchItems.length - 1)];
+            if (item) runSearchItem(item);
+        }
+    };
+
     const logout = (e) => {
         e.preventDefault();
         router.post(route('logout'));
@@ -499,120 +551,70 @@ export default function DashboardLayout({ children }) {
                                 leaveTo="opacity-0 scale-95 -translate-y-8"
                             >
                                 <Dialog.Panel className="dashboard-layout__search-panel">
-                                    <div className="dashboard-layout__search-body">
-                                        <div className="dashboard-layout__search-input-group group">
-                                            <Search size={24} className="dashboard-layout__search-icon" />
-                                            <input
-                                                ref={searchInputRef}
-                                                autoFocus
-                                                type="text"
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                placeholder="Search guests, properties, campaigns..."
-                                                className="dashboard-layout__search-input"
-                                            />
-                                            {searchLoading && <Loader2 size={18} className="dashboard-layout__search-spinner animate-spin" />}
-                                            <button
-                                                onClick={() => setIsSearchOpen(false)}
-                                                className="dashboard-layout__search-close"
-                                            >
-                                                <X size={20} />
-                                            </button>
-                                        </div>
-
-                                        <div className="dashboard-layout__search-sections custom-scrollbar">
-                                            {searchQuery.length >= 2 ? (
-                                                searchResults.length > 0 ? (
-                                                    <div>
-                                                        <h3 className="dashboard-layout__search-section-title">Results</h3>
-                                                        <div className="dashboard-layout__results-list">
-                                                            {searchResults.map((result, idx) => {
-                                                                const Icon = iconMap[result.icon] || User;
-                                                                return (
-                                                                    <button
-                                                                        key={`${result.type}-${result.id}-${idx}`}
-                                                                        onClick={() => handleSearchSelect(result)}
-                                                                        className="dashboard-layout__result-item"
-                                                                    >
-                                                                        <div className="dashboard-layout__result-icon">
-                                                                            <Icon size={16} />
-                                                                        </div>
-                                                                        <div className="dashboard-layout__result-info">
-                                                                            <span className="dashboard-layout__result-title">{result.title}</span>
-                                                                            <span className="dashboard-layout__result-subtitle">{result.subtitle}</span>
-                                                                        </div>
-                                                                        <span className="dashboard-layout__result-type">{result.type}</span>
-                                                                    </button>
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="dashboard-layout__search-empty">
-                                                        <Search size={32} className="text-black/10 mb-3" />
-                                                        <p className="text-sm text-black/40">No results for "{searchQuery}"</p>
-                                                    </div>
-                                                )
-                                            ) : (
-                                                <>
-                                                    {recentSearches.length > 0 && (
-                                                        <div>
-                                                            <h3 className="dashboard-layout__search-section-title">Recent Searches</h3>
-                                                            <div className="dashboard-layout__results-list">
-                                                                {recentSearches.map((result, idx) => {
-                                                                    const Icon = iconMap[result.icon] || User;
-                                                                    return (
-                                                                        <button
-                                                                            key={`recent-${idx}`}
-                                                                            onClick={() => handleSearchSelect(result)}
-                                                                            className="dashboard-layout__result-item"
-                                                                        >
-                                                                            <div className="dashboard-layout__result-icon">
-                                                                                <Icon size={16} />
-                                                                            </div>
-                                                                            <div className="dashboard-layout__result-info">
-                                                                                <span className="dashboard-layout__result-title">{result.title}</span>
-                                                                                <span className="dashboard-layout__result-subtitle">{result.subtitle}</span>
-                                                                            </div>
-                                                                        </button>
-                                                                    );
-                                                                })}
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    <div>
-                                                        <h3 className="dashboard-layout__search-section-title">Quick Actions</h3>
-                                                        <div className="dashboard-layout__command-list">
-                                                            {userRole === 'admin' && (
-                                                                <>
-                                                                    <CommandItem icon={<Building2 size={14} />} label="Manage Hosts" onClick={() => { setIsSearchOpen(false); router.get(route('admin.hosts.index')); }} />
-                                                                    <CommandItem icon={<Users size={14} />} label="Manage Users" onClick={() => { setIsSearchOpen(false); router.get(route('admin.users.index')); }} />
-                                                                    <CommandItem icon={<Globe size={14} />} label="Public Pages" onClick={() => { setIsSearchOpen(false); router.get(route('admin.landing.index')); }} />
-                                                                </>
-                                                            )}
-                                                            {userRole === 'host' && (
-                                                                <>
-                                                                    <CommandItem icon={<Users size={14} />} label="Guest List" onClick={() => { setIsSearchOpen(false); router.get(route('host.guests.index')); }} />
-                                                                    <CommandItem icon={<Home size={14} />} label="Properties" onClick={() => { setIsSearchOpen(false); router.get(route('host.properties.index')); }} />
-                                                                    <CommandItem icon={<Megaphone size={14} />} label="Marketing" onClick={() => { setIsSearchOpen(false); router.get(route('host.marketing.index')); }} />
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </div>
+                                    <div className="dashboard-layout__search-head">
+                                        <Search size={18} className="dashboard-layout__search-icon" />
+                                        <input
+                                            ref={searchInputRef}
+                                            autoFocus
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => { setSearchQuery(e.target.value); setActiveIndex(0); }}
+                                            onKeyDown={onSearchKeyDown}
+                                            placeholder={userRole === 'admin' ? 'Search hosts, guests, properties…' : `Search ${t('Guests').toLowerCase()}, properties, campaigns…`}
+                                            className="dashboard-layout__search-input"
+                                            aria-label="Search"
+                                            role="combobox"
+                                            aria-expanded="true"
+                                            aria-controls="dashboard-search-list"
+                                            aria-activedescendant={searchItems[activeIndex] ? `dashboard-search-item-${activeIndex}` : undefined}
+                                        />
+                                        {searchLoading && <Loader2 size={16} className="dashboard-layout__search-spinner animate-spin" />}
+                                        <button type="button" onClick={() => setIsSearchOpen(false)} className="dashboard-layout__search-close" aria-label="Close search">
+                                            <X size={16} />
+                                        </button>
                                     </div>
+
+                                    <div id="dashboard-search-list" role="listbox" className="dashboard-layout__search-sections">
+                                        {searchQuery.length >= 2 && !searchLoading && searchResults.length === 0 ? (
+                                            <div className="dashboard-layout__search-empty">
+                                                <Search size={24} />
+                                                <p>No results for “{searchQuery}”</p>
+                                            </div>
+                                        ) : (
+                                            searchGroups.map(group => (
+                                                <div key={group.title} role="group" aria-label={group.title}>
+                                                    <h3 className="dashboard-layout__search-section-title">{group.title}</h3>
+                                                    {group.items.map(({ item, index }) => {
+                                                        const Icon = item.Icon || iconMap[item.icon] || User;
+                                                        return (
+                                                            <button
+                                                                type="button"
+                                                                key={`${group.title}-${index}`}
+                                                                id={`dashboard-search-item-${index}`}
+                                                                role="option"
+                                                                aria-selected={index === activeIndex}
+                                                                onMouseMove={() => setActiveIndex(index)}
+                                                                onClick={() => runSearchItem(item)}
+                                                                className="dashboard-layout__result-item"
+                                                            >
+                                                                <span className="dashboard-layout__result-icon"><Icon size={15} /></span>
+                                                                <span className="dashboard-layout__result-info">
+                                                                    <span className="dashboard-layout__result-title">{item.title}</span>
+                                                                    {item.subtitle && <span className="dashboard-layout__result-subtitle">{item.subtitle}</span>}
+                                                                </span>
+                                                                {item.type && <span className="dashboard-layout__result-type">{item.type}</span>}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+
                                     <div className="dashboard-layout__search-footer">
-                                        <div className="dashboard-layout__search-footer-hints">
-                                            <span className="dashboard-layout__search-footer-hint">Type to search</span>
-                                            <span className="dashboard-layout__search-footer-hint">Esc to close</span>
-                                        </div>
-                                        <div className="dashboard-layout__search-footer-powered">
-                                            <span className="dashboard-layout__search-footer-label">Powered by</span>
-                                            <span className="dashboard-layout__search-footer-brand">TenaFi search</span>
-                                        </div>
+                                        <span><kbd>↑</kbd><kbd>↓</kbd> to move</span>
+                                        <span><kbd>Enter</kbd> to open</span>
+                                        <span><kbd>Esc</kbd> to close</span>
                                     </div>
                                 </Dialog.Panel>
                             </Transition.Child>
@@ -621,16 +623,5 @@ export default function DashboardLayout({ children }) {
                 </Dialog>
             </Transition>
         </div >
-    );
-}
-
-function CommandItem({ icon, label, onClick }) {
-    return (
-        <button onClick={onClick} className="dashboard-layout__command-item group">
-            <div className="dashboard-layout__command-item-left">
-                <div className="dashboard-layout__command-item-icon">{icon}</div>
-                <span className="dashboard-layout__command-item-label">{label}</span>
-            </div>
-        </button>
     );
 }

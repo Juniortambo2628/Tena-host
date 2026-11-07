@@ -7,6 +7,7 @@ use App\Models\PolicyDocument;
 use App\Models\Setting;
 use App\Services\Cms\V2Pages;
 use App\Support\TrialSlots;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -26,6 +27,12 @@ class PublicPageController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        // The v2 design is the live site (Admin -> Settings): /, /hosts,
+        // /business and /events show their v2 pages at the usual address.
+        if (static::v2Live() && ($slug === 'home' || isset(V2Pages::AUDIENCES[$slug]))) {
+            return $slug === 'home' ? $this->v2Home(true) : $this->v2AudiencePage($slug, true);
+        }
+
         $sections = LandingPage::publicSections($page->slug);
         $pageSeo = collect($sections)->firstWhere('section_key', 'seo');
 
@@ -40,10 +47,21 @@ class PublicPageController extends Controller
      * built. Admin -> Settings -> "V2 public pages" opens it to everyone;
      * admins can always see it. Never indexed by search engines.
      */
-    public function v2(): Response
+    public function v2(): Response|RedirectResponse
     {
         abort_unless(static::v2Visible(), 404);
 
+        // Once v2 is the live site, its preview address points at the real one.
+        if (static::v2Live()) {
+            return redirect('/');
+        }
+
+        return $this->v2Home(false);
+    }
+
+    /** The v2 homepage, at / when it's the live site, else at /v2 (never indexed there). */
+    private function v2Home(bool $live): Response
+    {
         // Its own CMS page (Admin -> Public Pages -> "Home (v2 design)"), or the
         // live homepage's sections until that page exists.
         $sections = LandingPage::publicSections(V2Pages::HOME) ?: LandingPage::publicSections('home');
@@ -52,7 +70,8 @@ class PublicPageController extends Controller
         return $this->render('Public/V2/Home', [
             'page' => ['slug' => V2Pages::HOME, 'name' => 'Home (v2)'],
             'sections' => $sections,
-        ], $pageSeo, '/v2', index: false);
+            'v2Base' => $live ? '' : '/v2',
+        ], $pageSeo, $live ? '/' : '/v2', index: $live);
     }
 
     /**
@@ -60,10 +79,20 @@ class PublicPageController extends Controller
      * journey template. Their sections are their own CMS page; the sign-up
      * form is the live page's (one form definition, validated by the server).
      */
-    public function v2Audience(string $audience): Response
+    public function v2Audience(string $audience): Response|RedirectResponse
     {
         abort_unless(static::v2Visible(), 404);
 
+        if (static::v2Live()) {
+            return redirect("/{$audience}");
+        }
+
+        return $this->v2AudiencePage($audience, false);
+    }
+
+    private function v2AudiencePage(string $audience, bool $isLive): Response
+    {
+        $base = $isLive ? '' : '/v2';
         $sections = LandingPage::publicSections(V2Pages::audienceSlug($audience)) ?: LandingPage::publicSections($audience);
         $live = collect(LandingPage::publicSections($audience));
         $pageSeo = collect($sections)->firstWhere('section_key', 'seo');
@@ -78,16 +107,19 @@ class PublicPageController extends Controller
                 'sections' => $live->filter(fn ($s) => in_array($s['section_key'], ['signup', 'pricing'], true))->values(),
             ],
             'others' => collect(array_keys(V2Pages::AUDIENCES))->reject(fn ($a) => $a === $audience)
-                ->map(fn ($a) => static::audienceCard($a))->filter()->values(),
-        ], $pageSeo, "/v2/{$audience}", index: false);
+                ->map(fn ($a) => static::audienceCard($a, $base))->filter()->values(),
+            'v2Base' => $base,
+        ], $pageSeo, "{$base}/{$audience}", index: $isLive);
     }
 
     /**
      * A link card to another v2 audience page: that audience's card on the
      * v2 homepage ("One platform, three kinds of places"), else its hero.
      */
-    private static function audienceCard(string $audience): ?array
+    private static function audienceCard(string $audience, string $base = '/v2'): ?array
     {
+        // The audience page's own card picture (its hero's "Card picture" slot) wins.
+        $own = collect(LandingPage::publicSections(V2Pages::audienceSlug($audience)))->firstWhere('section_key', 'hero')['media']['card_image'] ?? null;
         $home = collect(LandingPage::publicSections(V2Pages::HOME) ?: LandingPage::publicSections('home'))->firstWhere('section_key', 'path_cards');
         $plain = fn ($value) => trim(strip_tags((string) $value));
         foreach (array_keys($home['content'] ?? []) as $key) {
@@ -95,11 +127,11 @@ class PublicPageController extends Controller
                 $i = $m[1];
 
                 return [
-                    'to' => "/v2/{$audience}",
+                    'to' => "{$base}/{$audience}",
                     'badge' => preg_replace('/^\d+\s*·\s*/u', '', $plain($home['content']["cards.{$i}.label"] ?? '')),
                     'title' => $plain($home['content']["cards.{$i}.title"] ?? ''),
                     'text' => $plain($home['content']["cards.{$i}.description"] ?? ''),
-                    'image' => $home['media']["card_{$i}_image"] ?? null,
+                    'image' => $own ?: ($home['media']["card_{$i}_image"] ?? null),
                 ];
             }
         }
@@ -107,12 +139,22 @@ class PublicPageController extends Controller
         $hero = collect(LandingPage::publicSections(V2Pages::audienceSlug($audience)) ?: LandingPage::publicSections($audience))->firstWhere('section_key', 'hero');
 
         return $hero ? [
-            'to' => "/v2/{$audience}",
+            'to' => "{$base}/{$audience}",
             'badge' => $plain($hero['content']['badge'] ?? ''),
             'title' => $plain($hero['content']['title'] ?? ''),
             'text' => '',
-            'image' => null,
+            'image' => $own,
         ] : null;
+    }
+
+    /**
+     * The v2 design is the live site: /, /hosts, /business and /events show the
+     * v2 pages, and /v2... redirects there. On unless switched off in Admin ->
+     * Settings, which brings the previous design straight back.
+     */
+    public static function v2Live(): bool
+    {
+        return filter_var(Setting::getValue('v2_live', '1'), FILTER_VALIDATE_BOOLEAN);
     }
 
     /** The v2 pages are open to everyone when switched on, and to admins always. */

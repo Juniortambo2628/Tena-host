@@ -1,15 +1,21 @@
 @reference "../../../css/theme.css";
 
 .tabbed-modal__container {
-    @apply bg-white/95 backdrop-blur-2xl overflow-hidden rounded-[3rem] flex flex-col md:flex-row min-h-[600px] border border-black/5 shadow-2xl shadow-black/10;
+    @apply bg-white/95 backdrop-blur-2xl overflow-hidden flex flex-col md:flex-row flex-none min-h-0 w-full;
+    /* One height for every tabbed dialog, never more than the screen allows. */
+    height: min(720px, calc(100dvh - 1.5rem));
+}
+
+@media (min-width: 640px) {
+    .tabbed-modal__container { height: min(720px, calc(100dvh - 3rem)); }
 }
 
 .tabbed-modal__sidebar {
-    @apply w-full md:w-72 bg-gray-50/50 border-r border-black/5 p-10 flex flex-col;
+    @apply w-full md:w-64 flex-none bg-gray-50/50 border-b md:border-b-0 md:border-r border-black/5 p-5 md:p-8 flex flex-col md:overflow-y-auto;
 }
 
 .tabbed-modal__header {
-    @apply mb-10;
+    @apply mb-4 md:mb-8;
 }
 
 .tabbed-modal__title {
@@ -17,15 +23,15 @@
 }
 
 .tabbed-modal__description {
-    @apply text-black/40 text-xs font-semibold mt-4 leading-relaxed;
+    @apply hidden md:block text-black/40 text-xs font-semibold mt-4 leading-relaxed;
 }
 
 .tabbed-modal__tabs {
-    @apply flex-1 space-y-2;
+    @apply flex md:flex-col gap-2 overflow-x-auto md:overflow-visible md:flex-1 -mx-1 px-1 pb-1 md:pb-0;
 }
 
 .tabbed-modal__tab-button {
-    @apply w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-bold transition-all text-left;
+    @apply flex-none md:w-full flex items-center gap-3 px-4 py-2.5 md:px-5 md:py-3.5 rounded-2xl font-bold transition-all text-left whitespace-nowrap;
 }
 
 .tabbed-modal__tab-button--active {
@@ -53,7 +59,7 @@
 }
 
 .tabbed-modal__footer {
-    @apply mt-auto pt-8 border-t border-black/5;
+    @apply hidden md:block mt-auto pt-6 border-t border-black/5;
 }
 
 .tabbed-modal__cancel {
@@ -61,15 +67,16 @@
 }
 
 .tabbed-modal__content-area {
-    @apply flex-1 p-10 flex flex-col;
+    @apply flex-1 min-w-0 min-h-0 flex flex-col;
 }
 
+/* Step title stays at the top, the action bar at the bottom; only the fields scroll. */
 .tabbed-modal__content {
-    @apply flex-1;
+    @apply flex-1 min-h-0 overflow-y-auto px-5 py-5 md:px-8 md:py-6;
 }
 
 .tabbed-modal__step-header {
-    @apply mb-8;
+    @apply mb-6;
 }
 
 .tabbed-modal__step-counter {
@@ -81,7 +88,7 @@
 }
 
 .tabbed-modal__action-bar {
-    @apply mt-10 flex justify-between items-center bg-black/5 p-6 rounded-[2rem];
+    @apply flex-none flex justify-between items-center gap-3 border-t border-black/5 bg-black/[0.03] px-5 py-4 md:px-8;
 }
 
 .tabbed-modal__indicators {
@@ -101,5 +108,9 @@
 }
 
 .tabbed-modal__actions {
-    @apply flex gap-4;
+    @apply flex flex-wrap justify-end gap-3;
+}
+
+.tabbed-modal__actions .tabbed-modal__cancel-inline {
+    @apply md:hidden;
 }
