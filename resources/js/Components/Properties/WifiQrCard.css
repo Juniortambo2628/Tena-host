@@ -1,0 +1,42 @@
+@reference "../../../css/theme.css";
+
+.wifi-qr-card__body {
+    @apply mt-6 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-6 items-start;
+}
+
+.wifi-qr-card__fields {
+    @apply min-w-0;
+}
+
+.wifi-qr-card__label {
+    @apply block text-xs font-semibold text-black/50 mb-1;
+}
+
+.wifi-qr-card__input {
+    @apply w-full rounded-xl border border-black/10 bg-transparent px-4 py-3 text-sm focus:border-primary focus:ring-primary;
+}
+
+.wifi-qr-card__hint {
+    @apply text-xs text-black/50 mt-1 mb-4;
+}
+
+.wifi-qr-card__actions {
+    @apply flex flex-wrap gap-3;
+}
+
+.wifi-qr-card__preview {
+    @apply justify-self-center;
+}
+
+/* The code stays black on white in dark mode too, so cameras read it. */
+.wifi-qr-card__code {
+    @apply w-48 h-48 rounded-2xl bg-white dark:bg-white p-3 border border-black/10;
+}
+
+.wifi-qr-card__code svg {
+    @apply w-full h-full;
+}
+
+.wifi-qr-card__empty {
+    @apply w-48 h-48 rounded-2xl border border-dashed border-black/15 flex flex-col items-center justify-center gap-2 p-4 text-center text-xs text-black/40;
+}

@@ -65,6 +65,7 @@ class SettingsController extends Controller
             'event_accounts_enabled' => 'sometimes|in:0,1',
             'teams_enabled' => 'sometimes|in:0,1',
             'staff_wifi_enabled' => 'sometimes|in:0,1',
+            'wifi_qr_enabled' => 'sometimes|in:0,1',
             'visitor_log_enabled' => 'sometimes|in:0,1',
             'event_billing_enabled' => 'sometimes|in:0,1',
         ];

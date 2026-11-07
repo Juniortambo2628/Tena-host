@@ -8,8 +8,9 @@ import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import { Wifi, Users, Radio, MapPin, ArrowLeft, Trash2 } from 'lucide-react';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
 import { useConfirm } from '@/hooks/useConfirm';
+import WifiQrCard from '@/Components/Properties/WifiQrCard';
 
-export default function PropertyShow({ property, wifi = {}, staffWifi = null }) {
+export default function PropertyShow({ property, wifi = {}, staffWifi = null, wifiQrEnabled = false }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
     useEffect(() => {
         const timer = setInterval(() => {
@@ -64,6 +65,7 @@ export default function PropertyShow({ property, wifi = {}, staffWifi = null }) 
                             {(property.access_points || []).map(ap => <div key={ap.id} className="text-sm border-t pt-2"><strong>{ap.name}</strong> · {ap.mac_address} · {ap.status} · {ap.connected_clients_count} clients<br /><small>Last seen: {ap.last_seen ? new Date(ap.last_seen).toLocaleString() : 'Not seen yet'}</small></div>)}
                         </div>
                     </GlassCard>
+                    {wifiQrEnabled && <WifiQrCard key={property.id} property={property} />}
                     <GlassCard padding="p-8">
                         <h3 className="font-black text-lg">WiFi guest engagement</h3>
                         <p className="text-sm my-3">{wifi.guests || 0} WiFi guests · {wifi.visits || 0} visits · {wifi.recentGuests || 0} guests connected in the last 24 hours · {wifi.marketingOptIns || 0} opted in to offers</p>

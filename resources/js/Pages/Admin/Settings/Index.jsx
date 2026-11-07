@@ -152,6 +152,7 @@ export default function Index({ settings, logos = [] }) {
             event_accounts_enabled: flattened.event_accounts_enabled || '0',
             teams_enabled: flattened.teams_enabled || '0',
             staff_wifi_enabled: flattened.staff_wifi_enabled || '0',
+            wifi_qr_enabled: flattened.wifi_qr_enabled || '0',
             visitor_log_enabled: flattened.visitor_log_enabled || '0',
             event_billing_enabled: flattened.event_billing_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
@@ -379,6 +380,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Staff WiFi: a site's staff network gets a staff sign-in (name and staff ID or work email), kept out of customer lists and campaigns"
                                         checked={data.settings.staff_wifi_enabled === '1'}
                                         onChange={() => updateSetting('staff_wifi_enabled', data.settings.staff_wifi_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="WiFi QR code: each site's page gets a printable “scan to join the WiFi” QR code for rooms, tables and reception"
+                                        checked={data.settings.wifi_qr_enabled === '1'}
+                                        onChange={() => updateSetting('wifi_qr_enabled', data.settings.wifi_qr_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField
