@@ -96,3 +96,47 @@ it('never shares the two-factor secret or recovery codes with the page', functio
     $response->assertDontSee('JBSWY3DPEHPK3PXP');
     $response->assertDontSee('code-one');
 });
+
+it('rejects an invalid setting value and saves nothing from that request', function () {
+    $admin = User::factory()->admin()->create();
+    Setting::updateOrCreate(['key' => 'site_name'], ['value' => 'Before', 'type' => 'string', 'group' => 'general']);
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => [
+            'site_name' => 'After',
+            'staff_wifi_enabled' => 'yes',
+        ],
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHasErrors(['settings.staff_wifi_enabled']);
+    expect(Setting::where('key', 'staff_wifi_enabled')->exists())->toBeFalse();
+    expect(Setting::where('key', 'site_name')->value('value'))->toBe('Before');
+});
+
+it('rejects a signup alert webhook that is not a URL', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => ['signup_alert_webhook_url' => 'not a url'],
+    ]);
+
+    $response->assertSessionHasErrors(['settings.signup_alert_webhook_url']);
+    expect(Setting::where('key', 'signup_alert_webhook_url')->exists())->toBeFalse();
+});
+
+it('still saves valid switch and webhook values', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => [
+            'staff_wifi_enabled' => '1',
+            'signup_alert_webhook_url' => 'https://hooks.example.com/signup',
+        ],
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHasNoErrors();
+    expect(Setting::where('key', 'staff_wifi_enabled')->value('value'))->toBe('1');
+    expect(Setting::where('key', 'signup_alert_webhook_url')->value('value'))->toBe('https://hooks.example.com/signup');
+});

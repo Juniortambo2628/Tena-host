@@ -84,11 +84,18 @@ class SettingsController extends Controller
             'contact_enquiry_heading', 'contact_enquiry_body',
         ];
 
-        foreach ($data['settings'] as $key => $value) {
-            if (isset($rules[$key])) {
-                $request->validate([$key => $rules[$key]], [], ['key' => $key]);
-            }
+        // Each value arrives as settings[<key>], so the rules have to target
+        // settings.<key>. Validate everything before saving anything, so one bad
+        // value leaves every setting as it was.
+        $submitted = array_intersect_key($rules, $data['settings']);
 
+        $request->validate(
+            collect($submitted)->mapWithKeys(fn ($rule, $key) => ['settings.'.$key => $rule])->all(),
+            [],
+            collect($submitted)->mapWithKeys(fn ($rule, $key) => ['settings.'.$key => str_replace('_', ' ', $key)])->all(),
+        );
+
+        foreach ($data['settings'] as $key => $value) {
             $group = $request->input('settings_groups.'.$key)
                 ?? (in_array($key, $emailKeys) ? 'email_templates' : 'general');
 
