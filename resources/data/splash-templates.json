@@ -19,6 +19,10 @@
     {
       "id": "retail",
       "label": "Shops"
+    },
+    {
+      "id": "events",
+      "label": "Events & members clubs"
     }
   ],
   "businessTypes": [
@@ -589,6 +593,45 @@
           "birthday": true
         },
         "optIn": "Send me weekly deals and news"
+      }
+    },
+    {
+      "id": "society",
+      "name": "Society",
+      "for": "Launches, events & members clubs",
+      "group": "events",
+      "accent": "#E2BC6A",
+      "description": "Deep green and gold, like a members-club invitation. Perks up front, a member code after sign-in.",
+      "perks": true,
+      "look": {
+        "font": "serif",
+        "theme": "dark",
+        "header": "#0E3A2C",
+        "headerInk": "#F4EEDC",
+        "decor": "",
+        "page": "#0E3A2C"
+      },
+      "defaults": {
+        "headline": "The Members Club",
+        "tiles": [
+          {
+            "icon": "gift",
+            "label": "Exclusive launches"
+          },
+          {
+            "icon": "cal",
+            "label": "Event invites"
+          },
+          {
+            "icon": "tag",
+            "label": "Member-only deals"
+          }
+        ],
+        "fields": {
+          "email": true,
+          "birthday": false
+        },
+        "optIn": "Yes, send me launches, invites and member offers"
       }
     }
   ],

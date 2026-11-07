@@ -19,6 +19,7 @@ const BAND_THUMBS = {
     fade: () => <><i className="pole" /><i className="w" style={{ left: '40%', top: '18%', width: '40%' }} /><i className="w" style={{ left: '40%', top: '34%', width: '28%' }} />{bars(40, 54, 44, 10, 2)}{pill(40, 78, 44)}</>,
     pulse: () => <><i className="slash" /><i className="slash2" /><i className="w" style={{ left: '8%', top: '20%', width: '36%' }} /><i className="w" style={{ left: '8%', top: '37%', width: '26%' }} />{bars(8, 56, 36, 0, 1)}{pill(8, 72, 36)}</>,
     calm: () => <><i className="c1" /><i className="c2" /><i className="card" /><i className="plus" />{bars(37, 44, 26, 10, 2)}{pill(37, 68, 26)}</>,
+    society: () => <><i className="nm" /><i className="rule" /><i className="ttl" />{[30, 45, 60].map(l => <i key={l} className="perk" style={{ left: `${l}%` }} />)}{bars(28, 62, 44, 9, 2, 'fld')}{pill(28, 82, 44)}</>,
     corner: () => <><i className="awn" /><i className="sc" /><i className="card" /><i className="tag" />{bars(26, 56, 26, 9, 2)}{pill(26, 78, 48)}</>,
 };
 

@@ -9,7 +9,7 @@ import PillButton from '@/Components/Dashboard/PillButton';
 import { notify } from '@/Components/Toast';
 import { csrfHeaders } from '@/Support/csrf';
 import { TemplatePicker, AccentPicker } from '@/Components/Properties/SplashEditor';
-import { normalizeTemplate, originalTemplates, templateDefaults, applyTemplate, recommendedTemplate, findTemplate, tileIcons, nameAndPhoneOnly } from '@/Components/Properties/splashTemplates';
+import { normalizeTemplate, originalTemplates, templateDefaults, applyTemplate, recommendedTemplate, findTemplate, tileIcons, nameAndPhoneOnly, hasPerks, showsTiles } from '@/Components/Properties/splashTemplates';
 import './Splash.css';
 import { BRAND_COLORS } from '@/constants';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -59,7 +59,7 @@ const steps = [
 const blank = {
     emergency: { label: '', phone: '' },
     nearby: { name: '', category: 'food', note: '', distance: '', url: '' },
-    offers: { title: '', detail: '', when: '' },
+    offers: { title: '', detail: '', when: '', code: '' },
     stays: { property_id: '', title: '', detail: '', price: '', url: '' },
 };
 
@@ -77,7 +77,7 @@ function initialBranding(saved = {}, business = false) {
         template,
         fields: nameAndPhoneOnly.includes(template) ? { email: false, birthday: false } : { email: true, birthday: business, ...(defaults.fields || {}), ...(saved.fields || {}) },
         opt_in: saved.opt_in || '',
-        tiles: business ? (saved.tiles || defaults.tiles || []).map(t => ({ icon: 'star', label: '', url: '', ...t, url: t.url || '' })) : [],
+        tiles: showsTiles(template, business) ? (saved.tiles || defaults.tiles || []).map(t => ({ icon: 'star', label: '', url: '', ...t, url: t.url || '' })) : [],
         accent: saved.accent || BRAND_COLORS.primary,
         heading: saved.heading || '', message: saved.message || '', button: saved.button || '',
         welcome_note: saved.welcome_note || '', host_name: saved.host_name || '', review_prompt: saved.review_prompt || '',
@@ -371,10 +371,12 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
                 <Field label="Connect button" error={err('button')}>
                     <input type="text" maxLength={40} value={b.button} placeholder="Connect to WiFi" onChange={e => set('button', e.target.value)} />
                 </Field>
-                {isBusiness && (
+                {showsTiles(b.template, isBusiness) && (
                     <>
-                        <div className="studio-subhead"><h3>Quick links</h3></div>
-                        <p className="studio-field__hint">Three tiles above the sign-up form. Without a link, menu and list tiles open your customer homepage, and gift and deal tiles open your offers.</p>
+                        <div className="studio-subhead"><h3>{hasPerks(b.template) ? 'Member perks' : 'Quick links'}</h3></div>
+                        <p className="studio-field__hint">{hasPerks(b.template)
+                            ? 'Three perks above the sign-up form, each with an icon. Add a link only if a perk should open a page.'
+                            : 'Three tiles above the sign-up form. Without a link, menu and list tiles open your customer homepage, and gift and deal tiles open your offers.'}</p>
                         <RowList
                             rows={b.tiles} max={3} addLabel="Add a tile" empty="No quick links."
                             onAdd={() => set('tiles', [...b.tiles, { icon: 'star', label: '', url: '' }])}
@@ -494,6 +496,9 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
         offers: (
             <>
                 <SectionHead title="Offers" description="Upcoming deals and events. Guests who opt in to offers hear about them first." sectionKey="offers" branding={b} setSection={setSection} />
+                {hasPerks(b.template) && (
+                    <p className="studio-field__hint">{findTemplate(b.template).name} shows your first offer as the guest’s member perk once they’re online, with its code in a dashed box.</p>
+                )}
                 {b.offers.some(o => o.title) && (
                     <a className="studio-chip-btn" href={route('host.marketing.builder')}>
                         <Megaphone size={14} /> Send these to opted-in guests in the Campaign Studio
@@ -510,6 +515,7 @@ export default function SplashStudio({ property, otherProperties = [], hostPhone
                                 <Field label="When" error={rowErr('offers', i, 'when')}><input type="text" maxLength={60} value={row.when} placeholder="Until 31 Dec" onChange={e => update({ ...row, when: e.target.value })} /></Field>
                             </div>
                             <Field label="Details" error={rowErr('offers', i, 'detail')}><input type="text" maxLength={200} value={row.detail} placeholder="Book direct on WhatsApp and mention this page." onChange={e => update({ ...row, detail: e.target.value })} /></Field>
+                            <Field label="Code" hint="Optional: a code guests show or type at checkout." error={rowErr('offers', i, 'code')}><input type="text" maxLength={40} value={row.code} placeholder="WELCOME10" onChange={e => update({ ...row, code: e.target.value })} /></Field>
                         </>
                     )}
                 />

@@ -170,4 +170,51 @@ class SplashTemplatesTest extends TestCase
         $this->assertSame('bloom', $property->branding_json['template']);
         $this->assertSame('#C77B86', $property->branding_json['accent']);
     }
+
+    public function test_society_shows_its_perks_for_any_account_and_keeps_offers_for_after_sign_in(): void
+    {
+        // A short-term rental account: perks still show, unlike other templates' quick links.
+        $this->property([
+            'template' => 'society', 'heading' => 'The Sip Society',
+            'offers' => [['title' => '10% off your next order', 'code' => 'SIPSOCIETY10', 'when' => 'Valid 8–30 November']],
+        ]);
+
+        $this->get('/portal?ap=11:22:33:44:55:66&id=aa:bb:cc:dd:ee:ff&ssid=Venue%20WiFi')->assertOk()
+            ->assertSee('splash--society', false)
+            ->assertSee('Welcome — you’re almost online')->assertDontSee('· Venue WiFi')
+            ->assertSee('class="sp-tiles"', false)->assertSee('Exclusive launches')->assertSee('Member-only deals')
+            ->assertDontSee('data-tab="offers"', false)
+            ->assertDontSee('SIPSOCIETY10');
+    }
+
+    public function test_society_connected_page_shows_the_member_perk_and_code(): void
+    {
+        $property = $this->property();
+        $draft = ['branding_json' => [
+            'template' => 'society', 'heading' => 'The Sip Society',
+            'offers' => [['title' => '10% off your next order', 'detail' => '', 'code' => 'SIPSOCIETY10', 'when' => 'Valid 8–30 November']],
+        ]];
+
+        $this->actingAs($property->host)->post(route('host.properties.splash-preview', $property), $draft + ['page' => 'connected'])
+            ->assertOk()
+            ->assertSee('Welcome to the Sip Society')
+            ->assertSee('Your member perk')->assertSee('10% off your next order')
+            ->assertSee('SIPSOCIETY10')->assertSee('Valid 8–30 November')
+            ->assertSee('Screenshot this to save your code');
+    }
+
+    public function test_society_offer_code_is_saved_and_limited(): void
+    {
+        $property = $this->property(['template' => 'society']);
+        $owner = $property->host;
+
+        $this->actingAs($owner)->post(route('host.properties.splash.update', $property), ['branding_json' => [
+            'template' => 'society', 'offers' => [['title' => 'Free mocktail', 'code' => str_repeat('A', 41)]],
+        ]])->assertSessionHasErrors('branding_json.offers.0.code');
+
+        $this->actingAs($owner)->post(route('host.properties.splash.update', $property), ['branding_json' => [
+            'template' => 'society', 'offers' => [['title' => 'Free mocktail', 'code' => 'MOCK1']],
+        ]])->assertSessionHasNoErrors();
+        $this->assertSame('MOCK1', $property->fresh()->branding_json['offers'][0]['code']);
+    }
 }

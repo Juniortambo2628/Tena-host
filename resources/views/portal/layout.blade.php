@@ -1,12 +1,14 @@
 @php
     /** @var array $design */
     $c = $design['content'];
+    // Society shows its first offer as the member perk after sign-in, so no Offers tab.
+    $society = $design['template'] === 'society';
     $initial = mb_strtoupper(mb_substr($propertyName, 0, 1));
     $tabs = array_filter([
         'welcome' => ($c['welcome'] || $c['review']) ? 'Welcome' : null,
         'house' => ($c['rules'] || $c['emergency']) ? 'House' : null,
         'nearby' => $c['nearby'] ? 'Nearby' : null,
-        'offers' => $c['offers'] ? 'Offers' : null,
+        'offers' => $c['offers'] && ! $society ? 'Offers' : null,
         'stays' => $c['stays'] ? 'Stays' : null,
     ]);
     $paneTitles = [
@@ -78,7 +80,8 @@
             </div>
 
             <header class="sp-hero">
-                <p class="sp-eyebrow">@yield('eyebrow', 'Guest WiFi'){{ !empty($params['ssid']) ? ' · '.$params['ssid'] : '' }}</p>
+                @yield('hero_top')
+                <p class="sp-eyebrow">@yield('eyebrow', 'Guest WiFi'){{ !empty($params['ssid']) && ! $society ? ' · '.$params['ssid'] : '' }}</p>
                 <h1 class="sp-title">{!! $highlight($heading) !!}</h1>
                 <p class="sp-lede">@yield('lede', $design['message'])</p>
             </header>

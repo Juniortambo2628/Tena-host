@@ -12,6 +12,9 @@
 @extends('portal.layout')
 
 @section('title', $propertyName.' WiFi')
+@if($design['template'] === 'society' && $property)
+    @section('eyebrow', $returningGuest ? 'Welcome back' : 'Welcome — you’re almost online')
+@endif
 
 @section('lede')@if($returningGuest)Tap below to get back online at {{ $propertyName }}.@elseif($property){{ $design['message'] }}@else{{ !empty($params['ssid']) ? "You're connecting to ".$params['ssid'].'.' : '' }} Please ask your host to link this access point to the property.@endif @endsection
 

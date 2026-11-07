@@ -14,7 +14,7 @@ use App\Models\Property;
  */
 class SplashDesign
 {
-    public const TEMPLATES = ['bento', 'horizon', 'clover', 'monogram', 'brew', 'bistro', 'nocturne', 'bloom', 'fade', 'pulse', 'calm', 'corner'];
+    public const TEMPLATES = ['bento', 'horizon', 'clover', 'monogram', 'brew', 'bistro', 'nocturne', 'bloom', 'fade', 'pulse', 'calm', 'corner', 'society'];
 
     /**
      * The first five templates. Designs saved before per-template defaults keep
@@ -77,6 +77,8 @@ class SplashDesign
             'branding_json.offers.*.title' => 'nullable|string|max:80',
             'branding_json.offers.*.detail' => 'nullable|string|max:200',
             'branding_json.offers.*.when' => 'nullable|string|max:60',
+            // A member code shown with the offer (Society's perk card after sign-in).
+            'branding_json.offers.*.code' => 'nullable|string|max:40',
             'branding_json.stays' => 'nullable|array|max:8',
             'branding_json.stays.*.property_id' => 'nullable|integer',
             'branding_json.stays.*.title' => 'nullable|string|max:80',
@@ -91,6 +93,15 @@ class SplashDesign
             'branding_json.tiles.*.label' => 'nullable|string|max:30',
             'branding_json.tiles.*.url' => 'nullable|url:http,https|max:500',
         ];
+    }
+
+    /**
+     * Templates whose quick tiles are perks (Society): shown for every account,
+     * not only businesses, and never turned into links on their own.
+     */
+    public static function hasPerks(string $template): bool
+    {
+        return (bool) (self::template($template)['perks'] ?? false);
     }
 
     /** groups, businessTypes, templates and accents from the shared JSON. */
@@ -150,7 +161,7 @@ class SplashDesign
             'heading' => $defaults['headline'],
             'opt_in' => $defaults['optIn'],
             'fields' => $defaults['fields'],
-            'tiles' => $business ? array_map(fn ($t) => $t + ['url' => null], $defaults['tiles']) : null,
+            'tiles' => $business || self::hasPerks($template) ? array_map(fn ($t) => $t + ['url' => null], $defaults['tiles']) : null,
             'sections' => $business ? array_fill_keys(self::RENTAL_SECTIONS, false) : null,
         ], fn ($v) => $v !== null);
     }
@@ -308,7 +319,9 @@ class SplashDesign
             'hasContent' => (bool) array_filter($content),
             'fields' => $fields,
             'optIn' => ($settings['opt_in'] ?? null) ?: ($defaults['opt_in'] ?? 'Send me offers and early access to direct deals'),
-            'tiles' => self::tiles($property, $settings['tiles'] ?? $defaults['tiles'] ?? [], $content, $business),
+            'tiles' => self::tiles($property, $settings['tiles'] ?? $defaults['tiles'] ?? [], $content, $business, self::hasPerks($template)),
+            // Society: the first offer, shown as the guest's member perk once they're online.
+            'perk' => self::hasPerks($template) ? ($content['offers'][0] ?? null) : null,
         ];
     }
 
@@ -321,19 +334,23 @@ class SplashDesign
      * @param  array<string, mixed>  $content
      * @return list<array{icon: string, label: string, url: ?string, goto: ?string}>
      */
-    protected static function tiles(?Property $property, array $tiles, array $content, bool $business): array
+    protected static function tiles(?Property $property, array $tiles, array $content, bool $business, bool $perks = false): array
     {
-        if (! $business) {
+        if (! $business && ! $perks) {
             return [];
         }
 
-        return array_values(array_filter(array_map(function ($tile) use ($property, $content) {
+        return array_values(array_filter(array_map(function ($tile) use ($property, $content, $perks) {
             if (! is_array($tile) || blank($tile['label'] ?? null)) {
                 return null;
             }
             $icon = in_array($tile['icon'] ?? null, self::TILE_ICONS, true) ? $tile['icon'] : 'star';
             $url = ($tile['url'] ?? null) ?: null;
             $goto = null;
+            // Perks describe membership: they only link where the owner added one.
+            if ($perks) {
+                return ['icon' => $icon, 'label' => (string) $tile['label'], 'url' => $url, 'goto' => null];
+            }
             if (! $url && in_array($icon, ['gift', 'tag'], true) && $content['offers']) {
                 $goto = 'offers';
             } elseif (! $url && in_array($icon, ['menu', 'list'], true) && $property?->exists) {
