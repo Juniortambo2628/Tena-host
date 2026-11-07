@@ -56,3 +56,12 @@ it('saves the switch from Admin -> Settings', function () {
 
     expect(Setting::getValue('v2_live'))->toBe('0');
 });
+
+it('shows the new photos on the v2 pages, and each audience card uses its page’s card picture', function () {
+    $this->get('/')->assertInertia(fn ($page) => $page
+        ->where('sections', fn ($sections) => collect($sections)->firstWhere('section_key', 'hero')['media']['main_image'] === '/legacy/assets/v2/photos/home-hero-guest-sofa.webp'
+            && collect($sections)->firstWhere('section_key', 'path_cards')['media']['card_2_image'] === '/legacy/assets/v2/photos/card-events.webp'));
+
+    $this->get('/business')->assertInertia(fn ($page) => $page
+        ->where('others', fn ($others) => collect($others)->firstWhere('to', '/hosts')['image'] === '/legacy/assets/v2/photos/hosts-card-bed.webp'));
+});

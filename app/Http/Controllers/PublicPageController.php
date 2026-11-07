@@ -118,6 +118,8 @@ class PublicPageController extends Controller
      */
     private static function audienceCard(string $audience, string $base = '/v2'): ?array
     {
+        // The audience page's own card picture (its hero's "Card picture" slot) wins.
+        $own = collect(LandingPage::publicSections(V2Pages::audienceSlug($audience)))->firstWhere('section_key', 'hero')['media']['card_image'] ?? null;
         $home = collect(LandingPage::publicSections(V2Pages::HOME) ?: LandingPage::publicSections('home'))->firstWhere('section_key', 'path_cards');
         $plain = fn ($value) => trim(strip_tags((string) $value));
         foreach (array_keys($home['content'] ?? []) as $key) {
@@ -129,7 +131,7 @@ class PublicPageController extends Controller
                     'badge' => preg_replace('/^\d+\s*·\s*/u', '', $plain($home['content']["cards.{$i}.label"] ?? '')),
                     'title' => $plain($home['content']["cards.{$i}.title"] ?? ''),
                     'text' => $plain($home['content']["cards.{$i}.description"] ?? ''),
-                    'image' => $home['media']["card_{$i}_image"] ?? null,
+                    'image' => $own ?: ($home['media']["card_{$i}_image"] ?? null),
                 ];
             }
         }
@@ -141,7 +143,7 @@ class PublicPageController extends Controller
             'badge' => $plain($hero['content']['badge'] ?? ''),
             'title' => $plain($hero['content']['title'] ?? ''),
             'text' => '',
-            'image' => null,
+            'image' => $own,
         ] : null;
     }
 

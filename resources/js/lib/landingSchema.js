@@ -21,6 +21,7 @@ export const SECTION_MEDIA_SCHEMA = {
             { key: 'main_image', label: 'Main hero image', description: 'Primary hero visual on the right of the headline.' },
             { key: 'visual_shot', label: 'Screenshot instead of the drawn WiFi page', description: SHOT_HINT },
             { key: 'phone_image', label: 'Hero photo for phones', description: 'Shown instead of the main photo on phones held upright. Tall, about 900 × 1600. Empty: phones show the main photo.', v2: true },
+            { key: 'card_image', label: 'Card picture', description: 'v2 audience pages: the photo on the link cards to this page from the other pages. 4:3, about 1600 × 1200. Empty: the homepage card photo.', v2: true },
         ],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'features', 'feature_{i}_image', 'Feature {n} image'),
     },
