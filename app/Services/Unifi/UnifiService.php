@@ -283,6 +283,7 @@ class UnifiService
             $steps[$current] = ['ok' => false, 'detail' => static::shortError($e->getMessage()), 'hint' => match (true) {
                 $current === 'key' && in_array($status, [401, 403], true) => 'UniFi refused the key. Make a new one at unifi.ui.com → Settings → API Keys and paste it in full.',
                 $current === 'console' => 'Copy the console ID from unifi.ui.com: open the console and take the part of the address after /consoles/.',
+                $current !== 'key' && $status === 403 => 'UniFi only lets the console\'s owner use the cloud connection. Make the API key while signed in as the owner, or have the owner transfer ownership to your account (UniFi OS → Settings → Admins & Users).',
                 $current === 'site' && $status === 404 => 'The console doesn\'t offer the cloud API yet. Update UniFi OS and the Network application on the console, then test again.',
                 $current === 'site' && $status === 0 => 'Check the site: use "default" or the site\'s name as shown in UniFi.',
                 in_array($status, [502, 503, 504], true) => 'UniFi\'s cloud couldn\'t reach the console. Check that it\'s online in unifi.ui.com.',

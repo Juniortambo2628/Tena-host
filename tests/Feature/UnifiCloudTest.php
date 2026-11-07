@@ -130,3 +130,13 @@ it('lets a guest online from the portal through the cloud', function () {
     expect(app(UnifiService::class)->authorizeGuest('aa:bb:cc:dd:ee:ff', 'a8:9c:6c:c4:d4:f7'))->toBeTrue()
         ->and(WifiEvent::where('type', 'guest_authorized')->value('property_id'))->toBe($property->id);
 });
+
+it('says the key must be the console owner’s when UniFi says so', function () {
+    fakeCloudSite([CLOUD_NET.'/v1/sites*' => Http::response(['code' => 'forbidden', 'message' => 'forbidden: access denied: user is not the owner of this host'], 403)]);
+
+    $steps = collect(cloudUnifi()->diagnose()['steps'])->keyBy('key');
+
+    expect($steps['console']['ok'])->toBeTrue()
+        ->and($steps['site']['ok'])->toBeFalse()
+        ->and($steps['site']['hint'])->toContain('owner');
+});
