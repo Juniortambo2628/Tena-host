@@ -187,7 +187,10 @@ export default function Index({ settings, logos = [] }) {
             post(route('admin.settings.update'), {
                 preserveScroll: true,
                 onSuccess: () => setAutoSaveStatus('saved'),
-                onError: () => setAutoSaveStatus('error'),
+                onError: (errors) => {
+                    setAutoSaveStatus('error');
+                    notify.error(Object.values(errors)[0] || 'Settings could not be saved.');
+                },
             });
         }, 2000),
         []
@@ -245,7 +248,10 @@ export default function Index({ settings, logos = [] }) {
         post(route('admin.settings.update'), {
             preserveScroll: true,
             onSuccess: () => setAutoSaveStatus('saved'),
-            onError: () => setAutoSaveStatus('error'),
+            onError: (errors) => {
+                setAutoSaveStatus('error');
+                notify.error(Object.values(errors)[0] || 'Settings could not be saved.');
+            },
         });
     };
 

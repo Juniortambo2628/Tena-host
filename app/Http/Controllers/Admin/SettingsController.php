@@ -8,6 +8,7 @@ use App\Support\Brand;
 use App\Support\TrialSlots;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class SettingsController extends Controller
@@ -38,22 +39,22 @@ class SettingsController extends Controller
             'support_email' => 'sometimes|email|max:255',
             'email_primary_color' => 'sometimes|string|max:7',
             'email_accent_color' => 'sometimes|string|max:7',
-            'business_address' => 'sometimes|string|max:500',
-            'welcome_email_heading' => 'sometimes|string|max:255',
-            'welcome_email_body' => 'sometimes|string|max:5000',
-            'welcome_email_subject' => 'sometimes|string|max:255',
-            'receipt_email_heading' => 'sometimes|string|max:255',
-            'receipt_email_body' => 'sometimes|string|max:5000',
-            'forgot_password_email_heading' => 'sometimes|string|max:255',
-            'forgot_password_email_body' => 'sometimes|string|max:5000',
-            'waitlist_confirmation_subject' => 'sometimes|string|max:255',
-            'waitlist_confirmation_heading' => 'sometimes|string|max:255',
-            'waitlist_confirmation_body' => 'sometimes|string|max:5000',
-            'waitlist_welcome_subject' => 'sometimes|string|max:255',
-            'waitlist_welcome_heading' => 'sometimes|string|max:255',
-            'waitlist_welcome_body' => 'sometimes|string|max:5000',
-            'contact_enquiry_heading' => 'sometimes|string|max:255',
-            'contact_enquiry_body' => 'sometimes|string|max:5000',
+            'business_address' => 'sometimes|nullable|string|max:500',
+            'welcome_email_heading' => 'sometimes|nullable|string|max:255',
+            'welcome_email_body' => 'sometimes|nullable|string|max:5000',
+            'welcome_email_subject' => 'sometimes|nullable|string|max:255',
+            'receipt_email_heading' => 'sometimes|nullable|string|max:255',
+            'receipt_email_body' => 'sometimes|nullable|string|max:5000',
+            'forgot_password_email_heading' => 'sometimes|nullable|string|max:255',
+            'forgot_password_email_body' => 'sometimes|nullable|string|max:5000',
+            'waitlist_confirmation_subject' => 'sometimes|nullable|string|max:255',
+            'waitlist_confirmation_heading' => 'sometimes|nullable|string|max:255',
+            'waitlist_confirmation_body' => 'sometimes|nullable|string|max:5000',
+            'waitlist_welcome_subject' => 'sometimes|nullable|string|max:255',
+            'waitlist_welcome_heading' => 'sometimes|nullable|string|max:255',
+            'waitlist_welcome_body' => 'sometimes|nullable|string|max:5000',
+            'contact_enquiry_heading' => 'sometimes|nullable|string|max:255',
+            'contact_enquiry_body' => 'sometimes|nullable|string|max:5000',
             'billing_enabled' => 'sometimes|in:auto,enabled,disabled',
             'signup_alert_emails' => 'sometimes|nullable|string|max:500',
             'signup_alert_webhook_url' => 'sometimes|nullable|url|max:500',
@@ -84,11 +85,29 @@ class SettingsController extends Controller
             'contact_enquiry_heading', 'contact_enquiry_body',
         ];
 
-        foreach ($data['settings'] as $key => $value) {
-            if (isset($rules[$key])) {
-                $request->validate([$key => $rules[$key]], [], ['key' => $key]);
-            }
+        // A key with no rule is not a setting this page manages: reject it
+        // rather than save it. Compared as plain array keys, so a key such as
+        // "a.b" can't slip past as a nested field.
+        $unknown = array_keys(array_diff_key($data['settings'], $rules));
 
+        if ($unknown !== []) {
+            throw ValidationException::withMessages(collect($unknown)->mapWithKeys(
+                fn ($key) => ['settings.'.$key => 'The "'.$key.'" setting is not recognised.']
+            )->all());
+        }
+
+        // Each value arrives as settings[<key>], so the rules have to target
+        // settings.<key>. Validate everything before saving anything, so one bad
+        // value leaves every setting as it was.
+        $submitted = array_intersect_key($rules, $data['settings']);
+
+        $request->validate(
+            collect($submitted)->mapWithKeys(fn ($rule, $key) => ['settings.'.$key => $rule])->all(),
+            [],
+            collect($submitted)->mapWithKeys(fn ($rule, $key) => ['settings.'.$key => str_replace('_', ' ', $key)])->all(),
+        );
+
+        foreach ($data['settings'] as $key => $value) {
             $group = $request->input('settings_groups.'.$key)
                 ?? (in_array($key, $emailKeys) ? 'email_templates' : 'general');
 

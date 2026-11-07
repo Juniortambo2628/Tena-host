@@ -96,3 +96,112 @@ it('never shares the two-factor secret or recovery codes with the page', functio
     $response->assertDontSee('JBSWY3DPEHPK3PXP');
     $response->assertDontSee('code-one');
 });
+
+it('rejects an invalid setting value and saves nothing from that request', function () {
+    $admin = User::factory()->admin()->create();
+    Setting::updateOrCreate(['key' => 'site_name'], ['value' => 'Before', 'type' => 'string', 'group' => 'general']);
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => [
+            'site_name' => 'After',
+            'staff_wifi_enabled' => 'yes',
+        ],
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHasErrors(['settings.staff_wifi_enabled']);
+    expect(Setting::where('key', 'staff_wifi_enabled')->exists())->toBeFalse();
+    expect(Setting::where('key', 'site_name')->value('value'))->toBe('Before');
+});
+
+it('rejects a signup alert webhook that is not a URL', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => ['signup_alert_webhook_url' => 'not a url'],
+    ]);
+
+    $response->assertSessionHasErrors(['settings.signup_alert_webhook_url']);
+    expect(Setting::where('key', 'signup_alert_webhook_url')->exists())->toBeFalse();
+});
+
+it('still saves valid switch and webhook values', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => [
+            'staff_wifi_enabled' => '1',
+            'signup_alert_webhook_url' => 'https://hooks.example.com/signup',
+        ],
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHasNoErrors();
+    expect(Setting::where('key', 'staff_wifi_enabled')->value('value'))->toBe('1');
+    expect(Setting::where('key', 'signup_alert_webhook_url')->value('value'))->toBe('https://hooks.example.com/signup');
+});
+
+it('rejects a setting key it does not know and saves nothing from that request', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => [
+            'site_name' => 'After',
+            'mpesa_extras_enabled' => '0',
+            'a.b' => 'x',
+        ],
+    ]);
+
+    $response->assertSessionHasErrors(['settings.mpesa_extras_enabled']);
+    expect(Setting::where('key', 'mpesa_extras_enabled')->exists())->toBeFalse();
+    expect(Setting::where('key', 'a.b')->exists())->toBeFalse();
+    expect(Setting::where('key', 'site_name')->value('value'))->not->toBe('After');
+});
+
+it('saves the full settings form as the admin page sends it, empty fields included', function () {
+    $admin = User::factory()->admin()->create();
+
+    $response = $this->actingAs($admin)->post(route('admin.settings.update'), [
+        'settings' => [
+            'site_name' => 'TenaFi',
+            'maintenance_mode' => '0',
+            'support_email' => 'support@tena.com',
+            'signup_alert_emails' => '',
+            'signup_alert_webhook_url' => '',
+            'trial_slots_total' => '50',
+            'trial_slots_since' => '',
+            'callbacks_enabled' => '0',
+            'demo_enabled' => '0',
+            'v2_pages_enabled' => '0',
+            'event_accounts_enabled' => '0',
+            'teams_enabled' => '0',
+            'staff_wifi_enabled' => '1',
+            'wifi_qr_enabled' => '0',
+            'visitor_log_enabled' => '0',
+            'event_billing_enabled' => '0',
+            'email_primary_color' => '#000000',
+            'email_accent_color' => '#FFD300',
+            'business_address' => '',
+            'welcome_email_heading' => '',
+            'welcome_email_body' => '',
+            'welcome_email_subject' => '',
+            'receipt_email_heading' => '',
+            'receipt_email_body' => '',
+            'forgot_password_email_heading' => '',
+            'forgot_password_email_body' => '',
+            'waitlist_confirmation_subject' => '',
+            'waitlist_confirmation_heading' => '',
+            'waitlist_confirmation_body' => '',
+            'waitlist_welcome_subject' => '',
+            'waitlist_welcome_heading' => '',
+            'waitlist_welcome_body' => '',
+            'contact_enquiry_heading' => '',
+            'contact_enquiry_body' => '',
+            'billing_enabled' => 'auto',
+        ],
+    ]);
+
+    $response->assertRedirect();
+    $response->assertSessionHasNoErrors();
+    expect(Setting::where('key', 'staff_wifi_enabled')->value('value'))->toBe('1');
+});
