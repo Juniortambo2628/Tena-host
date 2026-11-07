@@ -140,3 +140,26 @@ it('says the key must be the console owner’s when UniFi says so', function () 
         ->and($steps['site']['ok'])->toBeFalse()
         ->and($steps['site']['hint'])->toContain('owner');
 });
+
+it('ignores a bad controller address left in the hidden direct-login field', function () {
+    $admin = User::factory()->admin()->create();
+    Setting::setValue('unifi_base_url', '192.168.88.181', 'unifi');
+    fakeCloudSite([
+        CLOUD_NET.'/v1/sites/site-uuid/devices*' => Http::response(['data' => []]),
+        CLOUD_NET.'/v1/sites/site-uuid/clients*' => Http::response(['data' => []]),
+    ]);
+    $form = ['mode' => 'cloud', 'api_key' => 'key-123', 'console_id' => '', 'base_url' => '192.168.88.181', 'username' => '', 'site' => 'default',
+        'is_os' => true, 'verify_ssl' => false, 'auth_minutes' => 1440, 'timeout' => 15];
+
+    $this->actingAs($admin)->postJson(route('admin.wifi.test'), $form)->assertOk()->assertJsonPath('ok', true);
+    $this->actingAs($admin)->post(route('admin.wifi.update'), $form)->assertSessionHasNoErrors();
+
+    expect(Setting::getValue('unifi_mode'))->toBe('cloud')
+        ->and(Setting::getValue('unifi_base_url'))->toBe('192.168.88.181');
+});
+
+it('still checks the controller address for the direct connection', function () {
+    $this->actingAs(User::factory()->admin()->create())
+        ->postJson(route('admin.wifi.test'), ['mode' => 'local', 'base_url' => '192.168.88.181', 'timeout' => 10])
+        ->assertStatus(422)->assertJsonValidationErrors('base_url');
+});
