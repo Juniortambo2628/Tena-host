@@ -92,7 +92,10 @@ function StepIcon({ state }) {
 }
 
 function Setup({ settings, status, portalUrl, portalHost, accessPoints }) {
-    const { data, setData, post, processing } = useForm({
+    const { data, setData, post, processing, errors } = useForm({
+        mode: settings.mode || 'local',
+        api_key: '',
+        console_id: settings.console_id || '',
         base_url: settings.base_url || '',
         username: settings.username || '',
         password: '',
@@ -116,6 +119,7 @@ function Setup({ settings, status, portalUrl, portalHost, accessPoints }) {
         setResult(null);
         try {
             const { data: r } = await window.axios.post(route('admin.wifi.test'), {
+                mode: data.mode, api_key: data.api_key, console_id: data.console_id,
                 base_url: data.base_url, username: data.username, password: data.password, site: data.site,
                 is_os: data.is_os, verify_ssl: data.verify_ssl, timeout: data.timeout,
             });
@@ -133,7 +137,7 @@ function Setup({ settings, status, portalUrl, portalHost, accessPoints }) {
     const connected = tested?.ok === true;
     const seen = accessPoints.some((ap) => ap.status !== 'never_seen');
     const checklist = [
-        { title: 'Enter the controller details', state: settings.base_url && settings.username && settings.has_password ? 'done' : 'todo' },
+        { title: 'Enter the controller details', state: (settings.mode === 'cloud' ? settings.has_api_key : settings.base_url && settings.username && settings.has_password) ? 'done' : 'todo' },
         { title: 'Test the connection', state: testing ? 'busy' : tested ? (connected ? 'done' : 'fail') : 'todo' },
         { title: 'Point the guest network at TenaFi', state: connected ? 'done' : 'todo', note: 'Done on the controller; TenaFi can’t check it for you.' },
         { title: 'Register access points on each site', state: accessPoints.length ? 'done' : 'todo' },
@@ -152,26 +156,49 @@ function Setup({ settings, status, portalUrl, portalHost, accessPoints }) {
                         </div>
                     </div>
                     <form onSubmit={(e) => { e.preventDefault(); save(); }} className="wifi-admin__form">
-                        <FormField label="Controller address" hint="Including https:// and the port if it isn’t 443, e.g. https://unifi.example.com:8443">
-                            <TextInput id="unifi-url" value={data.base_url} onChange={(e) => setData('base_url', e.target.value)} placeholder="https://controller.example.com" />
-                        </FormField>
-                        <FormField label="Controller type">
-                            <Select id="unifi-type" value={data.is_os ? 'os' : 'classic'} onChange={(e) => setData('is_os', e.target.value === 'os')}>
-                                <option value="os">UniFi OS: Dream Machine, Cloud Gateway, Cloud Key Gen2+</option>
-                                <option value="classic">Classic self-hosted Network application (port 8443)</option>
+                        <FormField label="How TenaFi reaches the controller">
+                            <Select id="unifi-mode" value={data.mode} onChange={(e) => setData('mode', e.target.value)}>
+                                <option value="local">Directly (address and admin login)</option>
+                                <option value="cloud">Through UniFi’s cloud (API key)</option>
                             </Select>
                         </FormField>
-                        <div className="wifi-admin__row">
-                            <FormField label="Admin username" hint="A local admin without two-factor sign-in.">
-                                <TextInput id="unifi-user" value={data.username} onChange={(e) => setData('username', e.target.value)} autoComplete="off" />
+                        {data.mode === 'cloud' ? (
+                            <>
+                                <p className="wifi-admin__hint">For a console TenaFi can’t reach from the internet, such as one behind the internet provider’s router. Make the key at unifi.ui.com → Settings → API Keys.</p>
+                                <div className="wifi-admin__row">
+                                    <FormField label="API key" error={errors.api_key}>
+                                        <TextInput id="unifi-api-key" type="password" value={data.api_key} onChange={(e) => setData('api_key', e.target.value)} autoComplete="new-password"
+                                            placeholder={settings.has_api_key ? '•••••••• (blank keeps the saved one)' : 'Paste the API key'} />
+                                    </FormField>
+                                    <FormField label="Console ID" hint="Blank if the key reaches one console. Otherwise the part after /consoles/ in unifi.ui.com’s address.">
+                                        <TextInput id="unifi-console" value={data.console_id} onChange={(e) => setData('console_id', e.target.value)} autoComplete="off" placeholder="Found automatically" />
+                                    </FormField>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                            <FormField label="Controller address" hint="Including https:// and the port if it isn’t 443, e.g. https://unifi.example.com:8443">
+                                <TextInput id="unifi-url" value={data.base_url} onChange={(e) => setData('base_url', e.target.value)} placeholder="https://controller.example.com" />
                             </FormField>
-                            <FormField label="Admin password">
-                                <TextInput id="unifi-pass" type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="new-password"
-                                    placeholder={settings.has_password ? '•••••••• (blank keeps the saved one)' : 'Controller admin password'} />
+                            <FormField label="Controller type">
+                                <Select id="unifi-type" value={data.is_os ? 'os' : 'classic'} onChange={(e) => setData('is_os', e.target.value === 'os')}>
+                                    <option value="os">UniFi OS: Dream Machine, Cloud Gateway, Cloud Key Gen2+</option>
+                                    <option value="classic">Classic self-hosted Network application (port 8443)</option>
+                                </Select>
                             </FormField>
-                        </div>
+                            <div className="wifi-admin__row">
+                                <FormField label="Admin username" hint="A local admin without two-factor sign-in.">
+                                    <TextInput id="unifi-user" value={data.username} onChange={(e) => setData('username', e.target.value)} autoComplete="off" />
+                                </FormField>
+                                <FormField label="Admin password">
+                                    <TextInput id="unifi-pass" type="password" value={data.password} onChange={(e) => setData('password', e.target.value)} autoComplete="new-password"
+                                        placeholder={settings.has_password ? '•••••••• (blank keeps the saved one)' : 'Controller admin password'} />
+                                </FormField>
+                            </div>
+                            </>
+                        )}
                         <div className="wifi-admin__row">
-                            <FormField label="Site ID" hint="From the controller’s address bar: …/site/<id>/…">
+                            <FormField label="Site ID" hint={data.mode === 'cloud' ? '“default”, or the site’s name as shown in UniFi.' : 'From the controller’s address bar: …/site/<id>/…'}>
                                 <TextInput id="unifi-site" value={data.site} onChange={(e) => setData('site', e.target.value)} placeholder="default" />
                             </FormField>
                             <FormField label="Guests stay online for (minutes)" hint="1440 = a day.">
@@ -184,7 +211,9 @@ function Setup({ settings, status, portalUrl, portalHost, accessPoints }) {
                                 <FormField label="Wait for the controller (seconds)">
                                     <TextInput id="unifi-timeout" type="number" value={data.timeout} onChange={(e) => setData('timeout', e.target.value)} />
                                 </FormField>
-                                <CheckboxField label="Verify the controller’s SSL certificate (leave off for a self-signed controller)" checked={data.verify_ssl} onChange={() => setData('verify_ssl', !data.verify_ssl)} />
+                                {data.mode !== 'cloud' && (
+                                    <CheckboxField label="Verify the controller’s SSL certificate (leave off for a self-signed controller)" checked={data.verify_ssl} onChange={() => setData('verify_ssl', !data.verify_ssl)} />
+                                )}
                             </div>
                         </details>
                         <FormActions>
@@ -237,7 +266,8 @@ function Setup({ settings, status, portalUrl, portalHost, accessPoints }) {
                 <GlassCard padding="p-6">
                     <h3 className="wifi-admin__side-title"><ShieldCheck size={16} /> Good to know</h3>
                     <ul className="wifi-admin__tips">
-                        <li>The password is stored encrypted and never shown again.</li>
+                        <li>The password and API key are stored encrypted and never shown again.</li>
+                        <li>Behind the internet provider’s router (“Upstream NAT detected” in UniFi)? Connect through UniFi’s cloud: no port forwarding needed.</li>
                         <li>Access points are registered by hosts (or you) under each site’s WiFi Access, using the AP’s MAC address.</li>
                         <li>TenaFi checks every access point every 5 minutes and tells the host when one goes offline.</li>
                     </ul>
