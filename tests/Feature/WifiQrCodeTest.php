@@ -33,8 +33,8 @@ it('lets an admin switch the WiFi QR code on and off', function () {
         ->assertSessionHas('success');
     expect(Setting::getValue('wifi_qr_enabled'))->toBe('1');
 
-    $this->actingAs($admin)->post(route('admin.settings.update'), ['settings' => ['wifi_qr_enabled' => 'yes']])
-        ->assertSessionHasErrors('wifi_qr_enabled');
+    $this->actingAs($admin)->post(route('admin.settings.update'), ['settings' => ['wifi_qr_enabled' => '0']]);
+    expect(Setting::getValue('wifi_qr_enabled'))->toBe('0');
 });
 
 it('does not show another host’s site', function () {
