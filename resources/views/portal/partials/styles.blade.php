@@ -49,4 +49,7 @@
     button:disabled { opacity: .6; cursor: default; }
     .fine { color: var(--muted); font-size: 12px; margin: 16px 0 0; text-align: center; }
     p { line-height: 1.5; }
+    .powered-by { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    .powered-by__logo { display: block; height: 18px; width: auto; }
+    .powered-by__logo--on-dark { display: none; }
 </style>

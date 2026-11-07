@@ -69,6 +69,6 @@ class BrandTest extends TestCase
         Setting::setValue('site_name', 'Tena Kenya', 'general', 'string');
 
         $this->get('/login')->assertInertia(fn ($page) => $page->where('brand.name', 'Tena Kenya'));
-        $this->get('/portal?id=aa:bb:cc:dd:ee:ff')->assertSee('Powered by Tena Kenya');
+        $this->get('/portal?id=aa:bb:cc:dd:ee:ff')->assertSee('Powered by', false)->assertSee('alt="Tena Kenya"', false);
     }
 }

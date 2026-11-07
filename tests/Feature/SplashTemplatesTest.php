@@ -217,4 +217,33 @@ class SplashTemplatesTest extends TestCase
         ]])->assertSessionHasNoErrors();
         $this->assertSame('MOCK1', $property->fresh()->branding_json['offers'][0]['code']);
     }
+
+    public function test_a_business_on_society_stays_on_the_themed_connected_page_after_sign_in(): void
+    {
+        $property = $this->property([
+            'template' => 'society', 'heading' => 'The Sip Society',
+            'offers' => [['title' => '10% off your next order', 'code' => 'SIPSOCIETY10']],
+        ], ['business_type' => 'bar'], 'business');
+        $this->mock(UnifiService::class, function ($mock) {
+            $mock->shouldReceive('authorizeGuest')->once()->andReturnTrue();
+            $mock->shouldReceive('normalizeMac')->andReturnUsing(fn ($m) => strtolower($m));
+        });
+
+        $this->post('/portal/connect', [
+            'id' => 'aa:bb:cc:dd:ee:ff', 'ap' => '11:22:33:44:55:66', 'url' => 'http://neverssl.com',
+            'first_name' => 'Wanjiru', 'phone' => '0712345678', 'consent' => '1', 'email' => 'w@example.com',
+        ])->assertOk()
+            ->assertSee('splash--society', false)
+            ->assertSee('Welcome to the Sip Society')->assertSee('SIPSOCIETY10');
+        $this->assertSame(1, $property->guests()->count());
+    }
+
+    public function test_powered_by_line_shows_the_logo(): void
+    {
+        $this->property(['template' => 'society']);
+
+        $this->splash()->assertOk()
+            ->assertSee('Powered by', false)
+            ->assertSee('/brand/tenafi-logo-header.png', false)->assertSee('/brand/tenafi-logo-footer.png', false);
+    }
 }

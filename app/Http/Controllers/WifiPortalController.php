@@ -249,8 +249,11 @@ class WifiPortalController extends Controller
                 ->update(['last_seen' => now(), 'status' => 'online']);
         }
 
-        // Business customers land on the business's homepage (menu, offers).
-        if (SplashDesign::isBusiness($context['property'])) {
+        // Business customers land on the business's homepage (menu, offers),
+        // except on templates with member perks (Society), whose own connected
+        // page carries the perk and code.
+        $perks = SplashDesign::hasPerks($context['design']['template']);
+        if (SplashDesign::isBusiness($context['property']) && ! $perks) {
             return redirect()->route('venue.show', $context['property']);
         }
 
@@ -259,7 +262,7 @@ class WifiPortalController extends Controller
         // success page carries it, with a link on to the original destination.
         $target = $data['url'] ?? null;
         $target = $target && preg_match('#^https?://#i', $target) ? $target : null;
-        if ($target && ! $context['design']['hasContent']) {
+        if ($target && ! $context['design']['hasContent'] && ! $perks) {
             return redirect()->away($target);
         }
 

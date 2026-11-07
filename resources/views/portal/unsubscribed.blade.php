@@ -13,7 +13,7 @@
         <div class="done" aria-hidden="true">&#10003;</div>
         <h1>You're unsubscribed</h1>
         <p class="sub">You won't receive offers from {{ $propertyName }} by email any more. Messages about a stay you book still reach you.</p>
-        <p class="fine">Powered by {{ \App\Support\Brand::name() }}</p>
+        <p class="fine">@include('portal.partials.powered')</p>
     </main>
 </body>
 </html>
