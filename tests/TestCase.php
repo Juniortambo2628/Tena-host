@@ -21,6 +21,8 @@ abstract class TestCase extends BaseTestCase
         ]);
 
         Setting::setValue('billing_enabled', 'disabled', 'billing', 'string');
+        // Most public-page tests cover the previous design; V2LiveSiteTest switches v2 on.
+        Setting::setValue('v2_live', '0', 'general', 'boolean');
         Cache::flush();
     }
 }

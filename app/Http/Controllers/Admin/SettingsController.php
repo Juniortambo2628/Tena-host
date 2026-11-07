@@ -63,6 +63,7 @@ class SettingsController extends Controller
             'callbacks_enabled' => 'sometimes|in:0,1',
             'demo_enabled' => 'sometimes|in:0,1',
             'v2_pages_enabled' => 'sometimes|in:0,1',
+            'v2_live' => 'sometimes|in:0,1',
             'event_accounts_enabled' => 'sometimes|in:0,1',
             'teams_enabled' => 'sometimes|in:0,1',
             'staff_wifi_enabled' => 'sometimes|in:0,1',

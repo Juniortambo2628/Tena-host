@@ -20,7 +20,9 @@ import './V2Site.css';
  *    edited in one place for both.
  */
 export default function V2Site({ places, media, joinHref = '#paths', children }) {
-    const { url } = usePage();
+    const { url, props } = usePage();
+    // Set before the sections render, so their links follow the current address.
+    v2Base = props.v2Base ?? (url.startsWith('/v2') ? '/v2' : '');
     const location = useInertiaLocation(url);
     const navigator = useMemo(() => ({
         createHref: (to) => (typeof to === 'string' ? to : createPath(to)),
@@ -76,9 +78,12 @@ function navigate(to, replace) {
     router.visit(next.pathname + next.search + next.hash, { replace });
 }
 
-/** A link to a live audience page ("/hosts#join") goes to its v2 version while previewing v2. */
+// "/v2" while previewing the v2 pages, "" once they're the live site (the page's v2Base prop).
+let v2Base = '/v2';
+
+/** A link to an audience page ("/hosts#join") stays on the v2 pages: /v2/hosts in the preview, /hosts live. */
 export function v2Link(href) {
-    return /^\/(hosts|business|events)(?=$|[#?])/.test(href || '') ? `/v2${href}` : href;
+    return /^\/(hosts|business|events)(?=$|[#?])/.test(href || '') ? `${v2Base}${href}` : href;
 }
 
 /** Kept stable, so the site settings aren't rebuilt on every render. */
@@ -122,7 +127,7 @@ function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
             nav: extractItems(header, 'links', ['label', 'href'])
                 .map((l) => ({ label: stripHtml(l.label), to: stripHtml(l.href) }))
                 .filter((l) => l.label && l.to)
-                .map((l) => ({ ...l, to: l.to.startsWith('#') ? `/v2${l.to}` : v2Link(l.to) })),
+                .map((l) => ({ ...l, to: l.to.startsWith('#') ? `${v2Base || '/'}${l.to}` : v2Link(l.to) })),
             useAccount: () => ({ signedIn }),
             // TenaFi has no public sign-in (it's fully managed): the quieter link is a WhatsApp chat.
             accountLinks: {
@@ -157,5 +162,5 @@ function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
                 pages: {},
             },
         };
-    }, [site, seo, brand, signedIn, places, media, joinHref]);
+    }, [site, seo, brand, signedIn, places, media, joinHref, v2Base]);
 }
