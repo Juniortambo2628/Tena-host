@@ -18,7 +18,7 @@ class VenueController extends Controller
 
         return view('portal.venue', [
             'property' => $property,
-            'logoUrl' => $property->logo_path ? asset('storage/'.ltrim($property->logo_path, '/')) : null,
+            'logoUrl' => SplashDesign::imageUrl($property->logo_path),
             'menu' => $property->amenities()->where('is_active', true)->orderBy('name')->get(['name', 'description', 'price']),
             'offers' => self::lines($property->offers),
             'events' => self::lines($property->events),

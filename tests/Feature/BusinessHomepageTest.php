@@ -47,6 +47,16 @@ class BusinessHomepageTest extends TestCase
             ->assertSee('Live music, Friday 7pm');
     }
 
+    public function test_venue_page_logo_works_for_both_saved_path_styles(): void
+    {
+        $this->cafe->update(['logo_path' => '/storage/logos/kahawa.png']);
+        $this->get(route('venue.show', $this->cafe))->assertSee('/storage/logos/kahawa.png', false)->assertDontSee('storage//storage', false)
+            ->assertSee('/brand/tenafi-logo-header.png', false);
+
+        $this->cafe->update(['logo_path' => 'logos/kahawa.png']);
+        $this->get(route('venue.show', $this->cafe))->assertSee('/storage/logos/kahawa.png', false);
+    }
+
     public function test_rental_properties_have_no_venue_page(): void
     {
         $rental = Property::factory()->create(['user_id' => User::factory()->create(['role' => 'host'])->id]);

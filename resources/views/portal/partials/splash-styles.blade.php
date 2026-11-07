@@ -730,5 +730,20 @@
     .sp-demo-bar a[aria-current=page] { background: #FFD300; color: #111; }
     @media (min-width: 640px) { .sp-demo-bar span { width: auto; margin-right: 6px; } }
 
+    /* "Powered by" logo: light-text version wherever the line sits on a dark background. */
+    .powered-by { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    .powered-by__logo { display: block; height: 18px; width: auto; }
+    .powered-by__logo--on-dark { display: none; }
+    .sp--dark .powered-by__logo--on-dark, .splash--nocturne .powered-by__logo--on-dark { display: block; }
+    .sp--dark .powered-by__logo--on-light, .splash--nocturne .powered-by__logo--on-light { display: none; }
+    .splash--society .powered-by__logo { height: 22px; }
+    @media (max-width: 1023.98px) {
+        .splash--horizon .powered-by__logo--on-dark { display: block; }
+        .splash--horizon .powered-by__logo--on-light { display: none; }
+    }
+    @media (min-width: 1024px) {
+        .splash--clover .powered-by__logo--on-dark, .splash--monogram .powered-by__logo--on-dark { display: block; }
+        .splash--clover .powered-by__logo--on-light, .splash--monogram .powered-by__logo--on-light { display: none; }
+    }
     @media (prefers-reduced-motion: reduce) { .sp * { transition: none !important; scroll-behavior: auto !important; } }
 </style>

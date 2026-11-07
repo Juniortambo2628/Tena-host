@@ -62,7 +62,7 @@
             <p class="sub">Enjoy your visit!</p>
         @endif
 
-        <p class="fine">Powered by {{ \App\Support\Brand::name() }}</p>
+        <p class="fine">@include('portal.partials.powered')</p>
     </main>
 </body>
 </html>

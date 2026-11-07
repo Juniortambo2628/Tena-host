@@ -140,7 +140,7 @@
             </div>
         @endif
 
-        <p class="sp-powered">Powered by {{ \App\Support\Brand::name() }}</p>
+        <p class="sp-powered">@include('portal.partials.powered')</p>
     </div>
 
     @if($tabs)
