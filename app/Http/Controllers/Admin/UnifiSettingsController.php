@@ -21,7 +21,9 @@ class UnifiSettingsController extends Controller
         'mode' => 'nullable|in:local,cloud',
         'api_key' => 'nullable|string|max:512',
         'console_id' => 'nullable|string|max:255',
-        'base_url' => 'nullable|url|max:255',
+        // Only used by the direct connection; through the cloud it's hidden, so
+        // a half-typed address left in it mustn't block saving or testing.
+        'base_url' => 'exclude_if:mode,cloud|nullable|url|max:255',
         'username' => 'nullable|string|max:255',
         'password' => 'nullable|string|max:255',
         'site' => 'nullable|string|max:64',
@@ -144,7 +146,9 @@ class UnifiSettingsController extends Controller
             Setting::setValue('unifi_api_key', Crypt::encryptString(trim($validated['api_key'])), self::GROUP);
         }
 
-        Setting::setValue('unifi_base_url', rtrim((string) $validated['base_url'], '/'), self::GROUP);
+        if (array_key_exists('base_url', $validated)) {
+            Setting::setValue('unifi_base_url', rtrim((string) $validated['base_url'], '/'), self::GROUP);
+        }
         Setting::setValue('unifi_username', (string) ($validated['username'] ?? ''), self::GROUP);
         Setting::setValue('unifi_site', $validated['site'] ?: 'default', self::GROUP);
         Setting::setValue('unifi_is_os', $validated['is_os'] ? '1' : '0', self::GROUP, 'boolean');
