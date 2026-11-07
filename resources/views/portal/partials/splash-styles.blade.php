@@ -620,6 +620,96 @@
         .sp--band.sp--solo .sp-connect { grid-column: 1 / 3; justify-self: center; width: min(440px, 100%); }
     }
 
+    /* ======================= 13. SOCIETY =======================
+       Events and members clubs: one centred column in deep green and gold,
+       like a printed invitation. No photo; the name is set in serif capitals,
+       the perks sit as plain gold icons, and the form has no card around it. */
+    .splash--society {
+        --canvas: var(--page, #0E3A2C); --paper: transparent; --paper-2: rgba(255, 255, 255, .05);
+        --ink: #F4EEDC; --muted: rgba(244, 238, 220, .72); --field-bg: #134636; --tile-icon: var(--accent);
+        --shadow: none; --r-field: 14px;
+    }
+    .splash--society .sp-app {
+        display: block; height: auto; min-height: 100vh; overflow: visible;
+        max-width: 480px; margin: 0 auto; padding: 44px 22px 8px;
+    }
+    .splash--society .sp-side { display: block; position: static; }
+    .splash--society .sp-photo, .splash--society .sp-mark, .splash--society .sp-connect__head { display: none; }
+    .splash--society .sp-brand { position: static; flex-direction: column; gap: 0; padding: 0; color: var(--ink); text-align: center; }
+    .splash--society .sp-brand__mono { display: none; }
+    .splash--society .sp-brand__logo { max-height: 64px; max-width: 220px; }
+    .splash--society .sp-brand__name {
+        font-family: var(--display); font-weight: 700; font-size: clamp(34px, 11vw, 46px); line-height: 1.05;
+        letter-spacing: .04em; text-transform: uppercase; overflow-wrap: anywhere;
+    }
+    .splash--society .sp-brand::after { content: ""; width: 96px; height: 1.5px; margin: 26px auto 0; background: var(--accent); opacity: .85; }
+    .splash--society .sp-hero {
+        position: static; min-height: 0; display: block; padding: 26px 0 0; color: var(--ink); text-align: center; text-shadow: none;
+    }
+    .splash--society .sp-eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .2em; opacity: 1; margin-bottom: 14px; }
+    .splash--society .sp-title, .splash--society .sp-title .sp-hl {
+        color: var(--accent); font-weight: 700; letter-spacing: -.005em; font-size: clamp(36px, 11vw, 52px); line-height: 1.08;
+    }
+    .splash--society .sp-lede { margin: 12px auto 0; font-size: 16px; color: var(--ink); opacity: .9; }
+    .splash--society .sp-connect { margin: 30px 0 0; padding: 0; background: none; border-radius: 0; overflow: visible; max-height: none; }
+    .splash--society .sp-tiles { gap: 6px; margin: 0 0 30px; }
+    .splash--society .sp-tile {
+        background: none; min-height: 0; padding: 0; gap: 10px; color: var(--ink);
+        font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .splash--society .sp-tile .sp-icon { width: 34px; height: 34px; }
+    .splash--society .sp-field { margin-bottom: 18px; }
+    .splash--society .sp-field > span:first-child { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+    .splash--society .sp-field em { text-transform: none; letter-spacing: 0; color: var(--muted); }
+    .splash--society input[type=text], .splash--society input[type=email], .splash--society input[type=tel], .splash--society select {
+        background: var(--field-bg); box-shadow: inset 0 0 0 1px rgba(244, 238, 220, .16); padding-block: 16px;
+    }
+    .splash--society .sp-tel { background: var(--field-bg); box-shadow: inset 0 0 0 1px rgba(244, 238, 220, .16); }
+    .splash--society .sp-tel input[type=tel] { background: transparent; box-shadow: none; }
+    .splash--society .sp-tel:focus-within, .splash--society input:focus { box-shadow: inset 0 0 0 2px var(--accent); }
+    .splash--society .sp-tel-prefix { color: var(--muted); }
+    .splash--society .sp-check { font-size: 14px; color: var(--ink); opacity: .92; }
+    .splash--society .sp-check input { width: 24px; height: 24px; }
+    .splash--society .sp-check a { color: var(--accent); }
+    .splash--society .sp-submit {
+        margin-top: 18px; padding: 21px 22px; font-size: 16px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    }
+    .splash--society .sp-powered { position: static; color: var(--muted); letter-spacing: .14em; text-transform: uppercase; padding: 36px 16px 28px; }
+    .splash--society .sp-sponsor { background: var(--paper-2); }
+    /* After sign-in: a gold ring, the perk card and the sign-off. */
+    .sp-ring {
+        width: 92px; height: 92px; margin: 2px auto 24px; border-radius: 50%; display: grid; place-items: center;
+        border: 2px solid var(--accent); color: var(--accent);
+    }
+    .sp-perk {
+        border: 1.5px solid var(--accent); border-radius: 22px; background: var(--paper-2); padding: 26px 20px; text-align: center;
+    }
+    .sp-perk__kicker { font-size: 13px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+    .sp-connect .sp-perk__title { font-family: var(--display); font-size: clamp(30px, 9vw, 40px); font-weight: 700; line-height: 1.1; margin: 10px 0 0; color: var(--ink); }
+    .sp-perk__detail { font-size: 15px; color: var(--muted); margin-top: 10px; }
+    .sp-perk__code {
+        display: inline-flex; flex-direction: column; gap: 4px; margin: 20px auto 0; padding: 12px 26px;
+        border: 1.5px dashed var(--accent); border-radius: 14px;
+    }
+    .sp-perk__code small { font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ink); opacity: .85; }
+    .sp-perk__code strong { font-size: 26px; font-weight: 700; letter-spacing: .1em; color: var(--accent); overflow-wrap: anywhere; }
+    .sp-perk__when { font-size: 15px; color: var(--ink); opacity: .85; margin-top: 14px; }
+    .sp-perk__save { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; color: var(--ink); opacity: .9; margin-top: 18px; }
+    .sp-perk__save .sp-icon { color: var(--accent); }
+    .sp-signoff-block { text-align: center; margin-top: 30px; }
+    .sp-signoff-block::before { content: ""; display: block; width: 60px; height: 1.5px; margin: 0 auto 26px; background: var(--accent); opacity: .85; }
+    .sp-connect .sp-signoff-block h2 { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--ink); }
+    .sp-signoff-block p { font-size: 16px; color: var(--muted); margin-top: 8px; }
+    .sp-signoff-block .sp-pill { margin: 18px auto 0; }
+    @media (max-width: 1023.98px) {
+        .splash--society .sp-connect { margin: 30px 0 0; }
+        .splash--society .sp-hero { min-height: 0; padding: 26px 0 0; }
+    }
+    @media (min-width: 1024px) {
+        .splash--society .sp-app { padding-top: 64px; }
+        .splash--society .sp-board { margin-top: 40px; }
+    }
+
     /* Staff WiFi: the note under the staff sign-in. */
     .sp-staff-note { font-size: 12.5px; line-height: 1.45; color: var(--muted); margin: 4px 0 14px; }
 

@@ -8,7 +8,7 @@ export const businessTypes = catalog.businessTypes;
 
 // Every guest splash template, grouped by the kind of place it suits.
 export const splashTemplates = catalog.templates.map(t => ({
-    key: t.id, name: t.name, description: t.description, best: t.for, group: t.group, accent: t.accent, defaults: t.defaults,
+    key: t.id, name: t.name, description: t.description, best: t.for, group: t.group, accent: t.accent, defaults: t.defaults, perks: !!t.perks,
 }));
 
 // The first five; their saved designs predate per-template defaults.
@@ -31,6 +31,12 @@ export function normalizeTemplate(key) {
 
 export const findTemplate = key => splashTemplates.find(t => t.key === normalizeTemplate(key));
 
+/** Society's quick tiles are perks: shown for every account, not only businesses. */
+export const hasPerks = key => !!findTemplate(key)?.perks;
+
+/** Whether the studio shows (and the page draws) the three quick tiles. */
+export const showsTiles = (key, business) => business || hasPerks(key);
+
 export const businessType = id => businessTypes.find(b => b.id === id) || null;
 
 export const recommendedTemplate = id => businessType(id)?.template || null;
@@ -46,7 +52,7 @@ export function templateDefaults(key, business) {
         heading: d.headline,
         opt_in: d.optIn,
         fields: { ...d.fields },
-        ...(business ? { tiles: d.tiles.map(t => ({ ...t, url: '' })) } : {}),
+        ...(showsTiles(key, business) ? { tiles: d.tiles.map(t => ({ ...t, url: '' })) } : {}),
     };
 }
 

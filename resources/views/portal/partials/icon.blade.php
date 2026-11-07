@@ -24,6 +24,7 @@
         'prev' => '<path d="m15 18-6-6 6-6"/>',
         'next' => '<path d="m9 18 6-6-6-6"/>',
         'check' => '<path d="M20 6 9 17l-5-5"/>',
+        'camera' => '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/>',
         // Quick tiles on business splash pages (resources/data/splash-templates.json).
         'tile-guide' => '<path d="M5 4h10a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h10"/>',
         'tile-clock' => '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
