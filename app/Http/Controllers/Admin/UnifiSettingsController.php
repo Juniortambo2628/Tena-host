@@ -16,6 +16,20 @@ class UnifiSettingsController extends Controller
 {
     private const GROUP = 'unifi';
 
+    /** The connection fields shared by save and test. */
+    private const RULES = [
+        'mode' => 'nullable|in:local,cloud',
+        'api_key' => 'nullable|string|max:512',
+        'console_id' => 'nullable|string|max:255',
+        'base_url' => 'nullable|url|max:255',
+        'username' => 'nullable|string|max:255',
+        'password' => 'nullable|string|max:255',
+        'site' => 'nullable|string|max:64',
+        'is_os' => 'boolean',
+        'verify_ssl' => 'boolean',
+        'timeout' => 'integer|min:1|max:120',
+    ];
+
     /**
      * Show the UniFi captive-portal settings form.
      */
@@ -23,6 +37,10 @@ class UnifiSettingsController extends Controller
     {
         return Inertia::render('Admin/Settings/Unifi', [
             'settings' => [
+                'mode' => Setting::getValue('unifi_mode') === 'cloud' ? 'cloud' : 'local',
+                'console_id' => Setting::getValue('unifi_console_id', ''),
+                // Like the password: only whether a key is saved, never the key.
+                'has_api_key' => filled(Setting::getValue('unifi_api_key')),
                 'base_url' => Setting::getValue('unifi_base_url', config('unifi.base_url')),
                 'username' => Setting::getValue('unifi_username', config('unifi.username')),
                 'site' => Setting::getValue('unifi_site', config('unifi.site', 'default')),
@@ -111,16 +129,20 @@ class UnifiSettingsController extends Controller
      */
     public function update(Request $request)
     {
-        $validated = $request->validate([
-            'base_url' => 'nullable|url|max:255',
-            'username' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-            'site' => 'nullable|string|max:64',
-            'is_os' => 'boolean',
-            'verify_ssl' => 'boolean',
+        $validated = $request->validate(self::RULES + [
             'auth_minutes' => 'integer|min:1|max:525600',
-            'timeout' => 'integer|min:1|max:120',
         ]);
+
+        $mode = ($validated['mode'] ?? 'local') === 'cloud' ? 'cloud' : 'local';
+        if ($mode === 'cloud' && blank($validated['api_key'] ?? null) && blank(Setting::getValue('unifi_api_key'))) {
+            return back()->withErrors(['api_key' => 'Paste the API key from unifi.ui.com → Settings → API Keys.']);
+        }
+
+        Setting::setValue('unifi_mode', $mode, self::GROUP);
+        Setting::setValue('unifi_console_id', trim((string) ($validated['console_id'] ?? '')), self::GROUP);
+        if (filled($validated['api_key'] ?? null)) {
+            Setting::setValue('unifi_api_key', Crypt::encryptString(trim($validated['api_key'])), self::GROUP);
+        }
 
         Setting::setValue('unifi_base_url', rtrim((string) $validated['base_url'], '/'), self::GROUP);
         Setting::setValue('unifi_username', (string) ($validated['username'] ?? ''), self::GROUP);
@@ -135,7 +157,12 @@ class UnifiSettingsController extends Controller
             Setting::setValue('unifi_password', Crypt::encryptString($validated['password']), self::GROUP);
         }
 
-        WifiEvent::record('settings_saved', 'Controller settings saved'.(filled($validated['password'] ?? null) ? ' (new password).' : '.'), ['by' => $request->user()?->email]);
+        $notes = array_filter([
+            $mode === 'cloud' ? 'through UniFi\'s cloud' : null,
+            filled($validated['password'] ?? null) ? 'new password' : null,
+            filled($validated['api_key'] ?? null) ? 'new API key' : null,
+        ]);
+        WifiEvent::record('settings_saved', 'Controller settings saved'.($notes ? ' ('.implode(', ', $notes).').' : '.'), ['by' => $request->user()?->email]);
 
         return back()->with('success', 'UniFi settings saved.');
     }
@@ -146,17 +173,14 @@ class UnifiSettingsController extends Controller
      */
     public function test(Request $request)
     {
-        $validated = $request->validate([
-            'base_url' => 'nullable|url|max:255',
-            'username' => 'nullable|string|max:255',
-            'password' => 'nullable|string|max:255',
-            'site' => 'nullable|string|max:64',
-            'is_os' => 'boolean',
-            'verify_ssl' => 'boolean',
-            'timeout' => 'integer|min:1|max:120',
-        ]);
+        $validated = $request->validate(self::RULES);
 
-        $service = new UnifiService(
+        $service = ($validated['mode'] ?? 'local') === 'cloud' ? new UnifiService(
+            site: ($validated['site'] ?? null) ?: Setting::getValue('unifi_site', config('unifi.site', 'default')),
+            timeout: max(15, (int) ($validated['timeout'] ?? 15)),
+            apiKey: filled($validated['api_key'] ?? null) ? trim($validated['api_key']) : UnifiService::storedApiKey(),
+            consoleId: trim((string) ($validated['console_id'] ?? '')) ?: null,
+        ) : new UnifiService(
             baseUrl: ($validated['base_url'] ?? null) ?: Setting::getValue('unifi_base_url', config('unifi.base_url')),
             username: ($validated['username'] ?? null) ?: Setting::getValue('unifi_username', config('unifi.username')),
             password: filled($validated['password'] ?? null)
@@ -167,6 +191,10 @@ class UnifiSettingsController extends Controller
             verifySsl: (bool) ($validated['verify_ssl'] ?? false),
             timeout: (int) ($validated['timeout'] ?? 10),
         );
+
+        if (! $service->usesCloud() && ($validated['mode'] ?? 'local') === 'cloud') {
+            return response()->json(['ok' => false, 'message' => 'Paste the API key first.', 'steps' => []]);
+        }
 
         $result = $service->diagnose();
         Setting::setValue('unifi_last_test', json_encode(['ok' => $result['ok'], 'message' => $result['message'], 'at' => now()->toIso8601String()]), self::GROUP);

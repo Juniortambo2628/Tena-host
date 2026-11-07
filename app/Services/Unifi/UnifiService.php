@@ -20,6 +20,10 @@ use RuntimeException;
  * Supports both classic self-hosted controllers (login at /api/login, API at
  * /api/s/{site}/...) and UniFi OS consoles such as the UDM/UDM-Pro/CloudKey
  * Gen2+ (login at /api/auth/login, API proxied under /proxy/network/...).
+ *
+ * With an API key instead (mode "cloud"), it goes through UniFi's cloud and
+ * the official Network API (see UnifiCloud), for a console TenaFi can't reach
+ * directly, such as one behind the internet provider's router.
  */
 class UnifiService
 {
@@ -29,6 +33,8 @@ class UnifiService
 
     protected bool $loggedIn = false;
 
+    protected ?UnifiCloud $cloud = null;
+
     public function __construct(
         protected ?string $baseUrl = null,
         protected ?string $username = null,
@@ -37,6 +43,8 @@ class UnifiService
         protected bool $isUnifiOs = true,
         protected bool $verifySsl = false,
         protected int $timeout = 10,
+        protected ?string $apiKey = null,
+        protected ?string $consoleId = null,
     ) {
         $this->baseUrl = rtrim($baseUrl ?? (string) config('unifi.base_url'), '/');
         $this->username ??= config('unifi.username');
@@ -68,6 +76,15 @@ class UnifiService
      */
     public static function fromSettings(): self
     {
+        if (Setting::getValue('unifi_mode') === 'cloud') {
+            return new self(
+                site: Setting::getValue('unifi_site') ?: config('unifi.site', 'default'),
+                timeout: max(15, (int) Setting::getValue('unifi_timeout', config('unifi.timeout', 10))),
+                apiKey: self::storedApiKey(),
+                consoleId: Setting::getValue('unifi_console_id') ?: null,
+            );
+        }
+
         return new self(
             baseUrl: Setting::getValue('unifi_base_url') ?: config('unifi.base_url'),
             username: Setting::getValue('unifi_username') ?: config('unifi.username'),
@@ -97,6 +114,33 @@ class UnifiService
         return config('unifi.password');
     }
 
+    /** The decrypted UniFi cloud API key from settings, if one is saved. */
+    public static function storedApiKey(): ?string
+    {
+        $stored = Setting::getValue('unifi_api_key');
+
+        if (filled($stored)) {
+            try {
+                return Crypt::decryptString($stored);
+            } catch (\Throwable) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /** Connecting through UniFi's cloud with an API key, rather than to the controller directly. */
+    public function usesCloud(): bool
+    {
+        return filled($this->apiKey);
+    }
+
+    protected function cloud(): UnifiCloud
+    {
+        return $this->cloud ??= new UnifiCloud($this->apiKey, $this->consoleId, $this->site, $this->timeout);
+    }
+
     /**
      * The connection test, step by step, for the admin's WiFi setup screen:
      * can we reach the controller, log in, open the site and list its
@@ -106,6 +150,10 @@ class UnifiService
      */
     public function diagnose(): array
     {
+        if ($this->usesCloud()) {
+            return $this->diagnoseCloud();
+        }
+
         $started = microtime(true);
         $steps = [
             'details' => ['label' => 'Controller details', 'ok' => null, 'detail' => '', 'hint' => null],
@@ -197,6 +245,64 @@ class UnifiService
         ];
     }
 
+    /**
+     * The same step-by-step test through UniFi's cloud: does the API key
+     * work, which console, can we open the site and list its devices?
+     */
+    protected function diagnoseCloud(): array
+    {
+        $started = microtime(true);
+        $steps = [
+            'key' => ['label' => 'Check the API key', 'ok' => null, 'detail' => '', 'hint' => null],
+            'console' => ['label' => 'Find the console', 'ok' => null, 'detail' => '', 'hint' => null],
+            'site' => ['label' => 'Open the site', 'ok' => null, 'detail' => '', 'hint' => null],
+            'devices' => ['label' => 'List access points', 'ok' => null, 'detail' => '', 'hint' => null],
+        ];
+        $devices = null;
+        $current = 'key';
+        $cloud = $this->cloud();
+
+        try {
+            $consoles = $cloud->consoles();
+            $steps['key'] = ['ok' => true, 'detail' => 'UniFi accepted the key.', 'hint' => null] + $steps['key'];
+
+            $current = 'console';
+            $id = $cloud->consoleId();
+            $name = collect($consoles)->firstWhere('id', $id)['name'] ?? null;
+            $steps['console'] = ['ok' => true, 'detail' => ($name ? $name.' · ' : '').$id, 'hint' => null] + $steps['console'];
+
+            $current = 'site';
+            $site = $cloud->site();
+            $steps['site'] = ['ok' => true, 'detail' => 'Site "'.$site['name'].'" is open.', 'hint' => null] + $steps['site'];
+
+            $current = 'devices';
+            $devices = count($cloud->devices());
+            $steps['devices'] = ['ok' => true, 'detail' => $devices === 1 ? '1 device on the site.' : "{$devices} devices on the site.", 'hint' => null] + $steps['devices'];
+        } catch (\Throwable $e) {
+            $status = $e instanceof UnifiCloudException ? $e->getCode() : 0;
+            $steps[$current] = ['ok' => false, 'detail' => static::shortError($e->getMessage()), 'hint' => match (true) {
+                $current === 'key' && in_array($status, [401, 403], true) => 'UniFi refused the key. Make a new one at unifi.ui.com → Settings → API Keys and paste it in full.',
+                $current === 'console' => 'Copy the console ID from unifi.ui.com: open the console and take the part of the address after /consoles/.',
+                $current === 'site' && $status === 404 => 'The console doesn\'t offer the cloud API yet. Update UniFi OS and the Network application on the console, then test again.',
+                $current === 'site' && $status === 0 => 'Check the site: use "default" or the site\'s name as shown in UniFi.',
+                in_array($status, [502, 503, 504], true) => 'UniFi\'s cloud couldn\'t reach the console. Check that it\'s online in unifi.ui.com.',
+                $status === 429 => 'Too many requests. Wait a minute and test again.',
+                default => 'Test again; if it keeps failing, check the console is online in unifi.ui.com.',
+            }] + $steps[$current];
+        }
+
+        $ok = collect($steps)->every(fn ($step) => $step['ok'] === true);
+        $failed = collect($steps)->first(fn ($step) => $step['ok'] === false);
+
+        return [
+            'ok' => $ok,
+            'message' => $ok ? 'Connected through UniFi\'s cloud. Guests can be let online.' : ($failed['label'] ?? 'Test').': '.($failed['detail'] ?? 'failed'),
+            'duration_ms' => (int) round((microtime(true) - $started) * 1000),
+            'devices' => $devices,
+            'steps' => collect($steps)->map(fn ($step, $key) => ['key' => $key] + $step)->values()->all(),
+        ];
+    }
+
     /** The useful part of a cURL error ("cURL error 28: ... timed out after 10001 ms" -> "Timed out after 10001 ms"). */
     public static function shortError(string $message): string
     {
@@ -208,6 +314,10 @@ class UnifiService
 
     public function isConfigured(): bool
     {
+        if ($this->usesCloud()) {
+            return true;
+        }
+
         return filled($this->baseUrl) && filled($this->username) && filled($this->password);
     }
 
@@ -222,6 +332,10 @@ class UnifiService
     {
         if (! $this->isConfigured()) {
             throw new RuntimeException('UniFi controller is not configured. Set UNIFI_BASE_URL, UNIFI_USERNAME and UNIFI_PASSWORD.');
+        }
+
+        if ($this->usesCloud()) {
+            return $this->authorizeGuestInCloud($clientMac, $apMac, $minutes);
         }
 
         $this->login();
@@ -260,6 +374,33 @@ class UnifiService
         return true;
     }
 
+    protected function authorizeGuestInCloud(string $clientMac, ?string $apMac, ?int $minutes): bool
+    {
+        $mac = $this->normalizeMac($clientMac);
+        $ap = $apMac ? $this->normalizeMac($apMac) : null;
+        $minutes ??= (int) Setting::getValue('unifi_auth_minutes', config('unifi.auth_minutes', 1440));
+        $propertyId = $ap ? AccessPoint::where('mac_address', $ap)->value('property_id') : null;
+
+        try {
+            $result = $this->cloud()->authorizeGuest($mac, $minutes);
+        } catch (\Throwable $e) {
+            $result = ['ok' => false, 'status' => $e instanceof UnifiCloudException ? $e->getCode() : 0, 'reason' => static::shortError($e->getMessage())];
+        }
+
+        if (! $result['ok']) {
+            Log::warning('UniFi cloud authorize-guest failed', ['status' => $result['status'], 'reason' => $result['reason'], 'mac' => $mac]);
+            WifiEvent::record('guest_refused', 'UniFi didn\'t let a device online (HTTP '.$result['status'].', '.$result['reason'].').', [
+                'device' => $mac, 'ap' => $ap, 'status' => $result['status'],
+            ], 'error', $propertyId);
+
+            return false;
+        }
+
+        WifiEvent::record('guest_authorized', 'A device was let online for '.$minutes.' minutes.', ['device' => $mac, 'ap' => $ap], 'info', $propertyId);
+
+        return true;
+    }
+
     /**
      * Every adopted device on the site with its connection state.
      *
@@ -267,6 +408,10 @@ class UnifiService
      */
     public function devices(): array
     {
+        if ($this->usesCloud()) {
+            return array_map(fn ($d) => ['mac' => $this->normalizeMac($d['mac'])] + $d, $this->cloud()->devices());
+        }
+
         $this->login();
 
         $response = $this->client()->get($this->apiPath('stat/device'));
