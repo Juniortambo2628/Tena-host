@@ -68,6 +68,8 @@ class PropertyController extends Controller
                 'latest' => $property->staffConnections()->latest('last_seen_at')->limit(20)
                     ->get(['id', 'name', 'identifier', 'visits', 'last_seen_at']),
             ] : null,
+            // A printable "scan to join the WiFi" QR code (admin switch, starts off).
+            'wifiQrEnabled' => filter_var(Setting::getValue('wifi_qr_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
         ]);
     }
 
