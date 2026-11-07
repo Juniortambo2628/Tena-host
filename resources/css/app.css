@@ -2,6 +2,13 @@
 /* Let Tailwind see the class names the v2 public pages' kit uses. */
 @source "../../node_modules/@okjt/site/dist";
 
+/* Phones keep the page at its real size: no font inflation when turned sideways.
+   (app.blade.php's viewport stops the zoom-in when a field is tapped.) */
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body {
     background-color: white;
     color: var(--color-dark);
