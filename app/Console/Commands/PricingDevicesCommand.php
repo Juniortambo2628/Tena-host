@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\LandingContent;
 use App\Models\LandingPage;
 use App\Models\Setting;
+use App\Services\Cms\PageBlueprint;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -17,6 +18,8 @@ use Illuminate\Support\Str;
  *    a month each" (devices are now bought, upfront or over 12 months, and
  *    belong to the client), keeping the rest of the admin's wording;
  *  - the header's "Pricing" link goes to /pricing;
+ *  - the /hosts and /business sign-up forms ask which device and how to pay
+ *    for it, just before the plan (the admin's other questions stay);
  *  - /pricing is switched on (Admin -> Settings "Pricing page").
  *
  *   --dry-run   lists every change and stops.
@@ -53,6 +56,11 @@ class PricingDevicesCommand extends Command
 
         foreach ($changes as $change) {
             $this->line("<comment>[{$change['where']}]</comment> {$change['key']}");
+            if (isset($change['note'])) {
+                $this->line('  + '.$change['note']);
+
+                continue;
+            }
             [$old, $new] = static::changedPart((string) $change['old'], (string) $change['new']);
             $this->line('  - '.$old);
             $this->line('  + '.$new);
@@ -102,6 +110,28 @@ class PricingDevicesCommand extends Command
         foreach ($this->contents(LandingPage::SITE, 'header', fn ($q) => $q->where('content_key', 'like', 'links.%.href')) as $row) {
             if (in_array(trim(strip_tags((string) $row->value)), ['/#pricing', '#pricing'], true)) {
                 $changes[] = ['id' => $row->id, 'where' => 'site/header', 'key' => $row->content_key, 'old' => $row->value, 'new' => '/pricing'];
+            }
+        }
+
+        // The sign-up forms: the device questions go in just before the plan.
+        foreach (['hosts', 'business'] as $slug) {
+            $wanted = collect(PageBlueprint::definitions()[$slug]['signup']['content']['steps'] ?? [])
+                ->flatMap(fn ($step) => $step['fields'] ?? [])
+                ->whereIn('key', ['device', 'devicePayment'])
+                ->values()->all();
+            foreach ($this->contents($slug, 'signup', fn ($q) => $q->where('content_key', 'like', 'steps.%.fields')) as $row) {
+                $fields = json_decode((string) $row->value, true) ?: [];
+                $keys = array_column($fields, 'key');
+                $at = array_search('plan', $keys, true);
+                if (! $wanted || $at === false || in_array('device', $keys, true)) {
+                    continue;
+                }
+                array_splice($fields, $at, 0, $wanted);
+                $changes[] = [
+                    'id' => $row->id, 'where' => "{$slug}/signup", 'key' => $row->content_key, 'old' => $row->value,
+                    'new' => json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                    'note' => 'new questions before the plan: '.collect($wanted)->pluck('label')->implode(' / '),
+                ];
             }
         }
 

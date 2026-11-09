@@ -213,6 +213,8 @@ class PublicPageController extends Controller
             'demo' => DemoController::enabled(),
             // Pricing sections link to /pricing once it's switched on.
             'pricingPage' => static::pricingPageEnabled() ? '/pricing' : null,
+            // Device prices, for the sign-up form's summary.
+            'devices' => LandingPage::liveDevices(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path, $index),
         ]);
     }

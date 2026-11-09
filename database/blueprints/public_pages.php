@@ -44,6 +44,12 @@ $detailsStep = fn (array $extra = []) => [
     ], $extra),
 ];
 
+// The device and how to pay for it (the /pricing page's devices; ids match its cards).
+$deviceFields = fn (string $unit) => [
+    ['key' => 'device', 'label' => 'Which TenaFi device?', 'type' => 'select', 'required' => false, 'options' => ['lite|TenaFi Lite (small spaces)', 'pro|TenaFi Pro (busy spaces)', 'outdoor|TenaFi Outdoor (outdoor & events)', 'notSure|Not sure, help me choose'], 'placeholder' => '', 'hint' => "(one per {$unit}; we confirm after a site survey)"],
+    ['key' => 'devicePayment', 'label' => 'How would you like to pay for it?', 'type' => 'singleSelect', 'required' => false, 'options' => ['upfront|Buy it upfront (best value)', 'monthly|Pay monthly (nothing upfront)'], 'placeholder' => '', 'hint' => ''],
+];
+
 $planField = fn (string $unit) => ['key' => 'plan', 'label' => 'Pick a starting plan', 'type' => 'planCards', 'required' => true, 'options' => ['basic|Basic', 'starter|Starter', 'growth|Growth', 'notSure|Not sure yet'], 'placeholder' => 'starter', 'hint' => "(per {$unit}, per month)"];
 
 $plans = fn (string $unit, array $features) => [
@@ -1012,6 +1018,7 @@ return [
                         ['key' => 'platforms', 'label' => 'Where do guests book you today?', 'type' => 'multiSelect', 'required' => false, 'options' => ['Airbnb', 'Booking.com', 'Vrbo', 'Direct or own website', 'Other'], 'placeholder' => '', 'hint' => ''],
                         ['key' => 'superhost', 'label' => 'Are you an Airbnb Superhost?', 'type' => 'singleSelect', 'required' => false, 'options' => ['Yes', 'Not yet'], 'placeholder' => '', 'hint' => '(optional)'],
                         ['key' => 'isp', 'label' => 'Internet provider', 'type' => 'select', 'required' => false, 'options' => ['Safaricom', 'Zuku', 'Faiba', 'Airtel', 'Different per unit', 'Other', 'Not sure'], 'placeholder' => '', 'hint' => ''],
+                        ...$deviceFields('unit'),
                         $planField('unit'),
                     ]],
                 ],
@@ -1368,6 +1375,7 @@ return [
                         ['key' => 'customersPerDay', 'label' => 'Customers per day', 'type' => 'select', 'required' => false, 'options' => ['Under 30', '30 to 100', '100 to 300', 'More than 300'], 'placeholder' => '', 'hint' => '(roughly)'],
                         ['key' => 'googleProfile', 'label' => 'Do you have a Google Business Profile?', 'type' => 'singleSelect', 'required' => false, 'options' => ['Yes', 'No', 'Not sure'], 'placeholder' => '', 'hint' => ''],
                         ['key' => 'isp', 'label' => 'Internet provider', 'type' => 'select', 'required' => false, 'options' => ['Safaricom', 'Zuku', 'Faiba', 'Airtel', 'Other', 'Not sure'], 'placeholder' => '', 'hint' => ''],
+                        ...$deviceFields('location'),
                         $planField('location'),
                     ]],
                 ],
