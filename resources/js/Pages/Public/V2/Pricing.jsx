@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import { SiteLayout, Container, SectionHeading, Eyebrow, PillLink, SECTION_OFFSET } from '@okjt/site';
 import V2Site from '@/Components/V2/V2Site';
+import { Pricing as PlanCards } from '@/Components/V2/Sections';
 import { extractItems, stripHtml, textLines } from '@/lib/cms';
 import { devicesFrom, formatKes, monthlyWithDevice, firstYear, fill, contentText as text } from '@/lib/devices';
 import './Pricing.css';
@@ -13,8 +14,8 @@ import './Pricing.css';
  * live /hosts plans, so the price table and the example are worked out here
  * and always match both.
  */
-export default function V2Pricing({ sections = [], seo = {} }) {
-    const { plans = [] } = usePage().props;
+export default function V2Pricing({ sections = [], planSections = {}, seo = {} }) {
+    const { plans = [], site = {} } = usePage().props;
     const devicesSection = sections.find((s) => s.section_key === 'devices');
     const pay = sections.find((s) => s.section_key === 'pay_options');
     const devices = devicesFrom(devicesSection);
@@ -23,10 +24,43 @@ export default function V2Pricing({ sections = [], seo = {} }) {
         <V2Site joinHref="#ways-to-pay">
             <Head title={seo.title || 'TenaFi devices and pricing'} />
             <SiteLayout cta={false}>
+                <Plans planSections={planSections} site={site} />
                 {devicesSection && <Devices section={devicesSection} devices={devices} />}
                 {pay && <WaysToPay section={pay} devices={devices} plans={plans.filter((p) => p.price_kes > 0)} />}
             </SiteLayout>
         </V2Site>
+    );
+}
+
+/** Where each audience's "Choose …" buttons go: its own sign-up form. */
+const AUDIENCES = [
+    { id: 'hosts', label: 'Short-term rentals', join: '/hosts#join' },
+    { id: 'business', label: 'Businesses', join: '/business#signup' },
+];
+
+/**
+ * The plans, exactly as each audience page's pricing section shows them,
+ * with a switch between rentals (per unit) and businesses (per location).
+ */
+function Plans({ planSections, site }) {
+    const audiences = AUDIENCES.filter((a) => planSections[a.id]);
+    const [current, setCurrent] = useState(audiences[0]?.id);
+    const audience = audiences.find((a) => a.id === current) || audiences[0];
+    if (!audience) return null;
+
+    return (
+        <div className="pricing-plans">
+            {audiences.length > 1 && (
+                <div className="pricing-plans__switch" role="group" aria-label="Show plans for">
+                    {audiences.map((a) => (
+                        <button key={a.id} type="button" aria-pressed={a.id === audience.id} onClick={() => setCurrent(a.id)}>
+                            {a.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+            <PlanCards key={audience.id} section={planSections[audience.id]} site={site} id="plans" joinHref={audience.join} devicesLink={false} />
+        </div>
     );
 }
 

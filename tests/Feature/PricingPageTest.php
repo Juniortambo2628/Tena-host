@@ -38,7 +38,11 @@ it('shows /pricing to everyone once switched on, with the three devices and live
         ->where('sections.1.content', fn ($c) => $c['items.0.name'] === 'TenaFi Lite' && $c['items.1.price_kes'] === '42000' && $c['items.2.monthly_kes'] === '5500')
         ->where('sections.1.media.device_1_image', '/legacy/assets/devices/tenafi-pro.webp')
         ->where('plans', fn ($plans) => collect($plans)->pluck('price_kes')->all() === [3000, 4500, 6000])
-        ->where('pricingPage', '/pricing'));
+        ->where('pricingPage', '/pricing')
+        // The plans as each audience page shows them, for the switch at the top.
+        ->where('planSections.hosts.section_key', 'pricing')
+        ->where('planSections.business.section_key', 'pricing')
+        ->where('planSections.business.content', fn ($c) => $c['plans.1.label'] === 'Starter'));
 
     $this->get('/sitemap.xml')->assertSee(url('/pricing'), false);
     // Each page's plans link to it.
