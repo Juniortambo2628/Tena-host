@@ -200,7 +200,7 @@ it('lets admins switch between pages in the CMS', function () {
         ->assertInertia(fn ($page) => $page
             ->component('Admin/Landing/Index')
             ->where('currentPage', 'business')
-            ->has('pages', 9) // site, home, hosts, business, events and their four v2 versions
+            ->has('pages', 10) // site, home, hosts, business, events, their four v2 versions and pricing
             ->where('sections.0.section_key', 'seo')
         );
 });

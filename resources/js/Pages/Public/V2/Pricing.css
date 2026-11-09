@@ -1,0 +1,270 @@
+@reference "../../../../css/theme.css";
+
+/* /pricing (V2 design): device cards, the two ways to pay, the price table
+   and the worked example. Text stays at 12px or more (CLAUDE.md). */
+
+.pricing-label {
+    @apply block text-xs font-semibold uppercase text-soft;
+    letter-spacing: 0.12em;
+}
+
+.pricing-chip {
+    @apply inline-flex self-start rounded-full px-3 py-1 text-xs font-semibold;
+}
+.pricing-chip--light,
+.pricing-chip--yellow { @apply bg-accent-soft text-ink; }
+.pricing-chip--soft { @apply bg-positive/10 text-positive; }
+.pricing-chip--dark { @apply bg-ink text-accent-soft; }
+
+/* Device cards */
+.pricing-devices {
+    @apply grid gap-5;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.pricing-device {
+    @apply flex flex-col overflow-hidden rounded-[1.75rem] border border-line bg-white;
+}
+
+.pricing-device__picture {
+    @apply flex items-center justify-center;
+    aspect-ratio: 66 / 39;
+}
+
+.pricing-device__picture img {
+    @apply block h-full w-full object-contain;
+}
+
+.pricing-device__body {
+    @apply flex flex-1 flex-col gap-3 p-6;
+}
+
+.pricing-device__name {
+    @apply !font-display text-2xl !font-semibold tracking-tight !text-ink;
+}
+
+.pricing-device__for {
+    @apply text-sm text-soft;
+}
+
+.pricing-device__specs {
+    @apply grid grid-cols-2 gap-2;
+}
+
+.pricing-device__specs div {
+    @apply flex flex-col-reverse rounded-xl bg-tint px-3 py-2.5;
+}
+
+.pricing-device__specs dd {
+    @apply text-lg font-semibold tabular-nums text-ink;
+}
+
+.pricing-device__specs dt {
+    @apply text-xs text-soft;
+}
+
+.pricing-device__price {
+    @apply mt-auto flex flex-col gap-1 border-t border-dashed border-line pt-4;
+}
+
+.pricing-device__price b {
+    @apply !font-display text-3xl font-semibold tabular-nums text-ink;
+}
+
+.pricing-device__monthly {
+    @apply text-sm text-soft;
+}
+
+/* "Bigger space? Add more devices." */
+.pricing-more {
+    @apply grid gap-6 rounded-[1.75rem] bg-ink p-6 text-white md:grid-cols-2 md:items-center md:p-8;
+}
+
+.pricing-more__intro h3 {
+    @apply !font-display text-2xl !font-semibold !text-accent-soft;
+}
+
+.pricing-more__intro p {
+    @apply mt-2 text-sm text-white/75;
+}
+
+.pricing-more__list {
+    @apply grid gap-2;
+}
+
+.pricing-more__list li {
+    @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl bg-white/5 px-4 py-3 text-sm;
+}
+
+.pricing-more__list b {
+    @apply font-semibold text-accent-soft;
+}
+
+/* Perks and notes */
+.pricing-perks,
+.pricing-notes {
+    @apply grid gap-3;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+}
+
+.pricing-perks li,
+.pricing-notes li {
+    @apply flex flex-col gap-1 rounded-2xl p-5 text-sm;
+}
+
+.pricing-perks li { @apply bg-accent-soft/25; }
+.pricing-notes li { @apply border border-line bg-white; }
+
+.pricing-perks b,
+.pricing-notes b {
+    @apply text-base font-semibold text-ink;
+}
+
+.pricing-perks span,
+.pricing-notes span {
+    @apply text-soft;
+}
+
+.pricing-footnote {
+    @apply text-xs text-soft;
+}
+
+/* Two ways to pay */
+.pricing-options {
+    @apply grid gap-5 md:grid-cols-2;
+}
+
+.pricing-option {
+    @apply flex flex-col gap-3 rounded-[1.75rem] border border-line bg-white p-6 md:p-8;
+}
+
+.pricing-option--dark {
+    @apply border-ink bg-ink text-white;
+}
+
+.pricing-option h3 {
+    @apply !font-display text-2xl !font-semibold !text-ink;
+}
+
+.pricing-option--dark h3 { @apply !text-accent-soft; }
+
+.pricing-option p { @apply text-sm text-soft; }
+.pricing-option--dark p { @apply text-white/75; }
+
+.pricing-option ol {
+    @apply mt-2 grid gap-2;
+}
+
+.pricing-option li {
+    @apply flex items-center gap-3 rounded-xl bg-tint px-4 py-3 text-sm text-ink;
+}
+
+.pricing-option--dark li {
+    @apply bg-white/5 text-white;
+}
+
+.pricing-option li > span {
+    @apply flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-bold text-ink;
+}
+
+/* The monthly price table: scrolls inside itself on phones. */
+.pricing-table {
+    @apply overflow-x-auto rounded-[1.25rem] border border-line bg-white;
+}
+
+.pricing-table table {
+    @apply w-full border-collapse text-sm;
+    min-width: 560px;
+}
+
+.pricing-table th,
+.pricing-table td {
+    @apply border-b border-line px-5 py-4 text-left;
+}
+
+.pricing-table td {
+    @apply text-right tabular-nums text-ink;
+    white-space: nowrap;
+}
+
+.pricing-table thead th {
+    white-space: nowrap;
+}
+
+/* Phones: the table scrolls sideways; say so. */
+.pricing-table__hint {
+    @apply mt-2 text-xs text-soft md:hidden;
+}
+
+.pricing-table thead th {
+    @apply bg-ink font-semibold text-white;
+}
+
+.pricing-table thead th:not(:first-child) {
+    @apply text-right;
+}
+
+.pricing-table tbody th {
+    @apply font-medium text-ink;
+}
+
+.pricing-table tbody th small {
+    @apply block text-xs font-normal text-soft;
+}
+
+.pricing-table tbody tr:last-child th,
+.pricing-table tbody tr:last-child td {
+    @apply border-b-0;
+}
+
+.pricing-table__best th,
+.pricing-table__best td {
+    @apply bg-accent-soft/25 font-semibold;
+}
+
+/* The worked example */
+.pricing-example {
+    @apply grid gap-4 md:grid-cols-3;
+}
+
+.pricing-example > div {
+    @apply flex flex-col gap-1 rounded-2xl border border-line bg-white p-5;
+}
+
+.pricing-example__intro b {
+    @apply text-base font-semibold text-ink;
+}
+
+.pricing-example__intro span,
+.pricing-example__way span:last-child {
+    @apply text-sm text-soft;
+}
+
+.pricing-example__way b {
+    @apply !font-display text-3xl font-semibold tabular-nums text-ink;
+}
+
+.pricing-example .pricing-example__way--best {
+    @apply border-positive/30 bg-positive/5;
+}
+
+.pricing-saving {
+    @apply flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-accent-soft px-6 py-4 font-semibold text-ink;
+}
+
+.pricing-saving b {
+    @apply !font-display text-2xl tabular-nums;
+}
+
+/* Call to action */
+.pricing-cta {
+    @apply flex flex-col gap-5 rounded-[1.75rem] bg-white p-6 md:flex-row md:items-center md:justify-between md:p-8;
+}
+
+.pricing-cta p {
+    @apply mt-2 max-w-xl text-base text-soft;
+}
+
+.pricing-cta__buttons {
+    @apply flex flex-wrap gap-3;
+}

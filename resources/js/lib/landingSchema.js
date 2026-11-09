@@ -136,6 +136,13 @@ export const SECTION_MEDIA_SCHEMA = {
     },
 
     comparison_table: { slots: [] },
+    // /pricing: one picture per device card (TenaFi Lite, Pro, Outdoor).
+    devices: {
+        slots: [],
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'items', 'device_{i}_image', 'Device {n}: picture')
+            .map(slot => ({ ...slot, description: 'The device on a transparent background, wide (about 1320 × 780). It sits on the card’s light, yellow or dark panel.' })),
+    },
+    pay_options: { slots: [] },
     demo: { slots: [] },
     worth_calculator: { slots: [] },
     tiles: { slots: [] },
