@@ -51,6 +51,8 @@ class BookADemoCommand extends Command
     private const SENTENCES = [
         '/Free trial: installs from 16 November, and the rest of November and all of December are free\.\s*Then month to month;/u' => 'Month to month;',
         '/Free for December, then month to month\./u' => 'Month to month.',
+        // The rentals pricing subtitle (also on the homepage and /pricing).
+        '/\s*Free trial from 1st December until 4 January 2027[^.]*\./u' => '',
     ];
 
     /**

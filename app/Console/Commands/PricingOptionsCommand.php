@@ -33,10 +33,13 @@ class PricingOptionsCommand extends Command
 {
     protected $signature = 'tenafi:pricing-options {--dry-run : Show the changes without saving anything} {--restore= : Restore a backup file from storage/app/cms-backups}';
 
-    protected $description = 'Add the two ways to pay, TenaFi devices and device FAQs to the live pricing (fills only new, empty fields; --dry-run first)';
+    protected $description = 'Add the two ways to pay, TenaFi devices and device FAQs to the live pricing (/hosts, /business and the homepage) (fills only new, empty fields; --dry-run first)';
 
     /** Live page => the blueprint page its defaults come from. */
-    private const PAGES = ['hosts' => 'hosts', 'v2-hosts' => 'hosts', 'business' => 'business', 'v2-business' => 'business'];
+    private const PAGES = ['hosts' => 'hosts', 'v2-hosts' => 'hosts', 'business' => 'business', 'v2-business' => 'business', 'v2' => 'hosts'];
+
+    /** Pages that get the pricing words only: the homepage's plans are the rentals plans, and its FAQ stays as it is. */
+    private const PRICING_ONLY = ['v2'];
 
     private const HOME_PAGES = ['home', 'v2'];
 
@@ -123,7 +126,7 @@ class PricingOptionsCommand extends Command
                 $this->checkPricing($slug, $live->all());
             }
 
-            if ($faq = $this->section($slug, 'faq')) {
+            if (! in_array($slug, self::PRICING_ONLY, true) && $faq = $this->section($slug, 'faq')) {
                 $this->faqs($faq, $slug, $blueprint[$bp]['faq']['content']['items'] ?? []);
             }
         }

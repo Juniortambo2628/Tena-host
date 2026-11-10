@@ -127,3 +127,20 @@ it('shows the Growth features one per line in the admin as a textarea', function
 
     expect($editor)->toContain("'features'")->toContain('One item per line');
 });
+
+it('gives the homepage pricing the two ways to pay, without adding device FAQs to its FAQ', function () {
+    Storage::fake('local');
+    // The live homepage as it is today: its pricing (copied from /hosts) has no "two ways to pay" words.
+    LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'pricing')->whereHas('page', fn ($p) => $p->where('slug', 'v2')))
+        ->where(fn ($q) => $q->where('content_key', 'like', 'pay_%')->orWhere('content_key', 'like', 'example_%')->orWhere('content_key', 'like', 'bigger_%')->orWhere('content_key', 'like', 'device%'))->delete();
+    LandingPage::clearCache();
+    $faqBefore = LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'faq')->whereHas('page', fn ($p) => $p->where('slug', 'v2')))->count();
+    expect(pricingField('v2', 'pricing', 'pay_buy_label'))->toBeNull();
+
+    $this->artisan('tenafi:pricing-options --dry-run')->expectsOutputToContain('[v2/pricing] pay_buy_label')->assertSuccessful();
+    $this->artisan('tenafi:pricing-options')->assertSuccessful();
+
+    expect(pricingField('v2', 'pricing', 'pay_buy_label'))->toBe('Buy the device')
+        ->and(pricingField('v2', 'pricing', 'example_device'))->toBe('lite')
+        ->and(LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'faq')->whereHas('page', fn ($p) => $p->where('slug', 'v2')))->count())->toBe($faqBefore);
+});
