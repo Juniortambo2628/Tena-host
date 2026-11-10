@@ -152,22 +152,34 @@ class LandingPage extends Model
      * Public Pages -> Devices & pricing), so the sign-up form quotes the
      * same prices as the page.
      *
-     * @return list<array{id: string, name: string, price_kes: int, monthly_kes: int, months: int}>
+     * They are kept once, on that section, and shared with every page's
+     * pricing (/hosts, /business) the way the plans are.
+     *
+     * @return list<array{id: string, name: string, price_kes: int, monthly_kes: int, months: int, image: string, best_for: string, coverage: string, coverage_label: string, capacity: string, capacity_label: string}>
      */
     public static function liveDevices(): array
     {
         $section = collect(static::publicSections('pricing'))->firstWhere('section_key', 'devices');
         $content = $section['content'] ?? [];
         $kes = fn ($value) => (int) preg_replace('/\D/', '', (string) $value);
+        $text = fn (string $key) => trim(strip_tags((string) ($content[$key] ?? '')));
 
         $devices = [];
         for ($i = 0; isset($content["items.{$i}.name"]); $i++) {
+            $id = $text("items.{$i}.id");
             $devices[] = [
-                'id' => strip_tags((string) ($content["items.{$i}.id"] ?? '')),
-                'name' => strip_tags((string) $content["items.{$i}.name"]),
+                'id' => $id,
+                'name' => $text("items.{$i}.name"),
                 'price_kes' => $kes($content["items.{$i}.price_kes"] ?? ''),
                 'monthly_kes' => $kes($content["items.{$i}.monthly_kes"] ?? ''),
                 'months' => $kes($content["items.{$i}.months"] ?? '') ?: 12,
+                // The uploaded picture, else TenaFi's own drawing of that device.
+                'image' => $section['media']["device_{$i}_image"] ?? (in_array($id, ['lite', 'pro', 'outdoor'], true) ? "/images/devices/tenafi-{$id}.svg" : ''),
+                'best_for' => $text("items.{$i}.best_for"),
+                'coverage' => $text("items.{$i}.coverage"),
+                'coverage_label' => $text("items.{$i}.coverage_label"),
+                'capacity' => $text("items.{$i}.capacity"),
+                'capacity_label' => $text("items.{$i}.capacity_label"),
             ];
         }
 

@@ -8,14 +8,16 @@ import { ArrowRight, Check, ChevronDown, Sparkles, Zap, Award, Clock } from 'luc
 import LineList from '@/Components/Public/LineList';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import ContactForm from './ContactForm';
+import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces } from '@/Components/Public/PayOptions';
+import { planHref } from '@/lib/pricingMath';
 import './Pricing.css';
 
-function PricingPlanCard({ plan }) {
+function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
     const { joinHref } = usePublic();
     const [expanded, setExpanded] = useState(false);
     const descId = `pricing-desc-${String(plan.label).replace(/\s+/g, '-').toLowerCase()}`;
-    // "#join?plan=growth" pre-selects the plan in this page's sign-up form.
-    const href = plan.id && joinHref.includes('#') ? `${joinHref}?plan=${plan.id}` : joinHref;
+    // "#join?plan=growth&pay=monthly&device=pro" pre-selects them in this page's sign-up form.
+    const href = planHref(joinHref, stripHtml(plan.id), pay, device?.id);
 
     return (
         <div className={`pricing-card ${plan.badge ? 'pricing-card--featured' : ''}`}>
@@ -24,7 +26,9 @@ function PricingPlanCard({ plan }) {
                 <span className="pricing-card-label">{plan.label}</span>
                 {stripHtml(plan.tagline) && <p className="pricing-card-tagline">{stripHtml(plan.tagline)}</p>}
                 <div className="pricing-card-price">
-                    {plan.price} <span className="pricing-card-price-unit">{plan.unit}</span>
+                    {monthly ? monthly.amount : plan.price}{' '}
+                    <span className="pricing-card-price-unit">{monthly ? stripHtml(plan.unit).replace(/\(about \$[\d,.]+\)/i, monthly.usd).trim() : plan.unit}</span>
+                    {monthly && <span className="pay-price-then">{monthly.then}</span>}
                 </div>
                 <LineList text={plan.features} className="pricing-card-features" icon={<Check size={16} className="pricing-card-feature-icon" />} />
                 {stripHtml(plan.description) && (
@@ -85,6 +89,12 @@ export default function Pricing({ section }) {
     const ctaClosing = getText(section, 'cta_closing', '');
     const ctaButton = getText(section, 'cta_button', 'Join');
 
+    // The two ways to pay, once the section has its words and there are devices.
+    const devices = useSectionDevices(section);
+    const withOptions = devices.length > 0 && Boolean(getText(section, 'pay_buy_label', ''));
+    const choice = usePayChoice(devices);
+    const pay = withOptions ? choice.pay : 'buy';
+
     return (
         <SectionWrapper bg={section.bg || 'gray'}>
             <SectionHeader title={title} subtitle={subtitle} />
@@ -93,11 +103,27 @@ export default function Pricing({ section }) {
 
             {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
 
+            {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} />}
+
             <div className="pricing-cards-grid">
                 {plans.map((plan, index) => (
-                    <PricingPlanCard key={index} plan={plan} />
+                    <PricingPlanCard
+                        key={index}
+                        plan={plan}
+                        pay={pay}
+                        device={choice.device}
+                        monthly={withOptions ? planPrice(section, plan, pay, choice.device) : null}
+                    />
                 ))}
             </div>
+
+            {withOptions && (
+                <>
+                    <WorkedExample section={section} plans={plans} devices={devices} />
+                    <DevicesRow section={section} devices={devices} />
+                    <BiggerSpaces section={section} site={site} />
+                </>
+            )}
 
             {ctaHeadline && <div className="pricing-cta-section">
                 <div className="pricing-cta-card">

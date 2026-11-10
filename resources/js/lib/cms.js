@@ -1,3 +1,5 @@
+import { splitLines } from './pricingMath';
+
 /**
  * Helper to extract CMS section data by section_key.
  */
@@ -202,8 +204,10 @@ export function baseSectionKey(sectionKey) {
 export function textLines(text, site) {
     // U+E000 marks line breaks through stripHtml, which collapses whitespace
     // (and HTML decoding drops NUL, so it can't be used as the marker).
+    // splitLines finds every kind of break a saved field can hold (\n, \r\n,
+    // <br>, </p>, </div>, </li>, &lt;br&gt;).
     const BREAK = '\uE000';
-    return stripHtml(String(text || '').replace(/<br\s*\/?>|<\/p>/gi, '\n').replace(/\r?\n/g, BREAK))
+    return stripHtml(splitLines(text).join(BREAK))
         .split(BREAK)
         .map((line) => line.trim())
         .filter(Boolean)

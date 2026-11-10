@@ -171,3 +171,8 @@
 .cta-trial__book .cta-banner-btn--ghost:hover {
     @apply border-dark;
 }
+
+/* "Plus a TenaFi device from KES 25,000, ..." under the plans. */
+.cta-trial__device-line {
+    @apply mt-2 text-sm text-muted;
+}

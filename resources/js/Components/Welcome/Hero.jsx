@@ -13,6 +13,18 @@ import FitText from '@/Components/Public/FitText';
 import './Hero.css';
 
 /** "From KES 3,000": the cheapest plan on the live /hosts pricing section. */
+/**
+ * "Plus a TenaFi device from {device_price}, ..." with the cheapest device on
+ * /pricing; '' when the line is empty or there are no devices yet.
+ */
+export function useDeviceLine(section) {
+    const { devices = [] } = usePage().props;
+    const line = stripHtml(getContent(section, 'device_line', ''));
+    const cheapest = devices.filter((d) => d.price_kes > 0).sort((a, b) => a.price_kes - b.price_kes)[0];
+    if (!line || (line.includes('{device_price}') && !cheapest)) return '';
+    return line.replace('{device_price}', cheapest ? `KES ${cheapest.price_kes.toLocaleString('en-KE')}` : '');
+}
+
 export function useCheapestPrice() {
     const { plans = [] } = usePage().props;
     const priced = plans.filter(p => p.price_kes > 0).sort((a, b) => a.price_kes - b.price_kes);

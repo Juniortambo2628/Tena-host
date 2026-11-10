@@ -10,6 +10,8 @@ import {
     textLines, baseSectionKey, comingSoonBadge,
 } from '@/lib/cms';
 import { v2Link } from '@/Components/V2/V2Site';
+import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces } from '@/Components/Public/PayOptions';
+import { planHref } from '@/lib/pricingMath';
 
 /**
  * The v2 public pages' sections (OKJT kit design), shared by the v2 homepage
@@ -467,16 +469,38 @@ export function Credibility({ section, id }) {
 }
 
 /** A page's plans (on /v2, the rentals plans copied from the live /hosts page). */
+/**
+ * A page's plans, with the two ways to pay (buy the device, or pay monthly
+ * with a device add-on), the TenaFi devices, a worked example and bigger
+ * spaces. The extras show once the section has its "Two ways to pay" words
+ * (`tenafi:pricing-options` fills them on live pages) and there are devices.
+ * On /pricing (devicesLink off) only the plans show: that page has its own.
+ */
 export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
     // Once /pricing is switched on (Admin -> Settings), each page's plans link to it.
     const { pricingPage: devicesPage } = usePage().props;
     const pricingPage = devicesLink ? devicesPage : null;
-    const plans = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'unit', 'features', 'cta', 'variant'])
-        .filter((p) => stripHtml(p.label))
-        .map((p, i) => ({
+    const devices = useSectionDevices(section);
+    const withOptions = devicesLink && devices.length > 0 && Boolean(stripHtml(getContent(section, 'pay_buy_label', '')));
+    const choice = usePayChoice(devices);
+    const pay = withOptions ? choice.pay : 'buy';
+
+    const rows = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'price_kes', 'unit', 'features', 'cta', 'variant'])
+        .filter((p) => stripHtml(p.label));
+    const plans = rows.map((p, i) => {
+        const monthly = withOptions ? planPrice(section, p, pay, choice.device) : null;
+        return {
             id: stripHtml(p.id) || String(i),
             name: stripHtml(p.label),
-            price: (
+            price: monthly ? (
+                <>
+                    {monthly.amount}
+                    <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">
+                        {stripHtml(p.unit).replace(/\(about \$[\d,.]+\)/i, monthly.usd).trim()}
+                    </span>
+                    <span className="pay-price-then">{monthly.then}</span>
+                </>
+            ) : (
                 <>
                     {stripHtml(p.price)}
                     {stripHtml(p.unit) && <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">{stripHtml(p.unit)}</span>}
@@ -484,21 +508,56 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
             ),
             tagline: stripHtml(p.tagline),
             lines: textLines(p.features, site).map((l) => (l.badge ? `${l.text} (${l.badge})` : l.text)),
-            cta: { to: joinHref, label: stripHtml(p.cta) || 'Book a demo' },
+            cta: { to: planHref(joinHref, stripHtml(p.id), pay, choice.device?.id), label: stripHtml(p.cta) || 'Book a demo' },
             highlight: stripHtml(p.variant) === 'dark',
-        }));
+        };
+    });
     if (!plans.length) return null;
 
     return (
         <div className={plans.length > 2 ? 'v2-pricing v2-pricing--wide' : 'v2-pricing'}>
-            <PricingSection
-                id={id}
-                eyebrow={stripHtml(getContent(section, 'menu_label', '')) || 'Pricing'}
-                title={stripHtml(getContent(section, 'title', ''))}
-                text={stripHtml(getContent(section, 'subtitle', ''))}
-                plans={plans}
-                footnote={stripHtml(getContent(section, 'footnote', ''))}
-            />
+            <section id={id} className={`${SECTION_OFFSET} py-24`}>
+                <Container>
+                    <SectionHeading
+                        eyebrow={stripHtml(getContent(section, 'menu_label', '')) || 'Pricing'}
+                        title={stripHtml(getContent(section, 'title', ''))}
+                        text={stripHtml(getContent(section, 'subtitle', ''))}
+                    />
+                    <div className="mt-10">
+                        {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} />}
+                    </div>
+                    {/* The kit's plan cards (PricingSection), drawn here so the switch sits above them. */}
+                    <div className="mx-auto mt-4 grid max-w-5xl gap-6 md:grid-cols-2">
+                        {plans.map((plan) => (
+                            <div key={plan.id} className={`relative flex flex-col overflow-hidden rounded-[2rem] p-8 sm:p-10 ${plan.highlight ? 'bg-ink text-white shadow-[0_40px_80px_-40px_color-mix(in_srgb,var(--color-ink)_80%,transparent)]' : 'border border-line bg-white'}`}>
+                                {plan.highlight && <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent-soft/20 blur-2xl" aria-hidden="true" />}
+                                <div className={`text-xs font-semibold uppercase tracking-[0.2em] ${plan.highlight ? 'text-accent-soft' : 'text-accent'}`}>{plan.name}</div>
+                                <div className={`mt-3 font-display text-3xl font-light tracking-tight sm:text-4xl ${plan.highlight ? 'text-white' : 'text-ink'}`}>{plan.price}</div>
+                                <div className={`mt-2 text-sm ${plan.highlight ? 'text-white/70' : 'text-soft'}`}>{plan.tagline}</div>
+                                <ul className="mt-8 flex-1 space-y-3 text-sm">
+                                    {plan.lines.map((feature) => (
+                                        <li key={feature} className="flex gap-3">
+                                            <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full ${plan.highlight ? 'bg-white/10 text-accent-soft' : 'bg-tint text-accent'}`}><Check className="h-3 w-3" /></span>
+                                            {feature}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <PillLink to={plan.cta.to} variant={plan.highlight ? 'light' : 'dark'} className="mt-10">{plan.cta.label}</PillLink>
+                            </div>
+                        ))}
+                    </div>
+                    {withOptions && (
+                        <>
+                            <WorkedExample section={section} plans={rows} devices={devices} />
+                            <DevicesRow section={section} devices={devices} />
+                            <BiggerSpaces section={section} site={site} />
+                        </>
+                    )}
+                    {stripHtml(getContent(section, 'footnote', '')) && (
+                        <div className="mt-8 text-center text-sm text-soft">{stripHtml(getContent(section, 'footnote', ''))}</div>
+                    )}
+                </Container>
+            </section>
             {pricingPage && (
                 <div className="v2-pricing__devices">
                     <PillLink to={pricingPage} variant="outline" arrow>See the devices and both ways to pay</PillLink>

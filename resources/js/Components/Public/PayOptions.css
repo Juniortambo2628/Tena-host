@@ -1,0 +1,147 @@
+@reference "../../../css/theme.css";
+
+/* The two ways to pay, the device row, the worked example and bigger spaces
+   on a pricing section. Text stays at 12px or more (CLAUDE.md). */
+
+.pay-options {
+    @apply mx-auto mb-10 flex w-full max-w-3xl flex-col items-center gap-4;
+}
+
+.pay-options__switch {
+    @apply grid w-full grid-cols-2 gap-1 rounded-full border border-dark/10 bg-white p-1;
+    max-width: 30rem;
+}
+
+.pay-options__switch button,
+.pay-options__devices button {
+    @apply flex min-w-0 flex-col items-center justify-center rounded-full px-3 py-2 text-center transition-colors;
+    min-height: 3rem;
+}
+
+.pay-options__switch button[aria-checked="true"],
+.pay-options__devices button[aria-checked="true"] {
+    @apply bg-dark text-white;
+}
+
+.pay-options__switch button:focus-visible,
+.pay-options__devices button:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+}
+
+.pay-options__label {
+    @apply text-sm font-semibold leading-tight;
+}
+
+.pay-options__badge {
+    @apply mt-0.5 text-xs font-medium opacity-75;
+}
+
+.pay-options__switch button[aria-checked="true"] .pay-options__badge {
+    @apply text-primary opacity-100;
+}
+
+.pay-options__detail {
+    @apply text-center text-sm text-muted;
+    max-width: 38rem;
+}
+
+.pay-options__detail ul {
+    @apply mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1;
+}
+
+.pay-options__detail li::before {
+    content: "✓ ";
+    @apply text-primary;
+}
+
+.pay-options__devices {
+    @apply flex flex-wrap justify-center gap-2;
+}
+
+.pay-options__devices button {
+    @apply border border-dark/10 bg-white px-4 py-1.5;
+    min-height: 2.75rem;
+}
+
+.pay-options__devices small {
+    @apply text-xs opacity-75;
+}
+
+.pay-options__vat {
+    @apply text-xs text-muted;
+}
+
+/* Plan price on monthly: the "for 12 months, then ..." line. */
+.pay-price-then {
+    @apply mt-1 block text-xs font-normal normal-case tracking-normal opacity-75;
+}
+
+/* Choose your TenaFi device */
+.pay-devices {
+    @apply mx-auto mt-14 w-full max-w-5xl;
+}
+
+.pay-devices__title {
+    @apply mb-6 text-center text-2xl font-semibold text-dark;
+}
+
+.pay-devices__list {
+    @apply grid gap-4 sm:grid-cols-3;
+}
+
+.pay-device {
+    @apply flex min-w-0 flex-col gap-1 rounded-3xl border border-dark/10 bg-white p-5 text-sm;
+}
+
+.pay-device img {
+    @apply mb-2 block h-auto w-full;
+    max-width: 100%;
+}
+
+.pay-device__name {
+    @apply text-lg text-dark;
+}
+
+.pay-device__specs,
+.pay-device__for,
+.pay-device__monthly {
+    @apply text-muted;
+}
+
+.pay-device__price {
+    @apply mt-2 text-xl font-semibold tabular-nums text-dark;
+}
+
+.pay-devices__note {
+    @apply mt-3 text-center text-xs text-muted;
+}
+
+/* Worked example */
+.pay-example {
+    @apply mx-auto mt-8 max-w-3xl rounded-2xl bg-primary/20 px-5 py-4 text-center text-sm text-dark;
+}
+
+/* Bigger space? */
+.pay-bigger {
+    @apply mx-auto mt-8 grid max-w-3xl gap-3 rounded-3xl bg-dark p-6 text-white;
+}
+
+.pay-bigger h3 {
+    @apply text-lg font-semibold text-primary;
+}
+
+.pay-bigger ul {
+    @apply grid gap-2;
+}
+
+.pay-bigger li {
+    @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl bg-white/5 px-4 py-2.5 text-sm;
+}
+
+.pay-bigger b {
+    @apply font-semibold text-primary;
+}
+
+.pay-bigger__cta {
+    @apply justify-self-start rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-dark;
+}
