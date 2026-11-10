@@ -26,7 +26,7 @@ export function sectionId(section) {
 /** The section's chip in the "On this page" bar. */
 export const NAV_LABELS = {
     comparison: 'The gap', detailed_features: 'Features', showcase: 'In action', how_it_works: 'How it works',
-    comparison_table: 'Compared', credibility: 'Who we are', pricing: 'Pricing', faq: 'FAQ', cta_banner: 'Free trial',
+    comparison_table: 'Compared', credibility: 'Who we are', pricing: 'Pricing', faq: 'FAQ', cta_banner: 'Book a demo',
 };
 export function navLabel(section) {
     const type = baseSectionKey(section.section_key);
@@ -484,7 +484,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
             ),
             tagline: stripHtml(p.tagline),
             lines: textLines(p.features, site).map((l) => (l.badge ? `${l.text} (${l.badge})` : l.text)),
-            cta: { to: joinHref, label: stripHtml(p.cta) || 'Book my free trial' },
+            cta: { to: joinHref, label: stripHtml(p.cta) || 'Book a demo' },
             highlight: stripHtml(p.variant) === 'dark',
         }));
     if (!plans.length) return null;
@@ -526,7 +526,7 @@ export function Faq({ section, id }) {
     );
 }
 
-/** The free trial band: words and ticks over a photo, a button per audience. */
+/** The "Book a demo" band: words and ticks over a photo, a button per audience. */
 export function Trial({ section, site, id, joinHref }) {
     const whatsapp = getText(site.whatsapp_button, 'number').replace(/\D/g, '');
     const ticks = textLines(getContent(section, 'ticks', ''), site);
@@ -546,7 +546,7 @@ export function Trial({ section, site, id, joinHref }) {
                 <div className="group relative isolate overflow-hidden rounded-[2rem] px-6 py-16 text-center sm:px-12 lg:py-24">
                     <Photo image={getUpload(section, 'image') || '/legacy/assets/Tena-Landing/Tena-Welcome-Divine.jpg'} width={1800} className="-z-20" />
                     <div className="absolute inset-0 -z-10 bg-gradient-to-r from-tint via-tint/90 to-tint/40" />
-                    <Eyebrow>{stripHtml(getContent(section, 'badge', '')) || 'Free trial'}</Eyebrow>
+                    <Eyebrow>{stripHtml(getContent(section, 'badge', '')) || 'Book a demo'}</Eyebrow>
                     <h2 className="mx-auto mt-4 max-w-3xl !font-display text-4xl !font-light leading-tight tracking-tight !text-ink sm:text-5xl lg:text-6xl">
                         {stripHtml(getContent(section, 'title', ''))}
                     </h2>

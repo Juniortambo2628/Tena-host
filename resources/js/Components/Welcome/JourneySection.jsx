@@ -194,7 +194,7 @@ export default function JourneySection({ section }) {
     const outcomes = extractItems(section, 'outcomes', ['title', 'text']).filter(o => o.title);
     const title = getText(section, 'title', 'What you get in your first month');
     const exampleTitle = getText(section, 'example_title', 'Example first month');
-    const ctaLabel = getText(section, 'cta_label', 'Book my free trial');
+    const ctaLabel = getText(section, 'cta_label', 'Book a demo');
     const ctaUrl = getText(section, 'cta_url', '#join');
 
     return (

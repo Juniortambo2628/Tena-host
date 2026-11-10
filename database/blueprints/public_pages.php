@@ -44,6 +44,9 @@ $detailsStep = fn (array $extra = []) => [
     ], $extra),
 ];
 
+// Book a demo: how they'd like it (on the details step of the rentals and business forms).
+$demoField = ['key' => 'demoType', 'label' => 'How would you like your demo?', 'type' => 'singleSelect', 'required' => false, 'options' => ['call|A call or video call', 'visit|A visit to my place'], 'placeholder' => '', 'hint' => ''];
+
 // The device and how to pay for it (the /pricing page's devices; ids match its cards).
 $deviceFields = fn (string $unit) => [
     ['key' => 'device', 'label' => 'Which TenaFi device?', 'type' => 'select', 'required' => false, 'options' => ['lite|TenaFi Lite (small spaces)', 'pro|TenaFi Pro (busy spaces)', 'outdoor|TenaFi Outdoor (outdoor & events)', 'notSure|Not sure, help me choose'], 'placeholder' => '', 'hint' => "(one per {$unit}; we confirm after a site survey)"],
@@ -58,23 +61,23 @@ $plans = fn (string $unit, array $features) => [
     ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 6,000', 'price_kes' => '6000', 'unit' => "per {$unit}, per month (about \$47)", 'features' => $features['growth'][1], 'cta' => 'Choose Growth', 'variant' => 'outline'],
 ];
 
-// The free trial (live copy, Oct 2026): installs start 16 November, the rest
-// of November is free, then a free month in December. After that it's month
-// to month (cancel with 30 days' notice), and paying yearly gives 2 months free.
+// Book a demo (Nov 2026): the free trial is over. New customers book a demo
+// (a call or video call, or a visit to their place); after that it's month to
+// month (cancel with 30 days' notice), and paying yearly gives 2 months free.
 //
-// TODO(Glen): does the KES 2,500 installation fee apply after the trial?
+// TODO(Glen): is there a KES 2,500 installation fee?
 //   Undecided, so no copy mentions it yet.
 // TODO(Glen): does the multi-unit discount start at 5 or 10 units?
 //   Undecided; the copy and the signup discounts below still say 10.
 $founding = fn (string $who) => [
     // Section key kept as cta_banner__founding so live content stays attached.
-    'title' => 'Free trial (December)',
+    'title' => 'Book a demo',
     'content' => [
-        'badge' => 'Free trial',
-        'title' => 'Try TenaFi free for the whole of December.',
-        'body' => 'Installs start 16 November'.($who === 'short-term rental operators' ? ', in time for the high season,' : '')." and the rest of November is free too. From January it\u{2019}s month to month: cancel any time with 30 days\u{2019} notice. Pay yearly and get 2 months free.",
+        'badge' => 'Book a demo',
+        'title' => 'See TenaFi working for your '.($who === 'short-term rental operators' ? 'rentals.' : 'business.'),
+        'body' => "Book a demo by call or video, or we visit and show it on your own WiFi. We recommend the right device and plan, with no commitment. After that it\u{2019}s month to month: cancel any time with 30 days\u{2019} notice. Pay yearly and get 2 months free.",
         'note' => '',
-        'buttons' => [['label' => 'Book my free trial', 'href' => '']],
+        'buttons' => [['label' => 'Book a demo', 'href' => '']],
     ],
 ];
 
@@ -118,7 +121,7 @@ $journey = fn (string $audience) => $audience === 'hosts' ? [
         ],
         'bar_lead' => 'One product, one team:',
         'bar_text' => 'device + WiFi page + CRM + done-for-you campaigns.',
-        'cta_label' => 'Book my free trial',
+        'cta_label' => 'Book a demo',
         'cta_url' => '/hosts#join',
     ],
 ] : [
@@ -158,7 +161,7 @@ $journey = fn (string $audience) => $audience === 'hosts' ? [
         ],
         'bar_lead' => 'One product, one team:',
         'bar_text' => 'device + WiFi page + CRM + done-for-you campaigns.',
-        'cta_label' => 'Book my free trial',
+        'cta_label' => 'Book a demo',
         'cta_url' => '/business#signup',
     ],
 ];
@@ -195,11 +198,11 @@ return [
             'title' => 'Announcement bar',
             'content' => [
                 'enabled' => '1',
-                // {taken}, {total} and {left} come from the free trial slot counter (Admin -> Settings).
-                'text' => 'Free trial for December · Installs from 16 November · {taken} of {total} slots taken',
+                // {taken}, {total} and {left} would come from the old trial slot counter; no longer used.
+                'text' => 'See TenaFi working for your place · Book a demo by call, video or a visit',
                 // Used when the counter is off (no total in Settings).
-                'text_without_slots' => 'Free trial for December · Installs from 16 November',
-                'link_label' => 'Book a slot',
+                'text_without_slots' => 'See TenaFi working for your place · Book a demo by call, video or a visit',
+                'link_label' => 'Book a demo',
                 'link_href' => '/#trial',
                 // Comma-separated page slugs (home, hosts, business). Empty = every page.
                 'pages' => 'home',
@@ -218,7 +221,7 @@ return [
                 'groups' => [
                     ['title' => 'Who it’s for', 'links' => "Short-term rentals | /hosts\nCafés & restaurants | /business\nSalons, spas & barbers | /business\nGyms & studios | /business\nClinics & pharmacies | /business\nShops | /business\nEvents, weddings & venues | /events"],
                     ['title' => 'What it does', 'links' => "Branded guest WiFi | /#wifi-page\nGuest list (CRM) | /#all-in-one\nGoogle review requests | /#reviews\nWhatsApp, SMS & email campaigns | /#campaigns\nEvent & sponsor WiFi | /events"],
-                    ['title' => 'Company', 'links' => "How it works | /#how\nFree trial | /#trial\nPrivacy policy | /privacy\nTerms | /terms"],
+                    ['title' => 'Company', 'links' => "How it works | /#how\nBook a demo | /#trial\nPrivacy policy | /privacy\nTerms | /terms"],
                 ],
                 // The single "Quick Links" column, used when there are no groups.
                 'links' => [
@@ -237,13 +240,13 @@ return [
                 'number' => '+254 703 501 597',
                 'label' => 'WhatsApp us',
                 // Pre-filled message, by page.
-                'message_home' => "Hi TenaFi, I\u{2019}d like to find out about your free trial.",
-                'message_hosts' => "Hi TenaFi, I\u{2019}d like to book a free trial for my short-term rental(s).",
-                'message_business' => "Hi TenaFi, I\u{2019}d like to book a free trial for my business.",
+                'message_home' => "Hi TenaFi, I\u{2019}d like to book a demo.",
+                'message_hosts' => "Hi TenaFi, I\u{2019}d like to book a demo for my short-term rental(s).",
+                'message_business' => "Hi TenaFi, I\u{2019}d like to book a demo for my business.",
                 // Optional menu per page: one option per line, "Label | pre-filled message".
                 // Empty = the button opens WhatsApp straight away with the message above.
                 'menu_greeting' => 'Hi there! 👋 What brings you to TenaFi?',
-                'menu_home' => "I run short-term rentals | Hi TenaFi, I run short-term rentals and I’d like to book a free trial.\nI own a business | Hi TenaFi, I own a business and I’d like to book a free trial.\nI’m planning an event | Hi TenaFi, I’m planning an event and I’d like to talk about event WiFi.\nI’m already a TenaFi client | Hi TenaFi, I’m already a client and I need some help.",
+                'menu_home' => "I run short-term rentals | Hi TenaFi, I run short-term rentals and I’d like to book a demo.\nI own a business | Hi TenaFi, I own a business and I’d like to book a demo.\nI’m planning an event | Hi TenaFi, I’m planning an event and I’d like to talk about event WiFi.\nI’m already a TenaFi client | Hi TenaFi, I’m already a client and I need some help.",
                 'menu_hosts' => '',
                 'menu_business' => '',
                 'message_events' => 'Hi TenaFi, I’m planning an event and I’d like to talk about event WiFi.',
@@ -252,7 +255,7 @@ return [
         ],
         'trial_slots' => [
             // The numbers come from real sign-ups; the total and start date are in Admin -> Settings.
-            'title' => 'Free trial slot counter',
+            'title' => 'Slot counter (old free trial; off)',
             'content' => [
                 'taken_text' => '{taken} of {total} free trial slots taken',
                 'left_text' => '{left} slots left',
@@ -302,7 +305,7 @@ return [
                 'title' => 'Turn your existing WiFi into '.$hl('growth.'),
                 'subtitle' => 'One all-in-one WiFi platform for <strong>short-term rentals</strong>, <strong>local businesses</strong> and <strong>events</strong>.',
                 'body' => 'Guests log in, join your list, review you and come back. We install it and run it for you.',
-                'cta_primary' => 'Book my free trial',
+                'cta_primary' => 'Book a demo',
                 'cta_primary_url' => '#trial',
                 'cta_secondary' => 'See how it works',
                 'cta_secondary_url' => '#how',
@@ -318,16 +321,16 @@ return [
                 'callback_title' => 'Get a call back',
                 'callback_options' => "hosts|I run rentals\nbusiness|I own a business\nevents|I’m planning an event",
                 'callback_button' => 'Call me back',
-                'callback_note' => 'We’ll call or WhatsApp you about the free trial.',
-                'callback_link_label' => 'Or book your slot now',
+                'callback_note' => 'We’ll call or WhatsApp you to arrange your demo.',
+                'callback_link_label' => 'Or book your demo now',
                 'callback_link' => '#trial',
                 'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
                 // {price} is the cheapest plan on the live /hosts pricing section.
-                'price_line' => 'Free for December. From {price} a month after that.',
+                'price_line' => 'Plans from {price} a month, plus your TenaFi device.',
                 'price_link_label' => 'See pricing',
                 'price_link' => '#pricing',
-                'ticks' => "Installed for you\nNo payment to book\nCancel with 30 days’ notice",
-                'show_slots' => '1',
+                'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
+                'show_slots' => '0',
                 // "image" (the hero photo, the default) or "splash" (a drawn WiFi page and floating cards).
                 'visual' => 'splash',
                 'visual_screen' => "color: #4A3123\nbrand: Kahawa House | Café · Westlands\nheadline: Karibu! Free WiFi.\ntiles: ☕ View menu | 📶 Free WiFi | 🎂 Birthday treat\nFirst name\n+254 Phone number\nBirthday (day and month)\noptin: Send me offers, news and a birthday treat",
@@ -423,7 +426,7 @@ return [
                 'demo_url' => '/demo',
                 // Phones and tablets see this button instead of the QR code.
                 'button_label' => 'Open the demo WiFi page',
-                'cta_label' => 'Book my free trial',
+                'cta_label' => 'Book a demo',
                 'cta_href' => '#trial',
                 // public/brand/demo-qr.svg encodes https://tena-fi.com/demo; regenerate it if the domain changes.
                 'qr_image' => '/brand/demo-qr.svg',
@@ -601,33 +604,33 @@ return [
             ],
         ],
         'cta_banner__founding' => [
-            'title' => 'Free trial (December) + pricing',
+            'title' => 'Book a demo + pricing',
             'content' => [
                 'anchor' => 'trial',
-                // "trial": yellow, ticks, slot counter and the after-the-trial pricing card.
+                // "trial": yellow, ticks and the pricing card (the style keeps its old name).
                 'style' => 'trial',
-                'badge' => 'Free trial',
-                'title' => 'Try TenaFi free for the whole of December.',
-                'body' => 'Installs start 16 November, and the rest of November is free too. Then it’s month to month.',
+                'badge' => 'Book a demo',
+                'title' => 'See TenaFi working for your place.',
+                'body' => 'Book a demo by call or video, or we visit and show it on your own WiFi. We recommend the right device and plan, with no commitment.',
                 'note' => '',
-                'ticks' => "No payment to book\nInstalled for you\nCancel with 30 days’ notice",
-                'show_slots' => '1',
+                'ticks' => "A call, a video call or a visit\nWe recommend your device and plan\nNo commitment",
+                'show_slots' => '0',
                 // Plans come from the live /hosts pricing section, never typed twice.
                 'pricing_anchor' => 'pricing',
-                'pricing_title' => 'After the trial',
+                'pricing_title' => 'Pricing',
                 'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
                 'pricing_links' => [
                     ['label' => 'Rental pricing', 'href' => '/hosts#h-pricing'],
                     ['label' => 'Business pricing', 'href' => '/business#b-pricing'],
                     ['label' => 'Events', 'href' => '/events'],
                 ],
-                'buttons_title' => 'Book your slot',
+                'buttons_title' => 'Book your demo',
                 // An href starting "whatsapp:" opens WhatsApp (Site-wide number) with that message.
                 'buttons' => [
                     ['label' => 'I run short-term rentals', 'href' => '/hosts#join'],
                     ['label' => 'I own a business', 'href' => '/business#signup'],
                     ['label' => 'I’m planning an event', 'href' => '/events#enquire'],
-                    ['label' => 'Questions? WhatsApp us', 'href' => 'whatsapp:Hi TenaFi, I have a question about the free trial.'],
+                    ['label' => 'Questions? WhatsApp us', 'href' => 'whatsapp:Hi TenaFi, I have a question about TenaFi.'],
                 ],
             ],
         ],
@@ -641,7 +644,7 @@ return [
                     ['question' => 'Who runs it day to day?', 'answer' => 'We do. We keep the WiFi running, update your page, and write and send your review requests and campaigns. You get a monthly report.'],
                     ['question' => 'Who owns the guest list?', 'answer' => 'You do. Guests opt in with consent on your WiFi page, and the list stays yours.'],
                     ['question' => 'Does it work for events?', 'answer' => 'Yes, from weddings and launch nights to stadiums. Each event gets its own WiFi page and attendee tag, with room for a sponsor. WhatsApp us with your date and expected crowd.'],
-                    ['question' => 'What happens after the free trial?', 'answer' => 'You choose a plan and continue month to month, or cancel with 30 days’ notice. Paying yearly gets you 2 months free.'],
+                    ['question' => 'What happens in a demo?', 'answer' => 'On a call, a video call or a visit to your place, we show you TenaFi working, look at your space and recommend the right device and plan. There’s no commitment. After that it’s month to month, or cancel with 30 days’ notice.'],
                 ],
             ],
         ],
@@ -675,12 +678,12 @@ return [
                 'callback_title' => 'Get a call back',
                 'callback_options' => 'hosts|I run rentals',
                 'callback_button' => 'Call me back',
-                'callback_note' => 'We’ll call or WhatsApp you about the free trial.',
-                'callback_link_label' => 'Or book your slot now',
+                'callback_note' => 'We’ll call or WhatsApp you to arrange your demo.',
+                'callback_link_label' => 'Or book your demo now',
                 'callback_link' => '#join',
                 'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
-                'ticks' => "Installed for you\nNo payment to book\nCancel with 30 days’ notice",
-                'show_slots' => '1',
+                'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
+                'show_slots' => '0',
                 // "image" (the hero photo) or "splash" (a drawn WiFi page and floating cards).
                 'visual' => 'splash',
                 'visual_screen' => "color: #0F4C45\nbrand: The Loft Nairobi | Kilimani\nheadline: Karibu! You’re home.\ntiles: 📖 Guide | 🕑 Checkout | 🚕 Transfers\nFirst name\nEmail address\n+254 Phone number\noptin: Send me offers and early access to direct deals",
@@ -748,7 +751,7 @@ return [
                 'checklist' => "See the welcome page, house guide and extras\nSwitch between a rental, a café, a salon and an event",
                 'demo_url' => '/demo?type=rental',
                 'button_label' => 'Open the demo WiFi page',
-                'cta_label' => 'Book my free trial',
+                'cta_label' => 'Book a demo',
                 'cta_href' => '#join',
                 // public/brand/demo-qr.svg encodes https://tena-fi.com/demo; regenerate it if the domain changes.
                 'qr_image' => '/brand/demo-qr.svg',
@@ -943,11 +946,11 @@ return [
                 'anchor' => 'h-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per unit. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, guest list and support. Free for December, then month to month.',
-                // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee after the trial?
-                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+                'subtitle' => 'The device, installation, WiFi page, guest list and support. Month to month.',
+                // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee?
+                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
-                'show_slots' => '1',
+                'show_slots' => '0',
                 'cta_headline' => '',
                 'plans' => $plans('unit', [
                     'basic' => ['Capture guests and collect reviews', "Branded WiFi page and guest list\nA review request to every guest, by SMS and email\nA campaign every quarter"],
@@ -987,19 +990,19 @@ return [
             'title' => 'Sign-up (#join)',
             'content' => [
                 'anchor' => 'join',
-                'menu_label' => 'Free trial',
-                'menu_description' => 'Book your free trial. December is on us.',
+                'menu_label' => 'Book a demo',
+                'menu_description' => 'By call, video or a visit to your place.',
                 'signup_type' => 'host',
-                'show_slots' => '1',
-                'badge' => 'Free trial',
+                'show_slots' => '0',
+                'badge' => 'Book a demo',
                 'title' => "Let\u{2019}s get started",
-                'subtitle' => 'Book a free trial for your short-term rentals. Installs start 16 November; the rest of November and all of December are free.',
-                'submit_label' => 'Book my free trial',
+                'subtitle' => 'Book a demo for your short-term rentals: a call, a video call or a visit. We show you TenaFi working and recommend the right device and plan.',
+                'submit_label' => 'Book my demo',
                 'consent_text' => $consent,
                 'success_title' => 'Asante, {firstName}!',
-                'success_message' => "Your free trial booking is in. Here\u{2019}s what we have.",
+                'success_message' => "Your demo request is in. Here\u{2019}s what we have.",
                 'next_steps_title' => 'What happens next',
-                'next_steps' => "We message you on WhatsApp to book a short setup call.\nWe check your routers and agree install dates, building by building if you have several units.\nYour first guests are captured within 7 days of install.",
+                'next_steps' => "We message you on WhatsApp to agree a day and time for your demo.\nWe show you TenaFi working, check your routers and recommend devices, building by building if you have several units.\nWhen you\u{2019}re ready, we install it and your first guests are captured within 7 days.",
                 'error_message' => 'Something went wrong. Please try again or WhatsApp us on +254 703 501 597.',
                 'price_suffix' => 'per unit / month',
                 'discount_field' => 'units',
@@ -1011,7 +1014,7 @@ return [
                     ['match' => '50+', 'percent' => '30'],
                 ],
                 'steps' => [
-                    $detailsStep(),
+                    $detailsStep([$demoField]),
                     ['title' => 'Your rentals', 'heading' => 'Tell us about your rentals', 'description' => 'So we can plan your devices and campaigns.', 'fields' => [
                         ['key' => 'units', 'label' => 'How many units?', 'type' => 'select', 'required' => true, 'options' => ['1|1 unit', '2-4|2 to 4', '5-9|5 to 9', '10-49|10 to 49', '50+|50 or more'], 'placeholder' => '', 'hint' => ''],
                         ['key' => 'area', 'label' => 'Where are they?', 'type' => 'text', 'required' => false, 'options' => [], 'placeholder' => 'e.g. Kilimani, Nairobi', 'hint' => ''],
@@ -1059,12 +1062,12 @@ return [
                 'callback_title' => 'Get a call back',
                 'callback_options' => 'business|I own a business',
                 'callback_button' => 'Call me back',
-                'callback_note' => 'We’ll call or WhatsApp you about the free trial.',
-                'callback_link_label' => 'Or book your slot now',
+                'callback_note' => 'We’ll call or WhatsApp you to arrange your demo.',
+                'callback_link_label' => 'Or book your demo now',
                 'callback_link' => '#signup',
                 'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
-                'ticks' => "Installed for you\nNo payment to book\nCancel with 30 days’ notice",
-                'show_slots' => '1',
+                'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
+                'show_slots' => '0',
                 // "image" (the hero photo) or "splash" (a drawn WiFi page and floating cards).
                 'visual' => 'splash',
                 'visual_screen' => "color: #4A3123\nbrand: Kahawa House | Café · Westlands\nheadline: Karibu! Free WiFi.\ntiles: ☕ Menu | 📶 Free WiFi | 🎂 Birthday\nFirst name\n+254 Phone number\nBirthday (day and month)\noptin: Send me offers, news and a birthday treat",
@@ -1099,7 +1102,7 @@ return [
                 'checklist' => "See the welcome page, menu and sign-up\nSwitch between a café, a salon, a rental and an event",
                 'demo_url' => '/demo?type=cafe',
                 'button_label' => 'Open the demo WiFi page',
-                'cta_label' => 'Book my free trial',
+                'cta_label' => 'Book a demo',
                 'cta_href' => '#signup',
                 // public/brand/demo-qr.svg encodes https://tena-fi.com/demo; regenerate it if the domain changes.
                 'qr_image' => '/brand/demo-qr.svg',
@@ -1302,11 +1305,11 @@ return [
                 'anchor' => 'b-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per location. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, customer list and support. Free for December, then month to month.',
-                // TODO(Glen): installation fee after the trial?
-                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+                'subtitle' => 'The device, installation, WiFi page, customer list and support. Month to month.',
+                // TODO(Glen): installation fee?
+                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
-                'show_slots' => '1',
+                'show_slots' => '0',
                 'cta_headline' => '',
                 'plans' => $plans('location', [
                     'basic' => ['Google reviews from every customer', "A Google review request to every customer\nBy SMS and email\nA campaign every quarter"],
@@ -1345,17 +1348,17 @@ return [
             'title' => 'Sign-up (#signup)',
             'content' => [
                 'anchor' => 'signup',
-                'menu_label' => 'Free trial',
-                'menu_description' => 'Book your free trial. December is on us.',
+                'menu_label' => 'Book a demo',
+                'menu_description' => 'By call, video or a visit to your place.',
                 'signup_type' => 'business',
-                'show_slots' => '1',
-                'badge' => 'Free trial',
+                'show_slots' => '0',
+                'badge' => 'Book a demo',
                 'title' => "Let\u{2019}s get started",
-                'subtitle' => 'Book a free trial for your business. Installs start 16 November; the rest of November and all of December are free.',
-                'submit_label' => 'Book my free trial',
+                'subtitle' => 'Book a demo for your business: a call, a video call or a visit. We show you TenaFi working and recommend the right device and plan.',
+                'submit_label' => 'Book my demo',
                 'consent_text' => $consent,
                 'success_title' => 'Asante, {firstName}!',
-                'success_message' => "Your free trial booking is in. Here\u{2019}s what we have.",
+                'success_message' => "Your demo request is in. Here\u{2019}s what we have.",
                 'next_steps_title' => 'What happens next',
                 'next_steps' => "We message you on WhatsApp to book a short setup call.\nIf you don\u{2019}t have a Google Business Profile yet, we help you set one up.\nYour WiFi page goes live and your first customers join within 7 days of install.",
                 'error_message' => 'Something went wrong. Please try again or WhatsApp us on +254 703 501 597.',
@@ -1366,6 +1369,7 @@ return [
                 'steps' => [
                     $detailsStep([
                         ['key' => 'role', 'label' => 'Your role', 'type' => 'select', 'required' => false, 'options' => ['Owner', 'Manager', 'Marketing', 'Other'], 'placeholder' => '', 'hint' => ''],
+                        $demoField,
                     ]),
                     ['title' => 'Your business', 'heading' => 'Tell us about your business', 'description' => 'We set up your WiFi page and campaigns around it.', 'fields' => [
                         ['key' => 'businessName', 'label' => 'Business name', 'type' => 'text', 'required' => true, 'options' => [], 'placeholder' => '', 'hint' => ''],

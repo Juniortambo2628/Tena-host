@@ -19,7 +19,7 @@ it('sits directly above pricing on both audience pages and books the right free 
 
     $content = journeyContent($slug);
     expect($content['eyebrow'])->toBe('Log on. Opt in. Come back.')
-        ->and($content['cta_label'])->toBe('Book my free trial')
+        ->and($content['cta_label'])->toBe('Book a demo')
         ->and($content['cta_url'])->toBe($book)
         ->and($content)->toHaveKeys(['steps.4.title', 'steps.4.screen', 'numbers.3.value', 'outcomes.3.title']);
 })->with([['hosts', '/hosts#join'], ['business', '/business#signup']]);
