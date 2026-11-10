@@ -53,6 +53,52 @@ $deviceFields = fn (string $unit) => [
     ['key' => 'devicePayment', 'label' => 'How would you like to pay for it?', 'type' => 'singleSelect', 'required' => false, 'options' => ['upfront|Buy it upfront (best value)', 'monthly|Pay monthly (nothing upfront)'], 'placeholder' => '', 'hint' => ''],
 ];
 
+// The two ways to pay, the device row, the worked example and bigger spaces
+// on a pricing section (Pricing.jsx / V2 Sections Pricing). Device prices are
+// kept once, on the /pricing page's devices section (LandingPage::liveDevices);
+// a pricing section can override them with its own devices.{i}.* rows.
+// TODO(Glen): are prices incl. or excl. 16% VAT? Fill vat_note once decided.
+// TODO(Glen): on Pay monthly, does the client own the device after month 12, or does TenaFi keep it?
+// TODO(Glen): extra devices: one-off purchases, or does each carry a plan?
+// TODO(Glen): TenaFi Outdoor may move from KES 48,000 to about 52,000 (one field on /pricing's devices).
+$payOptions = fn (string $example, string $plan, string $device) => [
+    'pay_label' => 'Two ways to pay',
+    'pay_buy_label' => 'Buy the device',
+    'pay_buy_badge' => 'Best value',
+    'pay_buy_text' => 'Pay once for the device and installation, then your plan each month.',
+    'pay_buy_terms' => "Month to month, 30 days\u{2019} notice\nPay yearly and get 2 months free",
+    'pay_monthly_label' => 'Pay monthly',
+    'pay_monthly_badge' => 'KES 0 upfront',
+    'pay_monthly_text' => 'Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.',
+    'pay_monthly_terms' => "Month to month, 30 days\u{2019} notice\nLeaving in the first 12 months: pay off the rest of the device, or return it",
+    // {months} and {plan} are filled in per plan.
+    'monthly_price_line' => 'for {months} months, then {plan}/month',
+    'devices_title' => 'Choose your TenaFi device',
+    // {addon} and {months} per device.
+    'device_price_line' => 'or +{addon}/month for {months} months',
+    'devices_note' => 'Coverage is for open space. Walls and floors reduce it, so we check your space at installation.',
+    // Worked out from the plan and device ids: {buy}, {monthly} and {saving}.
+    'example_label' => $example,
+    'example_plan' => $plan,
+    'example_device' => $device,
+    'example_text' => '{label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.',
+    'bigger_title' => 'Bigger space? Add more devices.',
+    // One per line: "Space | Devices".
+    'bigger_spaces' => "Restaurant with a terrace | 1 TenaFi Pro + 1 TenaFi Outdoor\nBoutique hotel on 3 floors | 3 TenaFi Pro\nStadiums and large events | Quoted after a site visit",
+    'bigger_cta_label' => 'Ask us on WhatsApp',
+    'bigger_cta_href' => 'whatsapp:Hi TenaFi, I have a bigger space and I’d like to know how many devices I need.',
+    // TODO(Glen): VAT. Shown under the prices when filled in.
+    'vat_note' => '',
+];
+
+// FAQs about devices and paying (both audience pages).
+$deviceFaqs = [
+    ['question' => 'Do I have to buy the device?', 'answer' => 'No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.'],
+    ['question' => 'Which device do I need?', 'answer' => 'TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at installation.'],
+    ['question' => 'What if I leave?', 'answer' => 'It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.'],
+    ['question' => 'Do I need more than one device?', 'answer' => 'Bigger spaces get more devices, for example one for a terrace and one for the dining room. We tell you how many after looking at your space.'],
+];
+
 $planField = fn (string $unit) => ['key' => 'plan', 'label' => 'Pick a starting plan', 'type' => 'planCards', 'required' => true, 'options' => ['basic|Basic', 'starter|Starter', 'growth|Growth', 'notSure|Not sure yet'], 'placeholder' => 'starter', 'hint' => "(per {$unit}, per month)"];
 
 $plans = fn (string $unit, array $features) => [
@@ -327,6 +373,8 @@ return [
                 'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
                 // {price} is the cheapest plan on the live /hosts pricing section.
                 'price_line' => 'Plans from {price} a month, plus your TenaFi device.',
+                // {device_price}: the cheapest device on /pricing. Empty hides the line.
+                'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
                 'price_link_label' => 'See pricing',
                 'price_link' => '#pricing',
                 'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
@@ -618,6 +666,8 @@ return [
                 // Plans come from the live /hosts pricing section, never typed twice.
                 'pricing_anchor' => 'pricing',
                 'pricing_title' => 'Pricing',
+                // {device_price}: the cheapest device on /pricing. Empty hides the line.
+                'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
                 'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
                 'pricing_links' => [
                     ['label' => 'Rental pricing', 'href' => '/hosts#h-pricing'],
@@ -952,6 +1002,7 @@ return [
                 'show_contact_form' => '0',
                 'show_slots' => '0',
                 'cta_headline' => '',
+                ...$payOptions('A one-bedroom rental on Starter with TenaFi Lite', 'starter', 'lite'),
                 'plans' => $plans('unit', [
                     'basic' => ['Capture guests and collect reviews', "Branded WiFi page and guest list\nA review request to every guest, by SMS and email\nA campaign every quarter"],
                     'starter' => ['A campaign every month to fill empty dates', "Everything in Basic\nA campaign and results report every month [[monthly_report]]\nUpsells, and your Tena Direct page at 0% commission [[tena_direct]]"],
@@ -967,11 +1018,12 @@ return [
                 'items' => [
                     ['question' => 'How does this increase my occupancy?', 'answer' => 'Every stay adds guests to your own list. Each month we send that list offers for your empty dates, holidays and low season. Past guests already know and trust your place, which makes them some of your likeliest bookings. The list grows with every stay, so it can fill more nights over time. TenaFi is designed to help raise occupancy; results vary by property and season.'],
                     ['question' => 'How soon will I see results?', 'answer' => 'Reviews, upsells and Instagram follows start in the first weeks. Repeat bookings build as your guest list grows, month after month.'],
-                    ['question' => 'Do I need new internet?', 'answer' => 'No. The TenaFi device plugs into your existing router and adds a separate guest network. Your own network stays private.'],
+                    ['question' => 'Do I need new internet?', 'answer' => 'No. The TenaFi device connects to your existing router with one cable and adds a separate guest network. Your own network stays private.'],
                     ['question' => 'Who owns the guest data?', 'answer' => "You do. Guests opt in on your WiFi page, and every contact is collected with consent under Kenya\u{2019}s Data Protection Act, 2019."],
                     ['question' => 'Do I have to write the messages?', 'answer' => 'No. We write, schedule and send every campaign, and you approve anything that goes out under your name.'],
-                    // TODO(Glen): 5 or 10 units for the multi-unit discount?
+                    // TODO(Glen): 5 or 10 units for the multi-unit discount? (20% off from 10 units, 30% from 50 until decided.)
                     ['question' => 'I manage lots of units.', 'answer' => 'You get 20% off from 10 units and 30% off from 50, and we install building by building. One report covers every unit.'],
+                    ...$deviceFaqs,
                 ],
             ],
         ],
@@ -1311,6 +1363,7 @@ return [
                 'show_contact_form' => '0',
                 'show_slots' => '0',
                 'cta_headline' => '',
+                ...$payOptions('A café on Starter with one TenaFi Pro', 'starter', 'pro'),
                 'plans' => $plans('location', [
                     'basic' => ['Google reviews from every customer', "A Google review request to every customer\nBy SMS and email\nA campaign every quarter"],
                     'starter' => ['A campaign every month', "Everything in Basic\nA campaign every month on WhatsApp, SMS and email\nA monthly report on reviews and return visits [[monthly_report]]"],
@@ -1324,12 +1377,13 @@ return [
             'content' => [
                 'title' => 'Questions owners ask',
                 'items' => [
-                    ['question' => 'Do I need new internet?', 'answer' => 'No. The TenaFi device plugs into the router you already have and adds a separate customer network. Your business network stays private.'],
+                    ['question' => 'Do I need new internet?', 'answer' => 'No. The TenaFi device connects to the router you already have with one cable and adds a separate customer network. Your business network stays private.'],
                     ['question' => 'What do you collect from customers?', 'answer' => "Only what they choose to give: a name, phone number, and optionally an email or birthday. Never health, payment or ID details. Every contact is collected with consent under Kenya\u{2019}s Data Protection Act, 2019, and the list belongs to your business."],
                     ['question' => 'Is asking for Google reviews allowed?', 'answer' => "Yes, as long as you ask every customer and never offer a reward for a review. That\u{2019}s exactly how TenaFi works."],
                     ['question' => 'Do I have to write the messages?', 'answer' => 'No. We draft, schedule and send every campaign, and you approve anything that goes out under your name.'],
                     ['question' => 'How long does setup take?', 'answer' => 'About a week. We build your WiFi page from your logo, our installer plugs in and tests the device, and your first customers join by day seven.'],
                     ['question' => 'I have more than one location.', 'answer' => 'Each location gets its own device and page, and you see every location in one report. Talk to us about group pricing.'],
+                    ...$deviceFaqs,
                 ],
             ],
         ],
@@ -1699,9 +1753,9 @@ return [
                 'note' => 'Coverage figures are manufacturer specs for open space; walls and layout reduce real-world range.',
             ],
             'media' => [
-                'device_0_image' => '/legacy/assets/devices/tenafi-lite.webp',
-                'device_1_image' => '/legacy/assets/devices/tenafi-pro.webp',
-                'device_2_image' => '/legacy/assets/devices/tenafi-outdoor.webp',
+                'device_0_image' => '/images/devices/tenafi-lite.svg',
+                'device_1_image' => '/images/devices/tenafi-pro.svg',
+                'device_2_image' => '/images/devices/tenafi-outdoor.svg',
             ],
         ],
         'pay_options' => [

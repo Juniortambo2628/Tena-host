@@ -47,11 +47,15 @@ it('leaves the device questions optional, and refuses a device that is not offer
 });
 
 it('gives the sign-up form the device prices from /pricing', function () {
-    $this->get('/business')->assertInertia(fn ($page) => $page->where('devices', [
-        ['id' => 'lite', 'name' => 'TenaFi Lite', 'price_kes' => 25000, 'monthly_kes' => 3000, 'months' => 12],
-        ['id' => 'pro', 'name' => 'TenaFi Pro', 'price_kes' => 42000, 'monthly_kes' => 5000, 'months' => 12],
-        ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'price_kes' => 48000, 'monthly_kes' => 5500, 'months' => 12],
-    ]));
+    $this->get('/business')->assertInertia(fn ($page) => $page->where('devices', function ($devices) {
+        $prices = collect($devices)->map(fn ($d) => collect($d)->only(['id', 'name', 'price_kes', 'monthly_kes', 'months'])->all())->values()->all();
+
+        return $prices === [
+            ['id' => 'lite', 'name' => 'TenaFi Lite', 'price_kes' => 25000, 'monthly_kes' => 3000, 'months' => 12],
+            ['id' => 'pro', 'name' => 'TenaFi Pro', 'price_kes' => 42000, 'monthly_kes' => 5000, 'months' => 12],
+            ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'price_kes' => 48000, 'monthly_kes' => 5500, 'months' => 12],
+        ] && collect($devices)->every(fn ($d) => str_starts_with($d['image'], '/images/devices/tenafi-'));
+    }));
 });
 
 it('adds the device questions to a live form that lacks them, keeping its other questions', function () {

@@ -8,7 +8,7 @@ import {
     Partners, Audiences, Gap, Features, Showcase, HowItWorks, CompareTable, Credibility, Pricing, Faq, Trial,
 } from '@/Components/V2/Sections';
 import { getContent, getMedia, getUpload, extractItems, stripHtml, textLines, baseSectionKey } from '@/lib/cms';
-import { useCheapestPrice } from '@/Components/Welcome/Hero';
+import { useCheapestPrice, useDeviceLine } from '@/Components/Welcome/Hero';
 
 /**
  * The v2 landing page (/v2), in the OKJT kit's design. Its sections are the
@@ -77,6 +77,7 @@ function Hero({ section: hero, site, joinHref }) {
     const ticks = textLines(getContent(hero, 'ticks', ''), site);
     // "From {price} a month": the cheapest live plan, as on the live hero.
     const cheapest = useCheapestPrice();
+    const deviceLine = useDeviceLine(hero);
     const priceLine = stripHtml(getContent(hero, 'price_line', 'Book a demo. We install it for you.'));
     const primary = stripHtml(getContent(hero, 'cta_primary', 'Book a demo'));
     const primaryHref = stripHtml(getContent(hero, 'cta_primary_url', '')) || joinHref;
@@ -109,6 +110,7 @@ function Hero({ section: hero, site, joinHref }) {
                             <p className="!font-display text-2xl !font-light leading-snug !text-white">
                                 {priceLine.includes('{price}') && !cheapest ? 'Book a demo. We install it for you.' : priceLine.replace('{price}', cheapest)}
                             </p>
+                            {deviceLine && <p className="text-sm text-white/75">{deviceLine}</p>}
                             <div className="mt-2"><PillLink to={primaryHref} variant="light">{primary}</PillLink></div>
                         </div>
                     </div>

@@ -67,9 +67,19 @@ const FIELD_OPTIONS = {
 
 const PLAIN_TEXT_KEYS = new Set(['badge', 'cta_text', 'cta_primary', 'cta_secondary', 'join_label']);
 
+/**
+ * Lists, one item per line (plan features, ticks, terms, bigger spaces, ...).
+ * Always a multi-line box: a single-line box turns pasted lines into one
+ * line, which is how a plan's features once ran together on /hosts.
+ */
+const LIST_KEYS = new Set(['features', 'ticks', 'points', 'checklist', 'next_steps', 'bigger_spaces', 'callback_options']);
+const isListKey = (key) => LIST_KEYS.has(key) || key.endsWith('_terms');
+const LIST_HINT = 'One item per line. End a line with [[feature_key]] for a “Coming soon” badge.';
+
 function detectFieldType(key, value) {
     const lowerKey = key.toLowerCase();
     if (FIELD_OPTIONS[lowerKey]) return 'select';
+    if (isListKey(lowerKey)) return 'textarea';
     // Single-line slots (pills, button labels) stay plain text: a rich
     // editor would save <p> and &nbsp; into them.
     if (PLAIN_TEXT_KEYS.has(lowerKey) || /(^|_)(badge|label|button|cta)$/.test(lowerKey)) return 'text';
@@ -312,7 +322,8 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                         onChange={(v) => handleContentChange(key, v)}
                         type={detectFieldType(key, value)}
                         options={FIELD_OPTIONS[key.toLowerCase()]}
-                        rows={typeof value === 'string' && value.length > 100 ? 4 : 2}
+                        rows={isListKey(key.toLowerCase()) ? 4 : (typeof value === 'string' && value.length > 100 ? 4 : 2)}
+                        hint={isListKey(key.toLowerCase()) ? LIST_HINT : undefined}
                     />
                 ))}
             </div>
@@ -408,7 +419,8 @@ export default function SectionEditor({ section, onUpdate, onMediaUpload, onMedi
                                                 onChange={(v) => handleContentChange(key, v)}
                                                 type={fieldType}
                                                 options={FIELD_OPTIONS[field.toLowerCase()]}
-                                                rows={field === 'description' || field === 'desc' ? 3 : 2}
+                                                rows={isListKey(field.toLowerCase()) ? 4 : (field === 'description' || field === 'desc' ? 3 : 2)}
+                                                hint={isListKey(field.toLowerCase()) ? LIST_HINT : undefined}
                                             />
                                         );
                                     })}

@@ -182,6 +182,15 @@ export default function SignupForm({ section }) {
             const match = window.location.hash.match(/plan=(\w+)/);
             const wanted = match && parseOptions(planField.options).find((o) => o.value.toLowerCase() === match[1].toLowerCase());
             if (wanted) setValues((v) => ({ ...v, [planField.key]: wanted.value }));
+            // "&pay=monthly&device=pro" from a pricing card: the device questions, when the form has them.
+            const pick = (key, value) => {
+                const field = allFields.find((f) => f.key === key);
+                const option = field && value && parseOptions(field.options).find((o) => o.value === value);
+                if (option) setValues((v) => ({ ...v, [key]: option.value }));
+            };
+            const pay = window.location.hash.match(/pay=(\w+)/)?.[1];
+            pick('devicePayment', pay === 'monthly' ? 'monthly' : pay === 'buy' ? 'upfront' : null);
+            pick('device', window.location.hash.match(/device=(\w+)/)?.[1]);
         };
         fromHash();
         window.addEventListener('hashchange', fromHash);
