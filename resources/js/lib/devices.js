@@ -1,11 +1,12 @@
 import { getContent, getUpload, getMedia, extractItems, stripHtml } from '@/lib/cms';
+import { formatKes, planMonthly, yearOne } from '@/lib/pricingMath';
 
 /**
  * TenaFi devices (Lite, Pro, Outdoor) from the /pricing page's "devices"
  * section (Admin -> Public Pages -> Devices & pricing), and the sums the
  * pricing page and the sign-up form share, so their numbers never differ.
  */
-export const formatKes = (n) => `KES ${Math.round(Number(n) || 0).toLocaleString('en-KE')}`;
+export { formatKes };
 
 const kes = (value) => Number(String(stripHtml(value ?? '')).replace(/\D/g, '')) || 0;
 
@@ -32,14 +33,16 @@ export function devicesFrom(section) {
 }
 
 /** A plan's monthly price while paying the device off (months 1-12), and after. */
-export const monthlyWithDevice = (planKes, device) => planKes + (device?.monthly || 0);
+// The sums themselves live in pricingMath.js, shared with the /hosts and
+// /business pricing, so the two pages can never quote different numbers.
+const asPriced = (device) => device && { price_kes: device.price, monthly_kes: device.monthly, months: device.months };
+
+export const monthlyWithDevice = (planKes, device) => planMonthly(planKes, 'monthly', asPriced(device));
 
 /** First-year cost each way, for the worked example. */
 export function firstYear(planKes, device) {
-    const upfront = (device?.price || 0) + planKes * 12;
-    const months = Math.min(device?.months || 12, 12);
-    const monthly = monthlyWithDevice(planKes, device) * months + planKes * (12 - months);
-    return { upfront, monthly, saving: monthly - upfront };
+    const { buy, monthly, saving } = yearOne(planKes, asPriced(device));
+    return { upfront: buy, monthly, saving };
 }
 
 /** "{monthly}"-style placeholders in CMS text. */
