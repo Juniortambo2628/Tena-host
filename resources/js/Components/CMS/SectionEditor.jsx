@@ -57,6 +57,8 @@ const FIELD_OPTIONS = {
         { value: 'versus', label: 'Versus (comparison: today vs with TenaFi)' },
         { value: 'dark', label: 'Dark (proof: quote instead of photo; hero: dark card)' },
         { value: 'trial', label: 'Trial (banner: ticks, counter, pricing card)' },
+        { value: 'light', label: 'Light (device card picture, pay option)' },
+        { value: 'yellow', label: 'Yellow (device card picture)' },
     ),
     // worth_calculator: one calculator, or all three as tabs.
     mode: opts({ value: '', label: 'All three (tabs)' }, { value: 'hosts', label: 'Rentals only' }, { value: 'business', label: 'Business only' }, { value: 'events', label: 'Events only' }),

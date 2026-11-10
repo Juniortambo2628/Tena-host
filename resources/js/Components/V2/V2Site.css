@@ -27,6 +27,12 @@
     }
 }
 
+/* The link from a page's plans to /pricing (devices and the two ways to pay). */
+.v2-pricing__devices {
+    @apply flex justify-center pb-16;
+    margin-top: -3rem; /* tucked under the plans' own bottom padding */
+}
+
 /* "Trusted by" (Sections.jsx Partners): clients on the left, the selected
    client's WiFi page in a phone on the right, like "What you get". Phones:
    a row of logos to swipe, then the card and the phone. */

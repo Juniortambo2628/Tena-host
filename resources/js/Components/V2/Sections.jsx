@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import { ArrowUpRight, Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import {
     ImageCard, Photo, Container, Eyebrow, PillLink, SectionHeading, SECTION_OFFSET,
@@ -467,6 +468,8 @@ export function Credibility({ section, id }) {
 
 /** A page's plans (on /v2, the rentals plans copied from the live /hosts page). */
 export function Pricing({ section, site, id, joinHref }) {
+    // Once /pricing is switched on (Admin -> Settings), each page's plans link to it.
+    const { pricingPage } = usePage().props;
     const plans = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'unit', 'features', 'cta', 'variant'])
         .filter((p) => stripHtml(p.label))
         .map((p, i) => ({
@@ -495,6 +498,11 @@ export function Pricing({ section, site, id, joinHref }) {
                 plans={plans}
                 footnote={stripHtml(getContent(section, 'footnote', ''))}
             />
+            {pricingPage && (
+                <div className="v2-pricing__devices">
+                    <PillLink to={pricingPage} variant="outline" arrow>See the devices and both ways to pay</PillLink>
+                </div>
+            )}
         </div>
     );
 }

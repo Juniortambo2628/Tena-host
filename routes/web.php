@@ -71,6 +71,7 @@ foreach (config('public_pages.redirects') as $from => $to) {
 
 Route::get('/sitemap.xml', function () {
     $paths = LandingPage::where('is_routable', true)->where('is_active', true)->orderBy('sort_order')->get()
+        ->reject(fn (LandingPage $page) => $page->slug === 'pricing' && ! PublicPageController::pricingPageEnabled())
         ->map->path()
         ->merge(array_map(fn ($path) => "/{$path}", array_keys(config('public_pages.policies'))));
 

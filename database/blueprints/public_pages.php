@@ -939,7 +939,7 @@ return [
                 'title' => 'One price per unit. Everything included.',
                 'subtitle' => 'The device, installation, WiFi page, guest list and support. Free for December, then month to month.',
                 // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee after the trial?
-                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Extra devices at the same site: KES 1,500 a month each. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
+                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
                 'show_slots' => '1',
                 'cta_headline' => '',
@@ -1297,7 +1297,7 @@ return [
                 'title' => 'One price per location. Everything included.',
                 'subtitle' => 'The device, installation, WiFi page, customer list and support. Free for December, then month to month.',
                 // TODO(Glen): installation fee after the trial?
-                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Extra devices at the same site: KES 1,500 a month each. WhatsApp and SMS allowances included; heavy use billed at cost. The device stays TenaFi\u{2019}s; we maintain and replace it.",
+                'footnote' => "Free trial: installs from 16 November, and the rest of November and all of December are free. Then month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
                 'show_slots' => '1',
                 'cta_headline' => '',
@@ -1634,6 +1634,103 @@ return [
                     ['question' => 'Who owns the attendee list?', 'answer' => 'You do. Attendees opt in with consent on your WiFi page, and the list is yours to keep and use for your next event.'],
                     ['question' => 'Can sponsors have their own branding?', 'answer' => 'Yes. A sponsor can have their logo, a question and an offer on the WiFi page, and you can change the sponsor by day, stage or match. You get a sponsor report after the event.'],
                     ['question' => 'What does it cost?', 'answer' => 'Event pricing depends on the size, the venue and how many days it runs. Tell us about your event and we’ll send a plan and a quote.'],
+                ],
+            ],
+        ],
+    ],
+
+    // ------------------------------------------------------------------
+    // Devices and pricing: /pricing (Glen's "TenaFi Devices & Pricing",
+    // November 2026). Created switched off; Admin -> Settings or
+    // `tenafi:pricing-devices` turns it on. The price table and the example
+    // are worked out on the page from these device prices and the live /hosts plans.
+    // ------------------------------------------------------------------
+    'pricing' => [
+        'seo' => [
+            'title' => 'SEO & social',
+            'content' => [
+                'meta_title' => 'TenaFi devices and pricing: buy once or pay monthly',
+                'meta_description' => 'TenaFi Lite, Pro and Outdoor: one device for every size of space, installed and managed for you. Buy upfront, or pay monthly with nothing upfront.',
+            ],
+        ],
+        'devices' => [
+            'title' => 'Devices',
+            'content' => [
+                'anchor' => 'devices',
+                'badge' => 'TenaFi devices',
+                'title' => 'One TenaFi device for every size of space.',
+                'subtitle' => 'Every TenaFi device runs your branded WiFi page, captures your guest list and is installed, set up and managed by our team. Pick the one that fits your space.',
+                'upfront_label' => 'Buy upfront, installed',
+                // {monthly} and {months} come from each device's prices below.
+                'monthly_line' => 'or {monthly} a month for {months} months',
+                // price_kes: bought upfront, installed. monthly_kes: added to the plan for `months` months.
+                // style: light | yellow | dark (the card's picture background).
+                'items' => [
+                    ['id' => 'lite', 'name' => 'TenaFi Lite', 'badge' => 'Small spaces', 'best_for' => 'Apartments, salons, barbershops, small cafés and shops', 'coverage' => '115 m²', 'coverage_label' => 'coverage', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '25000', 'monthly_kes' => '3000', 'months' => '12', 'style' => 'light'],
+                    ['id' => 'pro', 'name' => 'TenaFi Pro', 'badge' => 'Busy spaces', 'best_for' => 'Restaurants, busy cafés, villas, clinics, gyms and lounges', 'coverage' => '140 m²', 'coverage_label' => 'coverage', 'capacity' => '300+', 'capacity_label' => 'devices at once', 'price_kes' => '42000', 'monthly_kes' => '5000', 'months' => '12', 'style' => 'yellow'],
+                    ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'badge' => 'Outdoor & events', 'best_for' => 'Gardens, terraces, events, weddings and large venues', 'coverage' => '465 m²', 'coverage_label' => 'open space', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '48000', 'monthly_kes' => '5500', 'months' => '12', 'style' => 'dark'],
+                ],
+                'more_title' => 'Bigger space? Add more devices.',
+                'more_text' => 'Devices link into one network and one WiFi page. Our team surveys your space and tells you how many you need.',
+                'combos' => [
+                    ['label' => 'One apartment or salon', 'value' => '1 × Lite'],
+                    ['label' => 'Restaurant with a terrace', 'value' => '1 × Pro + 1 × Outdoor'],
+                    ['label' => 'Boutique hotel, 3 floors', 'value' => '3 × Pro'],
+                    ['label' => 'Stadiums & large events', 'value' => 'Quoted on site'],
+                ],
+                'perks' => [
+                    ['title' => 'Installed for you', 'text' => 'Our team fits and tests it.'],
+                    ['title' => 'Your brand', 'text' => 'Your logo and colours on the WiFi page.'],
+                    ['title' => 'Managed by us', 'text' => 'Monitored and updated from TenaFi.'],
+                    ['title' => 'Works with your internet', 'text' => 'Plugs into your existing router.'],
+                ],
+                'note' => 'Coverage figures are manufacturer specs for open space; walls and layout reduce real-world range.',
+            ],
+            'media' => [
+                'device_0_image' => '/legacy/assets/devices/tenafi-lite.webp',
+                'device_1_image' => '/legacy/assets/devices/tenafi-pro.webp',
+                'device_2_image' => '/legacy/assets/devices/tenafi-outdoor.webp',
+            ],
+        ],
+        'pay_options' => [
+            'title' => 'Two ways to pay',
+            'bg' => 'gray',
+            'content' => [
+                'anchor' => 'ways-to-pay',
+                'badge' => 'Two ways to pay',
+                'title' => 'Buy your device once, or spread it out.',
+                'subtitle' => 'Same device, same plans, same service. Buying upfront is the best value; paying monthly spreads the device over your first 12 months.',
+                // {cheapest} is the cheapest plan on the live /hosts pricing section.
+                'options' => [
+                    ['badge' => 'Best value', 'title' => 'Buy the device', 'text' => 'Pay for your TenaFi device and installation once, and it’s yours. Then just your monthly plan.', 'steps' => "One-off: device + installation\nMonthly: your plan from {cheapest}\nMonth to month, 30 days’ notice", 'style' => 'dark'],
+                    ['badge' => 'Nothing upfront', 'title' => 'Pay monthly', 'text' => 'No upfront cost. Your device is spread over 12 months on top of your plan, then your price drops.', 'steps' => "KES 0 upfront\nPlan + device, months 1–12\nFrom month 13: plan price only, and the device is yours", 'style' => 'light'],
+                ],
+                // The table: one row for upfront, one per device, a column per live plan.
+                'table_label' => 'Monthly price',
+                'row_upfront' => 'Bought the device upfront',
+                'row_upfront_note' => 'every month',
+                'row_monthly' => 'Paying monthly with {device}',
+                'row_monthly_note' => 'months 1–{months}, then as above',
+                // The worked example: a plan id from /hosts and a device id from above.
+                'example_plan' => 'starter',
+                'example_device' => 'pro',
+                'example_title' => 'Example: a café on Starter with one TenaFi Pro',
+                'example_text' => 'What the first year costs each way.',
+                'example_upfront' => 'Buy the device',
+                'example_monthly' => 'Pay monthly',
+                'example_saving' => 'Buying upfront saves this café in year one',
+                'notes' => [
+                    ['title' => 'Book a demo first', 'text' => 'On a call, a video call or a visit, we show you TenaFi and survey your space. Your device payment or first monthly charge starts after installation.'],
+                    ['title' => 'Short-term rentals', 'text' => 'Priced per unit, with one device per unit.'],
+                    ['title' => 'Leaving early on monthly', 'text' => 'Pay off the rest of the device or return it. Upfront: 30 days’ notice.'],
+                ],
+                'footnote' => 'Prices in KES. Paying yearly on the upfront option: 2 months free.',
+                'cta_title' => 'Not sure which device you need?',
+                'cta_text' => 'Book a demo and our team will survey your space and recommend the right devices.',
+                'buttons' => [
+                    ['label' => 'Book for my rentals', 'href' => '/hosts#join'],
+                    ['label' => 'Book for my business', 'href' => '/business#signup'],
+                    ['label' => 'Plan event WiFi', 'href' => '/events#enquire'],
                 ],
             ],
         ],
