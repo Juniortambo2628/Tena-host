@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { usePage } from '@inertiajs/react';
-import { ArrowUpRight, Check, X } from 'lucide-react';
+import { ArrowUpRight, Check, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import {
     ImageCard, Photo, Container, Eyebrow, PillLink, SectionHeading, SECTION_OFFSET,
-    FeatureExplorer, ShowcaseCarousel, PricingSection, FaqSection,
+    FeatureExplorer, ShowcaseCarousel, PricingSection, FaqSection, MediaFrame,
 } from '@okjt/site';
 import {
     getContent, getMedia, getUpload, getText, extractItems, extractJsonItems, sanitizeHtml, stripHtml,
@@ -67,42 +67,111 @@ export const Html = ({ html, as: Tag = 'span', className }) => (
     <Tag className={className} dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }} />
 );
 
-/** "Trusted by": each client's name, with their WiFi page screenshot when uploaded. */
+/**
+ * "Trusted by": the clients down the left (logo and name), and the selected
+ * client's WiFi page in a phone on the right, laid out like "What you get".
+ * On phones the clients are a row of logos to swipe, with the page under it.
+ * Pictures come from the section's Media slots: partner_{i}_logo is the WiFi
+ * page (splash) design, partner_{i}_mark the client's logo.
+ */
 export function Partners({ section }) {
     const partners = extractItems(section, 'partners', ['name', 'url', 'type_area'])
-        .map((p, i) => ({ name: stripHtml(p.name), url: stripHtml(p.url), area: stripHtml(p.type_area), shot: getUpload(section, `partner_${i}_logo`) }))
+        .map((p, i) => ({
+            i,
+            name: stripHtml(p.name),
+            url: stripHtml(p.url),
+            area: stripHtml(p.type_area),
+            shot: getUpload(section, `partner_${i}_logo`),
+            logo: getUpload(section, `partner_${i}_mark`),
+        }))
         .filter((p) => p.name);
+    const [activeIndex, setActiveIndex] = useState(0);
     if (!partners.length) return null;
 
+    const active = partners[Math.min(activeIndex, partners.length - 1)];
+    const step = (by) => setActiveIndex((current) => (current + by + partners.length) % partners.length);
+
     return (
-        <section className="pb-12 pt-20">
+        <section className="v2-trusted py-20">
             <Container>
-                <div className="text-center">
-                    <Eyebrow>{stripHtml(getContent(section, 'title', 'Trusted by'))}</Eyebrow>
-                    <p className="mt-2 text-sm text-soft">{stripHtml(getContent(section, 'subtitle', ''))}</p>
+                <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
+                    {/* min-w-0: lets the row of logos scroll inside the page on phones instead of widening it. */}
+                    <div className="min-w-0 lg:col-span-5">
+                        <SectionHeading
+                            align="left"
+                            as="h2"
+                            title={stripHtml(getContent(section, 'title', 'Trusted by'))}
+                            text={stripHtml(getContent(section, 'subtitle', ''))}
+                            className="v2-trusted__heading"
+                        />
+                        <div role="tablist" aria-label="Clients" aria-orientation="vertical" className="v2-trusted__tabs">
+                            {partners.map((p, n) => {
+                                const selected = p === active;
+                                return (
+                                    <button
+                                        key={p.i}
+                                        type="button"
+                                        role="tab"
+                                        id={`trusted-tab-${p.i}`}
+                                        aria-selected={selected}
+                                        aria-controls="trusted-panel"
+                                        onClick={() => setActiveIndex(n)}
+                                        className={`v2-trusted__tab ${selected ? 'v2-trusted__tab--active' : ''}`}
+                                    >
+                                        <ClientLogo client={p} />
+                                        <span className="min-w-0">
+                                            <span className="v2-trusted__name">{p.name}</span>
+                                            {p.area && <span className="v2-trusted__area">{p.area}</span>}
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div id="trusted-panel" role="tabpanel" aria-labelledby={`trusted-tab-${active.i}`} className="v2-trusted__panel min-w-0 lg:col-span-7">
+                        <div className="v2-trusted__card">
+                            <ClientLogo client={active} large />
+                            <div className="min-w-0">
+                                <h3 className="!font-display text-2xl !font-normal tracking-tight !text-ink">{active.name}</h3>
+                                {active.area && <p className="mt-1 text-sm text-soft">{active.area}</p>}
+                                {active.url && (
+                                    <a href={active.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-[0.15em] text-ink hover:text-accent">
+                                        Visit {active.name} <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                        <div className="v2-trusted__phone">
+                            {active.shot ? (
+                                <MediaFrame key={active.i} media={{ src: active.shot, alt: `${active.name}’s TenaFi WiFi page`, phone: true }} variant="phone" />
+                            ) : (
+                                <div className="v2-trusted__empty">
+                                    <ClientLogo client={active} large />
+                                    <span>{active.name}’s WiFi page</span>
+                                </div>
+                            )}
+                        </div>
+                        {partners.length > 1 && (
+                            <div className="v2-trusted__arrows">
+                                <button type="button" onClick={() => step(-1)} aria-label="Previous client"><ChevronLeft className="h-5 w-5" aria-hidden="true" /></button>
+                                <span aria-live="polite">{partners.indexOf(active) + 1} / {partners.length}</span>
+                                <button type="button" onClick={() => step(1)} aria-label="Next client"><ChevronRight className="h-5 w-5" aria-hidden="true" /></button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <ul className="mt-8 flex flex-wrap justify-center gap-3">
-                    {partners.map((p) => {
-                        const inner = (
-                            <>
-                                {p.shot && <img src={p.shot} alt="" loading="lazy" className="h-12 w-8 rounded-md object-cover object-top" />}
-                                <span className="text-left">
-                                    <span className="block text-sm font-semibold text-ink">{p.name}</span>
-                                    {p.area && <span className="block text-xs text-muted">{p.area}</span>}
-                                </span>
-                            </>
-                        );
-                        return (
-                            <li key={p.name}>
-                                {p.url
-                                    ? <a href={p.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-full bg-white px-5 py-2.5 shadow-sm transition-colors hover:bg-paper">{inner}</a>
-                                    : <span className="flex items-center gap-3 rounded-full bg-white px-5 py-2.5 shadow-sm">{inner}</span>}
-                            </li>
-                        );
-                    })}
-                </ul>
             </Container>
         </section>
+    );
+}
+
+/** A client's logo on a white tile, or their initial until a logo is uploaded. */
+function ClientLogo({ client, large = false }) {
+    return (
+        <span className={`v2-trusted__logo ${large ? 'v2-trusted__logo--large' : ''}`} aria-hidden="true">
+            {client.logo ? <img src={client.logo} alt="" loading="lazy" decoding="async" /> : client.name.trim().charAt(0).toUpperCase()}
+        </span>
     );
 }
 
