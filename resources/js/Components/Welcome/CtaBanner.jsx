@@ -18,7 +18,7 @@ function useHref() {
 }
 
 /**
- * Call-to-action band: the free trial and cross-links between audiences.
+ * Call-to-action band: book a demo, and cross-links between audiences.
  * A button with an empty href goes to this page's sign-up form.
  *
  * Style "trial" (homepage) adds ticks, the slot counter and an
@@ -80,7 +80,7 @@ export default function CtaBanner({ section }) {
                     {isTruthy(getContent(section, 'show_slots', '0')) && <TrialSlots className="cta-trial__slots" />}
                     {priced.length > 0 && (
                         <div className="cta-trial__pricing" id={stripHtml(getContent(section, 'pricing_anchor', '')) || undefined}>
-                            <b>{stripHtml(getContent(section, 'pricing_title', 'After the trial'))}</b>
+                            <b>{stripHtml(getContent(section, 'pricing_title', 'Pricing'))}</b>
                             <ul>
                                 {priced.map(plan => <li key={plan.id || plan.label}><span>{plan.label}</span><strong>{plan.price}</strong></li>)}
                             </ul>

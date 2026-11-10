@@ -42,7 +42,7 @@ export default function V2Audience({ audience, sections = [], signup = {}, other
         }
     });
 
-    // "On this page", in page order. The trial band is a call to action, not a part to jump to.
+    // "On this page", in page order. The demo band is a call to action, not a part to jump to.
     const nav = [
         ...body.flatMap((b) => {
             if (b.chapters) return chapters.map((c) => ({ id: c.id, label: c.label }));
@@ -193,7 +193,7 @@ function glanceNumbers(sections) {
 }
 
 function AudienceHero({ hero, glance, joinHref, audience, ids }) {
-    const primary = stripHtml(getContent(hero, 'cta_primary', 'Book my free trial'));
+    const primary = stripHtml(getContent(hero, 'cta_primary', 'Book a demo'));
     // "#how": a part of this page when it has one, else that part of the live page.
     const secondaryRaw = stripHtml(getContent(hero, 'cta_secondary_url', ''));
     const secondaryHref = !secondaryRaw.startsWith('#') || ids.includes(secondaryRaw.slice(1)) ? secondaryRaw || `/${audience}` : `/${audience}${secondaryRaw}`;

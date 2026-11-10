@@ -77,8 +77,8 @@ function Hero({ section: hero, site, joinHref }) {
     const ticks = textLines(getContent(hero, 'ticks', ''), site);
     // "From {price} a month": the cheapest live plan, as on the live hero.
     const cheapest = useCheapestPrice();
-    const priceLine = stripHtml(getContent(hero, 'price_line', 'Book a free trial. We install it for you.'));
-    const primary = stripHtml(getContent(hero, 'cta_primary', 'Book my free trial'));
+    const priceLine = stripHtml(getContent(hero, 'price_line', 'Book a demo. We install it for you.'));
+    const primary = stripHtml(getContent(hero, 'cta_primary', 'Book a demo'));
     const primaryHref = stripHtml(getContent(hero, 'cta_primary_url', '')) || joinHref;
 
     return (
@@ -103,9 +103,9 @@ function Hero({ section: hero, site, joinHref }) {
                         )}
                     </div>
                     <div className="flex flex-col justify-center gap-3 rounded-3xl bg-ink p-6 text-white sm:p-8 lg:col-span-2">
-                        <Eyebrow light>Free trial</Eyebrow>
+                        <Eyebrow light>Book a demo</Eyebrow>
                         <p className="!font-display text-2xl !font-light leading-snug !text-white">
-                            {priceLine.includes('{price}') && !cheapest ? 'Book a free trial. We install it for you.' : priceLine.replace('{price}', cheapest)}
+                            {priceLine.includes('{price}') && !cheapest ? 'Book a demo. We install it for you.' : priceLine.replace('{price}', cheapest)}
                         </p>
                         <div className="mt-2"><PillLink to={primaryHref} variant="light">{primary}</PillLink></div>
                     </div>
