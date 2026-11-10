@@ -147,6 +147,33 @@ class LandingPage extends Model
         return $plans;
     }
 
+    /**
+     * The TenaFi devices on the /pricing page's "devices" section (Admin ->
+     * Public Pages -> Devices & pricing), so the sign-up form quotes the
+     * same prices as the page.
+     *
+     * @return list<array{id: string, name: string, price_kes: int, monthly_kes: int, months: int}>
+     */
+    public static function liveDevices(): array
+    {
+        $section = collect(static::publicSections('pricing'))->firstWhere('section_key', 'devices');
+        $content = $section['content'] ?? [];
+        $kes = fn ($value) => (int) preg_replace('/\D/', '', (string) $value);
+
+        $devices = [];
+        for ($i = 0; isset($content["items.{$i}.name"]); $i++) {
+            $devices[] = [
+                'id' => strip_tags((string) ($content["items.{$i}.id"] ?? '')),
+                'name' => strip_tags((string) $content["items.{$i}.name"]),
+                'price_kes' => $kes($content["items.{$i}.price_kes"] ?? ''),
+                'monthly_kes' => $kes($content["items.{$i}.monthly_kes"] ?? ''),
+                'months' => $kes($content["items.{$i}.months"] ?? '') ?: 12,
+            ];
+        }
+
+        return $devices;
+    }
+
     public static function cacheKey(string $slug): string
     {
         return "landing_page:{$slug}";
