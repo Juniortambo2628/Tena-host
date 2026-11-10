@@ -1,0 +1,378 @@
+[hosts/pricing] pay_label
+  - (new field)
+  + Two ways to pay
+[hosts/pricing] pay_buy_label
+  - (new field)
+  + Buy the device
+[hosts/pricing] pay_buy_badge
+  - (new field)
+  + Best value
+[hosts/pricing] pay_buy_text
+  - (new field)
+  + Pay once for the device and installation, then your plan each month.
+[hosts/pricing] pay_buy_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Pay yearly and get 2 months free
+[hosts/pricing] pay_monthly_label
+  - (new field)
+  + Pay monthly
+[hosts/pricing] pay_monthly_badge
+  - (new field)
+  + KES 0 upfront
+[hosts/pricing] pay_monthly_text
+  - (new field)
+  + Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.
+[hosts/pricing] pay_monthly_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Leaving in the first 12 months: pay off the rest of the device, or return it
+[hosts/pricing] monthly_price_line
+  - (new field)
+  + for {months} months, then {plan}/month
+[hosts/pricing] devices_title
+  - (new field)
+  + Choose your TenaFi device
+[hosts/pricing] device_price_line
+  - (new field)
+  + or +{addon}/month for {months} months
+[hosts/pricing] devices_note
+  - (new field)
+  + Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+[hosts/pricing] example_label
+  - (new field)
+  + A one-bedroom rental on Starter with TenaFi Lite
+[hosts/pricing] example_plan
+  - (new field)
+  + starter
+[hosts/pricing] example_device
+  - (new field)
+  + lite
+[hosts/pricing] example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+[hosts/pricing] bigger_title
+  - (new field)
+  + Bigger space? Add more devices.
+[hosts/pricing] bigger_spaces
+  - (new field)
+  + Restaurant with a terrace | 1 TenaFi Pro + 1 TenaFi Outdoor / Boutique hotel on 3 floors | 3 TenaFi Pro / Stadiums and large events | Quoted after a s...
+[hosts/pricing] bigger_cta_label
+  - (new field)
+  + Ask us on WhatsApp
+[hosts/pricing] bigger_cta_href
+  - (new field)
+  + whatsapp:Hi TenaFi, I have a bigger space and I’d like to know how many devices I need.
+[hosts/faq] items.6.question
+  - (new field)
+  + Do I have to buy the device?
+[hosts/faq] items.6.answer
+  - (new field)
+  + No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+[hosts/faq] items.7.question
+  - (new field)
+  + Which device do I need?
+[hosts/faq] items.7.answer
+  - (new field)
+  + TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at install...
+[hosts/faq] items.8.question
+  - (new field)
+  + What if I leave?
+[hosts/faq] items.8.answer
+  - (new field)
+  + It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+[hosts/faq] items.9.question
+  - (new field)
+  + Do I need more than one device?
+[hosts/faq] items.9.answer
+  - (new field)
+  + Bigger spaces get more devices, for example one for a terrace and one for the dining room. We tell you how many after looking at your space.
+[v2-hosts/pricing] pay_label
+  - (new field)
+  + Two ways to pay
+[v2-hosts/pricing] pay_buy_label
+  - (new field)
+  + Buy the device
+[v2-hosts/pricing] pay_buy_badge
+  - (new field)
+  + Best value
+[v2-hosts/pricing] pay_buy_text
+  - (new field)
+  + Pay once for the device and installation, then your plan each month.
+[v2-hosts/pricing] pay_buy_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Pay yearly and get 2 months free
+[v2-hosts/pricing] pay_monthly_label
+  - (new field)
+  + Pay monthly
+[v2-hosts/pricing] pay_monthly_badge
+  - (new field)
+  + KES 0 upfront
+[v2-hosts/pricing] pay_monthly_text
+  - (new field)
+  + Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.
+[v2-hosts/pricing] pay_monthly_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Leaving in the first 12 months: pay off the rest of the device, or return it
+[v2-hosts/pricing] monthly_price_line
+  - (new field)
+  + for {months} months, then {plan}/month
+[v2-hosts/pricing] devices_title
+  - (new field)
+  + Choose your TenaFi device
+[v2-hosts/pricing] device_price_line
+  - (new field)
+  + or +{addon}/month for {months} months
+[v2-hosts/pricing] devices_note
+  - (new field)
+  + Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+[v2-hosts/pricing] example_label
+  - (new field)
+  + A one-bedroom rental on Starter with TenaFi Lite
+[v2-hosts/pricing] example_plan
+  - (new field)
+  + starter
+[v2-hosts/pricing] example_device
+  - (new field)
+  + lite
+[v2-hosts/pricing] example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+[v2-hosts/pricing] bigger_title
+  - (new field)
+  + Bigger space? Add more devices.
+[v2-hosts/pricing] bigger_spaces
+  - (new field)
+  + Restaurant with a terrace | 1 TenaFi Pro + 1 TenaFi Outdoor / Boutique hotel on 3 floors | 3 TenaFi Pro / Stadiums and large events | Quoted after a s...
+[v2-hosts/pricing] bigger_cta_label
+  - (new field)
+  + Ask us on WhatsApp
+[v2-hosts/pricing] bigger_cta_href
+  - (new field)
+  + whatsapp:Hi TenaFi, I have a bigger space and I’d like to know how many devices I need.
+[v2-hosts/faq] items.6.question
+  - (new field)
+  + Do I have to buy the device?
+[v2-hosts/faq] items.6.answer
+  - (new field)
+  + No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+[v2-hosts/faq] items.7.question
+  - (new field)
+  + Which device do I need?
+[v2-hosts/faq] items.7.answer
+  - (new field)
+  + TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at install...
+[v2-hosts/faq] items.8.question
+  - (new field)
+  + What if I leave?
+[v2-hosts/faq] items.8.answer
+  - (new field)
+  + It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+[v2-hosts/faq] items.9.question
+  - (new field)
+  + Do I need more than one device?
+[v2-hosts/faq] items.9.answer
+  - (new field)
+  + Bigger spaces get more devices, for example one for a terrace and one for the dining room. We tell you how many after looking at your space.
+[business/pricing] pay_label
+  - (new field)
+  + Two ways to pay
+[business/pricing] pay_buy_label
+  - (new field)
+  + Buy the device
+[business/pricing] pay_buy_badge
+  - (new field)
+  + Best value
+[business/pricing] pay_buy_text
+  - (new field)
+  + Pay once for the device and installation, then your plan each month.
+[business/pricing] pay_buy_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Pay yearly and get 2 months free
+[business/pricing] pay_monthly_label
+  - (new field)
+  + Pay monthly
+[business/pricing] pay_monthly_badge
+  - (new field)
+  + KES 0 upfront
+[business/pricing] pay_monthly_text
+  - (new field)
+  + Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.
+[business/pricing] pay_monthly_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Leaving in the first 12 months: pay off the rest of the device, or return it
+[business/pricing] monthly_price_line
+  - (new field)
+  + for {months} months, then {plan}/month
+[business/pricing] devices_title
+  - (new field)
+  + Choose your TenaFi device
+[business/pricing] device_price_line
+  - (new field)
+  + or +{addon}/month for {months} months
+[business/pricing] devices_note
+  - (new field)
+  + Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+[business/pricing] example_label
+  - (new field)
+  + A café on Starter with one TenaFi Pro
+[business/pricing] example_plan
+  - (new field)
+  + starter
+[business/pricing] example_device
+  - (new field)
+  + pro
+[business/pricing] example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+[business/pricing] bigger_title
+  - (new field)
+  + Bigger space? Add more devices.
+[business/pricing] bigger_spaces
+  - (new field)
+  + Restaurant with a terrace | 1 TenaFi Pro + 1 TenaFi Outdoor / Boutique hotel on 3 floors | 3 TenaFi Pro / Stadiums and large events | Quoted after a s...
+[business/pricing] bigger_cta_label
+  - (new field)
+  + Ask us on WhatsApp
+[business/pricing] bigger_cta_href
+  - (new field)
+  + whatsapp:Hi TenaFi, I have a bigger space and I’d like to know how many devices I need.
+[business/faq] items.6.question
+  - (new field)
+  + Do I have to buy the device?
+[business/faq] items.6.answer
+  - (new field)
+  + No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+[business/faq] items.7.question
+  - (new field)
+  + Which device do I need?
+[business/faq] items.7.answer
+  - (new field)
+  + TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at install...
+[business/faq] items.8.question
+  - (new field)
+  + What if I leave?
+[business/faq] items.8.answer
+  - (new field)
+  + It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+[business/faq] items.9.question
+  - (new field)
+  + Do I need more than one device?
+[business/faq] items.9.answer
+  - (new field)
+  + Bigger spaces get more devices, for example one for a terrace and one for the dining room. We tell you how many after looking at your space.
+[v2-business/pricing] pay_label
+  - (new field)
+  + Two ways to pay
+[v2-business/pricing] pay_buy_label
+  - (new field)
+  + Buy the device
+[v2-business/pricing] pay_buy_badge
+  - (new field)
+  + Best value
+[v2-business/pricing] pay_buy_text
+  - (new field)
+  + Pay once for the device and installation, then your plan each month.
+[v2-business/pricing] pay_buy_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Pay yearly and get 2 months free
+[v2-business/pricing] pay_monthly_label
+  - (new field)
+  + Pay monthly
+[v2-business/pricing] pay_monthly_badge
+  - (new field)
+  + KES 0 upfront
+[v2-business/pricing] pay_monthly_text
+  - (new field)
+  + Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.
+[v2-business/pricing] pay_monthly_terms
+  - (new field)
+  + Month to month, 30 days’ notice / Leaving in the first 12 months: pay off the rest of the device, or return it
+[v2-business/pricing] monthly_price_line
+  - (new field)
+  + for {months} months, then {plan}/month
+[v2-business/pricing] devices_title
+  - (new field)
+  + Choose your TenaFi device
+[v2-business/pricing] device_price_line
+  - (new field)
+  + or +{addon}/month for {months} months
+[v2-business/pricing] devices_note
+  - (new field)
+  + Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+[v2-business/pricing] example_label
+  - (new field)
+  + A café on Starter with one TenaFi Pro
+[v2-business/pricing] example_plan
+  - (new field)
+  + starter
+[v2-business/pricing] example_device
+  - (new field)
+  + pro
+[v2-business/pricing] example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+[v2-business/pricing] bigger_title
+  - (new field)
+  + Bigger space? Add more devices.
+[v2-business/pricing] bigger_spaces
+  - (new field)
+  + Restaurant with a terrace | 1 TenaFi Pro + 1 TenaFi Outdoor / Boutique hotel on 3 floors | 3 TenaFi Pro / Stadiums and large events | Quoted after a s...
+[v2-business/pricing] bigger_cta_label
+  - (new field)
+  + Ask us on WhatsApp
+[v2-business/pricing] bigger_cta_href
+  - (new field)
+  + whatsapp:Hi TenaFi, I have a bigger space and I’d like to know how many devices I need.
+[v2-business/faq] items.6.question
+  - (new field)
+  + Do I have to buy the device?
+[v2-business/faq] items.6.answer
+  - (new field)
+  + No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+[v2-business/faq] items.7.question
+  - (new field)
+  + Which device do I need?
+[v2-business/faq] items.7.answer
+  - (new field)
+  + TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at install...
+[v2-business/faq] items.8.question
+  - (new field)
+  + What if I leave?
+[v2-business/faq] items.8.answer
+  - (new field)
+  + It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+[v2-business/faq] items.9.question
+  - (new field)
+  + Do I need more than one device?
+[v2-business/faq] items.9.answer
+  - (new field)
+  + Bigger spaces get more devices, for example one for a terrace and one for the dining room. We tell you how many after looking at your space.
+[home/hero] device_line
+  - (new field)
+  + Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+[home/cta_banner__founding] device_line
+  - (new field)
+  + Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+[v2/hero] device_line
+  - (new field)
+  + Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+[v2/cta_banner__founding] device_line
+  - (new field)
+  + Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+
+Admin checklist: check or edit these by hand in Admin -> Public Pages
+  [ ] hosts pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] hosts FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into your existing router and adds a separate guest network. Your own network stays private.
+  [ ] v2-hosts pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] v2-hosts FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into your existing router and adds a separate guest network. Your own network stays private.
+  [ ] business pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. WhatsApp and SMS allowanc...
+  [ ] business FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into the router you already have and adds a separate customer network. Your business network stays private.
+  [ ] v2-business pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. WhatsApp and SMS allowanc...
+  [ ] v2-business FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into the router you already have and adds a separate customer network. Your business network stays private.
+  [ ] VAT: are prices incl. or excl. 16% VAT? Then fill vat_note on each pricing section (empty = not shown). [open decision]
+  [ ] Device prices live once, on Devices & pricing -> devices (/pricing). TenaFi Outdoor KES 48,000 may become ~52,000: change items.2.price_kes there. [open decision]
+  [ ] Pay monthly: does the client own the device after month 12, or does TenaFi keep it? The footnotes and /pricing say "it’s yours" (Glen’s earlier answer); confirm. [open decision]
+  [ ] Extra devices: one-off purchases, or does each carry a plan? [open decision]
+  [ ] Multi-unit discount: does it start at 5 or 10 units? /hosts FAQ "I manage lots of units." and the sign-up discount say 10. [open decision]
+
+120 field(s) to fill.
+Dry run: nothing was saved. Run without --dry-run to back up and apply.
