@@ -1720,13 +1720,13 @@ return [
                 'example_monthly' => 'Pay monthly',
                 'example_saving' => 'Buying upfront saves this café in year one',
                 'notes' => [
-                    ['title' => 'Free for December', 'text' => 'Installs from 16 November. Your device payment or first monthly charge starts in January.'],
+                    ['title' => 'Book a demo first', 'text' => 'On a call, a video call or a visit, we show you TenaFi and survey your space. Your device payment or first monthly charge starts after installation.'],
                     ['title' => 'Short-term rentals', 'text' => 'Priced per unit, with one device per unit.'],
                     ['title' => 'Leaving early on monthly', 'text' => 'Pay off the rest of the device or return it. Upfront: 30 days’ notice.'],
                 ],
                 'footnote' => 'Prices in KES. Paying yearly on the upfront option: 2 months free.',
                 'cta_title' => 'Not sure which device you need?',
-                'cta_text' => 'Book your free trial and our team will survey your space and recommend the right devices.',
+                'cta_text' => 'Book a demo and our team will survey your space and recommend the right devices.',
                 'buttons' => [
                     ['label' => 'Book for my rentals', 'href' => '/hosts#join'],
                     ['label' => 'Book for my business', 'href' => '/business#signup'],
