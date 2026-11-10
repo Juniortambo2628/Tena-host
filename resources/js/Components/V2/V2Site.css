@@ -32,3 +32,150 @@
     @apply flex justify-center pb-16;
     margin-top: -3rem; /* tucked under the plans' own bottom padding */
 }
+
+/* "Trusted by" (Sections.jsx Partners): clients on the left, the selected
+   client's WiFi page in a phone on the right, like "What you get". Phones:
+   a row of logos to swipe, then the card and the phone. */
+.v2-trusted__tabs {
+    @apply -mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-2;
+    scroll-snap-type: x mandatory;
+}
+
+.v2-trusted__tab {
+    @apply flex shrink-0 items-center gap-3 rounded-full bg-white/70 py-2 pl-2 pr-4 text-left transition-colors;
+    scroll-snap-align: start;
+}
+
+.v2-trusted__tab--active {
+    @apply bg-ink text-white;
+}
+
+.v2-trusted__name {
+    @apply block whitespace-nowrap text-sm font-semibold;
+}
+
+.v2-trusted__area {
+    @apply hidden text-xs text-faint;
+}
+
+.v2-trusted__logo {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white text-base font-bold text-ink;
+    box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+.v2-trusted__logo img {
+    @apply h-full w-full object-contain;
+    padding: 4px;
+}
+
+.v2-trusted__logo--large {
+    @apply h-16 w-16 rounded-2xl text-2xl;
+}
+
+@media (min-width: 1024px) {
+    .v2-trusted__tabs {
+        @apply mx-0 mt-10 block space-y-1 overflow-visible border-l border-line-strong px-0 pb-0;
+    }
+
+    .v2-trusted__tab {
+        @apply relative w-full rounded-none bg-transparent py-3 pl-6 text-ink;
+    }
+
+    .v2-trusted__tab--active {
+        @apply bg-transparent;
+    }
+
+    .v2-trusted__tab--active::before {
+        content: "";
+        @apply absolute top-0 h-full bg-ink;
+        left: -1px;
+        width: 2px;
+    }
+
+    .v2-trusted__tab:not(.v2-trusted__tab--active) {
+        @apply text-muted hover:text-ink;
+    }
+
+    .v2-trusted__name {
+        @apply whitespace-normal text-base font-medium;
+    }
+
+    .v2-trusted__area {
+        @apply block;
+    }
+}
+
+/* The right-hand panel: a dark card with the phone, the client's name on glass. */
+.v2-trusted__panel {
+    @apply relative isolate flex flex-col items-center gap-6 overflow-hidden rounded-[2rem] p-5 sm:p-8;
+    background: linear-gradient(160deg, var(--color-ink) 0%, var(--color-ink-deep) 100%);
+}
+
+.v2-trusted__card {
+    @apply flex w-full items-center gap-4 rounded-3xl border border-white/50 bg-white/85 p-5 shadow-xl backdrop-blur-xl;
+}
+
+.v2-trusted__phone {
+    @apply w-full;
+    max-width: 15rem;
+}
+
+.v2-trusted__empty {
+    @apply mx-auto flex aspect-[9/19] w-full flex-col items-center justify-center gap-3 rounded-[2.4rem] border-[7px] border-ink bg-white p-6 text-center text-sm text-muted;
+}
+
+.v2-trusted__arrows {
+    @apply flex items-center gap-4 text-sm text-white/80;
+}
+
+.v2-trusted__arrows button {
+    @apply flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20;
+}
+
+@media (min-width: 1024px) {
+    .v2-trusted__panel {
+        @apply grid items-center gap-8 p-10;
+        grid-template-columns: minmax(0, 1fr) 16rem;
+        min-height: 38rem;
+    }
+
+    .v2-trusted__card {
+        @apply max-w-sm self-start;
+    }
+
+    .v2-trusted__phone {
+        @apply row-span-2 max-w-none;
+        transform: rotate(-2deg);
+    }
+
+    .v2-trusted__arrows {
+        @apply self-end;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .v2-trusted__phone { transform: none; }
+}
+
+/* The Trusted by title: the kit's heading, a size down so the client list sits beside it. */
+.v2-trusted__heading h2 {
+    @apply text-3xl sm:text-4xl lg:text-5xl;
+}
+
+/* Hero photos (homepage and audience pages): darken from slightly see-through
+   at the top to dark at the bottom, instead of the kit's lighter middle, so the
+   heading, the paragraph and the content block under the photo stand out. */
+.v2-hero > section > div > .bg-gradient-to-b {
+    background-image: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-ink-deep) 55%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink-deep) 72%, transparent) 45%,
+        color-mix(in srgb, var(--color-ink-deep) 92%, transparent) 100%
+    );
+}
+
+/* A soft shadow under the hero's words, for busy photos. */
+.v2-hero h1,
+.v2-hero h1 + div {
+    text-shadow: 0 2px 18px color-mix(in srgb, var(--color-ink-deep) 55%, transparent);
+}

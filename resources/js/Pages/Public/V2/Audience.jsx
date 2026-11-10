@@ -199,22 +199,25 @@ function AudienceHero({ hero, glance, joinHref, audience, ids }) {
     const secondaryHref = !secondaryRaw.startsWith('#') || ids.includes(secondaryRaw.slice(1)) ? secondaryRaw || `/${audience}` : `/${audience}${secondaryRaw}`;
 
     return (
-        <PhotoHero
-            tall={glance.length > 0}
-            image={getMedia(hero, 'main_image', PHOTOS[0])}
-            phoneImage={getUpload(hero, 'phone_image') || undefined}
-            eyebrow={stripHtml(getContent(hero, 'badge', ''))}
-            title={<Html html={getContent(hero, 'title', '')} className="v2-hero-title" />}
-            text={<Html html={getContent(hero, 'subtitle', '')} />}
-            after={glance.length > 0 ? <JourneyGlance journey={{ glance }} /> : null}
-        >
-            <PillLink to={joinHref} variant="light" size="lg">{primary}</PillLink>
-            {stripHtml(getContent(hero, 'cta_secondary', '')) && (
-                <PillLink to={secondaryHref} variant="glass" size="lg" arrow>
-                    {stripHtml(getContent(hero, 'cta_secondary', ''))}
-                </PillLink>
-            )}
-        </PhotoHero>
+        // The wrapper darkens the photo top to bottom (V2Site.css .v2-hero), so the words read clearly.
+        <div className="v2-hero">
+            <PhotoHero
+                tall={glance.length > 0}
+                image={getMedia(hero, 'main_image', PHOTOS[0])}
+                phoneImage={getUpload(hero, 'phone_image') || undefined}
+                eyebrow={stripHtml(getContent(hero, 'badge', ''))}
+                title={<Html html={getContent(hero, 'title', '')} className="v2-hero-title" />}
+                text={<Html html={getContent(hero, 'subtitle', '')} />}
+                after={glance.length > 0 ? <JourneyGlance journey={{ glance }} /> : null}
+            >
+                <PillLink to={joinHref} variant="light" size="lg">{primary}</PillLink>
+                {stripHtml(getContent(hero, 'cta_secondary', '')) && (
+                    <PillLink to={secondaryHref} variant="glass" size="lg" arrow>
+                        {stripHtml(getContent(hero, 'cta_secondary', ''))}
+                    </PillLink>
+                )}
+            </PhotoHero>
+        </div>
     );
 }
 
