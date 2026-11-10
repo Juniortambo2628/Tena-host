@@ -155,3 +155,21 @@
 .v2-trusted__heading h2 {
     @apply text-3xl sm:text-4xl lg:text-5xl;
 }
+
+/* Hero photos (homepage and audience pages): darken from slightly see-through
+   at the top to dark at the bottom, instead of the kit's lighter middle, so the
+   heading, the paragraph and the content block under the photo stand out. */
+.v2-hero > section > div > .bg-gradient-to-b {
+    background-image: linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-ink-deep) 55%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink-deep) 72%, transparent) 45%,
+        color-mix(in srgb, var(--color-ink-deep) 92%, transparent) 100%
+    );
+}
+
+/* A soft shadow under the hero's words, for busy photos. */
+.v2-hero h1,
+.v2-hero h1 + div {
+    text-shadow: 0 2px 18px color-mix(in srgb, var(--color-ink-deep) 55%, transparent);
+}
