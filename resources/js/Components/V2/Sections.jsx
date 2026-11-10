@@ -474,14 +474,15 @@ export function Credibility({ section, id }) {
  * with a device add-on), the TenaFi devices, a worked example and bigger
  * spaces. The extras show once the section has its "Two ways to pay" words
  * (`tenafi:pricing-options` fills them on live pages) and there are devices.
- * On /pricing (devicesLink off) only the plans show: that page has its own.
+ * On /pricing (devicesLink off) the switch shows above the plans, but not the
+ * devices, example and bigger spaces: that page has its own.
  */
 export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
     // Once /pricing is switched on (Admin -> Settings), each page's plans link to it.
     const { pricingPage: devicesPage } = usePage().props;
     const pricingPage = devicesLink ? devicesPage : null;
     const devices = useSectionDevices(section);
-    const withOptions = devicesLink && devices.length > 0 && Boolean(stripHtml(getContent(section, 'pay_buy_label', '')));
+    const withOptions = devices.length > 0 && Boolean(stripHtml(getContent(section, 'pay_buy_label', '')));
     const choice = usePayChoice(devices);
     const pay = withOptions ? choice.pay : 'buy';
 
@@ -546,7 +547,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                             </div>
                         ))}
                     </div>
-                    {withOptions && (
+                    {withOptions && devicesLink && (
                         <>
                             <WorkedExample section={section} plans={rows} devices={devices} />
                             <DevicesRow section={section} devices={devices} />

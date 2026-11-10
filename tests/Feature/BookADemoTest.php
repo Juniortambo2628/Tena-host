@@ -77,3 +77,15 @@ it('stores how they would like their demo', function () {
 
     expect(Registration::first()->answers['demoType'])->toBe('visit');
 });
+
+it('takes the trial dates out of the rentals pricing subtitle, keeping the rest', function () {
+    Storage::fake('local');
+    $before = 'Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page. Free trial from 1st December until 4 January 2027, with first installations from Monday 16 November, in time for the December high season.';
+    demoContent('v2-hosts', 'pricing', 'subtitle')->update(['value' => $before]);
+    LandingPage::clearCache();
+
+    $this->artisan('tenafi:book-a-demo')->assertSuccessful();
+
+    expect(demoContent('v2-hosts', 'pricing', 'subtitle')->value)
+        ->toBe('Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page.');
+});
