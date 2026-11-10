@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import { CheckCircle2, ArrowLeft, Loader2 } from 'lucide-react';
 import { SectionWrapper, SectionHeader } from './layouts';
 import { getContent, extractItems, stripHtml, baseSectionKey, isTruthy } from '@/lib/cms';
@@ -153,6 +154,7 @@ function Field({ field, value, error, onChange, planProps }) {
  */
 export default function SignupForm({ section }) {
     const { page, sections } = usePublic();
+    const { devices = [] } = usePage().props;
     const steps = useMemo(
         () => extractItems(section, 'steps', ['title', 'heading', 'description', 'fields']).map((s) => ({ ...s, fields: parseFields(s.fields) })),
         [section],
@@ -206,6 +208,19 @@ export default function SignupForm({ section }) {
     const selectedPlan = planField ? values[planField.key] : null;
     const basePrice = Number(plans[selectedPlan]?.price_kes) || 0;
     const estimatedPrice = basePrice ? Math.round(basePrice * (1 - discount / 100)) : null;
+
+    // The device they picked (prices from /pricing) and how they'll pay for it.
+    const device = devices.find((d) => d.id === values.device);
+    const deviceRows = device ? (() => {
+        const once = `${formatKes(device.price_kes)} once, installed`;
+        const spread = `+${formatKes(device.monthly_kes)} a month for ${device.months} months`;
+        if (values.devicePayment === 'upfront') return [['Device', `${device.name}: ${once}`]];
+        if (values.devicePayment === 'monthly') {
+            return [['Device', `${device.name}: ${spread}, then it’s yours`]]
+                .concat(estimatedPrice ? [[`Monthly, months 1–${device.months}`, `${formatKes(estimatedPrice + device.monthly_kes)} ${planProps.suffix}`]] : []);
+        }
+        return [['Device', `${device.name}: ${once}, or ${spread}`]];
+    })() : [];
 
     const setValue = (key, value) => {
         setValues((v) => ({ ...v, [key]: value }));
@@ -285,6 +300,7 @@ export default function SignupForm({ section }) {
         })
         .concat(planField ? [[stripHtml(planField.label), parseOptions(planField.options).find((o) => o.value === selectedPlan)?.label || '-']] : [])
         .concat(planField ? [['Estimated price', estimatedPrice ? `${formatKes(estimatedPrice)} ${planProps.suffix}` : 'To be recommended']] : [])
+        .concat(deviceRows)
         .concat(allFields.filter((f) => f.type === 'tel' && values[f.key]).map((f) => [stripHtml(f.label), `+254 ${phoneDigits(values[f.key])}`]));
 
     const progress = [...steps.map((s) => stripHtml(s.title)), 'Confirmation'];

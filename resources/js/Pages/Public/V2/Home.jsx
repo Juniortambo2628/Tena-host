@@ -82,41 +82,44 @@ function Hero({ section: hero, site, joinHref }) {
     const primaryHref = stripHtml(getContent(hero, 'cta_primary_url', '')) || joinHref;
 
     return (
-        <PhotoHero
-            tall
-            image={getMedia(hero, 'main_image', '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg')}
-            phoneImage={getUpload(hero, 'phone_image') || undefined}
-            eyebrow={stripHtml(getContent(hero, 'badge', ''))}
-            title={<Html html={title} className="v2-hero-title" />}
-            text={<Html html={getContent(hero, 'subtitle', '')} />}
-            after={(
-                <div className="grid gap-4 rounded-[2rem] bg-white/85 p-4 shadow-[0_40px_90px_-40px_color-mix(in_srgb,var(--color-ink)_60%,transparent)] backdrop-blur-xl sm:p-6 lg:grid-cols-5">
-                    <div className="flex flex-col justify-between rounded-3xl bg-gradient-to-br from-white to-tint p-6 sm:p-8 lg:col-span-3">
-                        <Eyebrow>About TenaFi</Eyebrow>
-                        <p className="mt-5 !font-display text-3xl !font-light leading-tight tracking-tight !text-ink sm:text-4xl">
-                            {stripHtml(getContent(hero, 'body', 'Guests log in, join your list, review you and come back. We install it and run it for you.'))}
-                        </p>
-                        {ticks.length > 0 && (
-                            <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-body">
-                                {ticks.map((t, i) => <li key={i} className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-positive" aria-hidden="true" />{t.text}</li>)}
-                            </ul>
-                        )}
+        // The wrapper darkens the photo top to bottom (V2Site.css .v2-hero), so the words read clearly.
+        <div className="v2-hero">
+            <PhotoHero
+                tall
+                image={getMedia(hero, 'main_image', '/legacy/assets/Tena-Landing/Tena-Hero-1.jpg')}
+                phoneImage={getUpload(hero, 'phone_image') || undefined}
+                eyebrow={stripHtml(getContent(hero, 'badge', ''))}
+                title={<Html html={title} className="v2-hero-title" />}
+                text={<Html html={getContent(hero, 'subtitle', '')} />}
+                after={(
+                    <div className="grid gap-4 rounded-[2rem] bg-white/85 p-4 shadow-[0_40px_90px_-40px_color-mix(in_srgb,var(--color-ink)_60%,transparent)] backdrop-blur-xl sm:p-6 lg:grid-cols-5">
+                        <div className="flex flex-col justify-between rounded-3xl bg-gradient-to-br from-white to-tint p-6 sm:p-8 lg:col-span-3">
+                            <Eyebrow>About TenaFi</Eyebrow>
+                            <p className="mt-5 !font-display text-3xl !font-light leading-tight tracking-tight !text-ink sm:text-4xl">
+                                {stripHtml(getContent(hero, 'body', 'Guests log in, join your list, review you and come back. We install it and run it for you.'))}
+                            </p>
+                            {ticks.length > 0 && (
+                                <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-body">
+                                    {ticks.map((t, i) => <li key={i} className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-positive" aria-hidden="true" />{t.text}</li>)}
+                                </ul>
+                            )}
+                        </div>
+                        <div className="flex flex-col justify-center gap-3 rounded-3xl bg-ink p-6 text-white sm:p-8 lg:col-span-2">
+                            <Eyebrow light>Book a demo</Eyebrow>
+                            <p className="!font-display text-2xl !font-light leading-snug !text-white">
+                                {priceLine.includes('{price}') && !cheapest ? 'Book a demo. We install it for you.' : priceLine.replace('{price}', cheapest)}
+                            </p>
+                            <div className="mt-2"><PillLink to={primaryHref} variant="light">{primary}</PillLink></div>
+                        </div>
                     </div>
-                    <div className="flex flex-col justify-center gap-3 rounded-3xl bg-ink p-6 text-white sm:p-8 lg:col-span-2">
-                        <Eyebrow light>Book a demo</Eyebrow>
-                        <p className="!font-display text-2xl !font-light leading-snug !text-white">
-                            {priceLine.includes('{price}') && !cheapest ? 'Book a demo. We install it for you.' : priceLine.replace('{price}', cheapest)}
-                        </p>
-                        <div className="mt-2"><PillLink to={primaryHref} variant="light">{primary}</PillLink></div>
-                    </div>
-                </div>
-            )}
-        >
-            <PillLink to={primaryHref} variant="light" size="lg">{primary}</PillLink>
-            <PillLink to={stripHtml(getContent(hero, 'cta_secondary_url', '')) || '#how'} variant="glass" size="lg" arrow>
-                {stripHtml(getContent(hero, 'cta_secondary', 'See how it works'))}
-            </PillLink>
-        </PhotoHero>
+                )}
+            >
+                <PillLink to={primaryHref} variant="light" size="lg">{primary}</PillLink>
+                <PillLink to={stripHtml(getContent(hero, 'cta_secondary_url', '')) || '#how'} variant="glass" size="lg" arrow>
+                    {stripHtml(getContent(hero, 'cta_secondary', 'See how it works'))}
+                </PillLink>
+            </PhotoHero>
+        </div>
     );
 }
 

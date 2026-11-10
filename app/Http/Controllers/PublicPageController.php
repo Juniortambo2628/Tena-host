@@ -22,6 +22,11 @@ class PublicPageController extends Controller
 {
     public function show(string $slug = 'home'): Response
     {
+        // /pricing: off until switched on (Admin -> Settings); admins can always preview it.
+        if ($slug === 'pricing') {
+            abort_unless(static::pricingPageEnabled() || Auth::user()?->isAdmin(), 404);
+        }
+
         $page = LandingPage::where('slug', $slug)
             ->where('is_routable', true)
             ->where('is_active', true)
@@ -35,6 +40,21 @@ class PublicPageController extends Controller
 
         $sections = LandingPage::publicSections($page->slug);
         $pageSeo = collect($sections)->firstWhere('section_key', 'seo');
+
+        // The devices and pricing page is built in the v2 design only.
+        if ($slug === 'pricing') {
+            // The plans as each audience page shows them (its v2 copy, else the live page).
+            $plans = collect(['hosts', 'business'])->mapWithKeys(fn ($audience) => [$audience => collect(
+                LandingPage::publicSections(V2Pages::audienceSlug($audience)) ?: LandingPage::publicSections($audience)
+            )->firstWhere('section_key', 'pricing')])->filter();
+
+            return $this->render('Public/V2/Pricing', [
+                'page' => ['slug' => $page->slug, 'name' => $page->name],
+                'sections' => $sections,
+                'planSections' => $plans,
+                'v2Base' => '',
+            ], $pageSeo, $page->path(), index: static::pricingPageEnabled());
+        }
 
         return $this->render('Public/Page', [
             'page' => ['slug' => $page->slug, 'name' => $page->name],
@@ -157,6 +177,12 @@ class PublicPageController extends Controller
         return filter_var(Setting::getValue('v2_live', '1'), FILTER_VALIDATE_BOOLEAN);
     }
 
+    /** /pricing (devices and the two ways to pay) is shown once switched on in Admin -> Settings. */
+    public static function pricingPageEnabled(): bool
+    {
+        return filter_var(Setting::getValue('pricing_page_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+    }
+
     /** The v2 pages are open to everyone when switched on, and to admins always. */
     public static function v2Visible(): bool
     {
@@ -191,6 +217,10 @@ class PublicPageController extends Controller
             'callbacks' => CallbackController::enabled(),
             // The homepage "Try it yourself" section links to /demo only while it's on.
             'demo' => DemoController::enabled(),
+            // Pricing sections link to /pricing once it's switched on.
+            'pricingPage' => static::pricingPageEnabled() ? '/pricing' : null,
+            // Device prices, for the sign-up form's summary.
+            'devices' => LandingPage::liveDevices(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path, $index),
         ]);
     }

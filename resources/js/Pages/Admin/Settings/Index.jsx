@@ -150,6 +150,7 @@ export default function Index({ settings, logos = [] }) {
             demo_enabled: flattened.demo_enabled || '0',
             v2_pages_enabled: flattened.v2_pages_enabled || '0',
             v2_live: flattened.v2_live ?? '1',
+            pricing_page_enabled: flattened.pricing_page_enabled || '0',
             event_accounts_enabled: flattened.event_accounts_enabled || '0',
             teams_enabled: flattened.teams_enabled || '0',
             staff_wifi_enabled: flattened.staff_wifi_enabled || '0',
@@ -369,6 +370,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="V2 design on the live site: /, /hosts, /business and /events show the v2 pages (/v2 links redirect there). Untick to bring back the previous design."
                                         checked={data.settings.v2_live === '1'}
                                         onChange={() => updateSetting('v2_live', data.settings.v2_live === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Pricing page: show /pricing (TenaFi Lite, Pro and Outdoor, and the two ways to pay) to everyone, and link to it from each page's pricing. Admins can always preview it. Prices are edited in Public Pages → Devices & pricing."
+                                        checked={data.settings.pricing_page_enabled === '1'}
+                                        onChange={() => updateSetting('pricing_page_enabled', data.settings.pricing_page_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

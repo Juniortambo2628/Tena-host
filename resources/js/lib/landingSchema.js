@@ -78,8 +78,14 @@ export const SECTION_MEDIA_SCHEMA = {
     partners: {
         slots: [],
         // The slot keeps its old key so existing uploads stay attached to their rows.
-        dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n}: WiFi page screenshot or logo')
-            .map(slot => ({ ...slot, description: 'Best: a phone screenshot of their TenaFi WiFi page (tall, about 600 × 1200, status bar cropped off). A logo works too: it goes on a drawn WiFi page in the logo’s colours.' })),
+        // Two per client: the WiFi page (splash) design shown in the phone, and their logo beside the name.
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'partners', 'partner_{i}_logo', 'Partner {n}: WiFi page design')
+            .map(slot => ({ ...slot, description: 'Their TenaFi WiFi (splash) page, tall like a phone screen (about 600 × 1200, status bar cropped off). It shows in the phone on the right.' }))
+            .flatMap(slot => [slot, {
+                key: slot.key.replace(/_logo$/, '_mark'),
+                label: slot.label.replace('WiFi page design', 'logo'),
+                description: 'Their logo, shown on a white tile beside their name. Square or wide both work; a transparent background looks best.',
+            }]),
     },
 
     path_cards: {
@@ -136,6 +142,13 @@ export const SECTION_MEDIA_SCHEMA = {
     },
 
     comparison_table: { slots: [] },
+    // /pricing: one picture per device card (TenaFi Lite, Pro, Outdoor).
+    devices: {
+        slots: [],
+        dynamic: (contentKeys) => featureSlots(contentKeys, 'items', 'device_{i}_image', 'Device {n}: picture')
+            .map(slot => ({ ...slot, description: 'The device on a transparent background, wide (about 1320 × 780). It sits on the card’s light, yellow or dark panel.' })),
+    },
+    pay_options: { slots: [] },
     demo: { slots: [] },
     worth_calculator: { slots: [] },
     tiles: { slots: [] },
@@ -239,11 +252,11 @@ export function slotNotice(sectionKey, mediaKey, content = {}, media = {}, pageS
         if (mockup) return `Not on the site: ${what.toLowerCase()} shows a drawing. Upload in “${what}: screenshot instead of the drawing” to replace it.`;
     }
 
-    // Trusted by: a tall phone screenshot fills the phone; anything squarer is used as a logo.
+    // Trusted by: the phone needs a tall WiFi page design; a logo belongs in the logo slot.
     if (type === 'partners' && /^partner_\d+_logo$/.test(mediaKey)) {
         const { width, height } = media?.[mediaKey] || {};
         if (width && height && height / width < 1.3) {
-            return 'Shown as a logo on a drawn WiFi page. To show their real WiFi page, upload a tall phone screenshot of it instead.';
+            return 'This isn’t a tall phone screen, so it won’t fill the phone. Upload their WiFi page design here, and put the logo in their logo slot.';
         }
     }
 
@@ -256,10 +269,10 @@ export function slotNotice(sectionKey, mediaKey, content = {}, media = {}, pageS
 
 /** A slot's name in the editor; Trusted by slots are named after their client. */
 export function slotTitle(sectionKey, mediaKey, label, content = {}) {
-    const partner = /^partner_(\d+)_logo$/.exec(mediaKey);
+    const partner = /^partner_(\d+)_(logo|mark)$/.exec(mediaKey);
     if (String(sectionKey).split('__')[0] === 'partners' && partner) {
         const name = plain(content[`partners.${partner[1]}.name`]);
-        if (name) return `${name}: WiFi page screenshot or logo`;
+        if (name) return partner[2] === 'mark' ? `${name}: logo` : `${name}: WiFi page design`;
     }
     return label;
 }
