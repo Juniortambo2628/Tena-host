@@ -43,9 +43,15 @@ class PublicPageController extends Controller
 
         // The devices and pricing page is built in the v2 design only.
         if ($slug === 'pricing') {
+            // The plans as each audience page shows them (its v2 copy, else the live page).
+            $plans = collect(['hosts', 'business'])->mapWithKeys(fn ($audience) => [$audience => collect(
+                LandingPage::publicSections(V2Pages::audienceSlug($audience)) ?: LandingPage::publicSections($audience)
+            )->firstWhere('section_key', 'pricing')])->filter();
+
             return $this->render('Public/V2/Pricing', [
                 'page' => ['slug' => $page->slug, 'name' => $page->name],
                 'sections' => $sections,
+                'planSections' => $plans,
                 'v2Base' => '',
             ], $pageSeo, $page->path(), index: static::pricingPageEnabled());
         }

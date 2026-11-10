@@ -467,9 +467,10 @@ export function Credibility({ section, id }) {
 }
 
 /** A page's plans (on /v2, the rentals plans copied from the live /hosts page). */
-export function Pricing({ section, site, id, joinHref }) {
+export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
     // Once /pricing is switched on (Admin -> Settings), each page's plans link to it.
-    const { pricingPage } = usePage().props;
+    const { pricingPage: devicesPage } = usePage().props;
+    const pricingPage = devicesLink ? devicesPage : null;
     const plans = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'unit', 'features', 'cta', 'variant'])
         .filter((p) => stripHtml(p.label))
         .map((p, i) => ({

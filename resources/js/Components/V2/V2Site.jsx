@@ -98,7 +98,7 @@ const PHOTOS = { url: (key) => key || '', alt: () => '' };
  * `media` (screens shown in a phone or browser frame, by key).
  */
 function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
-    const { site = {}, seo = {}, auth } = usePage().props;
+    const { site = {}, seo = {}, auth, pricingPage } = usePage().props;
     const brand = useBrand();
     const signedIn = Boolean(auth?.user);
 
@@ -127,6 +127,8 @@ function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
             nav: extractItems(header, 'links', ['label', 'href'])
                 .map((l) => ({ label: stripHtml(l.label), to: stripHtml(l.href) }))
                 .filter((l) => l.label && l.to)
+                // Once /pricing is on (Admin -> Settings), the header's Pricing link goes there.
+                .map((l) => (pricingPage && /^\/?#pricing$/.test(l.to) ? { ...l, to: pricingPage } : l))
                 .map((l) => ({ ...l, to: l.to.startsWith('#') ? `${v2Base || '/'}${l.to}` : v2Link(l.to) })),
             useAccount: () => ({ signedIn }),
             // TenaFi has no public sign-in (it's fully managed): the quieter link is a WhatsApp chat.
@@ -162,5 +164,5 @@ function useV2SiteConfig({ places = NONE, media = NONE, joinHref }) {
                 pages: {},
             },
         };
-    }, [site, seo, brand, signedIn, places, media, joinHref, v2Base]);
+    }, [site, seo, brand, signedIn, places, media, joinHref, v2Base, pricingPage]);
 }
