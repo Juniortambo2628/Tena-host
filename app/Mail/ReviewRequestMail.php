@@ -70,7 +70,16 @@ class ReviewRequestMail extends Mailable
             '{review_link}' => '',
         ]);
 
+        // The look of the site's WiFi page: "society" is deep green, cream and gold,
+        // so the cream logo sits on green, as guests saw it; other designs use a
+        // white card with the logo on the brand colour.
+        $society = ($property->branding_json['template'] ?? null) === 'society';
+        $theme = $society
+            ? ['page' => '#0B2F24', 'card' => '#0E3A2C', 'header' => '#0E3A2C', 'headerInk' => '#F4EEDC', 'ink' => '#F4EEDC', 'body' => '#E9E3D1', 'muted' => '#B9B4A4', 'rule' => $accent, 'font' => "Georgia,'Times New Roman',serif", 'center' => true]
+            : ['page' => '#f3efe9', 'card' => '#ffffff', 'header' => $accent, 'headerInk' => SplashDesign::readableInk($accent), 'ink' => '#17171b', 'body' => '#33333a', 'muted' => '#7a7a82', 'rule' => null, 'font' => null, 'center' => false];
+
         return [
+            'theme' => $theme,
             'subject' => static::subjectFor($guest),
             'intro' => trim(preg_replace('/\s*:\s*$/', '.', trim($message))),
             'buttonLabel' => 'Leave a Google review',

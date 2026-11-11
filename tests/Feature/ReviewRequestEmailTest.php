@@ -164,3 +164,13 @@ it('only accepts the known channels', function () {
         ->assertSessionHasNoErrors();
     expect($this->property->fresh()->review_request_channel)->toBe('both');
 });
+
+it('dresses the email like the site’s WiFi page: deep green and gold for the society design', function () {
+    $this->property->update(['branding_json' => ['template' => 'society', 'accent' => '#D9BC6A']]);
+    $guest = sipper(['review_token' => 'abcd1234']);
+    $guest->setRelation('property', $this->property);
+
+    $html = (new ReviewRequestMail($guest, route('reviews.go', 'abcd1234')))->render();
+
+    expect($html)->toContain('background:#0E3A2C')->toContain('background:#D9BC6A')->toContain('Georgia');
+});
