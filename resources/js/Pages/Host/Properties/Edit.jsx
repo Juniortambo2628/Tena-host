@@ -9,12 +9,14 @@ import { T } from '@/Components/Dashboard/Terms';
 import { TemplateThumb } from '@/Components/Properties/SplashEditor';
 import { normalizeTemplate } from '@/Components/Properties/splashTemplates';
 import { BRAND_COLORS } from '@/constants';
+import { useConfirm } from '@/hooks/useConfirm';
 
-export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, venueUrl = null, staffWifiEnabled = false, visitorLogEnabled = false }) {
+export default function PropertyEdit({ property, reviewDefaults = {}, reviewStats = {}, reviewEmails = null, venueUrl = null, staffWifiEnabled = false, visitorLogEnabled = false }) {
+    const { confirm, ConfirmDialogEl } = useConfirm();
     // Occupancy alerts are for rentals only.
     const { account } = usePage().props.auth || {};
     const isRentals = !account || account.type === 'host';
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors, isDirty } = useForm({
         name: property.name || '',
         address: property.address || '',
         wifi_ssid: property.wifi_ssid || '',
@@ -23,6 +25,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         review_url: property.review_url || '',
         review_request_delay_hours: property.review_request_delay_hours || 24,
         review_message: property.review_message || '',
+        review_request_channel: property.review_request_channel || 'whatsapp',
         offers: property.offers || '',
         events: property.events || '',
         birthday_offer: property.birthday_offer || '',
@@ -31,6 +34,16 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
         visitor_log: !!property.visitor_log,
         _method: 'patch',
     });
+
+    // A thank-you and review request to every guest not yet asked (the saved settings).
+    const askEveryone = async () => {
+        const ok = await confirm({
+            title: 'Ask everyone so far',
+            message: `Send a thank-you and review request to ${reviewEmails.waiting} ${reviewEmails.waiting === 1 ? 'guest' : 'guests'} now? Each guest is only ever asked once.`,
+            confirmLabel: 'Send now',
+        });
+        if (ok) router.post(route('host.properties.review-requests', property.id), {}, { preserveScroll: true });
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -116,7 +129,9 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                 <Star size={14} /> Thank-you &amp; review request
                             </legend>
                             <p className="host-properties-edit-hint">
-                                After check-out (or a guest's last WiFi visit), TenaFi thanks them on WhatsApp, or by SMS if WhatsApp can't reach them, and links to your review page.
+                                {reviewEmails
+                                    ? "After check-out (or a guest's last WiFi visit), TenaFi thanks them the way you choose below and links to your review page."
+                                    : "After check-out (or a guest's last WiFi visit), TenaFi thanks them on WhatsApp, or by SMS if WhatsApp can't reach them, and links to your review page."}{' '}
                                 Each guest is asked once.
                                 {reviewStats.requested > 0 && ` So far: ${reviewStats.requested} asked, ${reviewStats.clicked} opened the link.`}
                             </p>
@@ -169,6 +184,46 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                                 </p>
                                 {errors.review_message && <p className="host-properties-edit-error">{errors.review_message}</p>}
                             </div>
+
+                            {reviewEmails && (
+                                <>
+                                    <div>
+                                        <label className="host-properties-edit-label" htmlFor="review_request_channel">Send by</label>
+                                        <select
+                                            id="review_request_channel"
+                                            className="host-properties-edit-input"
+                                            value={data.review_request_channel}
+                                            onChange={e => setData('review_request_channel', e.target.value)}
+                                        >
+                                            <option value="whatsapp">WhatsApp (SMS if WhatsApp can't reach them)</option>
+                                            <option value="email">Email, in your name, logo and colour</option>
+                                            <option value="both">Email if they gave one, otherwise WhatsApp</option>
+                                        </select>
+                                        <p className="host-properties-edit-hint">
+                                            By email, your message (without the link) sits under your logo, and the link becomes a “Leave a Google review” button.
+                                        </p>
+                                        {errors.review_request_channel && <p className="host-properties-edit-error">{errors.review_request_channel}</p>}
+                                    </div>
+
+                                    {reviewEmails.canSend && (
+                                        <div className="host-properties-edit-ask">
+                                            <p className="host-properties-edit-hint">
+                                                {reviewEmails.waiting > 0
+                                                    ? <>{reviewEmails.waiting} {reviewEmails.waiting === 1 ? 'guest has' : 'guests have'} not been asked yet, including people who came before review requests were on.</>
+                                                    : 'Everyone who can be asked has been asked.'}
+                                                {isDirty && ' Save your changes first.'}
+                                            </p>
+                                            <PillButton
+                                                variant="secondary"
+                                                onClick={askEveryone}
+                                                disabled={!reviewEmails.waiting || isDirty || !property.review_url}
+                                            >
+                                                Ask everyone so far
+                                            </PillButton>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </fieldset>
 
                         {venueUrl && (
@@ -281,6 +336,7 @@ export default function PropertyEdit({ property, reviewDefaults = {}, reviewStat
                     </form>
                 </GlassCard>
             </div>
+            {ConfirmDialogEl}
         </>
     );
 }
