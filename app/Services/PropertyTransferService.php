@@ -35,7 +35,11 @@ use Illuminate\Validation\ValidationException;
  *    runs it now and held from messages for 14 days (TransferNoticeService).
  *    The WiFi keeps running throughout.
  *
- * Not yet: taking over a device still being paid off (it blocks the transfer).
+ * Step 4: a TenaFi device still being paid off monthly either gets paid off
+ * first (TenaFi records it in Admin -> Devices), or the new owner takes over
+ * the remaining payments: they agree when accepting, TenaFi checks them (the
+ * transfer is held until an admin releases it), and at the hand-over the
+ * device agreements move to them with the same payment dates.
  */
 class PropertyTransferService
 {
@@ -48,7 +52,24 @@ class PropertyTransferService
         return filter_var(Setting::getValue('property_transfers_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
     }
 
-    public function start(User $owner, Property $property, string $email, ?string $ip = null): PropertyTransfer
+    /**
+     * What's still owed on the property's TenaFi devices paid for monthly.
+     *
+     * @return array{count: int, balance: int, monthly: int, last_due: ?string}
+     */
+    public static function deviceDebt(Property $property): array
+    {
+        $agreements = DeviceAgreement::with('instalments')->where('property_id', $property->id)->whereIn('status', self::OPEN_DEVICE_STATUSES)->get();
+
+        return [
+            'count' => $agreements->count(),
+            'balance' => (int) $agreements->sum(fn (DeviceAgreement $a) => $a->balance()),
+            'monthly' => (int) $agreements->sum('monthly_kes'),
+            'last_due' => $agreements->map(fn (DeviceAgreement $a) => $a->instalments->last()?->due_on)->filter()->max()?->toDateString(),
+        ];
+    }
+
+    public function start(User $owner, Property $property, string $email, ?string $ip = null, bool $deviceTakeover = false): PropertyTransfer
     {
         $email = PropertyTransfer::normalizeEmail($email);
 
@@ -62,7 +83,10 @@ class PropertyTransferService
         if (PropertyTransfer::where('property_id', $property->id)->whereIn('status', ['pending', 'accepted'])->exists()) {
             throw ValidationException::withMessages(['property_id' => 'This property already has a transfer under way. Cancel it first.']);
         }
-        $this->ensureNoOpenDevices($property, 'property_id');
+        $debt = static::deviceDebt($property);
+        if ($debt['count'] > 0 && ! $deviceTakeover) {
+            throw ValidationException::withMessages(['property_id' => 'A TenaFi device here is still being paid off monthly: KES '.number_format($debt['balance']).' left. Pay it off first (TenaFi records the payment), or choose that the new owner takes over the payments.']);
+        }
 
         $transfer = PropertyTransfer::create([
             'property_id' => $property->id,
@@ -71,6 +95,11 @@ class PropertyTransferService
             'status' => 'pending',
             'expires_at' => now()->addDays(PropertyTransfer::VALID_DAYS),
             'from_ip' => $ip,
+            // What was owed when offered: the new owner agrees to this, and the hand-over checks nothing was added.
+            'device_takeover' => $debt['count'] > 0,
+            'device_count' => $debt['count'],
+            'device_balance_kes' => $debt['balance'],
+            'device_monthly_kes' => $debt['monthly'],
         ]);
         $ownerName = static::name($owner);
 
@@ -96,15 +125,18 @@ class PropertyTransferService
             $recipient
                 ? 'Sign in and open Properties → Transfers to accept or decline. The offer is open until '.static::when($transfer->expires_at).'.'
                 : 'To accept, sign up for TenaFi with this email address, then open Properties → Transfers. The offer is open until '.static::when($transfer->expires_at).'.',
+            $transfer->device_takeover
+                ? 'Its TenaFi '.($transfer->device_count === 1 ? 'device is' : 'devices are').' still being paid off: KES '.number_format($transfer->device_balance_kes).' left, KES '.number_format($transfer->device_monthly_kes).' a month. Accepting means you take over those payments, after TenaFi checks with you.'
+                : '',
         ], ['label' => 'Review the offer', 'url' => route('host.transfers.index')]);
 
         return $transfer;
     }
 
     /** The recipient accepts: the cooling-off starts, and the hand-over follows unless it's cancelled. */
-    public function accept(PropertyTransfer $transfer, User $recipient, ?string $ip = null): PropertyTransfer
+    public function accept(PropertyTransfer $transfer, User $recipient, ?string $ip = null, bool $agreesToDevicePayments = false): PropertyTransfer
     {
-        $transfer = DB::transaction(function () use ($transfer, $recipient, $ip) {
+        $transfer = DB::transaction(function () use ($transfer, $recipient, $ip, $agreesToDevicePayments) {
             $transfer = PropertyTransfer::whereKey($transfer->id)->lockForUpdate()->firstOrFail();
             $property = Property::findOrFail($transfer->property_id);
 
@@ -112,7 +144,17 @@ class PropertyTransferService
             if ($property->user_id !== $transfer->from_user_id) {
                 throw ValidationException::withMessages(['transfer' => 'This property has changed hands since the offer was made.']);
             }
-            $this->ensureNoOpenDevices($property, 'transfer');
+            $debt = static::deviceDebt($property);
+            if ($debt['count'] > 0 && ! $transfer->device_takeover) {
+                throw ValidationException::withMessages(['transfer' => 'A device here started being paid off monthly after the offer was made. The owner needs to offer it again.']);
+            }
+            if ($transfer->device_takeover && $debt['balance'] > $transfer->device_balance_kes) {
+                throw ValidationException::withMessages(['transfer' => 'More is owed on the devices than when the offer was made. The owner needs to offer it again.']);
+            }
+            if ($transfer->device_takeover && $debt['count'] > 0 && ! $agreesToDevicePayments) {
+                throw ValidationException::withMessages(['takeover' => 'Tick that you agree to take over the device payments.']);
+            }
+            $takeover = $transfer->device_takeover && $debt['count'] > 0;
 
             $transfer->update([
                 'status' => 'accepted',
@@ -120,10 +162,21 @@ class PropertyTransferService
                 'decided_at' => now(),
                 'decided_ip' => $ip,
                 'completes_at' => now()->addHours(PropertyTransfer::COOLING_OFF_HOURS),
+                // Taking over device payments: TenaFi checks the new owner first, then releases it.
+                'held_at' => $takeover ? now() : null,
+                'admin_note' => $takeover ? 'Device payments to take over: check the new owner, then release.' : $transfer->admin_note,
             ]);
 
             return $transfer;
         });
+
+        if ($transfer->held_at) {
+            User::where('role', 'admin')->pluck('id')->each(fn ($id) => NotificationService::systemAlert(
+                'Transfer to check: device payments',
+                "{$transfer->to_email} accepted a property whose devices are still being paid off (KES ".number_format($transfer->device_balance_kes).' left). Check them, then release it in Admin → Transfers.',
+                $id,
+            ));
+        }
 
         $transfer->load('property', 'fromUser');
         $name = $transfer->property->name;
@@ -136,6 +189,7 @@ class PropertyTransferService
         ], ['label' => 'Open Transfers', 'url' => route('host.transfers.index')], $this->cancelLink($transfer, $transfer->completes_at));
         $this->email($recipient->email, $recipient->first_name, 'You accepted a property', [
             "You accepted {$name}. It becomes yours on {$on}, after a ".PropertyTransfer::COOLING_OFF_HOURS.'-hour cooling-off in which the current owner can still cancel.',
+            $transfer->held_at ? 'Because you’re taking over device payments (KES '.number_format($transfer->device_balance_kes).' left, KES '.number_format($transfer->device_monthly_kes).' a month), TenaFi will contact you to confirm before the hand-over.' : '',
             'Its guests will get a short note saying you run it now, and you can send them campaigns '.PropertyTransfer::CAMPAIGN_HOLD_DAYS.' days after that.',
         ], ['label' => 'Open Transfers', 'url' => route('host.transfers.index')]);
 
@@ -162,7 +216,8 @@ class PropertyTransferService
             $problem = match (true) {
                 ! $recipient => 'the new owner’s account no longer exists',
                 $property->user_id !== $transfer->from_user_id => 'the property changed hands in the meantime',
-                DeviceAgreement::where('property_id', $property->id)->whereIn('status', self::OPEN_DEVICE_STATUSES)->exists() => 'a device at the property is now being paid off monthly',
+                ! $transfer->device_takeover && DeviceAgreement::where('property_id', $property->id)->whereIn('status', self::OPEN_DEVICE_STATUSES)->exists() => 'a device at the property is now being paid off monthly',
+                $transfer->device_takeover && static::deviceDebt($property)['balance'] > $transfer->device_balance_kes => 'more is owed on its devices than when it was offered',
                 default => null,
             };
             if ($problem) {
@@ -185,6 +240,19 @@ class PropertyTransferService
             ])->save();
             Campaign::where('property_id', $property->id)->update(['user_id' => $recipient->id]);
             Event::where('property_id', $property->id)->update(['user_id' => $recipient->id]);
+            // Step 4: devices still being paid off move to the new owner, with the same payment dates.
+            $takenOver = 0;
+            if ($transfer->device_takeover) {
+                DeviceAgreement::where('property_id', $property->id)->whereIn('status', self::OPEN_DEVICE_STATUSES)->get()
+                    ->each(function (DeviceAgreement $agreement) use ($transfer, $recipient, $property, &$takenOver) {
+                        $agreement->update(['user_id' => $recipient->id]);
+                        $agreement->log('transferred', "Moved with {$property->name} to ".static::name($recipient).'.', null, [
+                            'from_user_id' => $transfer->from_user_id, 'to_user_id' => $recipient->id, 'transfer_id' => $transfer->id,
+                        ]);
+                        $takenOver++;
+                    });
+            }
+            $moved['devices_taken_over'] = $takenOver;
             // The old owner's team members lose access to this property, straight away
             // (their list of properties is cached; the owners' caches clear when the property saves).
             $members = DB::table('staff_property')->where('property_id', $property->id)->pluck('user_id');
@@ -332,13 +400,6 @@ class PropertyTransferService
         }
         if (! $transfer->isPending()) {
             throw ValidationException::withMessages(['transfer' => 'This transfer is no longer waiting.']);
-        }
-    }
-
-    private function ensureNoOpenDevices(Property $property, string $field): void
-    {
-        if (DeviceAgreement::where('property_id', $property->id)->whereIn('status', self::OPEN_DEVICE_STATUSES)->exists()) {
-            throw ValidationException::withMessages([$field => 'A TenaFi device at this property is still being paid off monthly. It must be paid off before the property can move.']);
         }
     }
 

@@ -41,3 +41,12 @@
 .transfers__note {
     @apply text-sm text-muted;
 }
+
+/* Devices still being paid off (step 4): the take-over choice on an offer. */
+.transfers__devices {
+    @apply mt-2 flex flex-col gap-3 rounded-2xl bg-primary/10 p-4 text-sm text-dark;
+}
+
+.transfers__devices b {
+    @apply font-black;
+}

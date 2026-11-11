@@ -45,12 +45,16 @@ class PropertyTransferController extends Controller
             'completed_at' => $t->completed_at?->toIso8601String(),
             'held' => (bool) $t->held_at,
             'cancelled_by' => $t->cancelled_by,
+            // Step 4: device payments the new owner takes over.
+            'devices' => $t->device_takeover ? ['count' => $t->device_count, 'balance' => $t->device_balance_kes, 'monthly' => $t->device_monthly_kes] : null,
         ];
 
         $incoming = PropertyTransfer::incomingFor($user)->with(['property', 'fromUser:id,first_name,last_name,email'])->latest('id')->limit(50)->get();
 
         return Inertia::render('Host/Transfers/Index', [
-            'properties' => $user->properties()->orderBy('name')->get(['id', 'name']),
+            // With what's still owed on their devices, to pay off or hand over.
+            'properties' => $user->properties()->orderBy('name')->get(['id', 'name'])
+                ->map(fn ($p) => ['id' => $p->id, 'name' => $p->name, 'devices' => PropertyTransferService::deviceDebt($p)]),
             'outgoing' => PropertyTransfer::where('from_user_id', $user->id)->with(['property', 'fromUser:id,first_name,last_name,email'])->latest('id')->limit(50)->get()->map($row),
             // Waiting offers show what would move, so the recipient knows what they're accepting.
             'incoming' => $incoming->map(fn (PropertyTransfer $t) => $row($t) + ($t->isPending() && $t->property ? ['preview' => [
@@ -74,13 +78,15 @@ class PropertyTransferController extends Controller
             'email' => 'required|email|max:255',
             // Re-enter the password: handing over a property can't be undone by the owner.
             'password' => 'required|current_password',
+            // A device still being paid off: the new owner takes over the payments.
+            'device_takeover' => 'sometimes|boolean',
         ], [
             'property_id.exists' => 'Pick one of your own properties.',
             'password.current_password' => 'That password isn’t right.',
         ]);
 
         $property = $user->properties()->findOrFail($data['property_id']);
-        $this->transfers->start($user, $property, $data['email'], $request->ip());
+        $this->transfers->start($user, $property, $data['email'], $request->ip(), (bool) ($data['device_takeover'] ?? false));
 
         return back()->with('success', "Transfer offered to {$data['email']}. They have ".PropertyTransfer::VALID_DAYS.' days to accept; you can cancel until then.');
     }
@@ -88,9 +94,10 @@ class PropertyTransferController extends Controller
     public function accept(Request $request, PropertyTransfer $transfer): RedirectResponse
     {
         abort_unless(PropertyTransferService::enabled(), 404);
-        $transfer = $this->transfers->accept($transfer, $request->user(), $request->ip());
+        $transfer = $this->transfers->accept($transfer, $request->user(), $request->ip(), $request->boolean('takeover'));
 
-        return back()->with('success', "Accepted. {$transfer->property->name} becomes yours after a ".PropertyTransfer::COOLING_OFF_HOURS.'-hour cooling-off.');
+        return back()->with('success', "Accepted. {$transfer->property->name} becomes yours after a ".PropertyTransfer::COOLING_OFF_HOURS.'-hour cooling-off'
+            .($transfer->held_at ? ', once TenaFi has confirmed the device payments with you.' : '.'));
     }
 
     public function decline(Request $request, PropertyTransfer $transfer): RedirectResponse

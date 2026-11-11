@@ -152,8 +152,20 @@ A transfer never silently moves a debt. The options:
    The owner can cancel while it waits or cools off. Admin → Transfers lists
    every transfer, and holds (it won't complete), releases or cancels one
    with a note.
-4. Device agreement payoff or take-over (after the device plan's first steps
-   exist).
+4. Device agreement payoff or take-over. **Built (November 2026):** when a
+   device on the site is still being paid off, the offer form shows what's
+   left (balance, monthly amount, last instalment) and the owner either pays
+   it off first (TenaFi records the payment in Admin → Devices; then the
+   offer goes through as before) or ticks that the new owner takes over the
+   payments. The offer records the count and balance at that moment; the
+   recipient sees them and must tick "I agree to take over these device
+   payments" to accept. Accepting then holds the transfer and tells admins:
+   TenaFi checks the new owner (identity, and a signed agreement for the
+   remaining months, done outside the app) and releases it in Admin →
+   Transfers. On hand-over the open agreements move to the new owner with the
+   same instalment dates, and each logs "Moved to a new owner". It refuses
+   to go ahead if a device was added or more is owed than when it was
+   offered.
 
 ## 8. Open questions
 

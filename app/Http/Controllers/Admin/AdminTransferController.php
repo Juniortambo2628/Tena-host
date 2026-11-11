@@ -47,6 +47,7 @@ class AdminTransferController extends Controller
                 'decided_ip' => $t->decided_ip,
                 'moved' => $t->moved,
                 'notice' => $t->notice_status ? ['status' => $t->notice_status, 'sent' => $t->notice_sent, 'total' => $t->notice_total] : null,
+                'devices' => $t->device_takeover ? ['count' => $t->device_count, 'balance' => $t->device_balance_kes, 'monthly' => $t->device_monthly_kes] : null,
             ]);
 
         return Inertia::render('Admin/Transfers/Index', [

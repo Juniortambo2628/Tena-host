@@ -116,7 +116,7 @@ it('moves the property and everything linked to it once the accepted transfer ha
     $transfer->refresh();
     expect($transfer->status)->toBe('completed')
         ->and($transfer->to_user_id)->toBe($this->newOwner->id)
-        ->and($transfer->moved)->toEqual(['guests' => 1, 'access_points' => 1, 'campaigns' => 1, 'events' => 1]);
+        ->and($transfer->moved)->toEqual(['guests' => 1, 'access_points' => 1, 'campaigns' => 1, 'events' => 1, 'devices_taken_over' => 0]);
 
     // It can't be accepted twice.
     $this->actingAs($this->newOwner)->post(route('host.transfers.accept', $transfer))->assertSessionHasErrors('transfer');
