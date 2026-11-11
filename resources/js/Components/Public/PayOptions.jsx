@@ -28,7 +28,7 @@ export function useSectionDevices(section) {
             return {
                 id,
                 name: stripHtml(d.name),
-                image: stripHtml(d.image) || (['lite', 'pro', 'outdoor'].includes(id) ? `/images/devices/tenafi-${id}.svg` : ''),
+                image: stripHtml(d.image) || (['lite', 'pro', 'outdoor'].includes(id) ? `/images/devices/photos/tenafi-${id}.webp` : ''),
                 coverage: stripHtml(d.coverage),
                 coverage_label: '',
                 capacity: stripHtml(d.capacity),

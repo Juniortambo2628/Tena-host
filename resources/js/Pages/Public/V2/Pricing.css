@@ -31,8 +31,9 @@
     aspect-ratio: 66 / 39;
 }
 
+/* Photos fill the panel (shot at its 66:39 shape); a transparent picture shows the panel colour. */
 .pricing-device__picture img {
-    @apply block h-full w-full object-contain;
+    @apply block h-full w-full object-cover;
 }
 
 .pricing-device__body {

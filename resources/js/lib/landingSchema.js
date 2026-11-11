@@ -146,7 +146,7 @@ export const SECTION_MEDIA_SCHEMA = {
     devices: {
         slots: [],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'items', 'device_{i}_image', 'Device {n}: picture')
-            .map(slot => ({ ...slot, description: 'The device on a transparent background, wide (about 1320 × 780). It sits on the card’s light, yellow or dark panel.' }))
+            .map(slot => ({ ...slot, description: 'A wide photo of the device (about 1320 × 770), or the device on a transparent background, which then sits on the card’s light, yellow or dark panel.' }))
             // Up to three more pictures on the device's own page (/pricing/lite, ...): the device in use, close-ups.
             .flatMap(slot => [slot, ...[1, 2, 3].map(n => ({
                 key: slot.key.replace(/_image$/, `_gallery_${n}`),

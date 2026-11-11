@@ -1773,9 +1773,24 @@ return [
                 ],
             ],
             'media' => [
-                'device_0_image' => '/images/devices/tenafi-lite.svg',
-                'device_1_image' => '/images/devices/tenafi-pro.svg',
-                'device_2_image' => '/images/devices/tenafi-outdoor.svg',
+                // TenaFi's own generated photos (docs/plans/device-images.md); an admin's upload replaces any of them.
+                'device_0_image' => '/images/devices/photos/tenafi-lite.webp',
+                'device_1_image' => '/images/devices/photos/tenafi-pro.webp',
+                'device_2_image' => '/images/devices/photos/tenafi-outdoor.webp',
+                'device_0_gallery_1' => '/images/devices/photos/lite-apartment.webp',
+                'device_0_gallery_2' => '/images/devices/photos/lite-salon.webp',
+                'device_0_gallery_3' => '/images/devices/photos/lite-closeup.webp',
+                'device_1_gallery_1' => '/images/devices/photos/pro-restaurant.webp',
+                'device_1_gallery_2' => '/images/devices/photos/pro-hotel.webp',
+                'device_1_gallery_3' => '/images/devices/photos/pro-lounge.webp',
+                'device_2_gallery_1' => '/images/devices/photos/outdoor-wedding.webp',
+                'device_2_gallery_2' => '/images/devices/photos/outdoor-terrace.webp',
+                'device_2_gallery_3' => '/images/devices/photos/outdoor-closeup.webp',
+                // "How it's installed": step 2 (on a wall) has no picture yet, so it doesn't show.
+                'install_0_image' => '/images/devices/photos/install-connect.webp',
+                'install_2_image' => '/images/devices/photos/install-wall-mounting.webp',
+                'install_3_image' => '/images/devices/photos/install-ceiling.webp',
+                'install_4_image' => '/images/devices/photos/install-ceiling-mounting.webp',
             ],
         ],
         'pay_options' => [

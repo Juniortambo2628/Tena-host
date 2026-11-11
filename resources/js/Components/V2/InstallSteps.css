@@ -1,8 +1,8 @@
 @reference "../../../css/theme.css";
 
 /* "How it's installed" (InstallSteps.jsx): one card per step, the first
-   (the connection diagram) twice as wide on large screens. Text stays at
-   12px or more (CLAUDE.md). */
+   (the connection diagram) twice as wide; its picture is cropped to the
+   middle band, where the diagram sits. Text stays at 12px or more (CLAUDE.md). */
 
 .install-steps {
     @apply mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3;
@@ -21,13 +21,10 @@
     aspect-ratio: 4 / 3;
 }
 
-.install-step:first-child img {
-    @apply object-contain;
-}
-
 @media (min-width: 640px) {
     .install-step:first-child img {
         aspect-ratio: 8 / 3;
+        object-position: 50% 58%; /* the diagram's labels sit just below the middle */
     }
 }
 

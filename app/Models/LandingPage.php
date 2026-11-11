@@ -174,7 +174,7 @@ class LandingPage extends Model
                 'monthly_kes' => $kes($content["items.{$i}.monthly_kes"] ?? ''),
                 'months' => $kes($content["items.{$i}.months"] ?? '') ?: 12,
                 // The uploaded picture, else TenaFi's own drawing of that device.
-                'image' => $section['media']["device_{$i}_image"] ?? (in_array($id, ['lite', 'pro', 'outdoor'], true) ? "/images/devices/tenafi-{$id}.svg" : ''),
+                'image' => $section['media']["device_{$i}_image"] ?? (in_array($id, ['lite', 'pro', 'outdoor'], true) ? "/images/devices/photos/tenafi-{$id}.webp" : ''),
                 'best_for' => $text("items.{$i}.best_for"),
                 'coverage' => $text("items.{$i}.coverage"),
                 'coverage_label' => $text("items.{$i}.coverage_label"),

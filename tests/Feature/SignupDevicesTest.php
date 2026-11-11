@@ -54,7 +54,7 @@ it('gives the sign-up form the device prices from /pricing', function () {
             ['id' => 'lite', 'name' => 'TenaFi Lite', 'price_kes' => 25000, 'monthly_kes' => 3000, 'months' => 12],
             ['id' => 'pro', 'name' => 'TenaFi Pro', 'price_kes' => 42000, 'monthly_kes' => 5000, 'months' => 12],
             ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'price_kes' => 48000, 'monthly_kes' => 5500, 'months' => 12],
-        ] && collect($devices)->every(fn ($d) => str_starts_with($d['image'], '/images/devices/tenafi-'));
+        ] && collect($devices)->every(fn ($d) => str_starts_with($d['image'], '/images/devices/photos/tenafi-'));
     }));
 });
 

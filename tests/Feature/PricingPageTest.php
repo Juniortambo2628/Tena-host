@@ -36,7 +36,7 @@ it('shows /pricing to everyone once switched on, with the three devices and live
 
     $this->get('/pricing')->assertOk()->assertInertia(fn ($page) => $page
         ->where('sections.1.content', fn ($c) => $c['items.0.name'] === 'TenaFi Lite' && $c['items.1.price_kes'] === '42000' && $c['items.2.monthly_kes'] === '5500')
-        ->where('sections.1.media.device_1_image', '/images/devices/tenafi-pro.svg')
+        ->where('sections.1.media.device_1_image', '/images/devices/photos/tenafi-pro.webp')
         ->where('plans', fn ($plans) => collect($plans)->pluck('price_kes')->all() === [3000, 4500, 6000])
         ->where('pricingPage', '/pricing')
         // The plans as each audience page shows them, for the switch at the top.
@@ -101,6 +101,12 @@ it('puts the devices and pricing live with a dry run, a backup and a restore', f
 
 it('gives each device card a picture slot in the editor', function () {
     $devices = LandingSection::whereHas('page', fn ($q) => $q->where('slug', 'pricing'))->where('section_key', 'devices')->firstOrFail();
+    $keys = $devices->media()->pluck('media_key')->all();
 
-    expect($devices->media()->pluck('media_key')->sort()->values()->all())->toBe(['device_0_image', 'device_1_image', 'device_2_image']);
+    // Each device's main picture and three for its own page, and the "How it's installed" steps that have one.
+    foreach ([0, 1, 2] as $i) {
+        expect($keys)->toContain("device_{$i}_image", "device_{$i}_gallery_1", "device_{$i}_gallery_2", "device_{$i}_gallery_3");
+    }
+    expect($keys)->toContain('install_0_image', 'install_2_image', 'install_3_image', 'install_4_image')
+        ->and($keys)->toHaveCount(16);
 });
