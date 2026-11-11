@@ -7,6 +7,7 @@ use App\Models\PropertyTransfer;
 use App\Services\PropertyTransferService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,6 +40,11 @@ class PropertyTransferController extends Controller
             // Step 2: the guests told who runs it now, and when messages to them can start.
             'notice' => $t->notice_status ? ['status' => $t->notice_status, 'sent' => $t->notice_sent, 'total' => $t->notice_total] : null,
             'hold_until' => $t->hold_until?->toIso8601String(),
+            // Step 3: accepted transfers cool off before the hand-over.
+            'completes_at' => $t->completes_at?->toIso8601String(),
+            'completed_at' => $t->completed_at?->toIso8601String(),
+            'held' => (bool) $t->held_at,
+            'cancelled_by' => $t->cancelled_by,
         ];
 
         $incoming = PropertyTransfer::incomingFor($user)->with(['property', 'fromUser:id,first_name,last_name,email'])->latest('id')->limit(50)->get();
@@ -54,6 +60,7 @@ class PropertyTransferController extends Controller
             ]] : [])),
             'validDays' => PropertyTransfer::VALID_DAYS,
             'holdDays' => PropertyTransfer::CAMPAIGN_HOLD_DAYS,
+            'coolingOffHours' => PropertyTransfer::COOLING_OFF_HOURS,
         ]);
     }
 
@@ -81,9 +88,9 @@ class PropertyTransferController extends Controller
     public function accept(Request $request, PropertyTransfer $transfer): RedirectResponse
     {
         abort_unless(PropertyTransferService::enabled(), 404);
-        $this->transfers->accept($transfer, $request->user(), $request->ip());
+        $transfer = $this->transfers->accept($transfer, $request->user(), $request->ip());
 
-        return redirect()->route('host.properties.index')->with('success', "{$transfer->property->name} is now yours.");
+        return back()->with('success', "Accepted. {$transfer->property->name} becomes yours after a ".PropertyTransfer::COOLING_OFF_HOURS.'-hour cooling-off.');
     }
 
     public function decline(Request $request, PropertyTransfer $transfer): RedirectResponse
@@ -92,6 +99,29 @@ class PropertyTransferController extends Controller
         $this->transfers->decline($transfer, $request->user(), $request->ip());
 
         return back()->with('success', 'Transfer declined.');
+    }
+
+    /**
+     * "It wasn't me" from the owner's email: a signed link, no sign-in. GET shows
+     * a confirm button (email scanners open links); POST cancels.
+     */
+    public function cancelLink(Request $request, PropertyTransfer $transfer): HttpResponse
+    {
+        $transfer->loadMissing('property');
+        $done = false;
+        if ($request->isMethod('post') && $transfer->isOpen()) {
+            $this->transfers->cancelFromLink($transfer, $request->ip());
+            $done = true;
+        }
+
+        return response()->view('transfers.cancel', [
+            'done' => $done,
+            'open' => $transfer->fresh()->isOpen(),
+            'propertyName' => $transfer->property?->name ?? 'Your property',
+            'toEmail' => $transfer->to_email,
+            'statusText' => ['completed' => 'completed', 'declined' => 'declined', 'cancelled' => 'cancelled', 'expired' => 'expired'][$transfer->fresh()->status] ?? 'closed',
+            'action' => $request->fullUrl(),
+        ]);
     }
 
     public function cancel(Request $request, PropertyTransfer $transfer): RedirectResponse

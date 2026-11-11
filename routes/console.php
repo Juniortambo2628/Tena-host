@@ -19,5 +19,7 @@ Schedule::command('birthdays:send')->dailyAt('09:00')->timezone('Africa/Nairobi'
 Schedule::command('campaigns:run')->everyFiveMinutes()->withoutOverlapping();
 // Property transfers: tell the guests of a transferred property who runs it now, in batches.
 Schedule::command('transfers:notices')->everyFiveMinutes()->withoutOverlapping();
+// Property transfers: hand over accepted transfers once their 48-hour cooling-off has passed.
+Schedule::command('transfers:complete')->everyFiveMinutes()->withoutOverlapping();
 // Bookings also arrive by PMS webhook; this catches anything missed.
 Schedule::command('pms:sync-guests')->hourly()->withoutOverlapping();

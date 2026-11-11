@@ -15,6 +15,9 @@ class PropertyTransfer extends Model
     /** How long the recipient has to accept. */
     public const VALID_DAYS = 7;
 
+    /** After the recipient accepts, the hand-over waits this long so the old owner can still cancel. */
+    public const COOLING_OFF_HOURS = 48;
+
     /** After a transfer, the new owner waits this long before messaging the guests who came with it. */
     public const CAMPAIGN_HOLD_DAYS = 14;
 
@@ -22,6 +25,7 @@ class PropertyTransfer extends Model
         'property_id', 'from_user_id', 'to_user_id', 'to_email', 'status',
         'expires_at', 'decided_at', 'from_ip', 'decided_ip', 'moved',
         'notice_status', 'notice_cursor', 'notice_total', 'notice_sent', 'hold_until',
+        'completes_at', 'completed_at', 'cancelled_at', 'cancelled_by', 'held_at', 'held_by', 'admin_note',
     ];
 
     protected $casts = [
@@ -29,6 +33,10 @@ class PropertyTransfer extends Model
         'decided_at' => 'datetime',
         'moved' => 'array',
         'hold_until' => 'datetime',
+        'completes_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'held_at' => 'datetime',
     ];
 
     public function property(): BelongsTo
@@ -49,6 +57,18 @@ class PropertyTransfer extends Model
     public function isPending(): bool
     {
         return $this->status === 'pending' && $this->expires_at->isFuture();
+    }
+
+    /** Accepted, waiting out the cooling-off before the hand-over. */
+    public function isCoolingOff(): bool
+    {
+        return $this->status === 'accepted';
+    }
+
+    /** Still open: waiting for an answer, or accepted and cooling off. The owner can cancel it. */
+    public function isOpen(): bool
+    {
+        return $this->isPending() || $this->isCoolingOff();
     }
 
     /** Whether this user is the one invited (signed in with the invited email). */

@@ -13,22 +13,24 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { notify } from '@/Components/Toast';
 import './Index.css';
 
-const STATUS = { pending: 'Waiting', completed: 'Completed', declined: 'Declined', cancelled: 'Cancelled', expired: 'Expired' };
+const STATUS = { pending: 'Waiting', accepted: 'Cooling off', completed: 'Completed', declined: 'Declined', cancelled: 'Cancelled', expired: 'Expired' };
 const COLORS = {
     waiting: 'bg-primary/20 text-dark',
+    'cooling off': 'bg-amber-100 text-amber-700',
     completed: 'bg-green-100 text-green-700',
     declined: 'bg-black/5 text-muted',
     cancelled: 'bg-black/5 text-muted',
     expired: 'bg-black/5 text-muted',
 };
 const day = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
+const when = (iso) => (iso ? new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
 
 /**
  * Properties -> Transfers (docs/plans/property-transfer.md, step 1): hand one
  * of your properties to another TenaFi account, accept or decline one offered
  * to you, and cancel an offer while it waits.
  */
-export default function Transfers({ properties, outgoing, incoming, validDays, holdDays }) {
+export default function Transfers({ properties, outgoing, incoming, validDays, holdDays, coolingOffHours }) {
     const t = useTerms();
     const { confirm, ConfirmDialogEl } = useConfirm();
     const waiting = incoming.filter((x) => x.status === 'pending');
@@ -54,7 +56,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
     const accept = async (x) => {
         const ok = await confirm({
             title: `Accept ${x.property}?`,
-            message: `It becomes yours, with its WiFi page, devices and ${t('guest').toLowerCase()} list. ${x.from} loses access. Its ${t('guests').toLowerCase()} get a short note saying you run it now, and you can send them campaigns after ${holdDays} days, so they have time to opt out.`,
+            message: `It becomes yours ${coolingOffHours} hours after you accept (${x.from} can still cancel until then), with its WiFi page, devices and ${t('guest').toLowerCase()} list. Its ${t('guests').toLowerCase()} then get a short note saying you run it now, and you can send them campaigns after ${holdDays} days, so they have time to opt out.`,
             confirmLabel: 'Accept',
             variant: 'success',
         });
@@ -65,7 +67,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
         if (ok) router.post(route('host.transfers.decline', x.id), {}, { preserveScroll: true });
     };
     const cancel = async (x) => {
-        const ok = await confirm({ title: 'Cancel this transfer?', message: `${x.property} stays yours.`, confirmLabel: 'Cancel transfer', variant: 'danger' });
+        const ok = await confirm({ title: 'Cancel this transfer?', message: `${x.property} stays yours and nothing moves${x.status === 'accepted' ? ', even though they accepted' : ''}.`, confirmLabel: 'Cancel transfer', variant: 'danger' });
         if (ok) router.post(route('host.transfers.cancel', x.id), {}, { preserveScroll: true });
     };
 
@@ -87,9 +89,26 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
             ),
         },
         { id: 'offered', header: 'Offered', accessorFn: (x) => x.created_at, cell: ({ row: { original: x } }) => day(x.created_at) },
-        { id: 'status', header: 'Status', accessorFn: (x) => x.status, cell: ({ row: { original: x } }) => <StatusBadge status={STATUS[x.status] || x.status} colors={COLORS} /> },
+        {
+            id: 'status',
+            header: 'Status',
+            accessorFn: (x) => x.status,
+            cell: ({ row: { original: x } }) => (
+                <span className="transfers__stack">
+                    <StatusBadge status={STATUS[x.status] || x.status} colors={COLORS} />
+                    {x.status === 'accepted' && <small>{x.held ? 'Paused by TenaFi' : `Hand-over ${when(x.completes_at)}`}</small>}
+                </span>
+            ),
+        },
         { id: 'until', header: 'Open until', accessorFn: (x) => x.expires_at, meta: { detailOnly: true }, cell: ({ row: { original: x } }) => day(x.expires_at) },
-        { id: 'decided', header: 'Decided', accessorFn: (x) => x.decided_at || '', meta: { detailOnly: true }, cell: ({ row: { original: x } }) => day(x.decided_at) },
+        { id: 'decided', header: 'Answered', accessorFn: (x) => x.decided_at || '', meta: { detailOnly: true }, cell: ({ row: { original: x } }) => day(x.decided_at) },
+        {
+            id: 'completes',
+            header: 'Hand-over',
+            accessorFn: (x) => x.completed_at || x.completes_at || '',
+            meta: { detailOnly: true },
+            cell: ({ row: { original: x } }) => (x.completed_at ? `Done ${day(x.completed_at)}` : x.status === 'accepted' ? (x.held ? 'Paused by TenaFi' : `On ${when(x.completes_at)}`) : '—'),
+        },
         {
             id: 'moved',
             header: 'What moved',
@@ -113,7 +132,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
             id: 'action',
             header: '',
             enableSorting: false,
-            cell: ({ row: { original: x } }) => (x.direction === 'out' && x.status === 'pending'
+            cell: ({ row: { original: x } }) => (x.direction === 'out' && ['pending', 'accepted'].includes(x.status)
                 ? <PillButton variant="ghost" onClick={() => cancel(x)} className="whitespace-nowrap">Cancel</PillButton>
                 : null),
         },

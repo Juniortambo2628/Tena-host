@@ -38,6 +38,9 @@ function acceptTransfer(): PropertyTransfer
     test()->actingAs(test()->owner)->post(route('host.transfers.store'), ['property_id' => test()->property->id, 'email' => 'wanjiru@example.com', 'password' => 'password'])->assertSessionHasNoErrors();
     $transfer = PropertyTransfer::latest('id')->firstOrFail();
     test()->actingAs(test()->newOwner)->post(route('host.transfers.accept', $transfer))->assertSessionHasNoErrors();
+    // The hand-over follows the cooling-off.
+    test()->travel(PropertyTransfer::COOLING_OFF_HOURS * 60 + 1)->minutes();
+    test()->artisan('transfers:complete')->assertSuccessful();
 
     return $transfer->fresh();
 }

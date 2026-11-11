@@ -1,0 +1,27 @@
+@reference "../../../../css/theme.css";
+
+/* Admin -> Transfers. Text stays at 12px or more. */
+
+.admin-transfers__stack {
+    @apply flex min-w-0 flex-col;
+}
+
+.admin-transfers__stack b {
+    @apply text-sm font-black text-dark;
+}
+
+.admin-transfers__stack small {
+    @apply break-words text-xs font-bold text-muted;
+}
+
+.admin-transfers__actions {
+    @apply flex flex-wrap justify-end gap-2;
+}
+
+.admin-transfers__form {
+    @apply flex flex-col gap-4;
+}
+
+.admin-transfers__summary {
+    @apply text-sm text-muted;
+}
