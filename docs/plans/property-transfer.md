@@ -6,22 +6,16 @@ which starts **off**.
 **Risk:** Needs Kevin. It touches the database, who can see what, and guest
 data.
 
-## 0. What this means (please confirm)
+## 0. What this means (confirmed)
 
-The request was *"transfer of properties from guest to guest, with all the
-data, only initiated by the guest themselves"*. This plan reads it as:
-
-> A **property owner** (the TenaFi account holder: a host or business) can hand
-> one of their properties to **another TenaFi account**, together with its WiFi
-> page, devices, guest list and history. Only the current owner can start it,
-> and the new owner must accept.
+A **property owner** (the TenaFi account holder: a host or business) can hand
+one of their properties to **another TenaFi account**, together with its WiFi
+page, devices, guest list and history. Only the current owner can start it,
+and the new owner must accept. **Confirmed on 11 November 2026: owner to
+owner.**
 
 Typical cases: a rental or café is **sold**; a new **manager** or management
 company takes over; an owner moves a property **between their own accounts**.
-
-If "guest" really means the people who log in to the WiFi, the request would be
-something different (for example, a guest moving their own details between
-venues). That case is covered briefly in §9. Tell us which you meant.
 
 ## 1. What moves, and what doesn't
 
@@ -134,16 +128,16 @@ A transfer never silently moves a debt. The options:
 
 ## 8. Open questions
 
-1. Confirm the meaning in §0 (owner to owner).
+1. ~~Confirm the meaning in §0~~ Confirmed: owner to owner.
 2. Is 14 days' notice to guests enough? (lawyer)
 3. Should moving between **your own** accounts skip the guest notice? (Same
    controller, so probably yes.)
 4. Who pays if the new owner never subscribes after the grace period? (WiFi
    pauses, as for an unpaid plan.)
 
-## 9. If "guest" meant the WiFi guests
+## 9. Related, separate idea: guest self-service
 
-A guest could ask, from a link in any TenaFi message, to **see, move or delete
+Not part of this plan. A guest could ask, from a link in any TenaFi message, to **see, move or delete
 their details**: their right of access and portability under the Data
 Protection Act. That would be a separate, smaller feature: a guest
 self-service page with a one-time code by SMS, showing which venues hold their
