@@ -101,6 +101,12 @@ it('puts the devices and pricing live with a dry run, a backup and a restore', f
 
 it('gives each device card a picture slot in the editor', function () {
     $devices = LandingSection::whereHas('page', fn ($q) => $q->where('slug', 'pricing'))->where('section_key', 'devices')->firstOrFail();
+    $keys = $devices->media()->pluck('media_key')->all();
 
-    expect($devices->media()->pluck('media_key')->sort()->values()->all())->toBe(['device_0_image', 'device_1_image', 'device_2_image']);
+    // Each device's main picture and three for its own page, and the "How it's installed" steps that have one.
+    foreach ([0, 1, 2] as $i) {
+        expect($keys)->toContain("device_{$i}_image", "device_{$i}_gallery_1", "device_{$i}_gallery_2", "device_{$i}_gallery_3");
+    }
+    expect($keys)->toContain('install_0_image', 'install_2_image', 'install_3_image', 'install_4_image')
+        ->and($keys)->toHaveCount(16);
 });
