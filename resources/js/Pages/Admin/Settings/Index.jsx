@@ -436,7 +436,7 @@ export default function Index({ settings, logos = [] }) {
                                     />
 
                                     <CheckboxField
-                                        label="Property transfers: owners can hand a property, with its WiFi page, devices and guest list, to another TenaFi account (Properties → Transfers). The recipient accepts. Guests aren't told yet, so use it for moves between your own accounts until that's built."
+                                        label="Property transfers: owners can hand a property, with its WiFi page, devices and guest list, to another TenaFi account (Properties → Transfers). The recipient accepts; the guests get a short note naming the new owner, who can message them after 14 days."
                                         checked={data.settings.property_transfers_enabled === '1'}
                                         onChange={() => updateSetting('property_transfers_enabled', data.settings.property_transfers_enabled === '1' ? '0' : '1')}
                                     />

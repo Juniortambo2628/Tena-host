@@ -15,15 +15,20 @@ class PropertyTransfer extends Model
     /** How long the recipient has to accept. */
     public const VALID_DAYS = 7;
 
+    /** After a transfer, the new owner waits this long before messaging the guests who came with it. */
+    public const CAMPAIGN_HOLD_DAYS = 14;
+
     protected $fillable = [
         'property_id', 'from_user_id', 'to_user_id', 'to_email', 'status',
         'expires_at', 'decided_at', 'from_ip', 'decided_ip', 'moved',
+        'notice_status', 'notice_cursor', 'notice_total', 'notice_sent', 'hold_until',
     ];
 
     protected $casts = [
         'expires_at' => 'datetime',
         'decided_at' => 'datetime',
         'moved' => 'array',
+        'hold_until' => 'datetime',
     ];
 
     public function property(): BelongsTo

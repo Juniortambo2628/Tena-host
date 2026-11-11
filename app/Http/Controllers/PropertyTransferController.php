@@ -36,6 +36,9 @@ class PropertyTransferController extends Controller
             'decided_at' => $t->decided_at?->toIso8601String(),
             'created_at' => $t->created_at->toIso8601String(),
             'moved' => $t->moved,
+            // Step 2: the guests told who runs it now, and when messages to them can start.
+            'notice' => $t->notice_status ? ['status' => $t->notice_status, 'sent' => $t->notice_sent, 'total' => $t->notice_total] : null,
+            'hold_until' => $t->hold_until?->toIso8601String(),
         ];
 
         $incoming = PropertyTransfer::incomingFor($user)->with(['property', 'fromUser:id,first_name,last_name,email'])->latest('id')->limit(50)->get();
@@ -50,6 +53,7 @@ class PropertyTransferController extends Controller
                 'campaigns' => Campaign::where('property_id', $t->property_id)->count(),
             ]] : [])),
             'validDays' => PropertyTransfer::VALID_DAYS,
+            'holdDays' => PropertyTransfer::CAMPAIGN_HOLD_DAYS,
         ]);
     }
 

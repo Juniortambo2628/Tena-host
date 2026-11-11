@@ -48,6 +48,8 @@ class Guest extends Model
         'marketing_opt_in' => 'boolean',
         'check_in' => 'date',
         'check_out' => 'date',
+        // Set when the property changes owner: no campaigns until then (PropertyTransferService).
+        'campaign_hold_until' => 'datetime',
     ];
 
     /**

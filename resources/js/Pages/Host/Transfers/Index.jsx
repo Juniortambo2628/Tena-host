@@ -28,7 +28,7 @@ const day = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { day: '
  * of your properties to another TenaFi account, accept or decline one offered
  * to you, and cancel an offer while it waits.
  */
-export default function Transfers({ properties, outgoing, incoming, validDays }) {
+export default function Transfers({ properties, outgoing, incoming, validDays, holdDays }) {
     const t = useTerms();
     const { confirm, ConfirmDialogEl } = useConfirm();
     const waiting = incoming.filter((x) => x.status === 'pending');
@@ -54,7 +54,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays })
     const accept = async (x) => {
         const ok = await confirm({
             title: `Accept ${x.property}?`,
-            message: `It becomes yours, with its WiFi page, devices and ${t('guest').toLowerCase()} list. ${x.from} loses access.`,
+            message: `It becomes yours, with its WiFi page, devices and ${t('guest').toLowerCase()} list. ${x.from} loses access. Its ${t('guests').toLowerCase()} get a short note saying you run it now, and you can send them campaigns after ${holdDays} days, so they have time to opt out.`,
             confirmLabel: 'Accept',
             variant: 'success',
         });
@@ -95,6 +95,19 @@ export default function Transfers({ properties, outgoing, incoming, validDays })
             header: 'What moved',
             accessorFn: (x) => (x.moved ? `${x.moved.guests} ${t('guests').toLowerCase()}, ${x.moved.access_points} devices, ${x.moved.campaigns} campaigns` : '—'),
             meta: { detailOnly: true },
+        },
+        {
+            id: 'notice',
+            header: `${t('Guests')} told`,
+            accessorFn: (x) => (x.notice ? (x.notice.status === 'none' ? 'Nobody to tell' : `${x.notice.sent} of ${x.notice.total}${x.notice.status === 'pending' ? ' so far' : ''}`) : '—'),
+            meta: { detailOnly: true },
+        },
+        {
+            id: 'hold',
+            header: 'Campaigns to them from',
+            accessorFn: (x) => x.hold_until || '',
+            meta: { detailOnly: true },
+            cell: ({ row: { original: x } }) => day(x.hold_until),
         },
         {
             id: 'action',
@@ -150,8 +163,9 @@ export default function Transfers({ properties, outgoing, incoming, validDays })
                         <form onSubmit={start} className="transfers__form">
                             <p className="transfers__note">
                                 Everything goes with it: the WiFi page, the TenaFi devices, the {t('guest').toLowerCase()} list, visits, campaigns and events.
-                                Your team members lose access to it. The WiFi keeps working throughout. The new owner needs a TenaFi account with this email,
-                                and accepts from Properties → Transfers.
+                                Your team members lose access to it. The WiFi keeps working throughout. Its {t('guests').toLowerCase()} get a short note naming the
+                                new owner, who can message them after {holdDays} days. The new owner needs a TenaFi account with this email, and accepts from
+                                Properties → Transfers.
                             </p>
                             <div className="transfers__row">
                                 <FormField label={t('Property')} required error={form.errors.property_id}>
