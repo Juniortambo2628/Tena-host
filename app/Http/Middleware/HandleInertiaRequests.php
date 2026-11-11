@@ -44,6 +44,8 @@ class HandleInertiaRequests extends Middleware
                 'eventBilling' => $request->user() !== null && Event::billingEnabled(),
                 // Device register (Admin -> Devices), shown to admins once switched on.
                 'deviceRegister' => (bool) $request->user()?->isAdmin() && DeviceAgreement::enabled(),
+                // Admin -> Transfers, once property transfers are switched on.
+                'adminTransfers' => (bool) $request->user()?->isAdmin() && PropertyTransferService::enabled(),
                 // Property transfers (Properties -> Transfers): for account owners once switched on, with offers waiting for them.
                 'propertyTransfers' => $request->user()?->isHost() && ! $request->user()->isTeamMember() && PropertyTransferService::enabled()
                     ? ['incoming' => PropertyTransfer::incomingFor($request->user())->where('status', 'pending')->where('expires_at', '>', now())->count()]

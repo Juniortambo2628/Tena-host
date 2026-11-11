@@ -74,7 +74,7 @@ it('offers the property, tells both sides, and keeps it with the owner until acc
         ->assertSessionHasErrors('property_id');
 });
 
-it('moves the property and everything linked to it when the recipient accepts', function () {
+it('moves the property and everything linked to it once the accepted transfer has cooled off', function () {
     $guest = Guest::factory()->create(['property_id' => $this->property->id]);
     $ap = AccessPoint::factory()->create(['property_id' => $this->property->id]);
     $campaign = Campaign::factory()->create(['property_id' => $this->property->id, 'user_id' => $this->owner->id]);
@@ -89,7 +89,17 @@ it('moves the property and everything linked to it when the recipient accepts', 
     // Someone else signed in can't accept it.
     $this->actingAs(User::factory()->host()->create())->post(route('host.transfers.accept', $transfer))->assertForbidden();
 
-    $this->actingAs($this->newOwner)->post(route('host.transfers.accept', $transfer))->assertRedirect(route('host.properties.index'));
+    $this->actingAs($this->newOwner)->post(route('host.transfers.accept', $transfer))->assertSessionHasNoErrors();
+
+    // Accepting starts the cooling-off: nothing moves yet.
+    expect($transfer->fresh()->status)->toBe('accepted')
+        ->and($this->property->fresh()->user_id)->toBe($this->owner->id);
+    $this->artisan('transfers:complete')->assertSuccessful();
+    expect($this->property->fresh()->user_id)->toBe($this->owner->id);
+
+    $this->travel(PropertyTransfer::COOLING_OFF_HOURS)->hours();
+    $this->travel(1)->minutes();
+    $this->artisan('transfers:complete')->assertSuccessful();
 
     $property = $this->property->fresh();
     expect($property->user_id)->toBe($this->newOwner->id)

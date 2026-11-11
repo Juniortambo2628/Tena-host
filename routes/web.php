@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccessPointController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
+use App\Http\Controllers\Admin\AdminTransferController;
 use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\DeviceAgreementController;
 use App\Http\Controllers\Admin\EmailImageController;
@@ -128,6 +129,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/devices', [DeviceAgreementController::class, 'store'])->name('devices.store');
     Route::post('/devices/{agreement}/instalments/{instalment}/pay', [DeviceAgreementController::class, 'pay'])->name('devices.pay');
     Route::put('/devices/{agreement}/status', [DeviceAgreementController::class, 'status'])->name('devices.status');
+
+    // Property transfers: see every transfer; hold, release or cancel one during its cooling-off
+    Route::get('/transfers', [AdminTransferController::class, 'index'])->name('transfers.index');
+    Route::post('/transfers/{transfer}/hold', [AdminTransferController::class, 'hold'])->name('transfers.hold');
+    Route::post('/transfers/{transfer}/release', [AdminTransferController::class, 'release'])->name('transfers.release');
+    Route::post('/transfers/{transfer}/cancel', [AdminTransferController::class, 'cancel'])->name('transfers.cancel');
 
     // Payments
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
@@ -379,6 +386,10 @@ Route::get('/r/{token}/unsubscribe', [ReviewLinkController::class, 'unsubscribe'
 Route::get('/pricing/{device}', [PublicPageController::class, 'device'])
     ->where('device', '[a-z0-9-]+')
     ->name('pricing.device');
+
+// "It wasn't me": the owner cancels a property transfer from their email, without signing in (signed link).
+Route::match(['get', 'post'], '/transfers/{transfer}/cancel', [PropertyTransferController::class, 'cancelLink'])
+    ->whereNumber('transfer')->middleware(['signed', 'throttle:20,1'])->name('transfers.cancel-link');
 
 // Catch-all for CMS pages (/hosts, /business, ...). Must stay last.
 Route::get('/{slug}', [PublicPageController::class, 'show'])

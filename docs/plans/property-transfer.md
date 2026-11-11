@@ -141,7 +141,17 @@ A transfer never silently moves a debt. The options:
    (venue-branded, with the unsubscribe link) or else on WhatsApp ("reply
    STOP"), sent in batches of 200 by `transfers:notices` every five minutes.
    The Transfers page shows how many were told and when messages can start.
-3. Cooling-off, the *"wasn't you?"* message and the admin screen.
+3. Cooling-off, the *"wasn't you?"* message and the admin screen. **Built
+   (November 2026):** accepting starts a 48-hour cooling-off ("accepted");
+   `transfers:complete` (every five minutes) hands it over afterwards,
+   re-checking that the property hasn't changed hands and no device is now
+   being paid off. Both owners get an email at each step (offered, accepted,
+   completed, declined, cancelled), the recipient's linking to Properties →
+   Transfers; the owner's carry an "It wasn't me" link (signed, no sign-in,
+   a confirm button first so email scanners can't cancel by opening it).
+   The owner can cancel while it waits or cools off. Admin → Transfers lists
+   every transfer, and holds (it won't complete), releases or cancels one
+   with a note.
 4. Device agreement payoff or take-over (after the device plan's first steps
    exist).
 
