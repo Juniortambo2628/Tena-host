@@ -100,6 +100,10 @@ function Devices({ section, devices }) {
                                         </span>
                                     )}
                                 </div>
+                                {/* The device's own page: specifications and more pictures. */}
+                                <PillLink to={`/pricing/${d.id}`} variant="outline" size="sm" arrow className="mt-4 self-start">
+                                    {text(section, 'details_label', 'See details')}
+                                </PillLink>
                             </div>
                         </li>
                     ))}
