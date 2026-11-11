@@ -6,7 +6,7 @@ import GlassCard from '@/Components/Dashboard/GlassCard';
 import PillButton from '@/Components/Dashboard/PillButton';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
 import TabbedModal from '@/Components/Dashboard/TabbedModal';
-import { Plus, Download, Trash2, Info, Home } from 'lucide-react';
+import { Plus, Download, Trash2, Info, Home, ArrowLeftRight } from 'lucide-react';
 import { FilePond, registerPlugin } from 'react-filepond';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 
@@ -28,7 +28,7 @@ registerPlugin(FilePondPluginImagePreview);
 export default function PropertyIndex({ properties, stats: live = {} }) {
     const { confirm, ConfirmDialogEl } = useConfirm();
     const t = useTerms();
-    const { account, team } = usePage().props.auth || {};
+    const { account, team, propertyTransfers } = usePage().props.auth || {};
     // A manager the owner invited works on their sites but doesn't add or remove them.
     const canManageSites = !team?.member;
     // Occupancy, guest limits and booking-system (PMS) sync are for rentals only.
@@ -125,6 +125,8 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
 
     const actions = [
         { label: 'Export Data', icon: <Download size={16} />, onClick: () => { window.location.href = route('host.properties.export'); } },
+        // Handing a property to another TenaFi account, or accepting one (Admin -> Settings switches it on).
+        propertyTransfers && { label: 'Transfers', icon: <ArrowLeftRight size={16} />, href: route('host.transfers.index') },
         canManageSites && { label: 'Add Property', variant: 'primary', icon: <Plus size={16} />, onClick: openCreateModal },
     ].filter(Boolean);
 
@@ -302,6 +304,19 @@ export default function PropertyIndex({ properties, stats: live = {} }) {
                 actions={actions}
                 stats={stats}
             />
+
+            {propertyTransfers?.incoming > 0 && (
+                <GlassCard className="mb-6">
+                    <div className="host-properties-index-transfer">
+                        <p>
+                            {propertyTransfers.incoming === 1
+                                ? t('Someone wants to hand a property to you.')
+                                : t(`${propertyTransfers.incoming} properties are waiting to be handed to you.`)}
+                        </p>
+                        <PillButton variant="primary" href={route('host.transfers.index')} icon={<ArrowLeftRight size={16} />}>Review</PillButton>
+                    </div>
+                </GlassCard>
+            )}
 
             <div className="host-properties-index-grid">
                 {properties.map((property) => (

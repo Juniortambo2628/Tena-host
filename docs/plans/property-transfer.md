@@ -118,6 +118,18 @@ A transfer never silently moves a debt. The options:
 
 1. `property_transfers` table, the start/accept/cancel flow and the
    hand-over transaction, without devices on Pay monthly (block those).
+   **Built (November 2026):** Properties → Transfers, behind Admin → Settings
+   "Property transfers" (off). The owner picks a property, enters the new
+   owner's email and their own password; the recipient, signed in with that
+   email, accepts or declines from the same page (an in-app notification and
+   a notice on Properties tell them); the owner can cancel while it waits;
+   offers expire after 7 days. On acceptance, in one transaction: the
+   property, its campaigns and events move; guests, devices, visits, orders
+   and amenities follow the property; the old owner's team loses access at
+   once; a PMS connection is marked disconnected. Blocked while a device on
+   the site is still being paid off. Not yet: guest notice and the 14-day
+   campaign hold (step 2), so until then use it only for moves between
+   your own accounts; the 48-hour cooling-off and emails (step 3).
    Feature tests: only the owner can start; a host never sees another host's
    property before acceptance; everything linked moves; the old owner loses
    access; the WiFi isn't interrupted.

@@ -159,6 +159,7 @@ export default function Index({ settings, logos = [] }) {
             review_emails_enabled: flattened.review_emails_enabled || '0',
             event_billing_enabled: flattened.event_billing_enabled || '0',
             device_financing_enabled: flattened.device_financing_enabled || '0',
+            property_transfers_enabled: flattened.property_transfers_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -432,6 +433,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Device register: Admin → Devices lists every TenaFi device paid for monthly, with its instalments, payments and status (recorded by hand for now)"
                                         checked={data.settings.device_financing_enabled === '1'}
                                         onChange={() => updateSetting('device_financing_enabled', data.settings.device_financing_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Property transfers: owners can hand a property, with its WiFi page, devices and guest list, to another TenaFi account (Properties → Transfers). The recipient accepts. Guests aren't told yet, so use it for moves between your own accounts until that's built."
+                                        checked={data.settings.property_transfers_enabled === '1'}
+                                        onChange={() => updateSetting('property_transfers_enabled', data.settings.property_transfers_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

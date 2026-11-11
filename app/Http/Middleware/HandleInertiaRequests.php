@@ -7,6 +7,8 @@ use App\Models\DeviceAgreement;
 use App\Models\Event;
 use App\Models\Notification;
 use App\Models\Property;
+use App\Models\PropertyTransfer;
+use App\Services\PropertyTransferService;
 use App\Support\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -42,6 +44,10 @@ class HandleInertiaRequests extends Middleware
                 'eventBilling' => $request->user() !== null && Event::billingEnabled(),
                 // Device register (Admin -> Devices), shown to admins once switched on.
                 'deviceRegister' => (bool) $request->user()?->isAdmin() && DeviceAgreement::enabled(),
+                // Property transfers (Properties -> Transfers): for account owners once switched on, with offers waiting for them.
+                'propertyTransfers' => $request->user()?->isHost() && ! $request->user()->isTeamMember() && PropertyTransferService::enabled()
+                    ? ['incoming' => PropertyTransfer::incomingFor($request->user())->where('status', 'pending')->where('expires_at', '>', now())->count()]
+                    : null,
                 'notifications' => $request->user()
                     ? Cache::remember(
                         'app_notifications_'.$request->user()->id,
