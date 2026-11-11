@@ -49,7 +49,7 @@ class ReviewRequestMail extends Mailable
         $property = $guest->property;
 
         return SplashDesign::isBusiness($property)
-            ? "Thanks for visiting {$property->name}"
+            ? "Thank you for visiting {$property->name}"
             : "Thank you for staying at {$property->name}";
     }
 

@@ -71,7 +71,7 @@ it('sends a branded email in the property’s name, with a counted review link',
 
         return $mail->hasTo('amina@example.com')
             && $mail->hasFrom(config('mail.from.address'), 'Zero Sips via TenaFi')
-            && $mail->hasSubject('Thanks for visiting Zero Sips')
+            && $mail->hasSubject('Thank you for visiting Zero Sips')
             && str_contains($html, 'Hi Amina, thank you for visiting Zero Sips!')
             && str_contains($html, route('reviews.go', $guest->review_token))
             && str_contains($html, 'Leave a Google review')
