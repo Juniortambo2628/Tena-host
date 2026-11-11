@@ -156,6 +156,7 @@ export default function Index({ settings, logos = [] }) {
             staff_wifi_enabled: flattened.staff_wifi_enabled || '0',
             wifi_qr_enabled: flattened.wifi_qr_enabled || '0',
             visitor_log_enabled: flattened.visitor_log_enabled || '0',
+            review_emails_enabled: flattened.review_emails_enabled || '0',
             event_billing_enabled: flattened.event_billing_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
@@ -412,6 +413,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Visitor log: a site's WiFi sign-in asks who the visitor is here to see, and reception gets a dated visitor log with sign-out"
                                         checked={data.settings.visitor_log_enabled === '1'}
                                         onChange={() => updateSetting('visitor_log_enabled', data.settings.visitor_log_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Review emails: a site can send its thank-you and Google review request as an email in its own name, logo and colour, and ask everyone captured so far in one go"
+                                        checked={data.settings.review_emails_enabled === '1'}
+                                        onChange={() => updateSetting('review_emails_enabled', data.settings.review_emails_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField

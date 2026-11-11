@@ -70,6 +70,7 @@ class SettingsController extends Controller
             'staff_wifi_enabled' => 'sometimes|in:0,1',
             'wifi_qr_enabled' => 'sometimes|in:0,1',
             'visitor_log_enabled' => 'sometimes|in:0,1',
+            'review_emails_enabled' => 'sometimes|in:0,1',
             'event_billing_enabled' => 'sometimes|in:0,1',
         ];
 

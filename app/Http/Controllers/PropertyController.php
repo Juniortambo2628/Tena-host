@@ -87,7 +87,30 @@ class PropertyController extends Controller
                 'requested' => $property->guests()->whereNotNull('review_requested_at')->count(),
                 'clicked' => $property->guests()->whereNotNull('review_clicked_at')->count(),
             ],
+            // Review requests by email, and asking everyone so far (Admin -> Settings, starts off).
+            'reviewEmails' => Property::reviewEmailsEnabled() ? [
+                'waiting' => app(ReviewRequestService::class)->everyone($property)->count(),
+                'canSend' => ! Auth::user()->isTeamMember(),
+            ] : null,
         ]);
+    }
+
+    /** "Ask everyone so far": a thank-you and review request to every guest not yet asked. */
+    public function askEveryone(Property $property, ReviewRequestService $reviews)
+    {
+        $this->authorize('update', $property);
+        abort_unless(Property::reviewEmailsEnabled(), 404);
+
+        if (! $property->review_url) {
+            return back()->with('error', 'Add your Google review link first.');
+        }
+
+        $sent = $reviews->everyone($property)->get()
+            ->each(fn ($guest) => $guest->setRelation('property', $property))
+            ->filter(fn ($guest) => $reviews->send($guest))
+            ->count();
+
+        return back()->with('success', $sent === 1 ? 'Review request sent to 1 guest.' : "Review requests sent to {$sent} guests.");
     }
 
     /**
@@ -233,6 +256,7 @@ class PropertyController extends Controller
             'events' => 'nullable|string|max:2000',
             'birthday_offer' => 'nullable|string|max:500',
             'review_request_delay_hours' => 'sometimes|integer|min:1|max:168',
+            'review_request_channel' => ['sometimes', Rule::in(ReviewRequestService::CHANNELS)],
             'review_message' => ['nullable', 'string', 'max:500', function ($attribute, $value, $fail) {
                 if ($value && ! str_contains($value, '{review_link}')) {
                     $fail('Include {review_link} so guests can find your review page.');
