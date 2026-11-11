@@ -8,13 +8,14 @@
     @apply grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12;
 }
 
+/* The device photo fills the panel (it's shot at the panel's shape, 66:39). */
 .device-hero__picture {
-    @apply flex items-center justify-center overflow-hidden rounded-[2rem] p-6;
+    @apply flex items-center justify-center overflow-hidden rounded-[2rem];
     aspect-ratio: 66 / 39;
 }
 
 .device-hero__picture img {
-    @apply block h-full w-full object-contain;
+    @apply block h-full w-full object-cover;
 }
 
 .device-hero__body {
