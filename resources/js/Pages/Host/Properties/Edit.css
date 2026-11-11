@@ -38,6 +38,10 @@
     @apply flex items-center gap-2 text-sm font-black text-black mb-2;
 }
 
+.host-properties-edit-ask {
+    @apply flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-dark/10 p-4;
+}
+
 .host-properties-edit-hint {
     @apply text-xs text-black/50 leading-relaxed ml-1;
 }

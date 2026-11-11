@@ -38,6 +38,7 @@ class Property extends Model
         'review_requests_enabled',
         'review_request_delay_hours',
         'review_message',
+        'review_request_channel',
         'occupancy_alerted_at',
         'offers',
         'events',
@@ -120,6 +121,12 @@ class Property extends Model
     }
 
     /** Admin -> Settings -> Visitor log is on (it starts off). */
+    /** Review requests by email (Admin -> Settings), and the "ask everyone so far" button. */
+    public static function reviewEmailsEnabled(): bool
+    {
+        return filter_var(Setting::getValue('review_emails_enabled', '0'), FILTER_VALIDATE_BOOLEAN);
+    }
+
     public static function visitorLogEnabled(): bool
     {
         return filter_var(Setting::getValue('visitor_log_enabled', '0'), FILTER_VALIDATE_BOOLEAN);

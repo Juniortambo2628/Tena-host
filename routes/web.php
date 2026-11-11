@@ -219,6 +219,8 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::get('properties/{property}/splash', [PropertyController::class, 'splash'])->name('properties.splash');
         Route::post('properties/{property}/splash', [PropertyController::class, 'updateSplash'])->name('properties.splash.update');
         Route::resource('properties', PropertyController::class)->except(['create']);
+        // Review requests to everyone captured so far (the owner's, like marketing).
+        Route::post('properties/{property}/review-requests', [PropertyController::class, 'askEveryone'])->middleware('account.owner')->name('properties.review-requests');
 
         // Access Points
         Route::get('/access-points', [AccessPointController::class, 'index'])->name('access-points.index');
@@ -371,6 +373,7 @@ Route::get('/places/{property}', [VenueController::class, 'show'])->whereNumber(
 
 // Short review link sent to guests (counts the click, then redirects).
 Route::get('/r/{token}', ReviewLinkController::class)->where('token', '[A-Za-z0-9]{8}')->name('reviews.go');
+Route::get('/r/{token}/unsubscribe', [ReviewLinkController::class, 'unsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed')->name('reviews.unsubscribe');
 
 // A TenaFi device's own page (/pricing/pro): off with /pricing (Admin -> Settings).
 Route::get('/pricing/{device}', [PublicPageController::class, 'device'])
