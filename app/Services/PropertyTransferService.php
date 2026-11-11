@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Campaign;
 use App\Models\DeviceAgreement;
 use App\Models\Event;
+use App\Models\Guest;
 use App\Models\Property;
 use App\Models\PropertyTransfer;
 use App\Models\Setting;
@@ -23,8 +24,11 @@ use Illuminate\Validation\ValidationException;
  * connection is marked disconnected for the new owner to reconnect. The WiFi
  * keeps running: devices and the WiFi page aren't touched.
  *
- * Not yet (later steps): telling guests and holding campaigns for 14 days,
- * a 48-hour cooling-off, emails, and taking over a device still being paid off.
+ * Step 2: the guests are told who runs it now (TransferNoticeService), and
+ * the new owner can't message them for 14 days (guests.campaign_hold_until).
+ *
+ * Not yet (later steps): a 48-hour cooling-off, emails to the owners, and
+ * taking over a device still being paid off.
  */
 class PropertyTransferService
 {
@@ -115,15 +119,23 @@ class PropertyTransferService
             DB::table('staff_property')->where('property_id', $property->id)->delete();
             $members->each(fn ($id) => Cache::forget("user_property_ids_{$id}"));
 
+            // Step 2: the guests who came with it are told who runs it now (transfers:notices),
+            // and the new owner can't message them for CAMPAIGN_HOLD_DAYS, so they can opt out.
+            $holdUntil = now()->addDays(PropertyTransfer::CAMPAIGN_HOLD_DAYS);
+            Guest::where('property_id', $property->id)->update(['campaign_hold_until' => $holdUntil]);
+
             $transfer->update([
                 'status' => 'completed',
                 'to_user_id' => $recipient->id,
                 'decided_at' => now(),
                 'decided_ip' => $ip,
                 'moved' => $moved,
+                'hold_until' => $holdUntil,
             ]);
+            $noticeTotal = TransferNoticeService::recipients($transfer)->count();
+            $transfer->update(['notice_total' => $noticeTotal, 'notice_status' => $noticeTotal > 0 ? 'pending' : 'none']);
 
-            NotificationService::systemAlert('Transfer complete', "{$property->name} is now yours, with its WiFi page, devices and guest list.", $recipient->id);
+            NotificationService::systemAlert('Transfer complete', "{$property->name} is now yours, with its WiFi page, devices and guest list. Its guests are told you run it now; you can send them campaigns from {$holdUntil->format('j M')}.", $recipient->id);
             NotificationService::systemAlert('Transfer complete', "{$property->name} now belongs to {$transfer->to_email}.", $transfer->from_user_id);
 
             return $moved;

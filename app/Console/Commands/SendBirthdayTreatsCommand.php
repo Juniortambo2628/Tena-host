@@ -26,6 +26,8 @@ class SendBirthdayTreatsCommand extends Command
         Guest::with('property.host')
             ->where('birthday', $today->format('m-d'))
             ->where('marketing_opt_in', true)
+            // Not while a transferred property's guests wait out the notice period.
+            ->where(fn ($q) => $q->whereNull('campaign_hold_until')->orWhere('campaign_hold_until', '<=', now()))
             ->whereNotNull('phone')
             ->where(fn ($q) => $q->whereNull('birthday_sent_year')->orWhere('birthday_sent_year', '<', $today->year))
             ->whereHas('property', fn ($q) => $q->whereNotNull('birthday_offer')->where('birthday_offer', '!=', '')

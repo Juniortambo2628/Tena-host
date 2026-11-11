@@ -127,13 +127,20 @@ A transfer never silently moves a debt. The options:
    property, its campaigns and events move; guests, devices, visits, orders
    and amenities follow the property; the old owner's team loses access at
    once; a PMS connection is marked disconnected. Blocked while a device on
-   the site is still being paid off. Not yet: guest notice and the 14-day
-   campaign hold (step 2), so until then use it only for moves between
-   your own accounts; the 48-hour cooling-off and emails (step 3).
+   the site is still being paid off. Not yet: the 48-hour cooling-off and
+   emails (step 3).
    Feature tests: only the owner can start; a host never sees another host's
    property before acceptance; everything linked moves; the old owner loses
    access; the WiFi isn't interrupted.
-2. Guest notice message and the 14-day campaign hold.
+2. Guest notice message and the 14-day campaign hold. **Built (November
+   2026):** on acceptance every guest of the property is held for 14 days
+   (`guests.campaign_hold_until`): campaigns (one-off and automated),
+   birthday treats and review requests skip them; guests who join after the
+   transfer aren't held. Each contactable guest who hasn't opted out gets one
+   note in the venue's name, "it's now run by …", by email when they gave one
+   (venue-branded, with the unsubscribe link) or else on WhatsApp ("reply
+   STOP"), sent in batches of 200 by `transfers:notices` every five minutes.
+   The Transfers page shows how many were told and when messages can start.
 3. Cooling-off, the *"wasn't you?"* message and the admin screen.
 4. Device agreement payoff or take-over (after the device plan's first steps
    exist).

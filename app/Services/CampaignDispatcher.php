@@ -108,6 +108,8 @@ class CampaignDispatcher
             // Data Protection Act, 2019).
             ->where(fn ($q) => $q->whereNull('consented_at')->orWhere('marketing_opt_in', true))
             ->whereNull('opted_out_at') // replied STOP
+            // Guests of a property that just changed owner wait out the notice period (property transfers).
+            ->where(fn ($q) => $q->whereNull('campaign_hold_until')->orWhere('campaign_hold_until', '<=', now()))
             ->when($campaign->type === 'email', fn ($q) => $q->whereNotNull('email'))
             ->when(in_array($campaign->type, Messenger::CHANNELS, true), fn ($q) => $q->whereNotNull('phone'))
             ->tap(fn ($q) => match ($campaign->target_audience) {

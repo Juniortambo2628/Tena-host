@@ -102,6 +102,8 @@ class ReviewRequestService
         return Guest::where('property_id', $property->id)
             ->whereNull('review_requested_at')
             ->whereNull('opted_out_at')
+            // Not while a transferred property's guests wait out the notice period.
+            ->where(fn ($q) => $q->whereNull('campaign_hold_until')->orWhere('campaign_hold_until', '<=', now()))
             // WiFi guests agreed to be asked; PMS guests have a booking with the host.
             ->where(fn ($q) => $q->whereNotNull('consented_at')->orWhereNotNull('check_out'))
             ->where(fn ($q) => match ($channel) {
