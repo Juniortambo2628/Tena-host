@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Mail;
 beforeEach(function () {
     Setting::setValue('property_transfers_enabled', '1');
     Mail::fake();
-    config(['services.whatsapp' => ['driver' => 'whatsapp_cloud', 'token' => 't', 'phone_number_id' => '1', 'template' => null]]);
+    config(['services.whatsapp' => [
+        'driver' => 'whatsapp_cloud', 'token' => 't', 'phone_number_id' => '1', 'template' => null,
+        'language' => 'en', 'api_version' => 'v21.0', 'fallback_to_sms' => false,
+    ]]);
     Http::fake(['graph.facebook.com/*' => Http::response(['messages' => [['id' => 'wamid.1']]])]);
 
     $this->owner = User::factory()->host()->create();
