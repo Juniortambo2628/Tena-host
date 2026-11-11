@@ -1,0 +1,93 @@
+@reference "../../../../css/theme.css";
+
+/* A TenaFi device's own page (/pricing/lite, ...). Reuses the /pricing card
+   pieces (Pricing.css) for the chip, specs and price. Text stays at 12px or
+   more (CLAUDE.md). */
+
+.device-hero {
+    @apply grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-12;
+}
+
+.device-hero__picture {
+    @apply flex items-center justify-center overflow-hidden rounded-[2rem] p-6;
+    aspect-ratio: 66 / 39;
+}
+
+.device-hero__picture img {
+    @apply block h-full w-full object-contain;
+}
+
+.device-hero__body {
+    @apply flex min-w-0 flex-col gap-4;
+}
+
+.device-hero__name {
+    @apply !font-display text-4xl !font-light leading-tight tracking-tight !text-ink sm:text-5xl;
+}
+
+.device-hero__tagline {
+    @apply text-lg text-body;
+}
+
+.device-hero__body .pricing-device__price {
+    @apply mt-2;
+}
+
+.device-hero__buttons {
+    @apply mt-2 flex flex-col gap-3 sm:flex-row sm:flex-wrap;
+}
+
+/* Specifications and highlights, side by side from tablet width. */
+.device-details {
+    @apply grid gap-10 md:grid-cols-2;
+}
+
+.device-details__title {
+    @apply mb-5 !font-display text-2xl !font-normal tracking-tight !text-ink sm:text-3xl;
+}
+
+.device-details__note {
+    @apply mt-4 text-xs text-soft;
+}
+
+.device-specs {
+    @apply divide-y divide-line rounded-2xl border border-line;
+}
+
+.device-specs div {
+    @apply grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 px-4 py-3 text-sm;
+}
+
+.device-specs dt {
+    @apply text-soft;
+}
+
+.device-specs dd {
+    @apply font-semibold text-ink;
+}
+
+.device-list {
+    @apply grid gap-3 text-sm text-body;
+}
+
+.device-list li {
+    @apply flex items-start gap-3;
+}
+
+.device-list svg {
+    @apply mt-0.5 shrink-0 text-positive;
+}
+
+.device-list--grid {
+    @apply sm:grid-cols-2;
+}
+
+/* More pictures of the device (Admin -> Public Pages -> Devices & pricing). */
+.device-gallery {
+    @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.device-gallery img {
+    @apply block w-full rounded-2xl object-cover;
+    aspect-ratio: 4 / 3;
+}

@@ -1,0 +1,75 @@
+@reference "../../../../css/theme.css";
+
+/* Admin -> Devices (the device register). Text stays at 12px or more. */
+
+.devices__stack {
+    @apply flex min-w-0 flex-col;
+}
+
+.devices__stack b {
+    @apply text-sm font-black text-dark;
+}
+
+.devices__stack small {
+    @apply break-words text-xs font-bold text-muted;
+}
+
+.devices__late {
+    @apply font-black text-red-600;
+}
+
+.devices__form,
+.devices__details,
+.devices__inline-form {
+    @apply flex flex-col gap-4;
+}
+
+.devices__row {
+    @apply grid gap-4 sm:grid-cols-2;
+}
+
+.devices__row--three {
+    @apply sm:grid-cols-3;
+}
+
+.devices__summary {
+    @apply text-sm text-muted;
+}
+
+.devices__summary b {
+    @apply text-dark;
+}
+
+.devices__heading {
+    @apply mt-2 text-xs font-black uppercase tracking-widest text-muted;
+}
+
+.devices__instalments {
+    @apply divide-y divide-black/5 rounded-2xl border border-black/5;
+}
+
+.devices__instalment {
+    @apply flex flex-wrap items-center justify-between gap-3 px-4 py-3;
+}
+
+/* The payment form, on its own line under its instalment. */
+.devices__instalment .devices__inline-form {
+    @apply basis-full;
+}
+
+.devices__instalment--paid,
+.devices__instalment--waived {
+    @apply opacity-60;
+}
+
+.devices__inline-form {
+    @apply rounded-2xl bg-canvas p-4;
+}
+
+.devices__log {
+    @apply flex flex-col gap-2 text-sm text-dark;
+}
+
+.devices__log small {
+    @apply block text-xs text-muted;
+}

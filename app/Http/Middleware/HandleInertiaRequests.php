@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\TeamController;
+use App\Models\DeviceAgreement;
 use App\Models\Event;
 use App\Models\Notification;
 use App\Models\Property;
@@ -39,6 +40,8 @@ class HandleInertiaRequests extends Middleware
                     && $request->user()->sites()->where('visitor_log', true)->exists(),
                 // Pay per event (admin's Event quotes page and organisers' event payments).
                 'eventBilling' => $request->user() !== null && Event::billingEnabled(),
+                // Device register (Admin -> Devices), shown to admins once switched on.
+                'deviceRegister' => (bool) $request->user()?->isAdmin() && DeviceAgreement::enabled(),
                 'notifications' => $request->user()
                     ? Cache::remember(
                         'app_notifications_'.$request->user()->id,

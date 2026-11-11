@@ -158,6 +158,7 @@ export default function Index({ settings, logos = [] }) {
             visitor_log_enabled: flattened.visitor_log_enabled || '0',
             review_emails_enabled: flattened.review_emails_enabled || '0',
             event_billing_enabled: flattened.event_billing_enabled || '0',
+            device_financing_enabled: flattened.device_financing_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -425,6 +426,12 @@ export default function Index({ settings, logos = [] }) {
                                         label="Pay per event: event organisers without a plan ask for a quote (Admin → Event quotes), then pay it by M-Pesa or card to switch the event's WiFi page on"
                                         checked={data.settings.event_billing_enabled === '1'}
                                         onChange={() => updateSetting('event_billing_enabled', data.settings.event_billing_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
+                                        label="Device register: Admin → Devices lists every TenaFi device paid for monthly, with its instalments, payments and status (recorded by hand for now)"
+                                        checked={data.settings.device_financing_enabled === '1'}
+                                        onChange={() => updateSetting('device_financing_enabled', data.settings.device_financing_enabled === '1' ? '0' : '1')}
                                     />
 
                                     <CheckboxField
