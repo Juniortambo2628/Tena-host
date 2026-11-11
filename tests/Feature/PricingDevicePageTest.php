@@ -29,6 +29,7 @@ it('shows a device’s own page with its specifications once /pricing is on', fu
         ->where('index', 2)
         ->where('section.content.items.2.name', 'TenaFi Outdoor')
         ->where('section.content.items.2.specs', fn ($specs) => str_contains($specs, 'WiFi standard | WiFi 7'))
+        ->where('section.content.install_steps.0.title', 'How it connects')
         ->where('pay.section_key', 'pay_options')
         ->where('seo.title', 'TenaFi Outdoor: specifications and pricing | TenaFi'));
 

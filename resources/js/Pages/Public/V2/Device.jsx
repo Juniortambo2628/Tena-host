@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react';
 import { SiteLayout, Container, SectionHeading, PillLink, SECTION_OFFSET } from '@okjt/site';
 import { ArrowLeft, Check } from 'lucide-react';
 import V2Site from '@/Components/V2/V2Site';
+import InstallSteps from '@/Components/V2/InstallSteps';
 import { extractItems, stripHtml, textLines } from '@/lib/cms';
 import { devicesFrom, formatKes, fill, contentText as text } from '@/lib/devices';
 import './Pricing.css';
@@ -111,6 +112,8 @@ export default function V2Device({ section, index, pay = null, seo = {} }) {
                         </Container>
                     </section>
                 )}
+
+                <InstallSteps section={section} />
 
                 {included.length > 0 && (
                     <section className={`${SECTION_OFFSET} bg-white py-16`}>

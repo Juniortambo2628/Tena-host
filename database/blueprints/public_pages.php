@@ -1760,6 +1760,17 @@ return [
                 'included_title' => 'Included with every TenaFi device',
                 'included' => "Installed and tested by our team\nYour logo and colours on the WiFi page\nYour guest list, reviews and campaigns\nMonitored and updated from TenaFi",
                 'back_label' => 'All devices and pricing',
+                // "How it's installed" on /pricing and each device page. A step shows once its picture
+                // (install_N_image, Admin -> Public Pages -> Devices & pricing) is uploaded.
+                'install_title' => 'How it’s installed',
+                'install_text' => 'One cable from your router, and our team does the rest.',
+                'install_steps' => [
+                    ['title' => 'How it connects', 'text' => 'Your internet, your router, one network cable, your TenaFi device. Several devices? We add a small switch.'],
+                    ['title' => 'On a wall', 'text' => 'Slim and quiet, it sits flat on the wall at about head height.'],
+                    ['title' => 'Wall mounting', 'text' => 'A small bracket and four screws, with the cable coming through the wall.'],
+                    ['title' => 'On a ceiling', 'text' => 'Fixed flush to the ceiling, where the signal spreads best.'],
+                    ['title' => 'Ceiling mounting', 'text' => 'A bracket and backing plate hold it to the ceiling tile; the cable drops through.'],
+                ],
             ],
             'media' => [
                 'device_0_image' => '/images/devices/tenafi-lite.svg',

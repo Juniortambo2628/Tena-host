@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Head, usePage } from '@inertiajs/react';
 import { SiteLayout, Container, SectionHeading, Eyebrow, PillLink, SECTION_OFFSET } from '@okjt/site';
 import V2Site from '@/Components/V2/V2Site';
+import InstallSteps from '@/Components/V2/InstallSteps';
 import { Pricing as PlanCards } from '@/Components/V2/Sections';
 import { extractItems, stripHtml, textLines } from '@/lib/cms';
 import { devicesFrom, formatKes, monthlyWithDevice, firstYear, fill, contentText as text } from '@/lib/devices';
@@ -26,6 +27,7 @@ export default function V2Pricing({ sections = [], planSections = {}, seo = {} }
             <SiteLayout cta={false}>
                 <Plans planSections={planSections} site={site} />
                 {devicesSection && <Devices section={devicesSection} devices={devices} />}
+                {devicesSection && <InstallSteps section={devicesSection} className="bg-white" />}
                 {pay && <WaysToPay section={pay} devices={devices} plans={plans.filter((p) => p.price_kes > 0)} />}
             </SiteLayout>
         </V2Site>
