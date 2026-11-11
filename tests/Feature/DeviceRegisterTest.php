@@ -97,7 +97,8 @@ it('changes the status with a note in the log', function () {
     expect($agreement->fresh()->status)->toBe('suspended')
         ->and($event->type)->toBe('status')
         ->and($event->note)->toBe('Two months unpaid')
-        ->and($event->meta)->toBe(['from' => 'active', 'to' => 'suspended'])
+        // MySQL may store JSON keys in its own order, so compare without order.
+        ->and($event->meta)->toEqual(['from' => 'active', 'to' => 'suspended'])
         ->and($event->user_id)->toBe($this->admin->id);
 });
 
