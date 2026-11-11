@@ -34,6 +34,7 @@ import {
     Home,
     Clipboard,
     Loader2,
+    Router,
 } from 'lucide-react';
 import { Menu, Transition, Dialog } from '@headlessui/react';
 import { safeRoute, hasRoute } from '@/lib/route';
@@ -79,6 +80,7 @@ export default function DashboardLayout({ children }) {
         { name: 'Sign-ups', icon: AlignLeft, route: 'admin.registrations.index', match: ['admin.registrations.*'] },
         { name: 'Payments', icon: CreditCard, route: 'admin.payments.index', match: ['admin.payments.*'] },
         auth.eventBilling && { name: 'Event quotes', icon: CalendarDays, route: 'admin.event-quotes.index' },
+        auth.deviceRegister && { name: 'Devices', icon: Router, route: 'admin.devices.index', match: ['admin.devices.*'] },
         { name: 'Public Pages', icon: Globe, route: 'admin.landing.index', match: ['admin.landing.*'] },
         { name: 'Policies', icon: FileText, route: 'admin.policies.index', match: ['admin.policies.*'] },
         { name: 'System', icon: Activity, route: 'admin.system.index' },
