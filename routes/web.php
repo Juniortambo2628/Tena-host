@@ -4,6 +4,7 @@ use App\Http\Controllers\AccessPointController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminPaymentController;
 use App\Http\Controllers\Admin\BrandingController;
+use App\Http\Controllers\Admin\DeviceAgreementController;
 use App\Http\Controllers\Admin\EmailImageController;
 use App\Http\Controllers\Admin\EventQuoteController;
 use App\Http\Controllers\Admin\HostController;
@@ -120,6 +121,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     // Pay per event: organisers' quote requests and the prices set for them
     Route::get('/event-quotes', [EventQuoteController::class, 'index'])->name('event-quotes.index');
     Route::put('/event-quotes/{event}', [EventQuoteController::class, 'update'])->name('event-quotes.update');
+
+    // Device register: TenaFi devices paid for monthly (docs/plans/device-monthly-payments.md)
+    Route::get('/devices', [DeviceAgreementController::class, 'index'])->name('devices.index');
+    Route::post('/devices', [DeviceAgreementController::class, 'store'])->name('devices.store');
+    Route::post('/devices/{agreement}/instalments/{instalment}/pay', [DeviceAgreementController::class, 'pay'])->name('devices.pay');
+    Route::put('/devices/{agreement}/status', [DeviceAgreementController::class, 'status'])->name('devices.status');
 
     // Payments
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');

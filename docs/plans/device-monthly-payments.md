@@ -185,7 +185,12 @@ device is the client's. This happens automatically after the 12th payment.
 ## 9. Build order (each step its own small PR, behind the switch)
 
 1. Tables, models and the admin list, with agreements recorded by hand. This
-   is useful on its own as the asset register.
+   is useful on its own as the asset register. **Built (November 2026):**
+   Admin → Devices (shown in the menu once Admin → Settings "Device register"
+   is on). Record a device; see its instalments, balance and days late;
+   record part or full payments with the M-Pesa code; change the status with a
+   note; every action is logged. The device is marked paid off automatically
+   after the last instalment.
 2. Instalment schedule, `devices:billing`, reminders and M-Pesa STK collection
    with automatic marking as paid.
 3. Overdue banner, campaign pause, and the app-level WiFi pause and resume.
