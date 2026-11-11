@@ -27,9 +27,10 @@ it('shows a device’s own page with its specifications once /pricing is on', fu
     $this->get('/pricing/outdoor')->assertOk()->assertInertia(fn ($page) => $page
         ->component('Public/V2/Device')
         ->where('index', 2)
-        ->where('section.content.items.2.name', 'TenaFi Outdoor')
-        ->where('section.content.items.2.specs', fn ($specs) => str_contains($specs, 'WiFi standard | WiFi 7'))
-        ->where('section.content.install_steps.0.title', 'How it connects')
+        // Content keys contain dots ("items.2.name"), so read the content as a whole.
+        ->where('section.content', fn ($c) => $c['items.2.name'] === 'TenaFi Outdoor'
+            && str_contains($c['items.2.specs'], 'WiFi standard | WiFi 7')
+            && $c['install_steps.0.title'] === 'How it connects')
         ->where('pay.section_key', 'pay_options')
         ->where('seo.title', 'TenaFi Outdoor: specifications and pricing | TenaFi'));
 
