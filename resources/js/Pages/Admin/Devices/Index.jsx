@@ -24,7 +24,7 @@ const COLORS = {
     'lost or stolen': 'bg-red-100 text-red-700',
 };
 const INSTALMENT = { due: 'Due', partly_paid: 'Part paid', paid: 'Paid', waived: 'Waived' };
-const EVENT = { recorded: 'Recorded', payment: 'Payment', paid_off: 'Paid off', status: 'Status changed', note: 'Note' };
+const EVENT = { recorded: 'Recorded', payment: 'Payment', paid_off: 'Paid off', status: 'Status changed', note: 'Note', transferred: 'Moved to a new owner' };
 const today = () => new Date().toISOString().slice(0, 10);
 
 /**

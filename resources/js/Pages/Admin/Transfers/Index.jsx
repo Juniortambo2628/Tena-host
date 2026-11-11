@@ -71,7 +71,7 @@ export default function Transfers({ transfers, enabled, coolingOffHours }) {
             accessorFn: (t) => t.completes_at || t.expires_at,
             cell: ({ row: { original: t } }) => ({
                 pending: `Open until ${when(t.expires_at)}`,
-                accepted: t.held ? 'Held' : `Completes ${when(t.completes_at)}`,
+                accepted: t.held ? (t.devices ? 'Held: check the new owner for the device payments' : 'Held') : `Completes ${when(t.completes_at)}`,
                 completed: `Completed ${when(t.completed_at)}`,
                 cancelled: `Cancelled ${when(t.cancelled_at)}${t.cancelled_by ? ` by ${BY[t.cancelled_by] || t.cancelled_by}` : ''}`,
             }[t.status] || when(t.decided_at || t.created_at)),
@@ -80,6 +80,12 @@ export default function Transfers({ transfers, enabled, coolingOffHours }) {
         { id: 'offered', header: 'Offered', accessorFn: (t) => when(t.created_at), meta: { detailOnly: true } },
         { id: 'ips', header: 'IP addresses', accessorFn: (t) => `Offered from ${t.from_ip || '—'}, answered from ${t.decided_ip || '—'}`, meta: { detailOnly: true } },
         { id: 'note', header: 'Note', accessorFn: (t) => t.admin_note || '—', meta: { detailOnly: true } },
+        {
+            id: 'devices',
+            header: 'Device payments taken over',
+            accessorFn: (t) => (t.devices ? `${t.devices.count} ${t.devices.count === 1 ? 'device' : 'devices'}: KES ${Number(t.devices.balance).toLocaleString()} left, KES ${Number(t.devices.monthly).toLocaleString()} a month` : '—'),
+            meta: { detailOnly: true },
+        },
         {
             id: 'moved',
             header: 'What moved',

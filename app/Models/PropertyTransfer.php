@@ -26,6 +26,7 @@ class PropertyTransfer extends Model
         'expires_at', 'decided_at', 'from_ip', 'decided_ip', 'moved',
         'notice_status', 'notice_cursor', 'notice_total', 'notice_sent', 'hold_until',
         'completes_at', 'completed_at', 'cancelled_at', 'cancelled_by', 'held_at', 'held_by', 'admin_note',
+        'device_takeover', 'device_count', 'device_balance_kes', 'device_monthly_kes',
     ];
 
     protected $casts = [
@@ -37,6 +38,10 @@ class PropertyTransfer extends Model
         'completed_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'held_at' => 'datetime',
+        'device_takeover' => 'boolean',
+        'device_count' => 'integer',
+        'device_balance_kes' => 'integer',
+        'device_monthly_kes' => 'integer',
     ];
 
     public function property(): BelongsTo

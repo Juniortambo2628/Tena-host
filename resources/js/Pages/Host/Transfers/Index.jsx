@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Head, router, useForm } from '@inertiajs/react';
 import { ArrowLeftRight, Check, X, Send } from 'lucide-react';
 import DashboardHero from '@/Components/Dashboard/DashboardHero';
@@ -7,7 +7,7 @@ import DataTable from '@/Components/Dashboard/DataTable';
 import StatusBadge from '@/Components/Dashboard/StatusBadge';
 import PillButton from '@/Components/Dashboard/PillButton';
 import EmptyState from '@/Components/Dashboard/EmptyState';
-import { FormField, TextInput, Select, FormActions } from '@/Components/Forms/FormPrimitives';
+import { FormField, TextInput, Select, FormActions, CheckboxField } from '@/Components/Forms/FormPrimitives';
 import { T, useTerms } from '@/Components/Dashboard/Terms';
 import { useConfirm } from '@/hooks/useConfirm';
 import { notify } from '@/Components/Toast';
@@ -23,6 +23,7 @@ const COLORS = {
     expired: 'bg-black/5 text-muted',
 };
 const day = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
+const kes = (n) => `KES ${Number(n || 0).toLocaleString()}`;
 const when = (iso) => (iso ? new Date(iso).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
 
 /**
@@ -34,7 +35,11 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
     const t = useTerms();
     const { confirm, ConfirmDialogEl } = useConfirm();
     const waiting = incoming.filter((x) => x.status === 'pending');
-    const form = useForm({ property_id: properties[0]?.id || '', email: '', password: '' });
+    const form = useForm({ property_id: properties[0]?.id || '', email: '', password: '', device_takeover: false });
+    // Step 4: what's still owed on the chosen property's devices, and the offers whose payments the recipient agreed to take over.
+    const chosen = properties.find((p) => String(p.id) === String(form.data.property_id));
+    const debt = chosen?.devices?.count > 0 ? chosen.devices : null;
+    const [agreed, setAgreed] = useState({});
 
     const start = async (e) => {
         e.preventDefault();
@@ -46,7 +51,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
             variant: 'warning',
         });
         if (!ok) return;
-        form.post(route('host.transfers.store'), {
+        form.transform((data) => ({ ...data, device_takeover: Boolean(debt) && data.device_takeover })).post(route('host.transfers.store'), {
             preserveScroll: true,
             onSuccess: () => { notify.success('Transfer offered'); form.reset('email', 'password'); },
             onError: () => form.reset('password'),
@@ -60,7 +65,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
             confirmLabel: 'Accept',
             variant: 'success',
         });
-        if (ok) router.post(route('host.transfers.accept', x.id), {}, { preserveScroll: true });
+        if (ok) router.post(route('host.transfers.accept', x.id), { takeover: Boolean(agreed[x.id]) }, { preserveScroll: true });
     };
     const decline = async (x) => {
         const ok = await confirm({ title: `Decline ${x.property}?`, message: `It stays with ${x.from}.`, confirmLabel: 'Decline', variant: 'danger' });
@@ -116,6 +121,12 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
             meta: { detailOnly: true },
         },
         {
+            id: 'devices',
+            header: 'Device payments taken over',
+            accessorFn: (x) => (x.devices ? `${x.devices.count} ${x.devices.count === 1 ? 'device' : 'devices'}, ${kes(x.devices.balance)} left, ${kes(x.devices.monthly)} a month` : '—'),
+            meta: { detailOnly: true },
+        },
+        {
             id: 'notice',
             header: `${t('Guests')} told`,
             accessorFn: (x) => (x.notice ? (x.notice.status === 'none' ? 'Nobody to tell' : `${x.notice.sent} of ${x.notice.total}${x.notice.status === 'pending' ? ' so far' : ''}`) : '—'),
@@ -162,10 +173,23 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
                                             Comes with {x.preview.guests} {t('guests').toLowerCase()}, {x.preview.access_points} {x.preview.access_points === 1 ? 'device' : 'devices'} and {x.preview.campaigns} campaigns.
                                         </small>
                                     )}
+                                    {x.devices && (
+                                        <div className="transfers__devices">
+                                            <p>
+                                                Its TenaFi {x.devices.count === 1 ? 'device is' : 'devices are'} still being paid off: <b>{kes(x.devices.balance)}</b> left,{' '}
+                                                {kes(x.devices.monthly)} a month on the same dates. TenaFi checks with you before the hand-over.
+                                            </p>
+                                            <CheckboxField
+                                                label="I agree to take over these device payments"
+                                                checked={Boolean(agreed[x.id])}
+                                                onChange={() => setAgreed((a) => ({ ...a, [x.id]: !a[x.id] }))}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="transfers__buttons">
                                     <PillButton variant="ghost" onClick={() => decline(x)} icon={<X size={16} />}>Decline</PillButton>
-                                    <PillButton variant="primary" onClick={() => accept(x)} icon={<Check size={16} />}>Accept</PillButton>
+                                    <PillButton variant="primary" onClick={() => accept(x)} icon={<Check size={16} />} disabled={Boolean(x.devices) && !agreed[x.id]}>Accept</PillButton>
                                 </div>
                             </div>
                         </GlassCard>
@@ -196,6 +220,19 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
                                     <TextInput id="transfer-email" type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)} autoComplete="off" required />
                                 </FormField>
                             </div>
+                            {debt && (
+                                <div className="transfers__devices">
+                                    <p>
+                                        A TenaFi {debt.count === 1 ? 'device' : 'devices'} here {debt.count === 1 ? 'is' : 'are'} still being paid off: <b>{kes(debt.balance)}</b> left,{' '}
+                                        {kes(debt.monthly)} a month{debt.last_due ? ` until ${day(debt.last_due)}` : ''}. Either pay it off first (TenaFi records the payment), or:
+                                    </p>
+                                    <CheckboxField
+                                        label="The new owner takes over the remaining payments (TenaFi checks with them before the hand-over)"
+                                        checked={form.data.device_takeover}
+                                        onChange={() => form.setData('device_takeover', !form.data.device_takeover)}
+                                    />
+                                </div>
+                            )}
                             <FormField label="Your password" hint="To confirm it’s you." required error={form.errors.password}>
                                 <TextInput id="transfer-password" type="password" value={form.data.password} onChange={(e) => form.setData('password', e.target.value)} autoComplete="current-password" required />
                             </FormField>
