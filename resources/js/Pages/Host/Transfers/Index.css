@@ -1,0 +1,43 @@
+@reference "../../../../css/theme.css";
+
+/* Properties -> Transfers. Text stays at 12px or more. */
+
+.transfers__section {
+    @apply mt-8 flex flex-col gap-4;
+}
+
+.transfers__heading {
+    @apply text-xs font-black uppercase tracking-widest text-muted;
+}
+
+.transfers__offer {
+    @apply flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.transfers__stack {
+    @apply flex min-w-0 flex-col gap-0.5;
+}
+
+.transfers__stack b {
+    @apply text-sm font-black text-dark;
+}
+
+.transfers__stack small {
+    @apply break-words text-xs font-bold text-muted;
+}
+
+.transfers__buttons {
+    @apply flex flex-wrap gap-2;
+}
+
+.transfers__form {
+    @apply flex flex-col gap-4;
+}
+
+.transfers__row {
+    @apply grid gap-4 sm:grid-cols-2;
+}
+
+.transfers__note {
+    @apply text-sm text-muted;
+}

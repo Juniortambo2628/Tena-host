@@ -38,6 +38,7 @@ use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\PropertyTransferController;
 use App\Http\Controllers\PublicPageController;
 use App\Http\Controllers\ReviewLinkController;
 use App\Http\Controllers\SignupController;
@@ -196,6 +197,16 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('host')->name('host.')->
         Route::post('/billing/paystack', [SubscriptionController::class, 'storePaystack'])->name('billing.paystack');
         Route::post('/billing/mpesa', [SubscriptionController::class, 'storeMpesa'])->name('billing.mpesa');
         Route::post('/billing/simulate', [SubscriptionController::class, 'simulateMpesa'])->name('billing.simulate');
+    });
+
+    // Property transfers: an owner hands a property to another TenaFi account (Admin -> Settings, starts off).
+    // Outside the plan check, so a new owner without a plan yet can still accept.
+    Route::middleware('account.owner')->group(function () {
+        Route::get('/transfers', [PropertyTransferController::class, 'index'])->name('transfers.index');
+        Route::post('/transfers', [PropertyTransferController::class, 'store'])->name('transfers.store');
+        Route::post('/transfers/{transfer}/accept', [PropertyTransferController::class, 'accept'])->name('transfers.accept');
+        Route::post('/transfers/{transfer}/decline', [PropertyTransferController::class, 'decline'])->name('transfers.decline');
+        Route::post('/transfers/{transfer}/cancel', [PropertyTransferController::class, 'cancel'])->name('transfers.cancel');
     });
 
     // Protected Host Routes (Requires Subscription)

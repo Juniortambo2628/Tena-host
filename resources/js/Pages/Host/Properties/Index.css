@@ -75,3 +75,12 @@
 .host-properties-index-add-card:hover .host-properties-index-add-subtitle {
     @apply opacity-40;
 }
+
+/* An offer to hand a property to this account (Properties -> Transfers). */
+.host-properties-index-transfer {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between;
+}
+
+.host-properties-index-transfer p {
+    @apply text-sm font-bold text-dark;
+}
