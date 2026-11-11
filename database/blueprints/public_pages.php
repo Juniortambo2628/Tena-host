@@ -1732,9 +1732,9 @@ return [
                 // price_kes: bought upfront, installed. monthly_kes: added to the plan for `months` months.
                 // style: light | yellow | dark (the card's picture background).
                 'items' => [
-                    ['id' => 'lite', 'name' => 'TenaFi Lite', 'badge' => 'Small spaces', 'best_for' => 'Apartments, salons, barbershops, small cafés and shops', 'coverage' => '115 m²', 'coverage_label' => 'coverage', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '25000', 'monthly_kes' => '3000', 'months' => '12', 'style' => 'light'],
-                    ['id' => 'pro', 'name' => 'TenaFi Pro', 'badge' => 'Busy spaces', 'best_for' => 'Restaurants, busy cafés, villas, clinics, gyms and lounges', 'coverage' => '140 m²', 'coverage_label' => 'coverage', 'capacity' => '300+', 'capacity_label' => 'devices at once', 'price_kes' => '42000', 'monthly_kes' => '5000', 'months' => '12', 'style' => 'yellow'],
-                    ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'badge' => 'Outdoor & events', 'best_for' => 'Gardens, terraces, events, weddings and large venues', 'coverage' => '465 m²', 'coverage_label' => 'open space', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '48000', 'monthly_kes' => '5500', 'months' => '12', 'style' => 'dark'],
+                    ['id' => 'lite', 'name' => 'TenaFi Lite', 'badge' => 'Small spaces', 'best_for' => 'Apartments, salons, barbershops, small cafés and shops', 'coverage' => '115 m²', 'coverage_label' => 'coverage', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '25000', 'monthly_kes' => '3000', 'months' => '12', 'style' => 'light', 'tagline' => 'A small, quiet ceiling device for one room or a small shop.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 115 m²\nDevices at once | 200+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Small and discreet: it blends into the ceiling\nEnough for an apartment, salon or small café\nRuns your branded WiFi page and guest list"],
+                    ['id' => 'pro', 'name' => 'TenaFi Pro', 'badge' => 'Busy spaces', 'best_for' => 'Restaurants, busy cafés, villas, clinics, gyms and lounges', 'coverage' => '140 m²', 'coverage_label' => 'coverage', 'capacity' => '300+', 'capacity_label' => 'devices at once', 'price_kes' => '42000', 'monthly_kes' => '5000', 'months' => '12', 'style' => 'yellow', 'tagline' => 'For busy indoor spaces: restaurants, lounges, clinics and villas.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz, 5 GHz and 6 GHz\nCoverage | About 140 m²\nDevices at once | 300+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Handles a full restaurant at dinner time\nThree bands keep phones fast when it’s busy\nRuns your branded WiFi page and guest list"],
+                    ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'badge' => 'Outdoor & events', 'best_for' => 'Gardens, terraces, events, weddings and large venues', 'coverage' => '465 m²', 'coverage_label' => 'open space', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '48000', 'monthly_kes' => '5500', 'months' => '12', 'style' => 'dark', 'tagline' => 'Weatherproof WiFi for gardens, terraces and events.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 465 m² of open space\nDevices at once | 200+\nWhere it goes | Pole or wall, outdoors\nWeather | Built for sun, dust and rain\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Covers a garden, terrace or event lawn\nWeatherproof, so it stays up all year\nWorks with a Lite or Pro indoors on one network"],
                 ],
                 'more_title' => 'Bigger space? Add more devices.',
                 'more_text' => 'Devices link into one network and one WiFi page. Our team surveys your space and tells you how many you need.',
@@ -1751,6 +1751,26 @@ return [
                     ['title' => 'Works with your internet', 'text' => 'Plugs into your existing router.'],
                 ],
                 'note' => 'Coverage figures are manufacturer specs for open space; walls and layout reduce real-world range.',
+                // Each device's own page (/pricing/{id}): specs are "Label | Value", one per line.
+                // TODO(Glen): check every device's specs against the supplier's datasheet before /pricing goes live.
+                'details_label' => 'See details',
+                'specs_title' => 'Specifications',
+                'highlights_title' => 'Why this one',
+                'gallery_title' => 'See it in use',
+                'included_title' => 'Included with every TenaFi device',
+                'included' => "Installed and tested by our team\nYour logo and colours on the WiFi page\nYour guest list, reviews and campaigns\nMonitored and updated from TenaFi",
+                'back_label' => 'All devices and pricing',
+                // "How it's installed" on /pricing and each device page. A step shows once its picture
+                // (install_N_image, Admin -> Public Pages -> Devices & pricing) is uploaded.
+                'install_title' => 'How it’s installed',
+                'install_text' => 'One cable from your router, and our team does the rest.',
+                'install_steps' => [
+                    ['title' => 'How it connects', 'text' => 'Your internet, your router, one network cable, your TenaFi device. Several devices? We add a small switch.'],
+                    ['title' => 'On a wall', 'text' => 'Slim and quiet, it sits flat on the wall at about head height.'],
+                    ['title' => 'Wall mounting', 'text' => 'A small bracket and four screws, with the cable coming through the wall.'],
+                    ['title' => 'On a ceiling', 'text' => 'Fixed flush to the ceiling, where the signal spreads best.'],
+                    ['title' => 'Ceiling mounting', 'text' => 'A bracket and backing plate hold it to the ceiling tile; the cable drops through.'],
+                ],
             ],
             'media' => [
                 'device_0_image' => '/images/devices/tenafi-lite.svg',

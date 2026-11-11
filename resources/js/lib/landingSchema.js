@@ -146,7 +146,16 @@ export const SECTION_MEDIA_SCHEMA = {
     devices: {
         slots: [],
         dynamic: (contentKeys) => featureSlots(contentKeys, 'items', 'device_{i}_image', 'Device {n}: picture')
-            .map(slot => ({ ...slot, description: 'The device on a transparent background, wide (about 1320 × 780). It sits on the card’s light, yellow or dark panel.' })),
+            .map(slot => ({ ...slot, description: 'The device on a transparent background, wide (about 1320 × 780). It sits on the card’s light, yellow or dark panel.' }))
+            // Up to three more pictures on the device's own page (/pricing/lite, ...): the device in use, close-ups.
+            .flatMap(slot => [slot, ...[1, 2, 3].map(n => ({
+                key: slot.key.replace(/_image$/, `_gallery_${n}`),
+                label: slot.label.replace('picture', `page picture ${n}`),
+                description: 'Shown on this device’s own page. A photo of it in use or a close-up, landscape (about 1600 × 1200).',
+            }))])
+            // "How it's installed": one picture per step; a step shows once it has one.
+            .concat(featureSlots(contentKeys, 'install_steps', 'install_{i}_image', 'How it’s installed, step {n}: picture')
+                .map(slot => ({ ...slot, description: 'A clean render on a light background, landscape (about 1600 × 1200). See docs/plans/device-images.md, section B.' }))),
     },
     pay_options: { slots: [] },
     demo: { slots: [] },

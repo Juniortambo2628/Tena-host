@@ -226,6 +226,42 @@ class PublicPageController extends Controller
     }
 
     /**
+     * A TenaFi device's own page (/pricing/lite, /pricing/pro, ...): its
+     * specifications, pictures and prices, from the /pricing devices section.
+     * Shown with /pricing (Admin -> Settings); admins can always preview it.
+     */
+    public function device(string $device): Response
+    {
+        abort_unless(static::pricingPageEnabled() || Auth::user()?->isAdmin(), 404);
+
+        $sections = LandingPage::publicSections('pricing');
+        $devices = collect($sections)->firstWhere('section_key', 'devices');
+        $content = $devices['content'] ?? [];
+        $index = null;
+        for ($i = 0; isset($content["items.{$i}.name"]); $i++) {
+            if (trim(strip_tags((string) ($content["items.{$i}.id"] ?? ''))) === $device) {
+                $index = $i;
+                break;
+            }
+        }
+        abort_if($index === null, 404);
+
+        $name = trim(strip_tags((string) $content["items.{$index}.name"]));
+        $tagline = trim(strip_tags((string) ($content["items.{$index}.tagline"] ?? '')));
+        $pageSeo = ['content' => [
+            'meta_title' => "{$name}: specifications and pricing | TenaFi",
+            'meta_description' => $tagline ?: trim(strip_tags((string) ($content["items.{$index}.best_for"] ?? ''))),
+        ], 'media' => isset($devices['media']["device_{$index}_image"]) ? ['og_image' => $devices['media']["device_{$index}_image"]] : []];
+
+        return $this->render('Public/V2/Device', [
+            'section' => $devices,
+            'index' => $index,
+            'pay' => collect($sections)->firstWhere('section_key', 'pay_options'),
+            'v2Base' => '',
+        ], $pageSeo, "/pricing/{$device}", index: static::pricingPageEnabled());
+    }
+
+    /**
      * Page SEO falls back to the site-wide defaults, field by field.
      */
     private function seo(?array $siteSeo, ?array $pageSeo, string $path, bool $index = true): array

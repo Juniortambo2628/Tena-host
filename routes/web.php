@@ -354,6 +354,11 @@ Route::get('/places/{property}', [VenueController::class, 'show'])->whereNumber(
 // Short review link sent to guests (counts the click, then redirects).
 Route::get('/r/{token}', ReviewLinkController::class)->where('token', '[A-Za-z0-9]{8}')->name('reviews.go');
 
+// A TenaFi device's own page (/pricing/pro): off with /pricing (Admin -> Settings).
+Route::get('/pricing/{device}', [PublicPageController::class, 'device'])
+    ->where('device', '[a-z0-9-]+')
+    ->name('pricing.device');
+
 // Catch-all for CMS pages (/hosts, /business, ...). Must stay last.
 Route::get('/{slug}', [PublicPageController::class, 'show'])
     ->where('slug', '[a-z0-9-]+')

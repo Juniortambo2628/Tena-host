@@ -1,0 +1,48 @@
+@reference "../../../css/theme.css";
+
+/* "How it's installed" (InstallSteps.jsx): one card per step, the first
+   (the connection diagram) twice as wide on large screens. Text stays at
+   12px or more (CLAUDE.md). */
+
+.install-steps {
+    @apply mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.install-step {
+    @apply flex flex-col overflow-hidden rounded-[1.75rem] border border-line bg-white;
+}
+
+.install-step:first-child {
+    @apply sm:col-span-2;
+}
+
+.install-step img {
+    @apply block w-full bg-paper-warm object-cover;
+    aspect-ratio: 4 / 3;
+}
+
+.install-step:first-child img {
+    @apply object-contain;
+}
+
+@media (min-width: 640px) {
+    .install-step:first-child img {
+        aspect-ratio: 8 / 3;
+    }
+}
+
+.install-step__body {
+    @apply flex items-start gap-3 p-5;
+}
+
+.install-step__number {
+    @apply grid h-7 w-7 shrink-0 place-items-center rounded-full bg-accent-soft text-xs font-semibold text-ink;
+}
+
+.install-step__title {
+    @apply !font-display text-lg !font-semibold tracking-tight !text-ink;
+}
+
+.install-step__text {
+    @apply mt-1 text-sm text-soft;
+}
