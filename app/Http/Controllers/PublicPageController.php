@@ -213,6 +213,8 @@ class PublicPageController extends Controller
             'trial' => TrialSlots::summary(),
             // Live rental plans, quoted by the homepage hero and trial card.
             'plans' => LandingPage::livePlans('hosts'),
+            // The free months on /hosts ("3 months free. Then from ..."), for the homepage.
+            'freeMonths' => LandingPage::liveFreeMonths('hosts'),
             // The hero's call-back form shows only when switched on in Settings.
             'callbacks' => CallbackController::enabled(),
             // The homepage "Try it yourself" section links to /demo only while it's on.

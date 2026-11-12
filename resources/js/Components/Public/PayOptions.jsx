@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { getContent, extractItems, stripHtml, textLines } from '@/lib/cms';
-import { formatKes, planMonthly, yearOne, kesPerUsd, aboutUsd, readChoice } from '@/lib/pricingMath';
+import { ShieldCheck } from 'lucide-react';
+import { formatKes, planMonthly, yearOne, kesPerUsd, aboutUsd, readChoice, clampFree, freeSchedule, fillFree } from '@/lib/pricingMath';
 import './PayOptions.css';
 
 /**
@@ -13,6 +14,11 @@ import './PayOptions.css';
 
 const text = (section, key, fallback = '') => stripHtml(getContent(section, key, fallback));
 const fill = (template, values) => String(template || '').replace(/\{(\w+)\}/g, (m, key) => (key in values ? values[key] : m));
+// A line with its "(about $X)" placeholders filled: an empty one leaves no double space.
+const tidy = (line) => line.replace(/\s{2,}/g, ' ').replace(/\s+([,.])/g, '$1').trim();
+
+/** The section's free months (0 to 12): 0 when it has none, so the section looks as before. */
+export const freeMonthsOf = (section) => clampFree(getContent(section, 'free_months', ''));
 
 /**
  * The devices for a pricing section: its own devices.{i}.* rows if it has
@@ -43,7 +49,7 @@ export function useSectionDevices(section) {
 }
 
 /** The visitor's choice, read from and written back to the URL. */
-export function usePayChoice(devices) {
+export function usePayChoice(devices, freeMonths = 0) {
     const ids = devices.map((d) => d.id);
     const [choice, setChoice] = useState({ pay: 'buy', device: ids[0] || null });
 
@@ -63,13 +69,15 @@ export function usePayChoice(devices) {
                     if (merged.device) url.searchParams.set('device', merged.device);
                 } else {
                     url.searchParams.delete('pay');
-                    url.searchParams.delete('device');
+                    // With free months the device is picked on "buy" too.
+                    if (freeMonths > 0 && merged.device) url.searchParams.set('device', merged.device);
+                    else url.searchParams.delete('device');
                 }
                 window.history.replaceState(window.history.state, '', url);
             }
             return merged;
         });
-    }, []);
+    }, [freeMonths]);
 
     return {
         pay: choice.pay,
@@ -83,8 +91,10 @@ export function usePayChoice(devices) {
  * A plan's price on the current choice: the main amount, its "(about $X)"
  * (from the plan's own conversion) and, on monthly, "for 12 months, then ...".
  */
-export function planPrice(section, plan, pay, device) {
+export function planPrice(section, plan, pay, device, freeMonths = 0) {
     const planKes = Number(String(plan.price_kes ?? '').replace(/\D/g, '')) || 0;
+    const free = clampFree(freeMonths);
+    if (planKes && device && free > 0) return freePlanPrice(section, plan, planKes, pay, device, free);
     if (!planKes || pay !== 'monthly' || !device) return null;
     const monthly = planMonthly(planKes, pay, device);
     const rate = kesPerUsd(planKes, stripHtml(plan.unit));
@@ -92,6 +102,67 @@ export function planPrice(section, plan, pay, device) {
         amount: formatKes(monthly),
         usd: aboutUsd(monthly, rate),
         then: fill(text(section, 'monthly_price_line', 'for {months} months, then {plan}/month'), { months: device.months, plan: formatKes(planKes) }),
+    };
+}
+
+/** KES per dollar from the section's first plan with an "(about $X)". */
+function sectionRate(section) {
+    const plans = extractItems(section, 'plans', ['price_kes', 'unit']);
+    for (const p of plans) {
+        const rate = kesPerUsd(Number(String(p.price_kes ?? '').replace(/\D/g, '')) || 0, stripHtml(p.unit));
+        if (rate) return rate;
+    }
+    return null;
+}
+
+/**
+ * A plan's price while its first months are free:
+ *  - buy:     "KES 0/month", for your first 3 months, then the plan, plus the device once;
+ *  - monthly: "KES {add-on}/month", device only, then plan + add-on until the
+ *             device is paid off, then the plan.
+ * Every amount comes from the plan, the device and the free months, each
+ * with its "(about $X)" from the plan's own conversion.
+ */
+function freePlanPrice(section, plan, planKes, pay, device, free) {
+    // One rate for the whole section, so the same amount reads the same on every card.
+    const rate = sectionRate(section) || kesPerUsd(planKes, stripHtml(plan.unit));
+    const usd = (kes) => (kes > 0 ? aboutUsd(kes, rate) : '');
+    const schedule = freeSchedule(planKes, pay, device, free);
+    // "{plan}/month" becomes "KES 4,500/month (about $35)"; "{device_price}" "KES 42,000 (about $323)".
+    const values = {
+        'plan/month': `${formatKes(schedule.after)}/month ${usd(schedule.after)}`,
+        'plan_addon/month': schedule.then ? `${formatKes(schedule.then)}/month ${usd(schedule.then)}` : '',
+        plan: `${formatKes(schedule.after)} ${usd(schedule.after)}`,
+        plan_addon: schedule.then ? `${formatKes(schedule.then)} ${usd(schedule.then)}` : '',
+        device: device.name,
+        device_price: `${formatKes(device.price_kes)} ${usd(device.price_kes)}`,
+    };
+    const line = (key, fallback) => tidy(fillFree(text(section, key, fallback), free)
+        .replace(/\{(\w+)\}(\/month)?/g, (m, key, month) => {
+            const k = month ? `${key}/month` : key;
+            return k in values ? values[k] : (key in values ? `${values[key]}${month || ''}` : m);
+        }));
+
+    const lines = pay === 'monthly'
+        ? [
+            line('free_monthly_first', 'for your first {free_months} months, device only'),
+            // The add-on ends within the free months: straight to the plan.
+            schedule.then
+                ? line('free_monthly_then', 'then {plan_addon}/month until the device is paid off, then {plan}/month')
+                : line('free_buy_then', 'then {plan}/month'),
+        ]
+        : [
+            line('free_first_line', 'for your first {free_months} months'),
+            line('free_buy_then', 'then {plan}/month'),
+            line('free_buy_device', 'plus {device}, {device_price} once'),
+        ];
+
+    return {
+        amount: `${formatKes(schedule.now)}/month`,
+        usd: usd(schedule.now),
+        then: '',
+        lines: lines.filter(Boolean),
+        cta: tidy(fillFree(text(section, 'free_cta_label', 'Start with {free_months} months free'), free)),
     };
 }
 
@@ -130,12 +201,15 @@ function RadioGroup({ label, options, value, onChange, className, renderOption }
     );
 }
 
+/** Each way to pay's text while months are free (free_buy_text, free_monthly_text); '' otherwise. */
+const freeText = (section, pay, freeMonths) => (freeMonths > 0 ? fillFree(text(section, `free_${pay}_text`), freeMonths) : '');
+
 /** "Two ways to pay": the switch, the chosen option's terms and (on monthly) the device picker. */
-export function PaySwitch({ section, devices, choice, site }) {
+export function PaySwitch({ section, devices, choice, site, freeMonths = 0 }) {
     if (!devices.length) return null;
     const options = [
-        { value: 'buy', label: text(section, 'pay_buy_label', 'Buy the device'), badge: text(section, 'pay_buy_badge'), body: text(section, 'pay_buy_text'), terms: getContent(section, 'pay_buy_terms', '') },
-        { value: 'monthly', label: text(section, 'pay_monthly_label', 'Pay monthly'), badge: text(section, 'pay_monthly_badge'), body: text(section, 'pay_monthly_text'), terms: getContent(section, 'pay_monthly_terms', '') },
+        { value: 'buy', label: text(section, 'pay_buy_label', 'Buy the device'), badge: text(section, 'pay_buy_badge'), body: freeText(section, 'buy', freeMonths) || text(section, 'pay_buy_text'), terms: getContent(section, 'pay_buy_terms', '') },
+        { value: 'monthly', label: text(section, 'pay_monthly_label', 'Pay monthly'), badge: text(section, 'pay_monthly_badge'), body: freeText(section, 'monthly', freeMonths) || text(section, 'pay_monthly_text'), terms: getContent(section, 'pay_monthly_terms', '') },
     ];
     const current = options.find((o) => o.value === choice.pay) || options[0];
 
@@ -160,17 +234,17 @@ export function PaySwitch({ section, devices, choice, site }) {
                     <ul>{textLines(current.terms, site).map((line, i) => <li key={i}>{line.text}</li>)}</ul>
                 )}
             </div>
-            {choice.pay === 'monthly' && devices.length > 1 && (
+            {(choice.pay === 'monthly' || freeMonths > 0) && devices.length > 1 && (
                 <RadioGroup
                     label="Device"
-                    options={devices.map((d) => ({ value: d.id, label: d.name, addon: d.monthly_kes }))}
+                    options={devices.map((d) => ({ value: d.id, label: d.name, addon: d.monthly_kes, price: d.price_kes }))}
                     value={choice.device?.id}
                     onChange={choice.setDevice}
                     className="pay-options__devices"
                     renderOption={(o) => (
                         <>
                             <span>{o.label}</span>
-                            <small>+{formatKes(o.addon)}/mo</small>
+                            <small>{choice.pay === 'monthly' ? `+${formatKes(o.addon)}/mo` : `${formatKes(o.price)} once, installed`}</small>
                         </>
                     )}
                 />
@@ -208,17 +282,21 @@ export function DevicesRow({ section, devices }) {
 }
 
 /** The worked example, worked out from the plan and device it names. */
-export function WorkedExample({ section, plans, devices }) {
+export function WorkedExample({ section, plans, devices, freeMonths = 0 }) {
     const plan = plans.find((p) => stripHtml(p.id) === text(section, 'example_plan'));
     const device = devices.find((d) => d.id === text(section, 'example_device'));
     const label = text(section, 'example_label');
     const planKes = Number(String(plan?.price_kes ?? '').replace(/\D/g, '')) || 0;
     if (!label || !planKes || !device) return null;
 
-    const year = yearOne(planKes, device);
+    const free = clampFree(freeMonths);
+    const year = yearOne(planKes, device, free);
+    const template = free > 0
+        ? fillFree(text(section, 'free_example_text', '{label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.'), free)
+        : text(section, 'example_text', '{label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.');
     return (
         <p className="pay-example">
-            {fill(text(section, 'example_text', '{label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.'), {
+            {fill(template, {
                 label, buy: formatKes(year.buy), monthly: formatKes(year.monthly), saving: formatKes(year.saving),
             })}
         </p>
@@ -246,6 +324,40 @@ export function BiggerSpaces({ section, site }) {
                 {rows.map(([space, devices], i) => <li key={i}><span>{space}</span>{devices && <b>{devices}</b>}</li>)}
             </ul>
             {ctaLabel && href && <a className="pay-bigger__cta" href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer">{ctaLabel}</a>}
+        </div>
+    );
+}
+
+/**
+ * "Your first 3 months are free": above the two ways to pay, with the
+ * guarantee (when filled in) and "See your WiFi page free first", which opens
+ * this page's sign-up form with ?free_design=1.
+ */
+export function FreeBanner({ section, freeMonths, joinHref }) {
+    if (!freeMonths) return null;
+    const words = (key, fallback = '') => fillFree(text(section, key, fallback), freeMonths);
+    const title = words('free_banner_title', 'Your first {free_months} months are free');
+    const body = words('free_banner_text');
+    const guarantee = text(section, 'guarantee_text');
+    const cta = text(section, 'free_design_cta');
+    const ctaText = text(section, 'free_design_text');
+    const href = String(joinHref || '').includes('#') ? `${joinHref}?free_design=1` : '';
+
+    return (
+        <div className="pay-free">
+            <div className="pay-free__offer">
+                <h3 className="pay-free__title">{title}</h3>
+                {body && <p className="pay-free__text">{body}</p>}
+                {guarantee && (
+                    <p className="pay-free__guarantee"><ShieldCheck size={16} aria-hidden="true" />{guarantee}</p>
+                )}
+            </div>
+            {cta && href && (
+                <div className="pay-free__design">
+                    <a className="pay-free__cta" href={href}>{cta}</a>
+                    {ctaText && <p className="pay-free__design-text">{ctaText}</p>}
+                </div>
+            )}
         </div>
     );
 }

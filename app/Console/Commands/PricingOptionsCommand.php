@@ -50,6 +50,16 @@ class PricingOptionsCommand extends Command
         'monthly_price_line', 'devices_title', 'device_price_line', 'devices_note',
         'example_label', 'example_plan', 'example_device', 'example_text',
         'bigger_title', 'bigger_spaces', 'bigger_cta_label', 'bigger_cta_href', 'vat_note',
+        // "Your first 3 months are free" (guarantee_text stays empty until Glen decides).
+        'free_months', 'free_banner_title', 'free_banner_text', 'free_design_cta', 'free_design_text',
+        'free_buy_text', 'free_monthly_text', 'free_cta_label', 'free_first_line', 'free_buy_then', 'free_buy_device',
+        'free_monthly_first', 'free_monthly_then', 'free_example_text',
+    ];
+
+    /** FAQs this command adds where their question isn't there yet (blueprint $deviceFaqs and $freeFaqs). */
+    private const FAQ_QUESTIONS = [
+        'Do I have to buy the device?', 'Which device do I need?', 'What if I leave?', 'Do I need more than one device?',
+        'What’s free?', 'Can I see it before I pay?', 'What happens after 3 months?',
     ];
 
     /** @var list<array{section_id: int, key: string, where: string, old: ?string, new: string}> */
@@ -131,22 +141,63 @@ class PricingOptionsCommand extends Command
             }
         }
 
-        // The homepage: "Plus a TenaFi device from ..." under the price.
+        // The homepage: "Plus a TenaFi device from ..." and "3 months free. Then from ..." by the price.
         foreach (self::HOME_PAGES as $slug) {
             foreach (['hero', 'cta_banner__founding'] as $key) {
                 $section = $this->section($slug, $key);
-                $default = $blueprint['home'][$key]['content']['device_line'] ?? '';
-                if ($section && $default !== '' && trim((string) $section->contents->firstWhere('content_key', 'device_line')?->value) === '') {
-                    $this->change($section, "{$slug}/{$key}", 'device_line', $section->contents->firstWhere('content_key', 'device_line')?->value, $default);
+                foreach (['device_line', 'free_price_line'] as $field) {
+                    $default = $blueprint['home'][$key]['content'][$field] ?? '';
+                    $now = $section?->contents->firstWhere('content_key', $field)?->value;
+                    if ($section && $default !== '' && trim((string) $now) === '') {
+                        $this->change($section, "{$slug}/{$key}", $field, $now, $default);
+                    }
                 }
             }
         }
+
+        $this->freeChecklist($blueprint);
 
         $this->checklist[] = 'VAT: are prices incl. or excl. 16% VAT? Then fill vat_note on each pricing section (empty = not shown). [open decision]';
         $this->checklist[] = 'Device prices live once, on Devices & pricing -> devices (/pricing). TenaFi Outdoor KES 48,000 may become ~52,000: change items.2.price_kes there. [open decision]';
         $this->checklist[] = 'Pay monthly: does the client own the device after month 12, or does TenaFi keep it? The footnotes and /pricing say "it’s yours" (Glen’s earlier answer); confirm. [open decision]';
         $this->checklist[] = 'Extra devices: one-off purchases, or does each carry a plan? [open decision]';
         $this->checklist[] = 'Multi-unit discount: does it start at 5 or 10 units? /hosts FAQ "I manage lots of units." and the sign-up discount say 10. [open decision]';
+    }
+
+    /** Live wording to read and edit by hand for the free months; nothing here is changed by the command. */
+    private function freeChecklist(array $blueprint): void
+    {
+        foreach (['hosts', 'v2-hosts', 'business', 'v2-business'] as $slug) {
+            $live = $this->section($slug, 'pricing')?->contents->pluck('value', 'content_key')->all() ?? [];
+            if (! $live) {
+                continue;
+            }
+            $bp = str_contains($slug, 'hosts') ? 'hosts' : 'business';
+            $footnote = $blueprint[$bp]['pricing']['content']['footnote'] ?? '';
+            if (trim(strip_tags((string) ($live['footnote'] ?? ''))) !== trim($footnote)) {
+                $this->checklist[] = "{$slug} pricing footnote: suggested wording for the free months: “".$this->short($footnote).'” Now: '.$this->short($live['footnote'] ?? '');
+            }
+            if ($bp === 'hosts' && ! str_contains((string) ($live['subtitle'] ?? ''), 'first 3 months are free')) {
+                $this->checklist[] = "{$slug} pricing paragraph (subtitle): add “Pay once for your TenaFi device and your first 3 months are free. Installations from Monday 16 November, in time for the December high season.” Now: ".$this->short($live['subtitle'] ?? '');
+            }
+            if (str_contains((string) ($live['pay_buy_terms'] ?? ''), '2 months free')) {
+                $this->checklist[] = "{$slug} pricing, Buy the device terms: yearly billing starts after the free months; say so if it should be explicit (“Pay yearly and get 2 months free”).";
+            }
+        }
+
+        // "Free one-month trial for December" and similar left in live words.
+        LandingSection::with(['contents', 'page'])->whereHas('page', fn ($q) => $q->whereIn('slug', ['home', 'v2', 'hosts', 'v2-hosts', 'business', 'v2-business', 'pricing']))
+            ->get()->each(function (LandingSection $section) {
+                foreach ($section->contents as $content) {
+                    if (preg_match('/one-month trial|free trial|trial for december/i', strip_tags((string) $content->value))) {
+                        $this->checklist[] = "{$section->page->slug}/{$section->section_key} {$content->content_key} still mentions a trial: replace it with the free months. Now: ".$this->short($content->value);
+                    }
+                }
+            });
+
+        $this->checklist[] = 'The FAQs “What’s free?” and “What happens after 3 months?” and the pricing paragraph say “3 months”: edit them if free_months changes.';
+        $this->checklist[] = '30-day money-back guarantee: fill guarantee_text on each pricing section (planned: “30-day money-back on the device.”) to show it under the banner. [open decision]';
+        $this->checklist[] = 'Growth: does it also get the free months, or Starter-level features while they last? The offer now applies to every plan. [open decision]';
     }
 
     /** Each plan's features as one item per line. */
@@ -161,7 +212,17 @@ class PricingOptionsCommand extends Command
             $lines = static::lines($value);
             $plan = trim(strip_tags((string) ($live["plans.{$m[1]}.id"] ?? $live["plans.{$m[1]}.label"] ?? $m[1])));
 
-            if (preg_match('/<br|<\/p>|<\/div>|<\/li>|&lt;br/i', $value)) {
+            // Saved with tabs or runs of spaces between the items (pasted from a document or a phone).
+            if (count($lines) === 1 && preg_match('/\t|[ \x{00A0}]{2,}/u', $value)) {
+                $split = array_values(array_filter(array_map('trim', preg_split('/\t+|[ \x{00A0}]{2,}/u', $lines[0] ?? ''))));
+                if (count($split) > 1) {
+                    $this->change($section, "{$slug}/pricing", $key, $value, implode("\n", $split));
+
+                    continue;
+                }
+            }
+
+            if (preg_match('/<br|<\/p>|<\/div>|<\/li>|&lt;br|\x{2028}|\x{2029}|\x{0085}/iu', $value)) {
                 $this->change($section, "{$slug}/pricing", $key, $value, implode("\n", $lines));
 
                 continue;
@@ -176,19 +237,20 @@ class PricingOptionsCommand extends Command
 
                     continue;
                 }
-                $this->checklist[] = "{$slug} pricing, plan “{$plan}” features are on one line: put one item per line. Now: ".$this->short($value);
+                // The value as stored (escaped), so a hidden separator shows if there is one.
+                $this->checklist[] = "{$slug} pricing, plan “{$plan}” features are on one line: open Pricing -> Plans and put one item per line. Stored as: ".json_encode(mb_substr($value, 0, 160), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             }
         }
     }
 
-    /** Lines of a list field saved in any format (\n, \r\n, <br>, </p>, </div>, </li>, &lt;br&gt;). */
+    /** Lines of a list field saved in any format (\n, \r\n, <br>, </p>, </div>, </li>, &lt;br&gt;, Unicode line separators). */
     public static function lines(string $text): array
     {
         $text = preg_replace(['/&lt;br\s*\/?&gt;/i', '/<br\s*\/?>|<\/p>|<\/div>|<\/li>/i'], "\n", $text);
 
         return array_values(array_filter(array_map(
             fn ($line) => trim(html_entity_decode(strip_tags($line), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
-            preg_split('/\r\n|\r|\n/', $text),
+            preg_split('/\r\n|\r|\n|\x{2028}|\x{2029}|\x{0085}/u', $text),
         ), fn ($line) => $line !== ''));
     }
 
@@ -196,13 +258,14 @@ class PricingOptionsCommand extends Command
     private function faqs(LandingSection $faq, string $slug, array $defaults): void
     {
         $live = $faq->contents->pluck('value', 'content_key');
-        $questions = $live->filter(fn ($v, $k) => preg_match('/^items\.\d+\.question$/', $k))->map(fn ($v) => mb_strtolower(trim(strip_tags((string) $v))));
+        $same = fn ($q) => mb_strtolower(str_replace(['’', '‘'], "'", trim(html_entity_decode(strip_tags((string) $q), ENT_QUOTES | ENT_HTML5, 'UTF-8'))));
+        $questions = $live->filter(fn ($v, $k) => preg_match('/^items\.\d+\.question$/', $k))->map($same);
         $next = $questions->keys()->map(fn ($k) => (int) explode('.', $k)[1])->max();
         $next = $next === null ? 0 : $next + 1;
 
-        foreach (['Do I have to buy the device?', 'Which device do I need?', 'What if I leave?', 'Do I need more than one device?'] as $question) {
+        foreach (self::FAQ_QUESTIONS as $question) {
             $item = collect($defaults)->firstWhere('question', $question);
-            if (! $item || $questions->contains(mb_strtolower($question))) {
+            if (! $item || $questions->contains($same($question))) {
                 continue;
             }
             $this->change($faq, "{$slug}/faq", "items.{$next}.question", null, $item['question']);

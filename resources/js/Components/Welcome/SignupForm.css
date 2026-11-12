@@ -82,6 +82,10 @@
     @apply mt-1 text-xs font-medium text-red-600;
 }
 
+.signup-free-design {
+    @apply mb-4 rounded-xl bg-primary/20 px-4 py-3 text-sm font-medium text-dark;
+}
+
 .signup-form-error {
     @apply mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700;
 }

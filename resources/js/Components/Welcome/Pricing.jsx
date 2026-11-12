@@ -8,16 +8,16 @@ import { ArrowRight, Check, ChevronDown, Sparkles, Zap, Award, Clock } from 'luc
 import LineList from '@/Components/Public/LineList';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import ContactForm from './ContactForm';
-import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces } from '@/Components/Public/PayOptions';
+import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces, FreeBanner, freeMonthsOf } from '@/Components/Public/PayOptions';
 import { planHref } from '@/lib/pricingMath';
 import './Pricing.css';
 
-function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
+function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null, freeMonths = 0 }) {
     const { joinHref } = usePublic();
     const [expanded, setExpanded] = useState(false);
     const descId = `pricing-desc-${String(plan.label).replace(/\s+/g, '-').toLowerCase()}`;
     // "#join?plan=growth&pay=monthly&device=pro" pre-selects them in this page's sign-up form.
-    const href = planHref(joinHref, stripHtml(plan.id), pay, device?.id);
+    const href = planHref(joinHref, stripHtml(plan.id), pay, device?.id, freeMonths);
 
     return (
         <div className={`pricing-card ${plan.badge ? 'pricing-card--featured' : ''}`}>
@@ -28,7 +28,7 @@ function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
                 <div className="pricing-card-price">
                     {monthly ? monthly.amount : plan.price}{' '}
                     <span className="pricing-card-price-unit">{monthly ? stripHtml(plan.unit).replace(/\(about \$[\d,.]+\)/i, monthly.usd).trim() : plan.unit}</span>
-                    {monthly && <span className="pay-price-then">{monthly.then}</span>}
+                    {monthly && (monthly.lines || [monthly.then]).map((line) => <span key={line} className="pay-price-then">{line}</span>)}
                 </div>
                 <LineList text={plan.features} className="pricing-card-features" icon={<Check size={16} className="pricing-card-feature-icon" />} />
                 {stripHtml(plan.description) && (
@@ -49,7 +49,7 @@ function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
                     </>
                 )}
                 <CtaLink href={href} event="join_click" className={plan.variant === 'dark' ? 'btn-primary pricing-card-cta-dark' : 'pricing-card-cta-outline'}>
-                    {plan.cta}
+                    {monthly?.cta || plan.cta}
                 </CtaLink>
             </div>
         </div>
@@ -59,7 +59,7 @@ function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
 const PERK_ICONS = { sparkles: Sparkles, zap: Zap, award: Award, clock: Clock };
 
 export default function Pricing({ section }) {
-    const { site } = usePublic();
+    const { site, joinHref } = usePublic();
 
     if (!section) {
         return (
@@ -92,7 +92,9 @@ export default function Pricing({ section }) {
     // The two ways to pay, once the section has its words and there are devices.
     const devices = useSectionDevices(section);
     const withOptions = devices.length > 0 && Boolean(getText(section, 'pay_buy_label', ''));
-    const choice = usePayChoice(devices);
+    // "Your first 3 months are free" (free_months; 0 or none and the section looks as before).
+    const free = withOptions ? freeMonthsOf(section) : 0;
+    const choice = usePayChoice(devices, free);
     const pay = withOptions ? choice.pay : 'buy';
 
     return (
@@ -103,7 +105,8 @@ export default function Pricing({ section }) {
 
             {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
 
-            {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} />}
+            <FreeBanner section={section} freeMonths={free} joinHref={joinHref} />
+            {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} freeMonths={free} />}
 
             <div className="pricing-cards-grid">
                 {plans.map((plan, index) => (
@@ -112,14 +115,15 @@ export default function Pricing({ section }) {
                         plan={plan}
                         pay={pay}
                         device={choice.device}
-                        monthly={withOptions ? planPrice(section, plan, pay, choice.device) : null}
+                        freeMonths={free}
+                        monthly={withOptions ? planPrice(section, plan, pay, choice.device, free) : null}
                     />
                 ))}
             </div>
 
             {withOptions && (
                 <>
-                    <WorkedExample section={section} plans={plans} devices={devices} />
+                    <WorkedExample section={section} plans={plans} devices={devices} freeMonths={free} />
                     <DevicesRow section={section} devices={devices} />
                     <BiggerSpaces section={section} site={site} />
                 </>

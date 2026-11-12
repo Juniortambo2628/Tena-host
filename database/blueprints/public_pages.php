@@ -66,6 +66,7 @@ $payOptions = fn (string $example, string $plan, string $device) => [
     'pay_buy_label' => 'Buy the device',
     'pay_buy_badge' => 'Best value',
     'pay_buy_text' => 'Pay once for the device and installation, then your plan each month.',
+    // Yearly billing starts after the free months.
     'pay_buy_terms' => "Month to month, 30 days\u{2019} notice\nPay yearly and get 2 months free",
     'pay_monthly_label' => 'Pay monthly',
     'pay_monthly_badge' => 'KES 0 upfront',
@@ -89,6 +90,40 @@ $payOptions = fn (string $example, string $plan, string $device) => [
     'bigger_cta_href' => 'whatsapp:Hi TenaFi, I have a bigger space and I’d like to know how many devices I need.',
     // TODO(Glen): VAT. Shown under the prices when filled in.
     'vat_note' => '',
+
+    // The free offer: "Pay once for the device. Your first 3 months are free."
+    // The customer always pays for the device; the plan is free for the first
+    // free_months months (0 turns the offer off and the section looks as before).
+    // Every amount is worked out from the plans, the devices and free_months;
+    // {free_months} reads "month" for one ("Your first month is free").
+    // TODO(Glen): does Growth also get the free months, or Starter-level features while they last?
+    'free_months' => '3',
+    'free_banner_title' => 'Your first {free_months} months are free',
+    'free_banner_text' => 'Pay once for your TenaFi device. Your WiFi page, guest list and campaigns are on us for {free_months} months.',
+    // The button opens this page's sign-up form with ?free_design=1 (recorded on the sign-up).
+    'free_design_cta' => 'See your WiFi page free first',
+    'free_design_text' => 'We design your branded WiFi page and show it on your phone within 24 hours, plus a free site visit. No payment.',
+    // TODO(Glen): switch on the 30-day money-back guarantee? Planned: "30-day money-back on the device." Empty hides it.
+    'guarantee_text' => '',
+    // The plan cards while the months are free. {plan}, {plan_addon}, {device} and
+    // {device_price} are filled per card; each amount gets its "(about $X)".
+    // Each way to pay's text while the months are free (instead of pay_buy_text / pay_monthly_text).
+    'free_buy_text' => 'Pay once for the device and installation. Your plan is free for your first {free_months} months, then you pay it each month.',
+    'free_monthly_text' => 'Nothing upfront. For your first {free_months} months you pay only the device add-on; then your plan plus the add-on until the device is paid off, then just your plan.',
+    'free_cta_label' => 'Start with {free_months} months free',
+    'free_first_line' => 'for your first {free_months} months',
+    'free_buy_then' => 'then {plan}/month',
+    'free_buy_device' => 'plus {device}, {device_price} once',
+    'free_monthly_first' => 'for your first {free_months} months, device only',
+    'free_monthly_then' => 'then {plan_addon}/month until the device is paid off, then {plan}/month',
+    'free_example_text' => '{label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.',
+];
+
+// FAQs about the free months (both audience pages).
+$freeFaqs = [
+    ['question' => 'What’s free?', 'answer' => 'Your plan for the first 3 months: the WiFi page, guest list, review requests and campaigns. You pay only for the device.'],
+    ['question' => 'Can I see it before I pay?', 'answer' => 'Yes. We design your WiFi page and show it on your phone within 24 hours, free.'],
+    ['question' => 'What happens after 3 months?', 'answer' => 'Your plan starts, month to month. Cancel with 30 days’ notice and the device stays yours as normal WiFi.'],
 ];
 
 // FAQs about devices and paying (both audience pages).
@@ -373,6 +408,8 @@ return [
                 'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
                 // {price} is the cheapest plan on the live /hosts pricing section.
                 'price_line' => 'Plans from {price} a month, plus your TenaFi device.',
+                // While /hosts has free months: shown instead of price_line. {free_months} and {price} from /hosts.
+                'free_price_line' => '{free_months} months free. Then from {price}/month.',
                 // {device_price}: the cheapest device on /pricing. Empty hides the line.
                 'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
                 'price_link_label' => 'See pricing',
@@ -666,6 +703,8 @@ return [
                 // Plans come from the live /hosts pricing section, never typed twice.
                 'pricing_anchor' => 'pricing',
                 'pricing_title' => 'Pricing',
+                // While /hosts has free months: a line under the title. {free_months} and {price} from /hosts.
+                'free_price_line' => '{free_months} months free. Then from {price}/month.',
                 // {device_price}: the cheapest device on /pricing. Empty hides the line.
                 'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
                 'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
@@ -996,9 +1035,10 @@ return [
                 'anchor' => 'h-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per unit. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, guest list and support. Month to month.',
+                // TODO(Glen): "Installations from Monday 16 November" dates this line; update it once that has passed.
+                'subtitle' => 'The device, installation, WiFi page, guest list and support. Month to month. Pay once for your TenaFi device and your first 3 months are free. Installations from Monday 16 November, in time for the December high season.',
                 // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee?
-                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+                'footnote' => "Your device is yours: paid once, or monthly with nothing upfront. Your plan is free for the first 3 months, then month to month with 30 days\u{2019} notice. Pay yearly on Buy the device and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
                 'show_slots' => '0',
                 'cta_headline' => '',
@@ -1024,6 +1064,7 @@ return [
                     // TODO(Glen): 5 or 10 units for the multi-unit discount? (20% off from 10 units, 30% from 50 until decided.)
                     ['question' => 'I manage lots of units.', 'answer' => 'You get 20% off from 10 units and 30% off from 50, and we install building by building. One report covers every unit.'],
                     ...$deviceFaqs,
+                    ...$freeFaqs,
                 ],
             ],
         ],
@@ -1359,7 +1400,7 @@ return [
                 'title' => 'One price per location. Everything included.',
                 'subtitle' => 'The device, installation, WiFi page, customer list and support. Month to month.',
                 // TODO(Glen): installation fee?
-                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+                'footnote' => "Your device is yours: paid once, or monthly with nothing upfront. Your plan is free for the first 3 months, then month to month with 30 days\u{2019} notice. Pay yearly on Buy the device and get 2 months free. Several locations? We\u2019ll quote group pricing. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
                 'show_slots' => '0',
                 'cta_headline' => '',
@@ -1384,6 +1425,7 @@ return [
                     ['question' => 'How long does setup take?', 'answer' => 'About a week. We build your WiFi page from your logo, our installer plugs in and tests the device, and your first customers join by day seven.'],
                     ['question' => 'I have more than one location.', 'answer' => 'Each location gets its own device and page, and you see every location in one report. Talk to us about group pricing.'],
                     ...$deviceFaqs,
+                    ...$freeFaqs,
                 ],
             ],
         ],

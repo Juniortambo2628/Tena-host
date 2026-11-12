@@ -8,7 +8,7 @@ import {
     Partners, Audiences, Gap, Features, Showcase, HowItWorks, CompareTable, Credibility, Pricing, Faq, Trial,
 } from '@/Components/V2/Sections';
 import { getContent, getMedia, getUpload, extractItems, stripHtml, textLines, baseSectionKey } from '@/lib/cms';
-import { useCheapestPrice, useDeviceLine } from '@/Components/Welcome/Hero';
+import { useCheapestPrice, useDeviceLine, useFreePriceLine } from '@/Components/Welcome/Hero';
 
 /**
  * The v2 landing page (/v2), in the OKJT kit's design. Its sections are the
@@ -78,7 +78,9 @@ function Hero({ section: hero, site, joinHref }) {
     // "From {price} a month": the cheapest live plan, as on the live hero.
     const cheapest = useCheapestPrice();
     const deviceLine = useDeviceLine(hero);
-    const priceLine = stripHtml(getContent(hero, 'price_line', 'Book a demo. We install it for you.'));
+    // While /hosts has free months, "3 months free. Then from ..." replaces it.
+    const freeLine = useFreePriceLine(hero);
+    const priceLine = freeLine || stripHtml(getContent(hero, 'price_line', 'Book a demo. We install it for you.'));
     const primary = stripHtml(getContent(hero, 'cta_primary', 'Book a demo'));
     const primaryHref = stripHtml(getContent(hero, 'cta_primary_url', '')) || joinHref;
 

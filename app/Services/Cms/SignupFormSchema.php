@@ -27,6 +27,8 @@ class SignupFormSchema
         'consentText' => ['nullable', 'string', 'max:1000'],
         'submittedAt' => ['nullable', 'date'],
         'source' => ['nullable', 'string', 'max:100'],
+        // "See your WiFi page free first" on a pricing section; kept with the answers.
+        'freeDesign' => ['nullable', 'in:1'],
     ];
 
     public const META_KEYS = ['consent', 'consentText', 'submittedAt', 'source'];

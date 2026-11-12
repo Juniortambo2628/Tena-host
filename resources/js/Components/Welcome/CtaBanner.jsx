@@ -7,7 +7,7 @@ import { usePublic } from '@/Components/Public/PublicContext';
 import CtaLink from '@/Components/Public/CtaLink';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import './CtaBanner.css';
-import { useDeviceLine } from './Hero';
+import { useDeviceLine, useFreePriceLine } from './Hero';
 
 /** "whatsapp:Hi TenaFi…" opens WhatsApp on the Site-wide number with that message. */
 function useHref() {
@@ -29,6 +29,7 @@ export default function CtaBanner({ section }) {
     const { site } = usePublic();
     const { plans = [] } = usePage().props;
     const deviceLine = useDeviceLine(section);
+    const freeLine = useFreePriceLine(section);
     const resolve = useHref();
     if (!section) return null;
 
@@ -83,6 +84,7 @@ export default function CtaBanner({ section }) {
                     {priced.length > 0 && (
                         <div className="cta-trial__pricing" id={stripHtml(getContent(section, 'pricing_anchor', '')) || undefined}>
                             <b>{stripHtml(getContent(section, 'pricing_title', 'Pricing'))}</b>
+                            {freeLine && <p className="cta-trial__free-line">{freeLine}</p>}
                             <ul>
                                 {priced.map(plan => <li key={plan.id || plan.label}><span>{plan.label}</span><strong>{plan.price}</strong></li>)}
                             </ul>

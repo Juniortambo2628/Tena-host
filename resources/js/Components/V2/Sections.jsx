@@ -10,7 +10,7 @@ import {
     textLines, baseSectionKey, comingSoonBadge,
 } from '@/lib/cms';
 import { v2Link } from '@/Components/V2/V2Site';
-import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces } from '@/Components/Public/PayOptions';
+import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces, FreeBanner, freeMonthsOf } from '@/Components/Public/PayOptions';
 import { planHref } from '@/lib/pricingMath';
 
 /**
@@ -483,13 +483,15 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
     const pricingPage = devicesLink ? devicesPage : null;
     const devices = useSectionDevices(section);
     const withOptions = devices.length > 0 && Boolean(stripHtml(getContent(section, 'pay_buy_label', '')));
-    const choice = usePayChoice(devices);
+    // "Your first 3 months are free" (free_months; 0 or none and the section looks as before).
+    const free = withOptions ? freeMonthsOf(section) : 0;
+    const choice = usePayChoice(devices, free);
     const pay = withOptions ? choice.pay : 'buy';
 
     const rows = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'price_kes', 'unit', 'features', 'cta', 'variant'])
         .filter((p) => stripHtml(p.label));
     const plans = rows.map((p, i) => {
-        const monthly = withOptions ? planPrice(section, p, pay, choice.device) : null;
+        const monthly = withOptions ? planPrice(section, p, pay, choice.device, free) : null;
         return {
             id: stripHtml(p.id) || String(i),
             name: stripHtml(p.label),
@@ -499,7 +501,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                     <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">
                         {stripHtml(p.unit).replace(/\(about \$[\d,.]+\)/i, monthly.usd).trim()}
                     </span>
-                    <span className="pay-price-then">{monthly.then}</span>
+                    {(monthly.lines || [monthly.then]).map((line) => <span key={line} className="pay-price-then">{line}</span>)}
                 </>
             ) : (
                 <>
@@ -509,7 +511,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
             ),
             tagline: stripHtml(p.tagline),
             lines: textLines(p.features, site).map((l) => (l.badge ? `${l.text} (${l.badge})` : l.text)),
-            cta: { to: planHref(joinHref, stripHtml(p.id), pay, choice.device?.id), label: stripHtml(p.cta) || 'Book a demo' },
+            cta: { to: planHref(joinHref, stripHtml(p.id), pay, choice.device?.id, free), label: monthly?.cta || stripHtml(p.cta) || 'Book a demo' },
             highlight: stripHtml(p.variant) === 'dark',
         };
     });
@@ -525,7 +527,8 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                         text={stripHtml(getContent(section, 'subtitle', ''))}
                     />
                     <div className="mt-10">
-                        {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} />}
+                        <FreeBanner section={section} freeMonths={free} joinHref={joinHref} />
+                        {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} freeMonths={free} />}
                     </div>
                     {/* The kit's plan cards (PricingSection), drawn here so the switch sits above them. */}
                     <div className="mx-auto mt-4 grid max-w-5xl gap-6 md:grid-cols-2">
@@ -549,7 +552,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                     </div>
                     {withOptions && devicesLink && (
                         <>
-                            <WorkedExample section={section} plans={rows} devices={devices} />
+                            <WorkedExample section={section} plans={rows} devices={devices} freeMonths={free} />
                             <DevicesRow section={section} devices={devices} />
                             <BiggerSpaces section={section} site={site} />
                         </>

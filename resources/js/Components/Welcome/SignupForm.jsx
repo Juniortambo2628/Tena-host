@@ -174,6 +174,8 @@ export default function SignupForm({ section }) {
     const [consent, setConsent] = useState(false);
     const [status, setStatus] = useState('idle'); // idle | submitting | done
     const [formError, setFormError] = useState('');
+    // Asked to see their WiFi page designed free first (?free_design=1).
+    const [freeDesign, setFreeDesign] = useState(false);
 
     // "#join?plan=growth" (from a pricing card) pre-selects that plan.
     useEffect(() => {
@@ -191,6 +193,8 @@ export default function SignupForm({ section }) {
             const pay = window.location.hash.match(/pay=(\w+)/)?.[1];
             pick('devicePayment', pay === 'monthly' ? 'monthly' : pay === 'buy' ? 'upfront' : null);
             pick('device', window.location.hash.match(/device=(\w+)/)?.[1]);
+            // "See your WiFi page free first" on a pricing section.
+            if (/free_design=1/.test(window.location.hash)) setFreeDesign(true);
         };
         fromHash();
         window.addEventListener('hashchange', fromHash);
@@ -254,6 +258,7 @@ export default function SignupForm({ section }) {
         return {
             ...body,
             estimatedPriceKES: estimatedPrice,
+            ...(freeDesign ? { freeDesign: '1' } : {}),
             consent: true,
             consentText: text('consent_text'),
             submittedAt: new Date().toISOString(),
@@ -355,6 +360,9 @@ export default function SignupForm({ section }) {
                     </div>
                 ) : (
                     <form onSubmit={submit} noValidate>
+                        {freeDesign && step === 0 && (
+                            <p className="signup-free-design">Free WiFi page design: we’ll show it on your phone within 24 hours. No payment.</p>
+                        )}
                         {current.heading && <h3 className="signup-step-heading">{stripHtml(current.heading)}</h3>}
                         {current.description && <p className="signup-step-desc">{stripHtml(current.description)}</p>}
 

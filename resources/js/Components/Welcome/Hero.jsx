@@ -8,6 +8,7 @@ import Mockup from '@/Components/Public/Mockup';
 import EditablePicture from '@/Components/Public/EditablePicture';
 import CallbackForm from './CallbackForm';
 import { SkeletonHero } from './Skeleton';
+import { fillFree } from '@/lib/pricingMath';
 import CtaLink from '@/Components/Public/CtaLink';
 import FitText from '@/Components/Public/FitText';
 import './Hero.css';
@@ -23,6 +24,19 @@ export function useDeviceLine(section) {
     const cheapest = devices.filter((d) => d.price_kes > 0).sort((a, b) => a.price_kes - b.price_kes)[0];
     if (!line || (line.includes('{device_price}') && !cheapest)) return '';
     return line.replace('{device_price}', cheapest ? `KES ${cheapest.price_kes.toLocaleString('en-KE')}` : '');
+}
+
+/**
+ * "3 months free. Then from KES 3,000/month.": the free months and cheapest
+ * plan on the live /hosts pricing; '' when /hosts has no free months or the
+ * line is empty, so the usual price line shows.
+ */
+export function useFreePriceLine(section) {
+    const { freeMonths = 0 } = usePage().props;
+    const cheapest = useCheapestPrice();
+    const line = stripHtml(getContent(section, 'free_price_line', ''));
+    if (!freeMonths || !line || (line.includes('{price}') && !cheapest)) return '';
+    return fillFree(line, freeMonths).replace('{price}', cheapest);
 }
 
 export function useCheapestPrice() {
@@ -76,7 +90,9 @@ export default function Hero({ section }) {
 
     // Optional extras (the homepage uses them; other pages leave them empty).
     const audiences = extractItems(section, 'audiences', ['label', 'href']).filter(a => stripHtml(a.label));
-    const priceLine = stripHtml(getContent(section, 'price_line', ''));
+    // While /hosts has free months, "3 months free. Then from ..." replaces it.
+    const freeLine = useFreePriceLine(section);
+    const priceLine = freeLine || stripHtml(getContent(section, 'price_line', ''));
     const priceLink = stripHtml(getContent(section, 'price_link', ''));
     const ticks = textLines(getContent(section, 'ticks', ''), site);
     const showSlots = isTruthy(getContent(section, 'show_slots', '0'));

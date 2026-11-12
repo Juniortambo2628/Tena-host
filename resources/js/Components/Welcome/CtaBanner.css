@@ -176,3 +176,8 @@
 .cta-trial__device-line {
     @apply mt-2 text-sm text-muted;
 }
+
+/* "3 months free. Then from KES 3,000/month." under the card's title. */
+.cta-trial__free-line {
+    @apply mt-1 text-sm font-semibold text-dark;
+}

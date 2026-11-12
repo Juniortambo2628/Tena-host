@@ -148,6 +148,19 @@ class LandingPage extends Model
     }
 
     /**
+     * The free months on a live pricing section (0 to 12): "Your first 3
+     * months are free". 0 when the section has none, so pages without the
+     * offer look as they did.
+     */
+    public static function liveFreeMonths(string $slug = 'hosts'): int
+    {
+        $pricing = collect(static::publicSections($slug))->firstWhere('section_key', 'pricing');
+        $months = (int) preg_replace('/\D/', '', strip_tags((string) ($pricing['content']['free_months'] ?? '')));
+
+        return max(0, min(12, $months));
+    }
+
+    /**
      * The TenaFi devices on the /pricing page's "devices" section (Admin ->
      * Public Pages -> Devices & pricing), so the sign-up form quotes the
      * same prices as the page.

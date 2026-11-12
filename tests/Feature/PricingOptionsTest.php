@@ -3,6 +3,9 @@
 use App\Console\Commands\PricingOptionsCommand;
 use App\Models\LandingContent;
 use App\Models\LandingPage;
+use App\Models\LandingSection;
+use App\Models\Registration;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
 
@@ -143,4 +146,110 @@ it('gives the homepage pricing the two ways to pay, without adding device FAQs t
     expect(pricingField('v2', 'pricing', 'pay_buy_label'))->toBe('Buy the device')
         ->and(pricingField('v2', 'pricing', 'example_device'))->toBe('lite')
         ->and(LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'faq')->whereHas('page', fn ($p) => $p->where('slug', 'v2')))->count())->toBe($faqBefore);
+});
+
+// ---- "Your first 3 months are free" ----
+
+it('works out year one with 0, 1 and 3 free months', function () {
+    expect(pricingMath('(m) => { const d = '.DEVICES_JS.'; return [0, 1, 3].map((f) => [m.yearOne(4500, d.pro, f), m.yearOne(4500, d.lite, f)]); }'))->toBe([
+        // 0: as before the offer (device + 12 x plan, or 12 x (plan + add-on)).
+        [['buy' => 96000, 'monthly' => 114000, 'saving' => 18000], ['buy' => 79000, 'monthly' => 90000, 'saving' => 11000]],
+        [['buy' => 91500, 'monthly' => 109500, 'saving' => 18000], ['buy' => 74500, 'monthly' => 85500, 'saving' => 11000]],
+        // The brief: a café on Starter with TenaFi Pro and 3 free months, 82,500 vs 100,500.
+        [['buy' => 82500, 'monthly' => 100500, 'saving' => 18000], ['buy' => 65500, 'monthly' => 76500, 'saving' => 11000]],
+    ]);
+});
+
+it('works out each month’s price on both ways to pay, for every device', function (int $free) {
+    $schedule = pricingMath('(m) => { const d = '.DEVICES_JS.'; return Object.fromEntries(Object.entries(d).map(([id, dev]) => [id, ["buy", "monthly"].map((pay) => m.freeSchedule(4500, pay, dev, '.$free.'))])); }');
+
+    foreach (['lite' => 3000, 'pro' => 5000, 'outdoor' => 5500] as $id => $addon) {
+        // Buy the device: KES 0 while free, then the plan.
+        expect($schedule[$id][0])->toBe(['free' => $free, 'now' => 0, 'then' => null, 'after' => 4500]);
+        // Pay monthly: the add-on only while free, then plan + add-on, then the plan.
+        expect($schedule[$id][1])->toBe(['free' => $free, 'now' => $addon, 'then' => 4500 + $addon, 'after' => 4500]);
+    }
+})->with([0, 1, 3]);
+
+it('keeps the plan links as they were with no free months, and adds the device and free months with them', function () {
+    expect(pricingMath('(m) => [m.planHref("/business#b-signup", "starter", "buy", "pro", 0), m.planHref("/business#b-signup", "starter", "monthly", "pro", 0), m.planHref("/business#b-signup", "starter", "buy", "pro", 3), m.planHref("/business#b-signup", "starter", "monthly", "lite", 1)]'))->toBe([
+        '/business#b-signup?plan=starter&pay=buy',
+        '/business#b-signup?plan=starter&pay=monthly&device=pro',
+        '/business#b-signup?plan=starter&pay=buy&device=pro&free_months=3',
+        '/business#b-signup?plan=starter&pay=monthly&device=lite&free_months=1',
+    ]);
+});
+
+it('words one free month and several', function () {
+    expect(pricingMath('(m) => [1, 3].flatMap((f) => [m.fillFree("Your first {free_months} months are free", f), m.fillFree("Start with {free_months} months free", f), m.fillFree("for your first {free_months} months, device only", f)])'))->toBe([
+        'Your first month is free', 'Start with 1 month free', 'for your first month, device only',
+        'Your first 3 months are free', 'Start with 3 months free', 'for your first 3 months, device only',
+    ])->and(pricingMath('(m) => [m.clampFree(""), m.clampFree("0"), m.clampFree("3 months"), m.clampFree(40)]'))->toBe([0, 0, 3, 12]);
+});
+
+it('has no free months on a page whose pricing has none, so it looks as before', function () {
+    LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'pricing')->whereHas('page', fn ($p) => $p->where('slug', 'hosts')))
+        ->where('content_key', 'free_months')->delete();
+    LandingPage::clearCache();
+
+    expect(LandingPage::liveFreeMonths('hosts'))->toBe(0);
+    $this->get('/')->assertInertia(fn ($page) => $page->where('freeMonths', 0));
+});
+
+it('ships the offer on a fresh install: 3 free months, the banner words and the free FAQs', function (string $slug) {
+    expect(pricingField($slug, 'pricing', 'free_months'))->toBe('3')
+        ->and(pricingField($slug, 'pricing', 'free_banner_title'))->toBe('Your first {free_months} months are free')
+        ->and(pricingField($slug, 'pricing', 'guarantee_text'))->toBeIn([null, ''])
+        ->and(LandingPage::liveFreeMonths($slug))->toBe(3);
+
+    $questions = LandingContent::whereHas('section', fn ($q) => $q->where('section_key', 'faq')->whereHas('page', fn ($p) => $p->where('slug', $slug)))
+        ->where('content_key', 'like', 'items.%.question')->pluck('value');
+    expect($questions)->toContain('What’s free?', 'Can I see it before I pay?', 'What happens after 3 months?');
+})->with(['hosts', 'business']);
+
+it('fills the free months on a live page without them, leaves an admin’s 0 alone, and splits a Growth list pasted with tabs', function () {
+    Storage::fake('local');
+    $section = fn (string $slug, string $key) => LandingSection::where('section_key', $key)->whereHas('page', fn ($p) => $p->where('slug', $slug))->first();
+    $without = fn (string $slug, string $key, string $like) => LandingContent::where('section_id', $section($slug, $key)->id)->where('content_key', 'like', $like)->delete();
+
+    // Live today: no free_* words; business switched the offer off with 0; Growth pasted with tabs.
+    $without('hosts', 'pricing', 'free_%');
+    $without('business', 'pricing', 'free_%');
+    LandingContent::create(['section_id' => $section('business', 'pricing')->id, 'content_key' => 'free_months', 'value' => '0', 'type' => 'text']);
+    LandingContent::where('section_id', $section('hosts', 'pricing')->id)->where('content_key', 'plans.2.features')->update(['value' => "Everything in Starter\t2 to 4 campaigns a month\tVIP WiFi tiers"]);
+    $without('v2', 'hero', 'free_price_line');
+    $faq = $section('hosts', 'faq');
+    LandingContent::where('section_id', $faq->id)->whereIn('value', ['What’s free?', 'Can I see it before I pay?', 'What happens after 3 months?'])->get()
+        ->each(fn ($q) => LandingContent::where('section_id', $faq->id)->whereIn('content_key', [$q->content_key, str_replace('.question', '.answer', $q->content_key)])->delete());
+    LandingPage::clearCache();
+
+    $this->artisan('tenafi:pricing-options --dry-run')
+        ->expectsOutputToContain('[hosts/pricing] free_months')
+        ->expectsOutputToContain('[hosts/pricing] plans.2.features')
+        ->expectsOutputToContain('[v2/hero] free_price_line')
+        ->doesntExpectOutputToContain('[business/pricing] free_months')
+        ->assertSuccessful();
+    expect(pricingField('hosts', 'pricing', 'free_months'))->toBeNull();
+
+    $this->artisan('tenafi:pricing-options')->assertSuccessful();
+
+    expect(pricingField('hosts', 'pricing', 'free_months'))->toBe('3')
+        ->and(pricingField('business', 'pricing', 'free_months'))->toBe('0')
+        ->and(pricingField('hosts', 'pricing', 'plans.2.features'))->toBe("Everything in Starter\n2 to 4 campaigns a month\nVIP WiFi tiers")
+        ->and(pricingField('v2', 'hero', 'free_price_line'))->toBe('{free_months} months free. Then from {price}/month.')
+        ->and(LandingContent::where('section_id', $faq->id)->where('value', 'What’s free?')->exists())->toBeTrue();
+
+    $this->artisan('tenafi:pricing-options --dry-run')->expectsOutputToContain('Nothing to fill')->assertSuccessful();
+});
+
+it('records "See your WiFi page free first" on the sign-up', function () {
+    Mail::fake();
+
+    $this->postJson(route('signups.store'), [
+        'type' => 'business', 'firstName' => 'Otieno', 'phone' => '+254722000111', 'businessName' => 'Kahawa House', 'plan' => 'starter', 'consent' => true, 'freeDesign' => '1',
+    ])->assertCreated();
+
+    expect(Registration::first()->answers)->toMatchArray(['freeDesign' => '1']);
+    $this->postJson(route('signups.store'), ['type' => 'business', 'firstName' => 'A', 'phone' => '+254722000112', 'businessName' => 'B', 'plan' => 'starter', 'consent' => true, 'freeDesign' => 'yes'])
+        ->assertStatus(422)->assertJsonValidationErrors('freeDesign');
 });
