@@ -1,0 +1,327 @@
+[hosts/pricing] free_months
+  - (new field)
+  + 3
+[hosts/pricing] free_banner_title
+  - (new field)
+  + Your first {free_months} months are free
+[hosts/pricing] free_banner_text
+  - (new field)
+  + Pay once for your TenaFi device. Your WiFi page, guest list and campaigns are on us for {free_months} months.
+[hosts/pricing] free_design_cta
+  - (new field)
+  + See your WiFi page free first
+[hosts/pricing] free_design_text
+  - (new field)
+  + We design your branded WiFi page and show it on your phone within 24 hours, plus a free site visit. No payment.
+[hosts/pricing] free_buy_text
+  - (new field)
+  + Pay once for the device and installation. Your plan is free for your first {free_months} months, then you pay it each month.
+[hosts/pricing] free_monthly_text
+  - (new field)
+  + Nothing upfront. For your first {free_months} months you pay only the device add-on; then your plan plus the add-on until the device is paid off, then...
+[hosts/pricing] free_cta_label
+  - (new field)
+  + Start with {free_months} months free
+[hosts/pricing] free_first_line
+  - (new field)
+  + for your first {free_months} months
+[hosts/pricing] free_buy_then
+  - (new field)
+  + then {plan}/month
+[hosts/pricing] free_buy_device
+  - (new field)
+  + plus {device}, {device_price} once
+[hosts/pricing] free_monthly_first
+  - (new field)
+  + for your first {free_months} months, device only
+[hosts/pricing] free_monthly_then
+  - (new field)
+  + then {plan_addon}/month until the device is paid off, then {plan}/month
+[hosts/pricing] free_example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.
+[hosts/faq] items.10.question
+  - (new field)
+  + What’s free?
+[hosts/faq] items.10.answer
+  - (new field)
+  + Your plan for the first 3 months: the WiFi page, guest list, review requests and campaigns. You pay only for the device.
+[hosts/faq] items.11.question
+  - (new field)
+  + Can I see it before I pay?
+[hosts/faq] items.11.answer
+  - (new field)
+  + Yes. We design your WiFi page and show it on your phone within 24 hours, free.
+[hosts/faq] items.12.question
+  - (new field)
+  + What happens after 3 months?
+[hosts/faq] items.12.answer
+  - (new field)
+  + Your plan starts, month to month. Cancel with 30 days’ notice and the device stays yours as normal WiFi.
+[v2-hosts/pricing] free_months
+  - (new field)
+  + 3
+[v2-hosts/pricing] free_banner_title
+  - (new field)
+  + Your first {free_months} months are free
+[v2-hosts/pricing] free_banner_text
+  - (new field)
+  + Pay once for your TenaFi device. Your WiFi page, guest list and campaigns are on us for {free_months} months.
+[v2-hosts/pricing] free_design_cta
+  - (new field)
+  + See your WiFi page free first
+[v2-hosts/pricing] free_design_text
+  - (new field)
+  + We design your branded WiFi page and show it on your phone within 24 hours, plus a free site visit. No payment.
+[v2-hosts/pricing] free_buy_text
+  - (new field)
+  + Pay once for the device and installation. Your plan is free for your first {free_months} months, then you pay it each month.
+[v2-hosts/pricing] free_monthly_text
+  - (new field)
+  + Nothing upfront. For your first {free_months} months you pay only the device add-on; then your plan plus the add-on until the device is paid off, then...
+[v2-hosts/pricing] free_cta_label
+  - (new field)
+  + Start with {free_months} months free
+[v2-hosts/pricing] free_first_line
+  - (new field)
+  + for your first {free_months} months
+[v2-hosts/pricing] free_buy_then
+  - (new field)
+  + then {plan}/month
+[v2-hosts/pricing] free_buy_device
+  - (new field)
+  + plus {device}, {device_price} once
+[v2-hosts/pricing] free_monthly_first
+  - (new field)
+  + for your first {free_months} months, device only
+[v2-hosts/pricing] free_monthly_then
+  - (new field)
+  + then {plan_addon}/month until the device is paid off, then {plan}/month
+[v2-hosts/pricing] free_example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.
+[v2-hosts/faq] items.10.question
+  - (new field)
+  + What’s free?
+[v2-hosts/faq] items.10.answer
+  - (new field)
+  + Your plan for the first 3 months: the WiFi page, guest list, review requests and campaigns. You pay only for the device.
+[v2-hosts/faq] items.11.question
+  - (new field)
+  + Can I see it before I pay?
+[v2-hosts/faq] items.11.answer
+  - (new field)
+  + Yes. We design your WiFi page and show it on your phone within 24 hours, free.
+[v2-hosts/faq] items.12.question
+  - (new field)
+  + What happens after 3 months?
+[v2-hosts/faq] items.12.answer
+  - (new field)
+  + Your plan starts, month to month. Cancel with 30 days’ notice and the device stays yours as normal WiFi.
+[business/pricing] free_months
+  - (new field)
+  + 3
+[business/pricing] free_banner_title
+  - (new field)
+  + Your first {free_months} months are free
+[business/pricing] free_banner_text
+  - (new field)
+  + Pay once for your TenaFi device. Your WiFi page, guest list and campaigns are on us for {free_months} months.
+[business/pricing] free_design_cta
+  - (new field)
+  + See your WiFi page free first
+[business/pricing] free_design_text
+  - (new field)
+  + We design your branded WiFi page and show it on your phone within 24 hours, plus a free site visit. No payment.
+[business/pricing] free_buy_text
+  - (new field)
+  + Pay once for the device and installation. Your plan is free for your first {free_months} months, then you pay it each month.
+[business/pricing] free_monthly_text
+  - (new field)
+  + Nothing upfront. For your first {free_months} months you pay only the device add-on; then your plan plus the add-on until the device is paid off, then...
+[business/pricing] free_cta_label
+  - (new field)
+  + Start with {free_months} months free
+[business/pricing] free_first_line
+  - (new field)
+  + for your first {free_months} months
+[business/pricing] free_buy_then
+  - (new field)
+  + then {plan}/month
+[business/pricing] free_buy_device
+  - (new field)
+  + plus {device}, {device_price} once
+[business/pricing] free_monthly_first
+  - (new field)
+  + for your first {free_months} months, device only
+[business/pricing] free_monthly_then
+  - (new field)
+  + then {plan_addon}/month until the device is paid off, then {plan}/month
+[business/pricing] free_example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.
+[business/faq] items.10.question
+  - (new field)
+  + What’s free?
+[business/faq] items.10.answer
+  - (new field)
+  + Your plan for the first 3 months: the WiFi page, guest list, review requests and campaigns. You pay only for the device.
+[business/faq] items.11.question
+  - (new field)
+  + Can I see it before I pay?
+[business/faq] items.11.answer
+  - (new field)
+  + Yes. We design your WiFi page and show it on your phone within 24 hours, free.
+[business/faq] items.12.question
+  - (new field)
+  + What happens after 3 months?
+[business/faq] items.12.answer
+  - (new field)
+  + Your plan starts, month to month. Cancel with 30 days’ notice and the device stays yours as normal WiFi.
+[v2-business/pricing] free_months
+  - (new field)
+  + 3
+[v2-business/pricing] free_banner_title
+  - (new field)
+  + Your first {free_months} months are free
+[v2-business/pricing] free_banner_text
+  - (new field)
+  + Pay once for your TenaFi device. Your WiFi page, guest list and campaigns are on us for {free_months} months.
+[v2-business/pricing] free_design_cta
+  - (new field)
+  + See your WiFi page free first
+[v2-business/pricing] free_design_text
+  - (new field)
+  + We design your branded WiFi page and show it on your phone within 24 hours, plus a free site visit. No payment.
+[v2-business/pricing] free_buy_text
+  - (new field)
+  + Pay once for the device and installation. Your plan is free for your first {free_months} months, then you pay it each month.
+[v2-business/pricing] free_monthly_text
+  - (new field)
+  + Nothing upfront. For your first {free_months} months you pay only the device add-on; then your plan plus the add-on until the device is paid off, then...
+[v2-business/pricing] free_cta_label
+  - (new field)
+  + Start with {free_months} months free
+[v2-business/pricing] free_first_line
+  - (new field)
+  + for your first {free_months} months
+[v2-business/pricing] free_buy_then
+  - (new field)
+  + then {plan}/month
+[v2-business/pricing] free_buy_device
+  - (new field)
+  + plus {device}, {device_price} once
+[v2-business/pricing] free_monthly_first
+  - (new field)
+  + for your first {free_months} months, device only
+[v2-business/pricing] free_monthly_then
+  - (new field)
+  + then {plan_addon}/month until the device is paid off, then {plan}/month
+[v2-business/pricing] free_example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.
+[v2-business/faq] items.10.question
+  - (new field)
+  + What’s free?
+[v2-business/faq] items.10.answer
+  - (new field)
+  + Your plan for the first 3 months: the WiFi page, guest list, review requests and campaigns. You pay only for the device.
+[v2-business/faq] items.11.question
+  - (new field)
+  + Can I see it before I pay?
+[v2-business/faq] items.11.answer
+  - (new field)
+  + Yes. We design your WiFi page and show it on your phone within 24 hours, free.
+[v2-business/faq] items.12.question
+  - (new field)
+  + What happens after 3 months?
+[v2-business/faq] items.12.answer
+  - (new field)
+  + Your plan starts, month to month. Cancel with 30 days’ notice and the device stays yours as normal WiFi.
+[v2/pricing] free_months
+  - (new field)
+  + 3
+[v2/pricing] free_banner_title
+  - (new field)
+  + Your first {free_months} months are free
+[v2/pricing] free_banner_text
+  - (new field)
+  + Pay once for your TenaFi device. Your WiFi page, guest list and campaigns are on us for {free_months} months.
+[v2/pricing] free_design_cta
+  - (new field)
+  + See your WiFi page free first
+[v2/pricing] free_design_text
+  - (new field)
+  + We design your branded WiFi page and show it on your phone within 24 hours, plus a free site visit. No payment.
+[v2/pricing] free_buy_text
+  - (new field)
+  + Pay once for the device and installation. Your plan is free for your first {free_months} months, then you pay it each month.
+[v2/pricing] free_monthly_text
+  - (new field)
+  + Nothing upfront. For your first {free_months} months you pay only the device add-on; then your plan plus the add-on until the device is paid off, then...
+[v2/pricing] free_cta_label
+  - (new field)
+  + Start with {free_months} months free
+[v2/pricing] free_first_line
+  - (new field)
+  + for your first {free_months} months
+[v2/pricing] free_buy_then
+  - (new field)
+  + then {plan}/month
+[v2/pricing] free_buy_device
+  - (new field)
+  + plus {device}, {device_price} once
+[v2/pricing] free_monthly_first
+  - (new field)
+  + for your first {free_months} months, device only
+[v2/pricing] free_monthly_then
+  - (new field)
+  + then {plan_addon}/month until the device is paid off, then {plan}/month
+[v2/pricing] free_example_text
+  - (new field)
+  + {label} pays {buy} in year one buying the device, or {monthly} paying monthly, with the first {free_months} months free. Buying saves {saving}.
+[home/hero] free_price_line
+  - (new field)
+  + {free_months} months free. Then from {price}/month.
+[home/cta_banner__founding] free_price_line
+  - (new field)
+  + {free_months} months free. Then from {price}/month.
+[v2/hero] free_price_line
+  - (new field)
+  + {free_months} months free. Then from {price}/month.
+[v2/cta_banner__founding] free_price_line
+  - (new field)
+  + {free_months} months free. Then from {price}/month.
+
+Admin checklist: check or edit these by hand in Admin -> Public Pages
+  [ ] hosts pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] hosts FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into your existing router and adds a separate guest network. Your own network stays private.
+  [ ] v2-hosts pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] v2-hosts FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into your existing router and adds a separate guest network. Your own network stays private.
+  [ ] business pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. WhatsApp and SMS allowanc...
+  [ ] business FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into the router you already have and adds a separate customer network. Your business network stays private.
+  [ ] v2-business pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. WhatsApp and SMS allowanc...
+  [ ] v2-business FAQ “Do I need new internet?”: say the device connects to the router with one cable. Now: No. The TenaFi device plugs into the router you already have and adds a separate customer network. Your business network stays private.
+  [ ] v2 pricing footnote: “Pay yearly and get 2 months free” is now on Buy the device only (it’s in that option’s terms). Edit the footnote if it reads as applying to both. Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] hosts pricing footnote: suggested wording for the free months: “Your device is yours: paid once, or monthly with nothing upfront. Your plan is free for the first 3 months, then month to month with 30 days’ notice....” Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] hosts pricing paragraph (subtitle): add “Pay once for your TenaFi device and your first 3 months are free. Installations from Monday 16 November, in time for the December high season.” Now: The device, installation, WiFi page, guest list and support. Month to month.
+  [ ] hosts pricing, Buy the device terms: yearly billing starts after the free months; say so if it should be explicit (“Pay yearly and get 2 months free”).
+  [ ] v2-hosts pricing footnote: suggested wording for the free months: “Your device is yours: paid once, or monthly with nothing upfront. Your plan is free for the first 3 months, then month to month with 30 days’ notice....” Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. WhatsApp...
+  [ ] v2-hosts pricing paragraph (subtitle): add “Pay once for your TenaFi device and your first 3 months are free. Installations from Monday 16 November, in time for the December high season.” Now: Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page, you keep their contacts, and we send the offers that...
+  [ ] v2-hosts pricing, Buy the device terms: yearly billing starts after the free months; say so if it should be explicit (“Pay yearly and get 2 months free”).
+  [ ] business pricing footnote: suggested wording for the free months: “Your device is yours: paid once, or monthly with nothing upfront. Your plan is free for the first 3 months, then month to month with 30 days’ notice....” Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. WhatsApp and SMS allowanc...
+  [ ] business pricing, Buy the device terms: yearly billing starts after the free months; say so if it should be explicit (“Pay yearly and get 2 months free”).
+  [ ] v2-business pricing footnote: suggested wording for the free months: “Your device is yours: paid once, or monthly with nothing upfront. Your plan is free for the first 3 months, then month to month with 30 days’ notice....” Now: Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. WhatsApp and SMS allowanc...
+  [ ] v2-business pricing, Buy the device terms: yearly billing starts after the free months; say so if it should be explicit (“Pay yearly and get 2 months free”).
+  [ ] pricing/pay_options cta_text still mentions a trial: replace it with the free months. Now: Book your free trial and our team will survey your space and recommend the right devices.
+  [ ] The FAQs “What’s free?” and “What happens after 3 months?” and the pricing paragraph say “3 months”: edit them if free_months changes.
+  [ ] 30-day money-back guarantee: fill guarantee_text on each pricing section (planned: “30-day money-back on the device.”) to show it under the banner. [open decision]
+  [ ] Growth: does it also get the free months, or Starter-level features while they last? The offer now applies to every plan. [open decision]
+  [ ] VAT: are prices incl. or excl. 16% VAT? Then fill vat_note on each pricing section (empty = not shown). [open decision]
+  [ ] Device prices live once, on Devices & pricing -> devices (/pricing). TenaFi Outdoor KES 48,000 may become ~52,000: change items.2.price_kes there. [open decision]
+  [ ] Pay monthly: does the client own the device after month 12, or does TenaFi keep it? The footnotes and /pricing say "it’s yours" (Glen’s earlier answer); confirm. [open decision]
+  [ ] Extra devices: one-off purchases, or does each carry a plan? [open decision]
+  [ ] Multi-unit discount: does it start at 5 or 10 units? /hosts FAQ "I manage lots of units." and the sign-up discount say 10. [open decision]
+
+98 field(s) to fill.
+Dry run: nothing was saved. Run without --dry-run to back up and apply.

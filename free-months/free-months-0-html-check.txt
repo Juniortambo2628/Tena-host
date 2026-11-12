@@ -1,0 +1,8 @@
+same  business-buy.html
+same  business-monthly.html
+same  home-buy.html
+same  home-monthly.html
+same  hosts-buy.html
+same  hosts-monthly.html
+same  pricing-buy.html
+same  pricing-monthly.html
