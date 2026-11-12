@@ -156,7 +156,12 @@ it('sends plain-text emails with placeholders, tracked links and a working unsub
     $this->get(route('campaigns.click', ['token' => $recipient->token, 'n' => 0]))->assertRedirect('https://example.com/book');
 
     $this->get(route('campaigns.unsubscribe', ['token' => $recipient->token]))->assertForbidden(); // unsigned
-    $this->get(URL::signedRoute('campaigns.unsubscribe', ['token' => $recipient->token]))->assertOk()->assertSee("You're unsubscribed", false);
+    // Opening the link (as an email scanner would) only asks; the button unsubscribes.
+    $link = URL::signedRoute('campaigns.unsubscribe', ['token' => $recipient->token]);
+    $this->get($link)->assertOk()->assertSee('Unsubscribe?')->assertSee('action="'.e($link).'"', false);
+    expect($guest->fresh()->opted_out_at)->toBeNull()->and($guest->fresh()->marketing_opt_in)->toBeTrue();
+    $this->post(route('campaigns.unsubscribe', ['token' => $recipient->token]))->assertForbidden(); // unsigned
+    $this->post($link)->assertOk()->assertSee("You're unsubscribed", false);
     expect($guest->fresh()->opted_out_at)->not->toBeNull()->and($guest->fresh()->marketing_opt_in)->toBeFalse();
 });
 

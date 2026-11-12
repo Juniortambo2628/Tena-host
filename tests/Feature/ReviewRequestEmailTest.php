@@ -151,7 +151,12 @@ it('stops further messages when the guest unsubscribes', function () {
     $guest = sipper(['review_token' => 'abcd1234']);
 
     $this->get('/r/abcd1234/unsubscribe')->assertForbidden();
-    $this->get(URL::signedRoute('reviews.unsubscribe', ['token' => 'abcd1234']))->assertOk()->assertSee('Zero Sips');
+    // Opening the link (as an email scanner would) only asks; the button unsubscribes.
+    $link = URL::signedRoute('reviews.unsubscribe', ['token' => 'abcd1234']);
+    $this->get($link)->assertOk()->assertSee('Unsubscribe?')->assertSee('Zero Sips');
+    expect($guest->fresh()->opted_out_at)->toBeNull();
+    $this->post('/r/abcd1234/unsubscribe')->assertForbidden();
+    $this->post($link)->assertOk()->assertSee("You're unsubscribed", false);
 
     expect($guest->fresh()->opted_out_at)->not->toBeNull()
         ->and($guest->fresh()->marketing_opt_in)->toBeFalse();
