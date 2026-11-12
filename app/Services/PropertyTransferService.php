@@ -346,6 +346,100 @@ class PropertyTransferService
         $transfer->update(['held_at' => null, 'held_by' => null]);
     }
 
+    /**
+     * Step 5: undo a completed transfer, within REVERSE_DAYS and only once both
+     * owners have agreed in writing (the note records where). The property and
+     * everything that followed it go back to the previous owner; device payments
+     * taken over go back too. The new owner's team loses access, and guest
+     * notices still waiting to go out are stopped.
+     *
+     * @return array<string, int> what moved back
+     */
+    public function reverse(PropertyTransfer $transfer, User $admin, string $note): array
+    {
+        $transfer = DB::transaction(function () use ($transfer, $admin, $note) {
+            $transfer = PropertyTransfer::whereKey($transfer->id)->lockForUpdate()->firstOrFail();
+            if (! $transfer->canBeReversed()) {
+                throw ValidationException::withMessages(['transfer' => 'Only a transfer completed in the last '.PropertyTransfer::REVERSE_DAYS.' days can be reversed.']);
+            }
+            $property = Property::whereKey($transfer->property_id)->lockForUpdate()->first();
+            $previous = User::find($transfer->from_user_id);
+            $problem = match (true) {
+                ! $property => 'The property no longer exists.',
+                ! $previous => 'The previous owner’s account no longer exists.',
+                $property->user_id !== $transfer->to_user_id => 'The property has changed hands again since. Reverse the later transfer first.',
+                PropertyTransfer::where('property_id', $property->id)->whereKeyNot($transfer->id)->get()->contains(fn ($t) => $t->isOpen()) => 'Another transfer of this property is under way. Cancel it first.',
+                default => null,
+            };
+            if ($problem) {
+                throw ValidationException::withMessages(['transfer' => $problem]);
+            }
+
+            $back = [
+                'guests' => $property->guests()->count(),
+                'access_points' => $property->accessPoints()->count(),
+                'campaigns' => Campaign::where('property_id', $property->id)->count(),
+                'events' => Event::where('property_id', $property->id)->count(),
+            ];
+            $property->forceFill([
+                'user_id' => $previous->id,
+                // The new owner's PMS account stops syncing; the previous owner reconnects theirs.
+                'pms_connection_status' => $property->pms_integration_type ? 'disconnected' : $property->pms_connection_status,
+            ])->save();
+            Campaign::where('property_id', $property->id)->update(['user_id' => $previous->id]);
+            Event::where('property_id', $property->id)->update(['user_id' => $previous->id]);
+
+            // Device payments the new owner took over with this transfer go back.
+            $devices = 0;
+            DeviceAgreement::where('property_id', $property->id)->where('user_id', $transfer->to_user_id)->get()
+                ->filter(fn (DeviceAgreement $a) => $a->events()->where('type', 'transferred')->get()->contains(fn ($e) => ($e->meta['transfer_id'] ?? null) === $transfer->id))
+                ->each(function (DeviceAgreement $agreement) use ($transfer, $previous, $property, $admin, &$devices) {
+                    $agreement->update(['user_id' => $previous->id]);
+                    $agreement->log('transfer_reversed', "Moved back with {$property->name} to ".static::name($previous).'.', $admin, [
+                        'from_user_id' => $transfer->to_user_id, 'to_user_id' => $previous->id, 'transfer_id' => $transfer->id,
+                    ]);
+                    $devices++;
+                });
+            $back['devices'] = $devices;
+
+            // The new owner's team members lose access straight away.
+            $members = DB::table('staff_property')->where('property_id', $property->id)->pluck('user_id');
+            DB::table('staff_property')->where('property_id', $property->id)->delete();
+            $members->each(fn ($id) => Cache::forget("user_property_ids_{$id}"));
+
+            // The guests are back with the venue they agreed to: no hold, and no more "new owner" notices.
+            Guest::where('property_id', $property->id)->whereNotNull('campaign_hold_until')->update(['campaign_hold_until' => null]);
+
+            $transfer->update([
+                'status' => 'reversed',
+                'reversed_at' => now(),
+                'reversed_by' => $admin->id,
+                'admin_note' => trim($note).' (reversed by '.static::name($admin).')',
+                'notice_status' => $transfer->notice_status === 'pending' ? 'stopped' : $transfer->notice_status,
+                'moved' => ($transfer->moved ?? []) + ['reversed' => $back],
+            ]);
+
+            return $transfer;
+        });
+
+        $transfer->load('property', 'fromUser', 'toUser');
+        $name = $transfer->property->name;
+        NotificationService::systemAlert('Transfer reversed', "{$name} is back in your account. TenaFi reversed the transfer to {$transfer->to_email}, as agreed.", $transfer->from_user_id);
+        $this->email($transfer->fromUser->email, $transfer->fromUser->first_name, 'Your property is back', [
+            "TenaFi reversed the transfer of {$name}, as you and {$transfer->to_email} agreed. It is back in your account, with its WiFi page, devices and guest list. The WiFi kept running throughout.",
+            'Team members you had on it before need adding again, and if it used a booking system (PMS), reconnect yours on the property page.',
+        ], ['label' => 'Open your properties', 'url' => route('host.properties.index')]);
+        if ($transfer->toUser) {
+            NotificationService::systemAlert('Transfer reversed', "{$name} has gone back to its previous owner, as agreed.", $transfer->toUser->id);
+            $this->email($transfer->toUser->email, $transfer->toUser->first_name, 'A property transfer was reversed', [
+                "TenaFi reversed the transfer of {$name}, as you and its previous owner agreed. It is no longer in your account.",
+                ($transfer->moved['reversed']['devices'] ?? 0) > 0 ? 'The device payments you took over with it have gone back to the previous owner.' : '',
+            ]);
+        }
+
+        return $transfer->moved['reversed'];
+    }
+
     /** The account that would receive it: a host account owner with that email, if there is one. */
     public function recipientAccount(string $email): ?User
     {

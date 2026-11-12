@@ -13,7 +13,8 @@ use Inertia\Response;
 /**
  * Admin -> Transfers (docs/plans/property-transfer.md, step 3): every property
  * transfer, and holding, releasing or cancelling one during its cooling-off
- * (e.g. when an owner says they didn't offer it).
+ * (e.g. when an owner says they didn't offer it), and (step 5) reversing a
+ * completed one within 30 days, once both owners agree in writing.
  */
 class AdminTransferController extends Controller
 {
@@ -47,6 +48,8 @@ class AdminTransferController extends Controller
                 'decided_ip' => $t->decided_ip,
                 'moved' => $t->moved,
                 'notice' => $t->notice_status ? ['status' => $t->notice_status, 'sent' => $t->notice_sent, 'total' => $t->notice_total] : null,
+                'reversed_at' => $t->reversed_at?->toIso8601String(),
+                'reversible' => $t->canBeReversed(),
                 'devices' => $t->device_takeover ? ['count' => $t->device_count, 'balance' => $t->device_balance_kes, 'monthly' => $t->device_monthly_kes] : null,
             ]);
 
@@ -54,6 +57,7 @@ class AdminTransferController extends Controller
             'transfers' => $transfers,
             'enabled' => PropertyTransferService::enabled(),
             'coolingOffHours' => PropertyTransfer::COOLING_OFF_HOURS,
+            'reverseDays' => PropertyTransfer::REVERSE_DAYS,
         ]);
     }
 
@@ -76,5 +80,19 @@ class AdminTransferController extends Controller
         $this->transfers->adminCancel($transfer, $request->user(), $request->validate(['note' => 'nullable|string|max:400'])['note'] ?? null);
 
         return back()->with('success', 'Transfer cancelled. Both owners have been told.');
+    }
+
+    public function reverse(Request $request, PropertyTransfer $transfer): RedirectResponse
+    {
+        $data = $request->validate([
+            'note' => 'required|string|max:400',
+            'agreed' => 'accepted',
+        ], [
+            'note.required' => 'Say where both owners agreed (e.g. the support ticket).',
+            'agreed.accepted' => 'Tick that both owners agreed in writing.',
+        ]);
+        $this->transfers->reverse($transfer, $request->user(), $data['note']);
+
+        return back()->with('success', 'Transfer reversed. The property is back with its previous owner, and both owners have been told.');
     }
 }

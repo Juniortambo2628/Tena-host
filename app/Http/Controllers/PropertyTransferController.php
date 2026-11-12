@@ -46,6 +46,7 @@ class PropertyTransferController extends Controller
             'held' => (bool) $t->held_at,
             'cancelled_by' => $t->cancelled_by,
             // Step 4: device payments the new owner takes over.
+            'reversed_at' => $t->reversed_at?->toIso8601String(),
             'devices' => $t->device_takeover ? ['count' => $t->device_count, 'balance' => $t->device_balance_kes, 'monthly' => $t->device_monthly_kes] : null,
         ];
 
