@@ -371,7 +371,9 @@ Route::post('/api/whatsapp/webhook', [MessagingWebhookController::class, 'whatsA
 Route::post('/api/sms/inbound', [MessagingWebhookController::class, 'sms'])->name('sms.inbound');
 
 // Campaign link and open tracking (CampaignLinks).
-Route::get('/c/{token}/unsubscribe', [CampaignTrackingController::class, 'unsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed')->name('campaigns.unsubscribe');
+// The email link opens "Unsubscribe?" (GET); pressing the button unsubscribes (POST), so link scanners can't.
+Route::get('/c/{token}/unsubscribe', [CampaignTrackingController::class, 'confirmUnsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed')->name('campaigns.unsubscribe');
+Route::post('/c/{token}/unsubscribe', [CampaignTrackingController::class, 'unsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed');
 Route::get('/c/{token}/o.gif', [CampaignTrackingController::class, 'open'])->where('token', '[A-Za-z0-9]{8}')->name('campaigns.open');
 Route::get('/c/{token}/{n}', [CampaignTrackingController::class, 'click'])->where(['token' => '[A-Za-z0-9]{8}', 'n' => '[0-9]{1,2}'])->name('campaigns.click');
 
@@ -380,7 +382,8 @@ Route::get('/places/{property}', [VenueController::class, 'show'])->whereNumber(
 
 // Short review link sent to guests (counts the click, then redirects).
 Route::get('/r/{token}', ReviewLinkController::class)->where('token', '[A-Za-z0-9]{8}')->name('reviews.go');
-Route::get('/r/{token}/unsubscribe', [ReviewLinkController::class, 'unsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed')->name('reviews.unsubscribe');
+Route::get('/r/{token}/unsubscribe', [ReviewLinkController::class, 'confirmUnsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed')->name('reviews.unsubscribe');
+Route::post('/r/{token}/unsubscribe', [ReviewLinkController::class, 'unsubscribe'])->where('token', '[A-Za-z0-9]{8}')->middleware('signed');
 
 // A TenaFi device's own page (/pricing/pro): off with /pricing (Admin -> Settings).
 Route::get('/pricing/{device}', [PublicPageController::class, 'device'])

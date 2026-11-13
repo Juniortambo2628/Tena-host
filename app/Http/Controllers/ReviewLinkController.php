@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Guest;
 use App\Services\ReviewRequestService;
 use App\Support\Brand;
+use Illuminate\Http\Request;
 
 class ReviewLinkController extends Controller
 {
@@ -17,7 +18,18 @@ class ReviewLinkController extends Controller
         return redirect()->away($reviews->click($guest));
     }
 
-    /** "Unsubscribe" in a review request email: no more messages from this property. */
+    /** The review email's unsubscribe link (signed): "Unsubscribe?" with a button. */
+    public function confirmUnsubscribe(Request $request, string $token)
+    {
+        $guest = Guest::with('property')->where('review_token', $token)->firstOrFail();
+
+        return response()->view('portal.unsubscribe-confirm', [
+            'propertyName' => $guest->property?->name ?? Brand::name(),
+            'action' => $request->fullUrl(),
+        ]);
+    }
+
+    /** The button on that page: no more messages from this property. */
     public function unsubscribe(string $token)
     {
         $guest = Guest::with('property')->where('review_token', $token)->firstOrFail();

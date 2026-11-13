@@ -6,6 +6,7 @@ use App\Models\CampaignRecipient;
 use App\Models\Guest;
 use App\Services\CampaignLinks;
 use App\Support\Brand;
+use Illuminate\Http\Request;
 
 /**
  * Public endpoints behind campaign links and the email open pixel.
@@ -26,9 +27,21 @@ class CampaignTrackingController extends Controller
         return redirect()->away($target);
     }
 
+    /** The campaign email's unsubscribe link (signed): "Unsubscribe?" with a button. */
+    public function confirmUnsubscribe(Request $request, string $token)
+    {
+        $recipient = CampaignRecipient::with('guest.property')->where('token', $token)->firstOrFail();
+
+        return response()->view('portal.unsubscribe-confirm', [
+            'propertyName' => $recipient->guest?->property?->name ?? Brand::name(),
+            'action' => $request->fullUrl(),
+        ]);
+    }
+
     /**
-     * One-click unsubscribe from a campaign email (signed link). Mirrors a
-     * STOP reply: the guest leaves every host's marketing for that address.
+     * Unsubscribe from a campaign email (the button, posted to the signed
+     * link). Mirrors a STOP reply: the guest leaves every host's marketing
+     * for that address.
      */
     public function unsubscribe(string $token)
     {
