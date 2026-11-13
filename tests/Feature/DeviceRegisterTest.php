@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\DeviceAgreement;
+use App\Models\LandingContent;
+use App\Models\LandingPage;
+use App\Models\LandingSection;
 use App\Models\Property;
 use App\Models\Setting;
 use App\Models\User;
@@ -107,4 +110,24 @@ it('refuses a payment against another device’s instalment', function () {
     $two = recordDevice(['serial_number' => 'SN-0002']);
 
     $this->actingAs($this->admin)->post(route('admin.devices.pay', [$one, $two->instalments->first()]), ['amount_kes' => 100])->assertNotFound();
+});
+
+it('fills the record form with each device’s stored instalment terms, though the public pages no longer show them', function () {
+    $section = LandingSection::whereHas('page', fn ($q) => $q->where('slug', 'pricing'))->where('section_key', 'devices')->firstOrFail();
+    LandingContent::updateOrCreate(['section_id' => $section->id, 'content_key' => 'items.1.monthly_kes'], ['value' => '3,500', 'type' => 'text']);
+    LandingContent::updateOrCreate(['section_id' => $section->id, 'content_key' => 'items.1.months'], ['value' => '15', 'type' => 'text']);
+    LandingPage::clearCache();
+
+    $this->actingAs($this->admin)->get(route('admin.devices.index'))
+        ->assertInertia(fn ($page) => $page
+            ->where('devices.1.id', 'pro')
+            ->where('devices.1.price_kes', 42000)
+            ->where('devices.1.monthly_kes', 3500)
+            ->where('devices.1.months', 15)
+            // None stored: no amount, and the usual 12 months.
+            ->where('devices.0.monthly_kes', 0)
+            ->where('devices.0.months', 12));
+
+    // The public pages still don't get them.
+    expect(LandingPage::liveDevices()[1])->not->toHaveKey('monthly_kes');
 });

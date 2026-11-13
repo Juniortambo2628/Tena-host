@@ -206,6 +206,29 @@ class LandingPage extends Model
         return $devices;
     }
 
+    /**
+     * The monthly amount and number of months stored for each device on /pricing,
+     * keyed by device id. Pay monthly is gone from the public pages, but Admin ->
+     * Devices still records instalment agreements, and fills its form from these.
+     *
+     * @return array<string, array{monthly_kes: int, months: int}>
+     */
+    public static function deviceInstalments(): array
+    {
+        $content = collect(static::publicSections('pricing'))->firstWhere('section_key', 'devices')['content'] ?? [];
+        $kes = fn ($value) => (int) preg_replace('/\D/', '', strip_tags((string) $value));
+
+        $terms = [];
+        for ($i = 0; isset($content["items.{$i}.name"]); $i++) {
+            $terms[trim(strip_tags((string) ($content["items.{$i}.id"] ?? '')))] = [
+                'monthly_kes' => $kes($content["items.{$i}.monthly_kes"] ?? ''),
+                'months' => $kes($content["items.{$i}.months"] ?? '') ?: 12,
+            ];
+        }
+
+        return $terms;
+    }
+
     public static function cacheKey(string $slug): string
     {
         return "landing_page:{$slug}";
