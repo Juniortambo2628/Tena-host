@@ -11,7 +11,7 @@ import {
 } from '@/lib/cms';
 import { v2Link } from '@/Components/V2/V2Site';
 import {
-    useSectionDevices, useDeviceChoice, offerOf, offerPlans, offerPrice, PricingSteps, sectionSteps, DevicePicker,
+    useSectionDevices, useDeviceChoice, offerOf, offerPlans, offerPrice, PricingSteps, sectionSteps, sectionHeadline, DevicePicker,
     OfferExample, OfferNote, DevicesRow, BiggerSpaces, PLAN_FIELDS,
 } from '@/Components/Public/PlanOffer';
 import { planHref } from '@/lib/pricingMath';
@@ -392,7 +392,7 @@ export function HowItWorks({ section, site, id }) {
                 {/* Getting started: the offer's three steps, from the live /hosts pricing. */}
                 {offer.freeMonths > 0 && offer.steps.length > 0 && (
                     <div className="mt-10">
-                        <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} />
+                        <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} headline={offer.headline} />
                     </div>
                 )}
             </Container>
@@ -488,7 +488,7 @@ export function Credibility({ section, id }) {
  */
 export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
     // Once /pricing is switched on (Admin -> Settings), each page's plans link to it.
-    const { pricingPage: devicesPage } = usePage().props;
+    const { pricingPage: devicesPage, kesPerUsd } = usePage().props;
     const pricingPage = devicesLink ? devicesPage : null;
     const devices = useSectionDevices(section);
     const choice = useDeviceChoice(devices);
@@ -496,13 +496,14 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
 
     const rows = extractItems(section, 'plans', PLAN_FIELDS);
     const plans = offerPlans(section, rows, offer).map((p) => {
-        const price = offerPrice(section, p, rows, choice.device, offer);
+        const price = offerPrice(section, p, rows, choice.device, offer, kesPerUsd);
         return {
             id: stripHtml(p.id) || String(p.index),
             name: stripHtml(p.label),
             price,
             tagline: stripHtml(p.tagline),
             lines: textLines(p.features, site).map((l) => (l.badge ? `${l.text} (${l.badge})` : l.text)),
+            messages: stripHtml(p.messages_note),
             note: stripHtml(p.note),
             cta: { to: planHref(joinHref, stripHtml(p.id), choice.device?.id, offer.free), label: stripHtml(p.cta) || 'Book a demo' },
             highlight: stripHtml(p.variant) === 'dark',
@@ -520,7 +521,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                         text={stripHtml(getContent(section, 'subtitle', ''))}
                     />
                     <div className="mt-10">
-                        <PricingSteps steps={sectionSteps(section)} freeMonths={offer.free} />
+                        <PricingSteps steps={sectionSteps(section)} freeMonths={offer.free} headline={sectionHeadline(section)} />
                         <DevicePicker section={section} devices={devices} choice={choice} />
                     </div>
                     {/* The kit's plan cards (PricingSection), drawn here so the steps and picker sit above them. */}
@@ -543,6 +544,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                                         </li>
                                     ))}
                                 </ul>
+                                {plan.messages && <p className="pricing-plan-messages">{plan.messages}</p>}
                                 {plan.note && <p className="pricing-plan-note">{plan.note}</p>}
                                 <PillLink to={plan.cta.to} variant={plan.highlight ? 'light' : 'dark'} className="mt-10">{plan.cta.label}</PillLink>
                             </div>
@@ -620,7 +622,7 @@ export function Trial({ section, site, id, joinHref }) {
                     <p className="mx-auto mt-4 max-w-xl text-soft">{stripHtml(getContent(section, 'body', ''))}</p>
                     {showOffer && (
                         <div className="mx-auto mt-8 max-w-3xl rounded-[1.75rem] bg-white/90 p-6 text-left text-ink shadow-[0_20px_60px_-30px_color-mix(in_srgb,var(--color-ink)_40%,transparent)] sm:p-8">
-                            <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} compact className="sm:!grid-cols-3" />
+                            <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} headline={offer.headline} compact className="sm:!grid-cols-3" />
                             {deviceLine && <p className="mt-5 text-sm font-semibold text-ink">{deviceLine}</p>}
                         </div>
                     )}

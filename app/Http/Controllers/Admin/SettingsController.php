@@ -59,6 +59,8 @@ class SettingsController extends Controller
             'signup_alert_emails' => 'sometimes|nullable|string|max:500',
             'signup_alert_webhook_url' => 'sometimes|nullable|url|max:500',
             'trial_slots_total' => 'sometimes|nullable|integer|min:0|max:10000',
+            // KES per US dollar, for every "(about $X)" on the pricing (default 129).
+            'kes_per_usd' => 'sometimes|required|numeric|min:1|max:100000',
             'trial_slots_since' => 'sometimes|nullable|date',
             'callbacks_enabled' => 'sometimes|in:0,1',
             'demo_enabled' => 'sometimes|in:0,1',
