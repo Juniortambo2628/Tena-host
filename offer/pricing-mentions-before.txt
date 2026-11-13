@@ -1,0 +1,379 @@
+app/Console/Commands/BookADemoCommand.php:16: * The free trial is over: new customers book a demo (a call, a video call
+app/Console/Commands/BookADemoCommand.php:20: *  - known trial sentences are taken out of longer texts (footnotes,
+app/Console/Commands/BookADemoCommand.php:22: *  - any other field that still mentions the trial gets the blueprint's
+app/Console/Commands/BookADemoCommand.php:25: * Then it lists anything that still mentions the trial (fields with no
+app/Console/Commands/BookADemoCommand.php:36:    protected $description = 'Replace the free trial with "Book a demo" across the public pages (with --dry-run and a backup first)';
+app/Console/Commands/BookADemoCommand.php:47:    /** Words that mean a field still talks about the free trial. */
+app/Console/Commands/BookADemoCommand.php:48:    private const TRIAL = '/free trial|after the trial|trial slot|book (a|your) slot|slots? (taken|left)|all of december|free for december|the whole of december|december is on us|16 november|no payment to book/i';
+app/Console/Commands/BookADemoCommand.php:50:    /** Trial sentences inside longer texts, and what replaces them. */
+app/Console/Commands/BookADemoCommand.php:52:        '/Free trial: installs from 16 November, and the rest of November and all of December are free\.\s*Then month to month;/u' => 'Month to month;',
+app/Console/Commands/BookADemoCommand.php:53:        '/Free for December, then month to month\./u' => 'Month to month.',
+app/Console/Commands/BookADemoCommand.php:55:        '/\s*Free trial from 1st December until 4 January 2027[^.]*\./u' => '',
+app/Console/Commands/BookADemoCommand.php:61:     * that mentions the trial is listed for a person to edit.
+app/Console/Commands/BookADemoCommand.php:98:            $this->line("<fg=red>[still mentions the trial]</> {$line}");
+app/Console/Commands/BookADemoCommand.php:168:        // An FAQ about the trial becomes the demo question (its answer follows it).
+app/Console/Commands/BookADemoCommand.php:169:        if (preg_match('/^items\.(\d+)\.question$/', $key) && preg_match(self::TRIAL, $value)) {
+app/Console/Commands/BookADemoCommand.php:172:        if (preg_match('/^items\.(\d+)\.answer$/', $key, $m) && preg_match(self::TRIAL, (string) ($content["items.{$m[1]}.question"] ?? ''))) {
+app/Console/Commands/BookADemoCommand.php:176:        if (! preg_match(self::TRIAL, $value)) {
+app/Console/Commands/BookADemoCommand.php:180:        // Trial sentences out of longer texts, keeping the rest.
+app/Console/Commands/BookADemoCommand.php:182:        if (! preg_match(self::TRIAL, $trimmed)) {
+app/Console/Commands/BookADemoCommand.php:190:        return $default !== '' && Str::is($rewritten, $key) && ! preg_match(self::TRIAL, $default) ? $defaults[$key] : null;
+app/Console/Commands/BookADemoCommand.php:216:     * Fields and email settings that will still mention the trial after the
+app/Console/Commands/BookADemoCommand.php:228:            if ($row->section?->section_key === 'trial_slots' || ! preg_match(self::TRIAL, $value)) {
+app/Console/Commands/BookADemoCommand.php:235:            if (is_string($setting->value) && preg_match(self::TRIAL, $setting->value)) {
+app/Console/Commands/PricingDevicesCommand.php:17: *    maintain and replace it" and "Extra devices at the same site: KES 1,500
+app/Console/Commands/PricingDevicesCommand.php:18: *    a month each" (devices are now bought, upfront or over 12 months, and
+app/Console/Commands/PricingDevicesCommand.php:145:        $text = preg_replace('/\s*Extra devices at the same site: KES 1,500 a month each\.?/u', '', $text);
+app/Console/Commands/PricingDevicesCommand.php:149:            'Your TenaFi device is bought upfront or over your first 12 months, and then it’s yours.',
+app/Console/Commands/PricingOptionsCommand.php:146:        $this->checklist[] = 'Device prices live once, on Devices & pricing -> devices (/pricing). TenaFi Outdoor KES 48,000 may become ~52,000: change items.2.price_kes there. [open decision]';
+app/Console/Commands/PricingOptionsCommand.php:147:        $this->checklist[] = 'Pay monthly: does the client own the device after month 12, or does TenaFi keep it? The footnotes and /pricing say "it’s yours" (Glen’s earlier answer); confirm. [open decision]';
+app/Console/Commands/PricingOptionsCommand.php:230:        if (preg_match('/free trial|december|16 november/i', $footnote.' '.($live['subtitle'] ?? ''))) {
+app/Console/Commands/PricingOptionsCommand.php:231:            $this->checklist[] = "{$slug} pricing still mentions the free trial: run tenafi:book-a-demo (PR #88) or edit the subtitle and footnote.";
+app/Http/Controllers/Admin/AdminDashboardController.php:136:     * One point per month for the last six months. $count receives a
+app/Http/Controllers/Admin/AdminTransferController.php:50:                'devices' => $t->device_takeover ? ['count' => $t->device_count, 'balance' => $t->device_balance_kes, 'monthly' => $t->device_monthly_kes] : null,
+app/Http/Controllers/Admin/DeviceAgreementController.php:36:                'price_kes' => $a->price_kes,
+app/Http/Controllers/Admin/DeviceAgreementController.php:37:                'monthly_kes' => $a->monthly_kes,
+app/Http/Controllers/Admin/DeviceAgreementController.php:43:                'balance_kes' => $a->balance(),
+app/Http/Controllers/Admin/DeviceAgreementController.php:50:                    'amount_kes' => $i->amount_kes,
+app/Http/Controllers/Admin/DeviceAgreementController.php:51:                    'paid_kes' => $i->paid_kes,
+app/Http/Controllers/Admin/DeviceAgreementController.php:52:                    'remaining_kes' => $i->remaining(),
+app/Http/Controllers/Admin/DeviceAgreementController.php:76:            'devices' => collect(LandingPage::liveDevices())->map(fn ($d) => collect($d)->only(['id', 'name', 'price_kes', 'monthly_kes', 'months']))->values(),
+app/Http/Controllers/Admin/DeviceAgreementController.php:91:            'price_kes' => 'required|integer|min:0|max:10000000',
+app/Http/Controllers/Admin/DeviceAgreementController.php:92:            'monthly_kes' => 'required|integer|min:1|max:1000000',
+app/Http/Controllers/Admin/DeviceAgreementController.php:104:        return back()->with('success', "Device recorded with {$agreement->months} monthly instalments of KES ".number_format($agreement->monthly_kes).'.');
+app/Http/Controllers/Admin/DeviceAgreementController.php:113:            'amount_kes' => ['required', 'integer', 'min:1', 'max:'.$instalment->remaining()],
+app/Http/Controllers/Admin/DeviceAgreementController.php:115:        ], ['amount_kes.max' => 'That’s more than is left on this instalment (KES '.number_format($instalment->remaining()).').']);
+app/Http/Controllers/Admin/DeviceAgreementController.php:117:        $agreement->recordPayment($instalment, (int) $data['amount_kes'], $data['reference'] ?? null, $request->user());
+app/Http/Controllers/Admin/EventQuoteController.php:55:        ], ['quote_amount.required' => 'Set the price in KES.']);
+app/Http/Controllers/Admin/EventQuoteController.php:60:        return back()->with('success', "{$event->name} is priced at KES ".number_format($event->quote_amount).'. The organiser has been told.');
+app/Http/Controllers/EventPaymentController.php:70:        return back()->with('success', 'M-Pesa request sent to your phone. Enter your PIN to pay KES '.number_format($event->quote_amount).'.');
+app/Http/Controllers/GuestController.php:151:            'KES '.number_format((float) $o->total).' · '.str_replace('_', ' ', $o->payment_status),
+app/Http/Controllers/PropertyTransferController.php:48:            // Step 4: device payments the new owner takes over.
+app/Http/Controllers/PropertyTransferController.php:49:            'devices' => $t->device_takeover ? ['count' => $t->device_count, 'balance' => $t->device_balance_kes, 'monthly' => $t->device_monthly_kes] : null,
+app/Http/Controllers/PropertyTransferController.php:81:            // A device still being paid off: the new owner takes over the payments.
+app/Http/Controllers/PublicPageController.php:213:            'trial' => TrialSlots::summary(),
+app/Http/Controllers/PublicPageController.php:214:            // Live rental plans, quoted by the homepage hero and trial card.
+app/Http/Controllers/SubscriptionController.php:94:            return back()->with('success', 'M-Pesa request sent to your phone. Enter your PIN to pay KES '.number_format($quote['total']).'.');
+app/Http/Controllers/SubscriptionController.php:125:     * Confirm with Paystack that this reference paid the quoted KES amount.
+app/Http/Controllers/SubscriptionController.php:127:    protected function verifyPaystackTransaction(string $reference, int $expectedKes): bool
+app/Http/Controllers/SubscriptionController.php:129:        return app(PaystackVerifier::class)->verify($reference, $expectedKes);
+app/Http/Controllers/TrackController.php:14: * events to window.dataLayer for GA4/GTM when that is installed.
+app/Mail/ReviewRequestMail.php:28:    public const DEFAULT_BUSINESS_MESSAGE = 'Hi {guest_name}, thank you for visiting {property_name}! How did we do? It takes 30 seconds to share your experience on Google.';
+app/Models/DeviceAgreement.php:31:        'price_kes', 'monthly_kes', 'months', 'starts_on', 'status', 'paid_off_at', 'notes',
+app/Models/DeviceAgreement.php:37:        'price_kes' => 'integer',
+app/Models/DeviceAgreement.php:38:        'monthly_kes' => 'integer',
+app/Models/DeviceAgreement.php:74:     * Record a device and its instalment schedule: one per month from the
+app/Models/DeviceAgreement.php:75:     * installation day (the first is due that day).
+app/Models/DeviceAgreement.php:87:                    // No overflow: a device installed on 31 January is next due on 28/29 February.
+app/Models/DeviceAgreement.php:89:                    'amount_kes' => $agreement->monthly_kes,
+app/Models/DeviceAgreement.php:92:            $agreement->log('recorded', null, $actor, ['months' => $agreement->months, 'monthly_kes' => $agreement->monthly_kes]);
+app/Models/DeviceAgreement.php:122:            $paid = min($instalment->amount_kes, $instalment->paid_kes + $amount);
+app/Models/DeviceAgreement.php:124:                'paid_kes' => $paid,
+app/Models/DeviceAgreement.php:127:                'status' => $paid >= $instalment->amount_kes ? 'paid' : 'partly_paid',
+app/Models/DeviceAgreement.php:129:            $this->log('payment', $reference, $actor, ['instalment' => $instalment->number, 'amount_kes' => $amount]);
+app/Models/DeviceInstalment.php:12:        'device_agreement_id', 'number', 'due_on', 'amount_kes', 'paid_kes', 'paid_at', 'reference', 'status',
+app/Models/DeviceInstalment.php:18:        'amount_kes' => 'integer',
+app/Models/DeviceInstalment.php:19:        'paid_kes' => 'integer',
+app/Models/DeviceInstalment.php:35:        return $this->isSettled() ? 0 : max(0, $this->amount_kes - $this->paid_kes);
+app/Models/Event.php:45:     * trial) doesn't cover it and it hasn't been paid.
+app/Models/Event.php:56:    /** The organiser's monthly plan (or trial) is active. */
+app/Models/LandingPage.php:130:     * @return list<array{id: string, label: string, price: string, price_kes: int}>
+app/Models/LandingPage.php:143:                'price_kes' => (int) preg_replace('/\D/', '', (string) ($content["plans.{$i}.price_kes"] ?? '')),
+app/Models/LandingPage.php:158:     * @return list<array{id: string, name: string, price_kes: int, monthly_kes: int, months: int, image: string, best_for: string, coverage: string, coverage_label: string, capacity: string, capacity_label: string}>
+app/Models/LandingPage.php:164:        $kes = fn ($value) => (int) preg_replace('/\D/', '', (string) $value);
+app/Models/LandingPage.php:173:                'price_kes' => $kes($content["items.{$i}.price_kes"] ?? ''),
+app/Models/LandingPage.php:174:                'monthly_kes' => $kes($content["items.{$i}.monthly_kes"] ?? ''),
+app/Models/LandingPage.php:175:                'months' => $kes($content["items.{$i}.months"] ?? '') ?: 12,
+app/Models/PropertyTransfer.php:29:        'device_takeover', 'device_count', 'device_balance_kes', 'device_monthly_kes',
+app/Models/PropertyTransfer.php:43:        'device_balance_kes' => 'integer',
+app/Models/PropertyTransfer.php:44:        'device_monthly_kes' => 'integer',
+app/Models/Registration.php:17:    /** Event quote requests from /events (not free-trial sign-ups). */
+app/Models/Registration.php:22:    /** The free trial is for rentals and businesses; event quotes don't take a slot. */
+app/Models/Registration.php:59:        // Every sign-up is a trial booking; the public slot counter must see it straight away.
+app/Services/Analytics/FunnelReport.php:43:     * Sign-ups per month, split by audience.
+app/Services/Billing/PaystackVerifier.php:9: * quoted amount, in KES. Used for plans and for event quotes.
+app/Services/Billing/PaystackVerifier.php:13:    public function verify(string $reference, int $expectedKes): bool
+app/Services/Billing/PaystackVerifier.php:45:            && (int) ($data['data']['amount'] ?? 0) >= $expectedKes * 100;
+app/Services/Cms/SignupFormSchema.php:26:        'estimatedPriceKES' => ['nullable', 'integer', 'min:0'],
+app/Services/ExtrasPaymentService.php:77:        return ['status' => 'pending', 'message' => 'Check your phone and enter your M-Pesa PIN to pay KES '.number_format((float) $order->total).'.'];
+app/Services/ExtrasPaymentService.php:130:                '%s: %s paid KES %s for %s at %s (M-Pesa %s).',
+app/Services/NotificationService.php:137:            "{$event->name}: KES ".number_format($event->quote_amount).'. Pay from the event page to switch on its WiFi page.',
+app/Services/PropertyTransferService.php:39: * first (TenaFi records it in Admin -> Devices), or the new owner takes over
+app/Services/PropertyTransferService.php:67:            'monthly' => (int) $agreements->sum('monthly_kes'),
+app/Services/PropertyTransferService.php:88:            throw ValidationException::withMessages(['property_id' => 'A TenaFi device here is still being paid off monthly: KES '.number_format($debt['balance']).' left. Pay it off first (TenaFi records the payment), or choose that the new owner takes over the payments.']);
+app/Services/PropertyTransferService.php:101:            'device_balance_kes' => $debt['balance'],
+app/Services/PropertyTransferService.php:102:            'device_monthly_kes' => $debt['monthly'],
+app/Services/PropertyTransferService.php:129:                ? 'Its TenaFi '.($transfer->device_count === 1 ? 'device is' : 'devices are').' still being paid off: KES '.number_format($transfer->device_balance_kes).' left, KES '.number_format($transfer->device_monthly_kes).' a month. Accepting means you take over those payments, after TenaFi checks with you.'
+app/Services/PropertyTransferService.php:151:            if ($transfer->device_takeover && $debt['balance'] > $transfer->device_balance_kes) {
+app/Services/PropertyTransferService.php:176:                "{$transfer->to_email} accepted a property whose devices are still being paid off (KES ".number_format($transfer->device_balance_kes).' left). Check them, then release it in Admin → Transfers.',
+app/Services/PropertyTransferService.php:192:            $transfer->held_at ? 'Because you’re taking over device payments (KES '.number_format($transfer->device_balance_kes).' left, KES '.number_format($transfer->device_monthly_kes).' a month), TenaFi will contact you to confirm before the hand-over.' : '',
+app/Services/PropertyTransferService.php:220:                $transfer->device_takeover && static::deviceDebt($property)['balance'] > $transfer->device_balance_kes => 'more is owed on its devices than when it was offered',
+app/Services/ReviewRequestService.php:31:    public const DEFAULT_BUSINESS_MESSAGE = 'Hi {guest_name}, thanks for visiting {property_name} today! How did we do? It takes 30 seconds to share your experience on Google: {review_link}';
+app/Support/TrialSlots.php:11: * "X of 50 free trial slots taken". Taken is the number of real trial
+app/Support/TrialSlots.php:12: * bookings: host and business sign-ups (registrations) since the trial
+database/blueprints/public_pages.php:21:|   - "anchor" makes the section reachable at #anchor; adding "menu_label"
+database/blueprints/public_pages.php:53:    ['key' => 'devicePayment', 'label' => 'How would you like to pay for it?', 'type' => 'singleSelect', 'required' => false, 'options' => ['upfront|Buy it upfront (best value)', 'monthly|Pay monthly (nothing upfront)'], 'placeholder' => '', 'hint' => ''],
+database/blueprints/public_pages.php:61:// TODO(Glen): on Pay monthly, does the client own the device after month 12, or does TenaFi keep it?
+database/blueprints/public_pages.php:63:// TODO(Glen): TenaFi Outdoor may move from KES 48,000 to about 52,000 (one field on /pricing's devices).
+database/blueprints/public_pages.php:68:    'pay_buy_text' => 'Pay once for the device and installation, then your plan each month.',
+database/blueprints/public_pages.php:70:    'pay_monthly_label' => 'Pay monthly',
+database/blueprints/public_pages.php:71:    'pay_monthly_badge' => 'KES 0 upfront',
+database/blueprints/public_pages.php:72:    'pay_monthly_text' => 'Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.',
+database/blueprints/public_pages.php:77:    // {addon} and {months} per device.
+database/blueprints/public_pages.php:78:    'device_price_line' => 'or +{addon}/month for {months} months',
+database/blueprints/public_pages.php:79:    'devices_note' => 'Coverage is for open space. Walls and floors reduce it, so we check your space at installation.',
+database/blueprints/public_pages.php:96:    ['question' => 'Do I have to buy the device?', 'answer' => 'No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.'],
+database/blueprints/public_pages.php:97:    ['question' => 'Which device do I need?', 'answer' => 'TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at installation.'],
+database/blueprints/public_pages.php:98:    ['question' => 'What if I leave?', 'answer' => 'It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.'],
+database/blueprints/public_pages.php:102:$planField = fn (string $unit) => ['key' => 'plan', 'label' => 'Pick a starting plan', 'type' => 'planCards', 'required' => true, 'options' => ['basic|Basic', 'starter|Starter', 'growth|Growth', 'notSure|Not sure yet'], 'placeholder' => 'starter', 'hint' => "(per {$unit}, per month)"];
+database/blueprints/public_pages.php:105:    ['id' => 'basic', 'label' => 'Basic', 'tagline' => $features['basic'][0], 'badge' => '', 'price' => 'KES 3,000', 'price_kes' => '3000', 'unit' => "per {$unit}, per month (about \$23)", 'features' => $features['basic'][1], 'cta' => 'Choose Basic', 'variant' => 'outline'],
+database/blueprints/public_pages.php:106:    ['id' => 'starter', 'label' => 'Starter', 'tagline' => $features['starter'][0], 'badge' => 'Most popular', 'price' => 'KES 4,500', 'price_kes' => '4500', 'unit' => "per {$unit}, per month (about \$35)", 'features' => $features['starter'][1], 'cta' => 'Choose Starter', 'variant' => 'dark'],
+database/blueprints/public_pages.php:107:    ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 6,000', 'price_kes' => '6000', 'unit' => "per {$unit}, per month (about \$47)", 'features' => $features['growth'][1], 'cta' => 'Choose Growth', 'variant' => 'outline'],
+database/blueprints/public_pages.php:110:// Book a demo (Nov 2026): the free trial is over. New customers book a demo
+database/blueprints/public_pages.php:114:// TODO(Glen): is there a KES 2,500 installation fee?
+database/blueprints/public_pages.php:189:            ['title' => 'Google review request', 'text' => 'Later that day, a thank-you with a one-tap Google review link. No QR code to scan.', 'mockup' => 'chat', 'screen' => 'Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share it on Google. | Review us on Google | 16:05'],
+database/blueprints/public_pages.php:247:                // {taken}, {total} and {left} would come from the old trial slot counter; no longer used.
+database/blueprints/public_pages.php:252:                'link_href' => '/#trial',
+database/blueprints/public_pages.php:270:                    ['title' => 'Company', 'links' => "How it works | /#how\nBook a demo | /#trial\nPrivacy policy | /privacy\nTerms | /terms"],
+database/blueprints/public_pages.php:304:            'title' => 'Slot counter (old free trial; off)',
+database/blueprints/public_pages.php:306:                'taken_text' => '{taken} of {total} free trial slots taken',
+database/blueprints/public_pages.php:309:                'full_text' => 'All {total} free trial slots taken',
+database/blueprints/public_pages.php:355:                'cta_primary_url' => '#trial',
+database/blueprints/public_pages.php:372:                'callback_link' => '#trial',
+database/blueprints/public_pages.php:377:                'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
+database/blueprints/public_pages.php:380:                'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
+database/blueprints/public_pages.php:478:                'cta_href' => '#trial',
+database/blueprints/public_pages.php:514:                        'screen' => "color: #4A3123\nhead: Kahawa House | WhatsApp · same day\nmsg: Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share it on Google. | Review us on Google | 16:05\n---\n@stats\nscore: 4.5\nrow: Reviews at start of month | 42\nrow: New this month | +12\nrow: Rating | 4.4 → 4.5",
+database/blueprints/public_pages.php:542:                        'screen' => "color: #0F4C45\nhead: Welcome to The Loft\nrow: 📖 | House guide | Free\nrow: 🕑 | Late checkout, 2pm | KES 2,000\nrow: 🚕 | Airport transfer | KES 3,500\nrow: 🌙 | Extra night | KES 7,000\n---\n@mpesa\nto: Pay KES 2,000 to The Loft Nairobi?\nok: Paid. Your host has been told.",
+database/blueprints/public_pages.php:657:                'anchor' => 'trial',
+database/blueprints/public_pages.php:658:                // "trial": yellow, ticks and the pricing card (the style keeps its old name).
+database/blueprints/public_pages.php:659:                'style' => 'trial',
+database/blueprints/public_pages.php:670:                'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
+database/blueprints/public_pages.php:671:                'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
+database/blueprints/public_pages.php:726:                'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 per unit a month.",
+database/blueprints/public_pages.php:735:                'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
+database/blueprints/public_pages.php:817:                'title' => "What a returning guest\u{2019}s KES 100,000 stay costs you in commission",
+database/blueprints/public_pages.php:823:                    ['value' => 'KES 15,500', 'label' => 'Back through Airbnb (15.5%)'],
+database/blueprints/public_pages.php:824:                    ['value' => 'about KES 15,000', 'label' => 'Back through Booking.com (~15%)'],
+database/blueprints/public_pages.php:825:                    ['value' => 'KES 0', 'label' => 'Direct on Tena Direct'],
+database/blueprints/public_pages.php:903:                        'screen' => "color: #0F4C45\nhead: Welcome to The Loft\nrow: 📖 | House guide | Free\nrow: 📍 | Local tips | Free\nrow: 🕑 | Late checkout, 2pm | KES 2,000\nrow: 🌙 | Extra night | KES 7,000\n---\n@mpesa\nto: Pay KES 2,000 to The Loft Nairobi?\nok: Paid. Your host has been told.",
+database/blueprints/public_pages.php:932:                        'screen' => "head: Your monthly report · October\nrow: Guests added to your list | 46\nrow: Review requests sent | 18\nrow: Upsells sold | 7\nrow: Nights booked direct | 5\nrow: OTA fees saved | KES 9,300",
+database/blueprints/public_pages.php:998:                'title' => 'One price per unit. Everything included.',
+database/blueprints/public_pages.php:999:                'subtitle' => 'The device, installation, WiFi page, guest list and support. Month to month.',
+database/blueprints/public_pages.php:1000:                // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee?
+database/blueprints/public_pages.php:1001:                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+database/blueprints/public_pages.php:1019:                    ['question' => 'How does this increase my occupancy?', 'answer' => 'Every stay adds guests to your own list. Each month we send that list offers for your empty dates, holidays and low season. Past guests already know and trust your place, which makes them some of your likeliest bookings. The list grows with every stay, so it can fill more nights over time. TenaFi is designed to help raise occupancy; results vary by property and season.'],
+database/blueprints/public_pages.php:1059:                'price_suffix' => 'per unit / month',
+database/blueprints/public_pages.php:1075:                        ['key' => 'isp', 'label' => 'Internet provider', 'type' => 'select', 'required' => false, 'options' => ['Safaricom', 'Zuku', 'Faiba', 'Airtel', 'Different per unit', 'Other', 'Not sure'], 'placeholder' => '', 'hint' => ''],
+database/blueprints/public_pages.php:1112:                'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 a month.",
+database/blueprints/public_pages.php:1121:                'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
+database/blueprints/public_pages.php:1256:                        'screen' => "color: #4A3123\nhead: Kahawa House | WhatsApp · same day\nmsg: Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share your experience on Google. | Review us on Google | 16:05\n---\n@rating\nname: Kahawa House\nscore: 4.5\nmeta: 54 reviews · +12 this month\nrow: BO | Review request sent | Same day",
+database/blueprints/public_pages.php:1258:                        'description' => "\u{201C}Hi Brian, thanks for visiting Kahawa House today! How did we do? It takes 30 seconds to share your experience on Google.\u{201D}",
+database/blueprints/public_pages.php:1360:                'subtitle' => 'The device, installation, WiFi page, customer list and support. Month to month.',
+database/blueprints/public_pages.php:1361:                // TODO(Glen): installation fee?
+database/blueprints/public_pages.php:1362:                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+database/blueprints/public_pages.php:1569:                        'screen' => "head: Your events this year\nrow: Launch night · March | 180\nrow: Design Week · Day 1 | 1,960\nrow: Design Week · Day 2 | 2,140\nrow: Year-end gala · December | 320\nrow: Came to 2 or more | 610",
+database/blueprints/public_pages.php:1718:                'meta_title' => 'TenaFi devices and pricing: buy once or pay monthly',
+database/blueprints/public_pages.php:1719:                'meta_description' => 'TenaFi Lite, Pro and Outdoor: one device for every size of space, installed and managed for you. Buy upfront, or pay monthly with nothing upfront.',
+database/blueprints/public_pages.php:1728:                'subtitle' => 'Every TenaFi device runs your branded WiFi page, captures your guest list and is installed, set up and managed by our team. Pick the one that fits your space.',
+database/blueprints/public_pages.php:1729:                'upfront_label' => 'Buy upfront, installed',
+database/blueprints/public_pages.php:1732:                // price_kes: bought upfront, installed. monthly_kes: added to the plan for `months` months.
+database/blueprints/public_pages.php:1735:                    ['id' => 'lite', 'name' => 'TenaFi Lite', 'badge' => 'Small spaces', 'best_for' => 'Apartments, salons, barbershops, small cafés and shops', 'coverage' => '115 m²', 'coverage_label' => 'coverage', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '25000', 'monthly_kes' => '3000', 'months' => '12', 'style' => 'light', 'tagline' => 'A small, quiet ceiling device for one room or a small shop.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 115 m²\nDevices at once | 200+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Small and discreet: it blends into the ceiling\nEnough for an apartment, salon or small café\nRuns your branded WiFi page and guest list"],
+database/blueprints/public_pages.php:1736:                    ['id' => 'pro', 'name' => 'TenaFi Pro', 'badge' => 'Busy spaces', 'best_for' => 'Restaurants, busy cafés, villas, clinics, gyms and lounges', 'coverage' => '140 m²', 'coverage_label' => 'coverage', 'capacity' => '300+', 'capacity_label' => 'devices at once', 'price_kes' => '42000', 'monthly_kes' => '5000', 'months' => '12', 'style' => 'yellow', 'tagline' => 'For busy indoor spaces: restaurants, lounges, clinics and villas.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz, 5 GHz and 6 GHz\nCoverage | About 140 m²\nDevices at once | 300+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Handles a full restaurant at dinner time\nThree bands keep phones fast when it’s busy\nRuns your branded WiFi page and guest list"],
+database/blueprints/public_pages.php:1737:                    ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'badge' => 'Outdoor & events', 'best_for' => 'Gardens, terraces, events, weddings and large venues', 'coverage' => '465 m²', 'coverage_label' => 'open space', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '48000', 'monthly_kes' => '5500', 'months' => '12', 'style' => 'dark', 'tagline' => 'Weatherproof WiFi for gardens, terraces and events.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 465 m² of open space\nDevices at once | 200+\nWhere it goes | Pole or wall, outdoors\nWeather | Built for sun, dust and rain\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Covers a garden, terrace or event lawn\nWeatherproof, so it stays up all year\nWorks with a Lite or Pro indoors on one network"],
+database/blueprints/public_pages.php:1748:                    ['title' => 'Installed for you', 'text' => 'Our team fits and tests it.'],
+database/blueprints/public_pages.php:1761:                'included' => "Installed and tested by our team\nYour logo and colours on the WiFi page\nYour guest list, reviews and campaigns\nMonitored and updated from TenaFi",
+database/blueprints/public_pages.php:1763:                // "How it's installed" on /pricing and each device page. A step shows once its picture
+database/blueprints/public_pages.php:1765:                'install_title' => 'How it’s installed',
+database/blueprints/public_pages.php:1789:                // "How it's installed": step 2 (on a wall) has no picture yet, so it doesn't show.
+database/blueprints/public_pages.php:1803:                'subtitle' => 'Same device, same plans, same service. Buying upfront is the best value; paying monthly spreads the device over your first 12 months.',
+database/blueprints/public_pages.php:1806:                    ['badge' => 'Best value', 'title' => 'Buy the device', 'text' => 'Pay for your TenaFi device and installation once, and it’s yours. Then just your monthly plan.', 'steps' => "One-off: device + installation\nMonthly: your plan from {cheapest}\nMonth to month, 30 days’ notice", 'style' => 'dark'],
+database/blueprints/public_pages.php:1807:                    ['badge' => 'Nothing upfront', 'title' => 'Pay monthly', 'text' => 'No upfront cost. Your device is spread over 12 months on top of your plan, then your price drops.', 'steps' => "KES 0 upfront\nPlan + device, months 1–12\nFrom month 13: plan price only, and the device is yours", 'style' => 'light'],
+database/blueprints/public_pages.php:1809:                // The table: one row for upfront, one per device, a column per live plan.
+database/blueprints/public_pages.php:1811:                'row_upfront' => 'Bought the device upfront',
+database/blueprints/public_pages.php:1812:                'row_upfront_note' => 'every month',
+database/blueprints/public_pages.php:1820:                'example_upfront' => 'Buy the device',
+database/blueprints/public_pages.php:1821:                'example_monthly' => 'Pay monthly',
+database/blueprints/public_pages.php:1822:                'example_saving' => 'Buying upfront saves this café in year one',
+database/blueprints/public_pages.php:1824:                    ['title' => 'Book a demo first', 'text' => 'On a call, a video call or a visit, we show you TenaFi and survey your space. Your device payment or first monthly charge starts after installation.'],
+database/blueprints/public_pages.php:1825:                    ['title' => 'Short-term rentals', 'text' => 'Priced per unit, with one device per unit.'],
+database/blueprints/public_pages.php:1826:                    ['title' => 'Leaving early on monthly', 'text' => 'Pay off the rest of the device or return it. Upfront: 30 days’ notice.'],
+database/blueprints/public_pages.php:1828:                'footnote' => 'Prices in KES. Paying yearly on the upfront option: 2 months free.',
+resources/js/Components/CMS/SectionEditor.jsx:59:        { value: 'trial', label: 'Trial (banner: ticks, counter, pricing card)' },
+resources/js/Components/Events/EventPayment.jsx:10:const kes = (n) => `KES ${Number(n || 0).toLocaleString()}`;
+resources/js/Components/Events/EventPayment.jsx:26:                        <h3>Event paid{payment.amount ? ` · ${kes(payment.amount)}` : ''}</h3>
+resources/js/Components/Events/EventPayment.jsx:108:                <b>{kes(payment.amount)}</b>
+resources/js/Components/Events/EventPayment.jsx:127:                                <PillButton variant="primary" type="submit" disabled={processing} icon={<Smartphone size={16} />}>Pay {kes(payment.amount)}</PillButton>
+resources/js/Components/Events/EventPayment.jsx:134:                                <PillButton variant="primary" onClick={payCard} disabled={processing} icon={<CreditCard size={16} />}>Pay {kes(payment.amount)} by card</PillButton>
+resources/js/Components/Public/AnnouncementBar.jsx:7:const fill = (text, trial) => text.replace(/\{(taken|total|left)\}/g, (_, key) => String(trial[key]));
+resources/js/Components/Public/AnnouncementBar.jsx:12: * from the free trial slot counter; without it, "text_without_slots" is used.
+resources/js/Components/Public/AnnouncementBar.jsx:16:    const { trial } = usePage().props;
+resources/js/Components/Public/AnnouncementBar.jsx:24:    const text = usesSlots && !trial?.total ? getText(bar, 'text_without_slots') : fill(getText(bar, 'text'), trial || {});
+resources/js/Components/Public/Mockup.jsx:22: *   mpesa       to: Pay KES 2,000 to …?   ok: Paid. Your host has been told.
+resources/js/Components/Public/PayOptions.jsx:4:import { formatKes, planMonthly, yearOne, kesPerUsd, aboutUsd, readChoice } from '@/lib/pricingMath';
+resources/js/Components/Public/PayOptions.jsx:9: * device, or pay monthly with a device add-on for its first 12 months. The
+resources/js/Components/Public/PayOptions.jsx:23:    const own = extractItems(section, 'devices', ['id', 'name', 'image', 'coverage', 'capacity', 'best_for', 'price_kes', 'monthly_addon_kes', 'addon_months'])
+resources/js/Components/Public/PayOptions.jsx:26:            const kes = (v) => Number(String(stripHtml(v ?? '')).replace(/\D/g, '')) || 0;
+resources/js/Components/Public/PayOptions.jsx:37:                price_kes: kes(d.price_kes),
+resources/js/Components/Public/PayOptions.jsx:38:                monthly_kes: kes(d.monthly_addon_kes),
+resources/js/Components/Public/PayOptions.jsx:39:                months: kes(d.addon_months) || 12,
+resources/js/Components/Public/PayOptions.jsx:42:    return own.length ? own : shared.filter((d) => d.name && d.price_kes > 0);
+resources/js/Components/Public/PayOptions.jsx:87:    const planKes = Number(String(plan.price_kes ?? '').replace(/\D/g, '')) || 0;
+resources/js/Components/Public/PayOptions.jsx:88:    if (!planKes || pay !== 'monthly' || !device) return null;
+resources/js/Components/Public/PayOptions.jsx:89:    const monthly = planMonthly(planKes, pay, device);
+resources/js/Components/Public/PayOptions.jsx:90:    const rate = kesPerUsd(planKes, stripHtml(plan.unit));
+resources/js/Components/Public/PayOptions.jsx:92:        amount: formatKes(monthly),
+resources/js/Components/Public/PayOptions.jsx:94:        then: fill(text(section, 'monthly_price_line', 'for {months} months, then {plan}/month'), { months: device.months, plan: formatKes(planKes) }),
+resources/js/Components/Public/PayOptions.jsx:138:        { value: 'monthly', label: text(section, 'pay_monthly_label', 'Pay monthly'), badge: text(section, 'pay_monthly_badge'), body: text(section, 'pay_monthly_text'), terms: getContent(section, 'pay_monthly_terms', '') },
+resources/js/Components/Public/PayOptions.jsx:166:                    options={devices.map((d) => ({ value: d.id, label: d.name, addon: d.monthly_kes }))}
+resources/js/Components/Public/PayOptions.jsx:173:                            <small>+{formatKes(o.addon)}/mo</small>
+resources/js/Components/Public/PayOptions.jsx:186:    const priceLine = text(section, 'device_price_line', 'or +{addon}/month for {months} months');
+resources/js/Components/Public/PayOptions.jsx:200:                        <span className="pay-device__price">{formatKes(d.price_kes)}</span>
+resources/js/Components/Public/PayOptions.jsx:201:                        {d.monthly_kes > 0 && <span className="pay-device__monthly">{fill(priceLine, { addon: formatKes(d.monthly_kes), months: d.months })}</span>}
+resources/js/Components/Public/PayOptions.jsx:215:    const planKes = Number(String(plan?.price_kes ?? '').replace(/\D/g, '')) || 0;
+resources/js/Components/Public/PayOptions.jsx:216:    if (!label || !planKes || !device) return null;
+resources/js/Components/Public/PayOptions.jsx:218:    const year = yearOne(planKes, device);
+resources/js/Components/Public/PayOptions.jsx:222:                label, buy: formatKes(year.buy), monthly: formatKes(year.monthly), saving: formatKes(year.saving),
+resources/js/Components/Public/TrialSlots.css:3:/* Free trial slot counter (design: Glen's tenafi-trial.css). */
+resources/js/Components/Public/TrialSlots.css:4:.trial-slots {
+resources/js/Components/Public/TrialSlots.css:12:.trial-slots__top {
+resources/js/Components/Public/TrialSlots.css:17:.trial-slots__top b {
+resources/js/Components/Public/TrialSlots.css:21:.trial-slots__top span {
+resources/js/Components/Public/TrialSlots.css:26:.trial-slots__bar {
+resources/js/Components/Public/TrialSlots.css:33:.trial-slots__bar span {
+resources/js/Components/Public/TrialSlots.css:39:.trial-slots--dark .trial-slots__bar {
+resources/js/Components/Public/TrialSlots.css:44:    .trial-slots__bar span {
+resources/js/Components/Public/TrialSlots.jsx:10: * "20 of 50 free trial slots taken". The numbers are real trial bookings
+resources/js/Components/Public/TrialSlots.jsx:11: * (App\Support\TrialSlots); the wording is Site-wide → Free trial slot counter.
+resources/js/Components/Public/TrialSlots.jsx:15:    const { trial } = usePage().props;
+resources/js/Components/Public/TrialSlots.jsx:20:    if (!trial?.total) return null;
+resources/js/Components/Public/TrialSlots.jsx:23:    const full = trial.left <= 0;
+resources/js/Components/Public/TrialSlots.jsx:24:    const main = fill(full ? getText(copy, 'full_text', 'All {total} free trial slots taken') : getText(copy, 'taken_text', '{taken} of {total} free trial slots taken'), trial);
+resources/js/Components/Public/TrialSlots.jsx:27:        : fill(trial.left === 1 ? getText(copy, 'last_text', 'Only 1 slot left') : getText(copy, 'left_text', '{left} slots left'), trial);
+resources/js/Components/Public/TrialSlots.jsx:28:    const pct = Math.round((trial.taken / trial.total) * 100);
+resources/js/Components/Public/TrialSlots.jsx:31:        <div className={`trial-slots trial-slots--${tone} ${className}`}>
+resources/js/Components/Public/TrialSlots.jsx:32:            <div className="trial-slots__top">
+resources/js/Components/Public/TrialSlots.jsx:36:            <div className="trial-slots__bar" role="progressbar" aria-valuemin={0} aria-valuemax={trial.total} aria-valuenow={trial.taken} aria-label={main}>
+resources/js/Components/Public/WhatsAppButton.css:1:/* Floating WhatsApp button (design: Glen's tenafi-trial.css). */
+resources/js/Components/Public/splashForm.js:8: * Takes the field lines an admin typed in a drawing's "screen" and returns
+resources/js/Components/V2/InstallSteps.css:3:/* "How it's installed" (InstallSteps.jsx): one card per step, the first
+resources/js/Components/V2/InstallSteps.jsx:7: * "How it's installed": how a TenaFi device connects (internet, router, one
+resources/js/Components/V2/InstallSteps.jsx:21:        <section id="installed" className={`${SECTION_OFFSET} py-16 ${className}`}>
+resources/js/Components/V2/InstallSteps.jsx:26:                    title={stripHtml(section?.content?.install_title ?? '') || 'How it’s installed'}
+resources/js/Components/V2/Sections.jsx:18: * and the audience pages. Each takes a CMS section (the same content keys as
+resources/js/Components/V2/Sections.jsx:473: * A page's plans, with the two ways to pay (buy the device, or pay monthly
+resources/js/Components/V2/Sections.jsx:489:    const rows = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'price_kes', 'unit', 'features', 'cta', 'variant'])
+resources/js/Components/V2/Sections.jsx:590:export function Trial({ section, site, id, joinHref }) {
+resources/js/Components/V2/V2Site.jsx:149:                    { icon: Sparkles, text: 'Installed and run for you' },
+resources/js/Components/Welcome/CtaBanner.css:35:/* "trial" (homepage): yellow, the trial terms and the after-the-trial pricing card. */
+resources/js/Components/Welcome/CtaBanner.css:36:.cta-trial {
+resources/js/Components/Welcome/CtaBanner.css:43:    .cta-trial {
+resources/js/Components/Welcome/CtaBanner.css:50:.cta-trial .cta-banner-badge {
+resources/js/Components/Welcome/CtaBanner.css:87:.cta-trial__slots .trial-slots__bar {
+resources/js/Components/Welcome/CtaBanner.css:91:.cta-trial__slots .trial-slots__bar span {
+resources/js/Components/Welcome/CtaBanner.css:95:.cta-trial__slots .trial-slots__top {
+resources/js/Components/Welcome/CtaBanner.css:175:/* "Plus a TenaFi device from KES 25,000, ..." under the plans. */
+resources/js/Components/Welcome/CtaBanner.jsx:25: * Style "trial" (homepage) adds ticks, the slot counter and an
+resources/js/Components/Welcome/CtaBanner.jsx:26: * "After the trial" card listing the plans from the live /hosts pricing.
+resources/js/Components/Welcome/CtaBanner.jsx:38:    const trial = stripHtml(getContent(section, 'style', '')) === 'trial';
+resources/js/Components/Welcome/CtaBanner.jsx:56:    if (!trial) {
+resources/js/Components/Welcome/CtaBanner.jsx:72:            <div className="cta-trial">
+resources/js/Components/Welcome/Hero.jsx:15:/** "From KES 3,000": the cheapest plan on the live /hosts pricing section. */
+resources/js/Components/Welcome/Hero.jsx:23:    const cheapest = devices.filter((d) => d.price_kes > 0).sort((a, b) => a.price_kes - b.price_kes)[0];
+resources/js/Components/Welcome/Hero.jsx:25:    return line.replace('{device_price}', cheapest ? `KES ${cheapest.price_kes.toLocaleString('en-KE')}` : '');
+resources/js/Components/Welcome/Hero.jsx:30:    const priced = plans.filter(p => p.price_kes > 0).sort((a, b) => a.price_kes - b.price_kes);
+resources/js/Components/Welcome/JourneySection.css:3:/* "What you get in your first month" (ported from Glen's tenafi-trial.css journey styles).
+resources/js/Components/Welcome/PartnersCarousel.jsx:14: * it shows the logo and takes the logo's main colour; otherwise their initial.
+resources/js/Components/Welcome/Pricing.css:210:/* Long unit text ("per unit, per month (about $35)") sits under the price. */
+resources/js/Components/Welcome/Pricing.css:215:.pricing-trial-slots {
+resources/js/Components/Welcome/Pricing.jsx:78:    const planFields = ['id', 'label', 'tagline', 'badge', 'price', 'price_kes', 'unit', 'features', 'description', 'cta', 'variant'];
+resources/js/Components/Welcome/Pricing.jsx:102:            {isTruthy(getContent(section, 'show_slots', '0')) && <TrialSlots className="pricing-trial-slots" />}
+resources/js/Components/Welcome/SignupForm.css:209:.signup-trial-slots {
+resources/js/Components/Welcome/SignupForm.jsx:36:const formatKes = (n) => `KES ${Math.round(n).toLocaleString('en-KE')}`;
+resources/js/Components/Welcome/SignupForm.jsx:77:                const base = Number(plans[o.value]?.price_kes) || 0;
+resources/js/Components/Welcome/SignupForm.jsx:84:                                {discount > 0 && <s>{formatKes(base)}</s>} {formatKes(base * (1 - discount / 100))}
+resources/js/Components/Welcome/SignupForm.jsx:165:    // Plan prices come from this page's pricing section (plans.{i}.id / price_kes).
+resources/js/Components/Welcome/SignupForm.jsx:168:        return Object.fromEntries(extractItems(pricing, 'plans', ['id', 'label', 'price_kes']).map((p) => [p.id, p]));
+resources/js/Components/Welcome/SignupForm.jsx:192:            pick('devicePayment', pay === 'monthly' ? 'monthly' : pay === 'buy' ? 'upfront' : null);
+resources/js/Components/Welcome/SignupForm.jsx:214:        suffix: text('price_suffix', 'per month'),
+resources/js/Components/Welcome/SignupForm.jsx:218:    const basePrice = Number(plans[selectedPlan]?.price_kes) || 0;
+resources/js/Components/Welcome/SignupForm.jsx:224:        const once = `${formatKes(device.price_kes)} once, installed`;
+resources/js/Components/Welcome/SignupForm.jsx:225:        const spread = `+${formatKes(device.monthly_kes)} a month for ${device.months} months`;
+resources/js/Components/Welcome/SignupForm.jsx:226:        if (values.devicePayment === 'upfront') return [['Device', `${device.name}: ${once}`]];
+resources/js/Components/Welcome/SignupForm.jsx:229:                .concat(estimatedPrice ? [[`Monthly, months 1–${device.months}`, `${formatKes(estimatedPrice + device.monthly_kes)} ${planProps.suffix}`]] : []);
+resources/js/Components/Welcome/SignupForm.jsx:256:            estimatedPriceKES: estimatedPrice,
+resources/js/Components/Welcome/SignupForm.jsx:311:        .concat(planField ? [['Estimated price', estimatedPrice ? `${formatKes(estimatedPrice)} ${planProps.suffix}` : 'To be recommended']] : [])
+resources/js/Components/Welcome/SignupForm.jsx:327:            {isTruthy(getContent(section, 'show_slots', '0')) && <TrialSlots className="signup-trial-slots" />}
+resources/js/Components/Welcome/WorthCalculator.jsx:6:const kes = (v) => `KES ${Math.round(v).toLocaleString('en-KE')}`;
+resources/js/Components/Welcome/WorthCalculator.jsx:19:            { id: 'rate', label: 'Average nightly rate', min: 2000, max: 40000, step: 500, value: 7000, fmt: kes },
+resources/js/Components/Welcome/WorthCalculator.jsx:30:                { v: kes(direct), l: `direct-booking revenue, if ${pct(a.hosts_direct_share)} of nights come back direct`, hi: true },
+resources/js/Components/Welcome/WorthCalculator.jsx:31:                { v: kes(direct * a.hosts_ota_fee / 100), l: 'OTA fees you keep on those nights' },
+resources/js/Components/Welcome/WorthCalculator.jsx:39:            { id: 'spend', label: 'Average spend', min: 200, max: 10000, step: 100, value: 600, fmt: kes },
+resources/js/Components/Welcome/WorthCalculator.jsx:51:                { v: kes(redeemed * v.spend), l: 'spent on those return visits', hi: true },
+resources/js/Emails/PaymentReceipt.jsx:69:                                <Text style={receiptValueStyle}>KES {amount}</Text>
+resources/js/Pages/Guest/Portal.jsx:16:const kes = (n) => `KES ${Number(n || 0).toLocaleString('en-KE')}`;
+resources/js/Pages/Guest/Portal.jsx:142:                                            <span className="guest-portal-amenity-price">{kes(amenity.price)}</span>
+resources/js/Pages/Guest/Portal.jsx:152:                                        {payingFor?.id === amenity.id ? `Pay ${kes(amenity.price)}` : 'Order'}
+resources/js/Pages/Guest/Portal.jsx:173:                            <p className="guest-portal-pay-hint">Tap “Pay {kes(payingFor.price)}” above, then enter your M-Pesa PIN on your phone.</p>
+resources/js/Pages/Guest/Portal.jsx:182:                                    <span>{o.amenity?.name} · {kes(o.total)}</span>
+resources/js/Pages/Public/V2/Audience.jsx:9:    Html, PHOTOS, screen, sectionId, navLabel, Gap, CompareTable, Credibility, Pricing, Faq, Trial,
+resources/js/Pages/Public/V2/Audience.jsx:95:    cta_banner: Trial,
+resources/js/Pages/Public/V2/Device.jsx:8:import { devicesFrom, formatKes, fill, contentText as text } from '@/lib/devices';
+resources/js/Pages/Public/V2/Device.jsx:55:                                    <span className="pricing-label">{text(section, 'upfront_label', 'Buy upfront, installed')}</span>
+resources/js/Pages/Public/V2/Device.jsx:56:                                    <b>{formatKes(device.price)}</b>
+resources/js/Pages/Public/V2/Device.jsx:59:                                            {fill(monthlyLine, { monthly: `+${formatKes(device.monthly)}`, months: device.months })}
+resources/js/Pages/Public/V2/Home.jsx:8:    Partners, Audiences, Gap, Features, Showcase, HowItWorks, CompareTable, Credibility, Pricing, Faq, Trial,
+resources/js/Pages/Public/V2/Home.jsx:21:    const trial = find('cta_banner');
+resources/js/Pages/Public/V2/Home.jsx:31:    const joinHref = trial ? `#${sectionId(trial)}` : pathsHref;
+resources/js/Pages/Public/V2/Home.jsx:141:    cta_banner: Trial,
+resources/js/Pages/Public/V2/Pricing.jsx:8:import { devicesFrom, formatKes, monthlyWithDevice, firstYear, fill, contentText as text } from '@/lib/devices';
+resources/js/Pages/Public/V2/Pricing.jsx:31:                {pay && <WaysToPay section={pay} devices={devices} plans={plans.filter((p) => p.price_kes > 0)} />}
+resources/js/Pages/Public/V2/Pricing.jsx:45: * with a switch between rentals (per unit) and businesses (per location).
+resources/js/Pages/Public/V2/Pricing.jsx:74:    const upfront = text(section, 'upfront_label', 'Buy upfront, installed');
+resources/js/Pages/Public/V2/Pricing.jsx:97:                                    <span className="pricing-label">{upfront}</span>
+resources/js/Pages/Public/V2/Pricing.jsx:98:                                    <b>{formatKes(d.price)}</b>
+resources/js/Pages/Public/V2/Pricing.jsx:101:                                            {fill(monthlyLine, { monthly: `+${formatKes(d.monthly)}`, months: d.months })}
+resources/js/Pages/Public/V2/Pricing.jsx:145:    const cheapest = plans.length ? formatKes(Math.min(...plans.map((p) => p.price_kes))) : '';
+resources/js/Pages/Public/V2/Pricing.jsx:149:    const year = plan && device ? firstYear(plan.price_kes, device) : null;
+resources/js/Pages/Public/V2/Pricing.jsx:182:                                    <th scope="row">{text(section, 'row_upfront')}<small>{text(section, 'row_upfront_note')}</small></th>
+resources/js/Pages/Public/V2/Pricing.jsx:183:                                    {plans.map((p) => <td key={p.id}>{formatKes(p.price_kes)}</td>)}
+resources/js/Pages/Public/V2/Pricing.jsx:191:                                        {plans.map((p) => <td key={p.id}>{formatKes(monthlyWithDevice(p.price_kes, d))}</td>)}
+resources/js/Pages/Public/V2/Pricing.jsx:208:                                <span className="pricing-label">{text(section, 'example_upfront', 'Buy the device')}</span>
+resources/js/Pages/Public/V2/Pricing.jsx:209:                                <b>{formatKes(year.upfront)}</b>
+resources/js/Pages/Public/V2/Pricing.jsx:210:                                <span>{formatKes(device.price)} once + {formatKes(plan.price_kes)} × 12</span>
+resources/js/Pages/Public/V2/Pricing.jsx:213:                                <span className="pricing-label">{text(section, 'example_monthly', 'Pay monthly')}</span>
+resources/js/Pages/Public/V2/Pricing.jsx:214:                                <b>{formatKes(year.monthly)}</b>
+resources/js/Pages/Public/V2/Pricing.jsx:215:                                <span>{formatKes(monthlyWithDevice(plan.price_kes, device))} × {Math.min(device.months, 12)}{device.months < 12 ? ` + ${formatKes(plan.price_kes)} × ${12 - device.months}` : ''}</span>
+resources/js/Pages/Public/V2/Pricing.jsx:221:                                <b>{formatKes(year.saving)}</b>
+resources/js/lib/devices.js:2:import { formatKes, planMonthly, yearOne, splitLines } from '@/lib/pricingMath';
+resources/js/lib/devices.js:9:export { formatKes };
+resources/js/lib/devices.js:11:const kes = (value) => Number(String(stripHtml(value ?? '')).replace(/\D/g, '')) || 0;
+resources/js/lib/devices.js:16:    return extractItems(section, 'items', ['id', 'name', 'badge', 'best_for', 'coverage', 'coverage_label', 'capacity', 'capacity_label', 'price_kes', 'monthly_kes', 'months', 'style', 'tagline', 'specs', 'highlights'])
+resources/js/lib/devices.js:26:            price: kes(d.price_kes),
+resources/js/lib/devices.js:27:            monthly: kes(d.monthly_kes),
+resources/js/lib/devices.js:28:            months: kes(d.months) || 12,
+resources/js/lib/devices.js:43:const asPriced = (device) => device && { price_kes: device.price, monthly_kes: device.monthly, months: device.months };
+resources/js/lib/devices.js:45:export const monthlyWithDevice = (planKes, device) => planMonthly(planKes, 'monthly', asPriced(device));
+resources/js/lib/devices.js:48:export function firstYear(planKes, device) {
+resources/js/lib/devices.js:49:    const { buy, monthly, saving } = yearOne(planKes, asPriced(device));
+resources/js/lib/devices.js:50:    return { upfront: buy, monthly, saving };
+resources/js/lib/helpArticles.js:250:            'Go to WiFi Access → Amenities and add each extra with a name, price in KES and a short description.',
+resources/js/lib/helpArticles.js:398:            'You pay per unit (a rental unit, a business location or a venue) per month, on the Basic, Starter or Growth plan. 10 or more units get 20% off and 50 or more get 30% off. Extra devices at the same site are charged per device.',
+resources/js/lib/helpArticles.js:399:            'Pay monthly, quarterly (5% off) or yearly (2 months free). Pay by M-Pesa (a prompt on your phone) or debit/credit card. Each payment is emailed as a receipt and listed under Billing.',
+resources/js/lib/helpArticles.js:530:            'Sign-ups lists trial requests and enquiries from the public site; Convert opens an account of the right type and emails the owner a link to set their password. Accounts lists every account, with its type, plan and sites.',
+resources/js/lib/landingSchema.js:156:            // "How it's installed": one picture per step; a step shows once it has one.
+resources/js/lib/landingSchema.js:157:            .concat(featureSlots(contentKeys, 'install_steps', 'install_{i}_image', 'How it’s installed, step {n}: picture')
+resources/js/lib/pricingMath.js:6: * A device has `price_kes` (bought upfront, installed), `monthly_kes` (the
+resources/js/lib/pricingMath.js:10:/** "KES 9,500" */
+resources/js/lib/pricingMath.js:11:export const formatKes = (n) => `KES ${Math.round(Number(n) || 0).toLocaleString('en-KE')}`;
+resources/js/lib/pricingMath.js:14:export function planMonthly(planKes, pay, device) {
+resources/js/lib/pricingMath.js:15:    return pay === 'monthly' && device ? planKes + (device.monthly_kes || 0) : planKes;
+resources/js/lib/pricingMath.js:19:export function yearOne(planKes, device) {
+resources/js/lib/pricingMath.js:21:    const buy = (device?.price_kes || 0) + planKes * 12;
+resources/js/lib/pricingMath.js:22:    const monthly = (planKes + (device?.monthly_kes || 0)) * months + planKes * (12 - months);
+resources/js/lib/pricingMath.js:27: * KES per US dollar implied by a plan's own "(about $23)" unit text, so new
+resources/js/lib/pricingMath.js:30:export function kesPerUsd(planKes, unitText) {
+resources/js/lib/pricingMath.js:33:    return usd > 0 && planKes > 0 ? planKes / usd : null;
+resources/js/lib/pricingMath.js:36:/** "(about $73)" for a KES amount at that rate, or ''. */
+resources/js/lib/pricingMath.js:37:export const aboutUsd = (kes, rate) => (rate ? `(about $${Math.round(kes / rate)})` : '');
+resources/views/portal/venue.blade.php:46:                        @if($item->price > 0)<span class="price">KES {{ number_format($item->price) }}</span>@endif
