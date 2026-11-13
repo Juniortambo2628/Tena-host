@@ -68,12 +68,16 @@ class DeviceAgreementController extends Controller
             ->orderBy('first_name')->get(['id', 'first_name', 'last_name', 'email'])
             ->map(fn (User $u) => ['id' => $u->id, 'name' => trim("{$u->first_name} {$u->last_name}") ?: $u->email, 'email' => $u->email]);
 
+        $terms = LandingPage::deviceInstalments();
+
         return Inertia::render('Admin/Devices/Index', [
             'agreements' => $agreements,
             'clients' => $clients,
             'sites' => Property::orderBy('name')->get(['id', 'name', 'user_id']),
-            // Prices from /pricing (Admin -> Public Pages -> Devices & pricing), to fill the form.
-            'devices' => collect(LandingPage::liveDevices())->map(fn ($d) => collect($d)->only(['id', 'name', 'price_kes', 'monthly_kes', 'months']))->values(),
+            // Prices from /pricing (Admin -> Public Pages -> Devices & pricing), to fill the form,
+            // with the instalment terms still stored there (the public pages no longer show them).
+            'devices' => collect(LandingPage::liveDevices())->map(fn ($d) => collect($d)->only(['id', 'name', 'price_kes'])->all()
+                + ($terms[$d['id']] ?? ['monthly_kes' => 0, 'months' => 12]))->values(),
             'statuses' => DeviceAgreement::STATUSES,
             'enabled' => DeviceAgreement::enabled(),
         ]);
