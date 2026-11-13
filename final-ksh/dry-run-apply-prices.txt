@@ -1,0 +1,973 @@
+[pricing] new section: faq (the offer's FAQs)
+[hosts/pricing] free_months
+  - (new field)
+  + 3
+[hosts/pricing] base_free_plan
+  - (new field)
+  + basic
+[hosts/pricing] show_free_plan
+  - (new field)
+  + 1
+[hosts/pricing] price_unit
+  - (new field)
+  + per unit
+[hosts/pricing] devices_picker_label
+  - (new field)
+  + Your TenaFi device
+[hosts/pricing] intro_line
+  - (new field)
+  + a month for your first {free_months} months
+[hosts/pricing] then_line
+  - (new field)
+  + then {plan}/month
+[hosts/pricing] device_line_card
+  - (new field)
+  + plus {device}, {device_price} once
+[hosts/pricing] free_plan_line
+  - (new field)
+  + forever
+[hosts/pricing] intro_free_phrase
+  - (new field)
+  + {free_months} months free
+[hosts/pricing] intro_paid_phrase
+  - (new field)
+  + {intro}/month for {free_months} months
+[hosts/pricing] example_full_text
+  - (new field)
+  + {label}: {device_price} once, then {plan}/month. Year one: {year_one}.
+[hosts/pricing] offer_note
+  - (new field)
+  + Month to month after your free months, 30 days’ notice. Your device is yours.
+[hosts/pricing] offer_headline
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours.
+[hosts/pricing] steps.0.title
+  - (new field)
+  + Get your TenaFi device
+[hosts/pricing] steps.0.text
+  - (new field)
+  + Pay once. We set it up for you.
+[hosts/pricing] steps.1.title
+  - (new field)
+  + {free_months} months of Basic, free
+[hosts/pricing] steps.1.text
+  - (new field)
+  + Your WiFi page, guest homepage, review requests and email campaigns.
+[hosts/pricing] steps.2.title
+  - (new field)
+  + Then choose
+[hosts/pricing] steps.2.text
+  - (new field)
+  + Stay on Free, or pick Basic, Starter or Growth. The device is yours.
+[hosts/pricing] subtitle
+  - The device, installation, WiFi page, guest list and support. Month to month.
+  + Your WiFi page, guest list and support, month to month. Get your TenaFi device and your first 3 months of Basic are free. Installations from Monday 16...
+[hosts/pricing] footnote
+  - Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your Tena...
+  + Month to month after your free months; cancel with 30 days’ notice. Pay yearly and get 2 months free, from month 4. Multi-unit operators: 20% off from...
+[hosts/pricing] example_text
+  - {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+  + {label}: {device_price} once, {intro_phrase}, then {plan}. Year one: {year_one}.
+[hosts/pricing] example_label
+  - A one-bedroom rental on Starter with TenaFi Lite
+  + A one-bedroom rental on Basic with TenaFi Lite
+[hosts/pricing] devices_note
+  - Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+  + Coverage is for open space. Walls and floors reduce it, so we check your space before we set it up.
+[hosts/pricing] example_plan
+  - starter
+  + basic
+[hosts/pricing] plans.3.id
+  - (new field)
+  + free
+[hosts/pricing] plans.3.label
+  - (new field)
+  + Free
+[hosts/pricing] plans.3.tagline
+  - (new field)
+  + Your guest list, forever
+[hosts/pricing] plans.3.price
+  - (new field)
+  + KES 0
+[hosts/pricing] plans.3.price_kes
+  - (new field)
+  + 0
+[hosts/pricing] plans.3.unit
+  - (new field)
+  + per unit, per month
+[hosts/pricing] plans.3.features
+  - (new field)
+  + Branded WiFi page that captures every guest / Your guest list, export it any time / Guest count in your dashboard
+[hosts/pricing] plans.3.note
+  - (new field)
+  + One WiFi page design. Support by WhatsApp.
+[hosts/pricing] plans.3.cta
+  - (new field)
+  + Get your device
+[hosts/pricing] plans.3.variant
+  - (new field)
+  + outline
+[hosts/pricing] plans.0.features
+  - Branded WiFi page and guest list / A review request to every guest, by SMS and email / A campaign every quarter
+  + Everything in Free / Guest homepage: house guide, local tips, contact host / A review request after every stay, by email and SMS / 1 email campaign a...
+[hosts/pricing] plans.0.messages_note
+  - (new field)
+  + Email campaigns included. 100 SMS review requests a month.
+[hosts/pricing] plans.0.cta
+  - Choose Basic
+  + Start 3 months free
+[hosts/pricing] plans.1.features
+  - Everything in Basic / A campaign and results report every month [[monthly_report]] / Upsells, and your Tena Direct page at 0% commission [[tena_direct...
+  + Everything in Basic / 1 direct-booking campaign a month, by WhatsApp or SMS / Paid extras by M-Pesa: late checkout, extra nights, transfers [[mpesa_ex...
+[hosts/pricing] plans.1.messages_note
+  - (new field)
+  + 300 WhatsApp or SMS messages a month.
+[hosts/pricing] plans.2.features
+  - Everything in Starter / 2 to 4 campaigns a month / Featured on Tena Direct, plus VIP WiFi tiers [[vip_wifi]]
+  + Everything in Starter / 2 to 4 campaigns a month, timed to your gaps and the holidays / Birthday and anniversary offers / Featured on Tena Direct [[te...
+[hosts/pricing] plans.2.messages_note
+  - (new field)
+  + 700 WhatsApp or SMS messages a month.
+[v2-hosts/pricing] free_months
+  - (new field)
+  + 3
+[v2-hosts/pricing] base_free_plan
+  - (new field)
+  + basic
+[v2-hosts/pricing] show_free_plan
+  - (new field)
+  + 1
+[v2-hosts/pricing] price_unit
+  - (new field)
+  + per unit
+[v2-hosts/pricing] devices_picker_label
+  - (new field)
+  + Your TenaFi device
+[v2-hosts/pricing] intro_line
+  - (new field)
+  + a month for your first {free_months} months
+[v2-hosts/pricing] then_line
+  - (new field)
+  + then {plan}/month
+[v2-hosts/pricing] device_line_card
+  - (new field)
+  + plus {device}, {device_price} once
+[v2-hosts/pricing] free_plan_line
+  - (new field)
+  + forever
+[v2-hosts/pricing] intro_free_phrase
+  - (new field)
+  + {free_months} months free
+[v2-hosts/pricing] intro_paid_phrase
+  - (new field)
+  + {intro}/month for {free_months} months
+[v2-hosts/pricing] example_full_text
+  - (new field)
+  + {label}: {device_price} once, then {plan}/month. Year one: {year_one}.
+[v2-hosts/pricing] offer_note
+  - (new field)
+  + Month to month after your free months, 30 days’ notice. Your device is yours.
+[v2-hosts/pricing] offer_headline
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours.
+[v2-hosts/pricing] steps.0.title
+  - (new field)
+  + Get your TenaFi device
+[v2-hosts/pricing] steps.0.text
+  - (new field)
+  + Pay once. We set it up for you.
+[v2-hosts/pricing] steps.1.title
+  - (new field)
+  + {free_months} months of Basic, free
+[v2-hosts/pricing] steps.1.text
+  - (new field)
+  + Your WiFi page, guest homepage, review requests and email campaigns.
+[v2-hosts/pricing] steps.2.title
+  - (new field)
+  + Then choose
+[v2-hosts/pricing] steps.2.text
+  - (new field)
+  + Stay on Free, or pick Basic, Starter or Growth. The device is yours.
+[v2-hosts/pricing] footnote
+  - Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your Tena...
+  + Month to month after your free months; cancel with 30 days’ notice. Pay yearly and get 2 months free, from month 4. Multi-unit operators: 20% off from...
+[v2-hosts/pricing] example_text
+  - {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+  + {label}: {device_price} once, {intro_phrase}, then {plan}. Year one: {year_one}.
+[v2-hosts/pricing] example_label
+  - A one-bedroom rental on Starter with TenaFi Lite
+  + A one-bedroom rental on Basic with TenaFi Lite
+[v2-hosts/pricing] devices_note
+  - Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+  + Coverage is for open space. Walls and floors reduce it, so we check your space before we set it up.
+[v2-hosts/pricing] subtitle
+  - Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page, you keep their contacts, and we send the offers that...
+  + Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page, you keep their contacts, and we send the offers that...
+[v2-hosts/pricing] example_plan
+  - starter
+  + basic
+[v2-hosts/pricing] plans.3.id
+  - (new field)
+  + free
+[v2-hosts/pricing] plans.3.label
+  - (new field)
+  + Free
+[v2-hosts/pricing] plans.3.tagline
+  - (new field)
+  + Your guest list, forever
+[v2-hosts/pricing] plans.3.price
+  - (new field)
+  + KES 0
+[v2-hosts/pricing] plans.3.price_kes
+  - (new field)
+  + 0
+[v2-hosts/pricing] plans.3.unit
+  - (new field)
+  + per unit, per month
+[v2-hosts/pricing] plans.3.features
+  - (new field)
+  + Branded WiFi page that captures every guest / Your guest list, export it any time / Guest count in your dashboard
+[v2-hosts/pricing] plans.3.note
+  - (new field)
+  + One WiFi page design. Support by WhatsApp.
+[v2-hosts/pricing] plans.3.cta
+  - (new field)
+  + Get your device
+[v2-hosts/pricing] plans.3.variant
+  - (new field)
+  + outline
+[v2-hosts/pricing] plans.0.features
+  - Branded WiFi page and guest list / A review request to every guest, by SMS and email / A campaign every quarter
+  + Everything in Free / Guest homepage: house guide, local tips, contact host / A review request after every stay, by email and SMS / 1 email campaign a...
+[v2-hosts/pricing] plans.0.messages_note
+  - (new field)
+  + Email campaigns included. 100 SMS review requests a month.
+[v2-hosts/pricing] plans.0.cta
+  - Choose Basic
+  + Start 3 months free
+[v2-hosts/pricing] plans.1.features
+  - Everything in Basic / A campaign and results report every month [[monthly_report]] / Upsells, and your Tena Direct page at 0% commission [[tena_direct...
+  + Everything in Basic / 1 direct-booking campaign a month, by WhatsApp or SMS / Paid extras by M-Pesa: late checkout, extra nights, transfers [[mpesa_ex...
+[v2-hosts/pricing] plans.1.messages_note
+  - (new field)
+  + 300 WhatsApp or SMS messages a month.
+[v2-hosts/pricing] plans.2.features
+  - Everything in Starter / 2 to 4 campaigns a month / Featured on Tena Direct, plus VIP WiFi tiers [[vip_wifi]]
+  + Everything in Starter / 2 to 4 campaigns a month, timed to your gaps and the holidays / Birthday and anniversary offers / Featured on Tena Direct [[te...
+[v2-hosts/pricing] plans.2.messages_note
+  - (new field)
+  + 700 WhatsApp or SMS messages a month.
+[business/pricing] free_months
+  - (new field)
+  + 3
+[business/pricing] base_free_plan
+  - (new field)
+  + basic
+[business/pricing] show_free_plan
+  - (new field)
+  + 1
+[business/pricing] price_unit
+  - (new field)
+  + per location
+[business/pricing] devices_picker_label
+  - (new field)
+  + Your TenaFi device
+[business/pricing] intro_line
+  - (new field)
+  + a month for your first {free_months} months
+[business/pricing] then_line
+  - (new field)
+  + then {plan}/month
+[business/pricing] device_line_card
+  - (new field)
+  + plus {device}, {device_price} once
+[business/pricing] free_plan_line
+  - (new field)
+  + forever
+[business/pricing] intro_free_phrase
+  - (new field)
+  + {free_months} months free
+[business/pricing] intro_paid_phrase
+  - (new field)
+  + {intro}/month for {free_months} months
+[business/pricing] example_full_text
+  - (new field)
+  + {label}: {device_price} once, then {plan}/month. Year one: {year_one}.
+[business/pricing] offer_note
+  - (new field)
+  + Month to month after your free months, 30 days’ notice. Your device is yours.
+[business/pricing] offer_headline
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours.
+[business/pricing] steps.0.title
+  - (new field)
+  + Get your TenaFi device
+[business/pricing] steps.0.text
+  - (new field)
+  + Pay once. We set it up for you.
+[business/pricing] steps.1.title
+  - (new field)
+  + {free_months} months of Basic, free
+[business/pricing] steps.1.text
+  - (new field)
+  + Your WiFi page, customer homepage, review requests and email campaigns.
+[business/pricing] steps.2.title
+  - (new field)
+  + Then choose
+[business/pricing] steps.2.text
+  - (new field)
+  + Stay on Free, or pick Basic, Starter or Growth. The device is yours.
+[business/pricing] subtitle
+  - The device, installation, WiFi page, customer list and support. Month to month.
+  + Your WiFi page, customer list and support, month to month. Get your TenaFi device and your first 3 months of Basic are free.
+[business/pricing] footnote
+  - Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. Your TenaFi device is bou...
+  + Month to month after your free months; cancel with 30 days’ notice. Pay yearly and get 2 months free, from month 4. Several locations? We’ll quote gro...
+[business/pricing] example_text
+  - {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+  + {label}: {device_price} once, {intro_phrase}, then {plan}. Year one: {year_one}.
+[business/pricing] devices_note
+  - Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+  + Coverage is for open space. Walls and floors reduce it, so we check your space before we set it up.
+[business/pricing] plans.3.id
+  - (new field)
+  + free
+[business/pricing] plans.3.label
+  - (new field)
+  + Free
+[business/pricing] plans.3.tagline
+  - (new field)
+  + Your customer list, forever
+[business/pricing] plans.3.price
+  - (new field)
+  + KES 0
+[business/pricing] plans.3.price_kes
+  - (new field)
+  + 0
+[business/pricing] plans.3.unit
+  - (new field)
+  + per location, per month
+[business/pricing] plans.3.features
+  - (new field)
+  + Branded WiFi page that captures every customer / Your customer list, export it any time / Customer count in your dashboard
+[business/pricing] plans.3.note
+  - (new field)
+  + One WiFi page design. Support by WhatsApp.
+[business/pricing] plans.3.cta
+  - (new field)
+  + Get your device
+[business/pricing] plans.3.variant
+  - (new field)
+  + outline
+[business/pricing] plans.0.features
+  - A Google review request to every customer / By SMS and email / A campaign every quarter
+  + Everything in Free / Customer homepage: your menu, today’s offer, events / A Google review request after every visit, by email and SMS / 1 email campa...
+[business/pricing] plans.0.messages_note
+  - (new field)
+  + Email campaigns included. 100 SMS review requests a month.
+[business/pricing] plans.0.cta
+  - Choose Basic
+  + Start 3 months free
+[business/pricing] plans.1.features
+  - Everything in Basic / A campaign every month on WhatsApp, SMS and email / A monthly report on reviews and return visits [[monthly_report]]
+  + Everything in Basic / 1 campaign a month by WhatsApp or SMS, to fill quiet days / Birthday treats sent for you / Paid extras and pre-orders by M-Pesa...
+[business/pricing] plans.1.messages_note
+  - (new field)
+  + 300 WhatsApp or SMS messages a month.
+[business/pricing] plans.2.features
+  - Everything in Starter / 2 to 4 campaigns a month / Free and VIP WiFi tiers [[vip_wifi]]
+  + Everything in Starter / 2 to 4 campaigns a month, timed to your gaps and the holidays / Birthday and anniversary offers / Featured on Tena Direct [[te...
+[business/pricing] plans.2.messages_note
+  - (new field)
+  + 700 WhatsApp or SMS messages a month.
+[v2-business/pricing] free_months
+  - (new field)
+  + 3
+[v2-business/pricing] base_free_plan
+  - (new field)
+  + basic
+[v2-business/pricing] show_free_plan
+  - (new field)
+  + 1
+[v2-business/pricing] price_unit
+  - (new field)
+  + per location
+[v2-business/pricing] devices_picker_label
+  - (new field)
+  + Your TenaFi device
+[v2-business/pricing] intro_line
+  - (new field)
+  + a month for your first {free_months} months
+[v2-business/pricing] then_line
+  - (new field)
+  + then {plan}/month
+[v2-business/pricing] device_line_card
+  - (new field)
+  + plus {device}, {device_price} once
+[v2-business/pricing] free_plan_line
+  - (new field)
+  + forever
+[v2-business/pricing] intro_free_phrase
+  - (new field)
+  + {free_months} months free
+[v2-business/pricing] intro_paid_phrase
+  - (new field)
+  + {intro}/month for {free_months} months
+[v2-business/pricing] example_full_text
+  - (new field)
+  + {label}: {device_price} once, then {plan}/month. Year one: {year_one}.
+[v2-business/pricing] offer_note
+  - (new field)
+  + Month to month after your free months, 30 days’ notice. Your device is yours.
+[v2-business/pricing] offer_headline
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours.
+[v2-business/pricing] steps.0.title
+  - (new field)
+  + Get your TenaFi device
+[v2-business/pricing] steps.0.text
+  - (new field)
+  + Pay once. We set it up for you.
+[v2-business/pricing] steps.1.title
+  - (new field)
+  + {free_months} months of Basic, free
+[v2-business/pricing] steps.1.text
+  - (new field)
+  + Your WiFi page, customer homepage, review requests and email campaigns.
+[v2-business/pricing] steps.2.title
+  - (new field)
+  + Then choose
+[v2-business/pricing] steps.2.text
+  - (new field)
+  + Stay on Free, or pick Basic, Starter or Growth. The device is yours.
+[v2-business/pricing] subtitle
+  - The device, installation, WiFi page, customer list and support. Month to month.
+  + Your WiFi page, customer list and support, month to month. Get your TenaFi device and your first 3 months of Basic are free.
+[v2-business/pricing] footnote
+  - Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Several locations? We’ll quote group pricing. Your TenaFi device is bou...
+  + Month to month after your free months; cancel with 30 days’ notice. Pay yearly and get 2 months free, from month 4. Several locations? We’ll quote gro...
+[v2-business/pricing] example_text
+  - {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+  + {label}: {device_price} once, {intro_phrase}, then {plan}. Year one: {year_one}.
+[v2-business/pricing] devices_note
+  - Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+  + Coverage is for open space. Walls and floors reduce it, so we check your space before we set it up.
+[v2-business/pricing] plans.3.id
+  - (new field)
+  + free
+[v2-business/pricing] plans.3.label
+  - (new field)
+  + Free
+[v2-business/pricing] plans.3.tagline
+  - (new field)
+  + Your customer list, forever
+[v2-business/pricing] plans.3.price
+  - (new field)
+  + KES 0
+[v2-business/pricing] plans.3.price_kes
+  - (new field)
+  + 0
+[v2-business/pricing] plans.3.unit
+  - (new field)
+  + per location, per month
+[v2-business/pricing] plans.3.features
+  - (new field)
+  + Branded WiFi page that captures every customer / Your customer list, export it any time / Customer count in your dashboard
+[v2-business/pricing] plans.3.note
+  - (new field)
+  + One WiFi page design. Support by WhatsApp.
+[v2-business/pricing] plans.3.cta
+  - (new field)
+  + Get your device
+[v2-business/pricing] plans.3.variant
+  - (new field)
+  + outline
+[v2-business/pricing] plans.0.features
+  - A Google review request to every customer / By SMS and email / A campaign every quarter
+  + Everything in Free / Customer homepage: your menu, today’s offer, events / A Google review request after every visit, by email and SMS / 1 email campa...
+[v2-business/pricing] plans.0.messages_note
+  - (new field)
+  + Email campaigns included. 100 SMS review requests a month.
+[v2-business/pricing] plans.0.cta
+  - Choose Basic
+  + Start 3 months free
+[v2-business/pricing] plans.1.features
+  - Everything in Basic / A campaign every month on WhatsApp, SMS and email / A monthly report on reviews and return visits [[monthly_report]]
+  + Everything in Basic / 1 campaign a month by WhatsApp or SMS, to fill quiet days / Birthday treats sent for you / Paid extras and pre-orders by M-Pesa...
+[v2-business/pricing] plans.1.messages_note
+  - (new field)
+  + 300 WhatsApp or SMS messages a month.
+[v2-business/pricing] plans.2.features
+  - Everything in Starter / 2 to 4 campaigns a month / Free and VIP WiFi tiers [[vip_wifi]]
+  + Everything in Starter / 2 to 4 campaigns a month, timed to your gaps and the holidays / Birthday and anniversary offers / Featured on Tena Direct [[te...
+[v2-business/pricing] plans.2.messages_note
+  - (new field)
+  + 700 WhatsApp or SMS messages a month.
+[v2/pricing] free_months
+  - (new field)
+  + 3
+[v2/pricing] base_free_plan
+  - (new field)
+  + basic
+[v2/pricing] show_free_plan
+  - (new field)
+  + 1
+[v2/pricing] price_unit
+  - (new field)
+  + per unit
+[v2/pricing] devices_picker_label
+  - (new field)
+  + Your TenaFi device
+[v2/pricing] intro_line
+  - (new field)
+  + a month for your first {free_months} months
+[v2/pricing] then_line
+  - (new field)
+  + then {plan}/month
+[v2/pricing] device_line_card
+  - (new field)
+  + plus {device}, {device_price} once
+[v2/pricing] free_plan_line
+  - (new field)
+  + forever
+[v2/pricing] intro_free_phrase
+  - (new field)
+  + {free_months} months free
+[v2/pricing] intro_paid_phrase
+  - (new field)
+  + {intro}/month for {free_months} months
+[v2/pricing] example_full_text
+  - (new field)
+  + {label}: {device_price} once, then {plan}/month. Year one: {year_one}.
+[v2/pricing] offer_note
+  - (new field)
+  + Month to month after your free months, 30 days’ notice. Your device is yours.
+[v2/pricing] offer_headline
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours.
+[v2/pricing] steps.0.title
+  - (new field)
+  + Get your TenaFi device
+[v2/pricing] steps.0.text
+  - (new field)
+  + Pay once. We set it up for you.
+[v2/pricing] steps.1.title
+  - (new field)
+  + {free_months} months of Basic, free
+[v2/pricing] steps.1.text
+  - (new field)
+  + Your WiFi page, guest homepage, review requests and email campaigns.
+[v2/pricing] steps.2.title
+  - (new field)
+  + Then choose
+[v2/pricing] steps.2.text
+  - (new field)
+  + Stay on Free, or pick Basic, Starter or Growth. The device is yours.
+[v2/pricing] footnote
+  - Month to month; cancel with 30 days’ notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your Tena...
+  + Month to month after your free months; cancel with 30 days’ notice. Pay yearly and get 2 months free, from month 4. Multi-unit operators: 20% off from...
+[v2/pricing] example_text
+  - {label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.
+  + {label}: {device_price} once, {intro_phrase}, then {plan}. Year one: {year_one}.
+[v2/pricing] example_label
+  - A one-bedroom rental on Starter with TenaFi Lite
+  + A one-bedroom rental on Basic with TenaFi Lite
+[v2/pricing] devices_note
+  - Coverage is for open space. Walls and floors reduce it, so we check your space at installation.
+  + Coverage is for open space. Walls and floors reduce it, so we check your space before we set it up.
+[v2/pricing] subtitle
+  - Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page, you keep their contacts, and we send the offers that...
+  + Your guests already log in to your WiFi. With TenaFi, they log in through your own branded page, you keep their contacts, and we send the offers that...
+[v2/pricing] example_plan
+  - starter
+  + basic
+[v2/pricing] plans.3.id
+  - (new field)
+  + free
+[v2/pricing] plans.3.label
+  - (new field)
+  + Free
+[v2/pricing] plans.3.tagline
+  - (new field)
+  + Your guest list, forever
+[v2/pricing] plans.3.price
+  - (new field)
+  + KES 0
+[v2/pricing] plans.3.price_kes
+  - (new field)
+  + 0
+[v2/pricing] plans.3.unit
+  - (new field)
+  + per unit, per month
+[v2/pricing] plans.3.features
+  - (new field)
+  + Branded WiFi page that captures every guest / Your guest list, export it any time / Guest count in your dashboard
+[v2/pricing] plans.3.note
+  - (new field)
+  + One WiFi page design. Support by WhatsApp.
+[v2/pricing] plans.3.cta
+  - (new field)
+  + Get your device
+[v2/pricing] plans.3.variant
+  - (new field)
+  + outline
+[v2/pricing] plans.0.features
+  - Branded WiFi page and guest list / A review request to every guest, by SMS and email / A campaign every quarter
+  + Everything in Free / Guest homepage: house guide, local tips, contact host / A review request after every stay, by email and SMS / 1 email campaign a...
+[v2/pricing] plans.0.messages_note
+  - (new field)
+  + Email campaigns included. 100 SMS review requests a month.
+[v2/pricing] plans.0.cta
+  - Choose Basic
+  + Start 3 months free
+[v2/pricing] plans.1.features
+  - Everything in Basic / A campaign and results report every month [[monthly_report]] / Upsells, and your Tena Direct page at 0% commission [[tena_direct...
+  + Everything in Basic / 1 direct-booking campaign a month, by WhatsApp or SMS / Paid extras by M-Pesa: late checkout, extra nights, transfers [[mpesa_ex...
+[v2/pricing] plans.1.messages_note
+  - (new field)
+  + 300 WhatsApp or SMS messages a month.
+[v2/pricing] plans.2.features
+  - Everything in Starter / 2 to 4 campaigns a month / Featured on Tena Direct, plus VIP WiFi tiers [[vip_wifi]]
+  + Everything in Starter / 2 to 4 campaigns a month, timed to your gaps and the holidays / Birthday and anniversary offers / Featured on Tena Direct [[te...
+[v2/pricing] plans.2.messages_note
+  - (new field)
+  + 700 WhatsApp or SMS messages a month.
+[hosts/hero] note
+  - Africa’s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 per unit a month.
+  + Africa’s guest relationship platform. No new internet needed. Live in 7 days. TenaFi free for 3 months, and the device is yours.
+[v2-hosts/hero] note
+  - Africa’s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 per unit a month.
+  + Africa’s guest relationship platform. No new internet needed. Live in 7 days. TenaFi free for 3 months, and the device is yours.
+[business/hero] note
+  - Africa’s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 a month.
+  + Africa’s guest relationship platform. No new internet needed. Live in 7 days. TenaFi free for 3 months, and the device is yours.
+[v2-business/hero] note
+  - Africa’s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 a month.
+  + Africa’s guest relationship platform. No new internet needed. Live in 7 days. TenaFi free for 3 months, and the device is yours.
+[hosts/pricing] plans.0.unit
+  - per unit, per month (about $23)
+  + per unit, per month
+[hosts/pricing] plans.1.unit
+  - per unit, per month (about $35)
+  + per unit, per month
+[hosts/pricing] plans.2.unit
+  - per unit, per month (about $47)
+  + per unit, per month
+[business/pricing] plans.0.unit
+  - per location, per month (about $23)
+  + per location, per month
+[business/pricing] plans.1.unit
+  - per location, per month (about $35)
+  + per location, per month
+[business/pricing] plans.2.unit
+  - per location, per month (about $47)
+  + per location, per month
+[v2/pricing] plans.0.unit
+  - per unit, per month (about $23)
+  + per unit, per month
+[v2/pricing] plans.1.unit
+  - per unit, per month (about $35)
+  + per unit, per month
+[v2/pricing] plans.2.unit
+  - per unit, per month (about $47)
+  + per unit, per month
+[v2-hosts/pricing] plans.0.unit
+  - per unit, per month (about $23)
+  + per unit, per month
+[v2-hosts/pricing] plans.1.unit
+  - per unit, per month (about $35)
+  + per unit, per month
+[v2-hosts/pricing] plans.2.unit
+  - per unit, per month (about $47)
+  + per unit, per month
+[v2-business/pricing] plans.0.unit
+  - per location, per month (about $23)
+  + per location, per month
+[v2-business/pricing] plans.1.unit
+  - per location, per month (about $35)
+  + per location, per month
+[v2-business/pricing] plans.2.unit
+  - per location, per month (about $47)
+  + per location, per month
+[hosts/faq] items.10.question
+  - (new field)
+  + What’s free?
+[hosts/faq] items.10.answer
+  - (new field)
+  + Your first 3 months of Basic, and the Free plan for as long as you like. You pay only for your TenaFi device.
+[hosts/faq] items.11.question
+  - (new field)
+  + What happens after 3 months?
+[hosts/faq] items.11.answer
+  - (new field)
+  + Choose Basic, Starter or Growth, month to month. Or stay on Free: your WiFi page keeps collecting guests and the list stays yours.
+[hosts/faq] items.12.question
+  - (new field)
+  + Do I keep the device?
+[hosts/faq] items.12.answer
+  - (new field)
+  + Yes. You buy it once, and it’s yours.
+[hosts/faq] items.13.question
+  - (new field)
+  + What’s the difference between Free and Basic?
+[hosts/faq] items.13.answer
+  - (new field)
+  + Free collects your guest list. Basic puts it to work: guest homepage, review requests, monthly email campaigns and a report.
+[hosts/faq] items.14.question
+  - (new field)
+  + Can I start on Starter or Growth?
+[hosts/faq] items.14.answer
+  - (new field)
+  + Yes. For your first 3 months you pay only the difference from Basic.
+[hosts/faq] items.15.question
+  - (new field)
+  + How do I pay for the device?
+[hosts/faq] items.15.answer
+  - (new field)
+  + By M-Pesa.
+[hosts/faq] items.6.answer
+  - No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+  + Yes. You buy your TenaFi device once and it’s yours, and your first 3 months of Basic are free.
+[hosts/faq] items.8.answer
+  - It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+  + After your free months it’s month to month with 30 days’ notice. The device stays yours.
+[v2-hosts/faq] items.10.question
+  - (new field)
+  + What’s free?
+[v2-hosts/faq] items.10.answer
+  - (new field)
+  + Your first 3 months of Basic, and the Free plan for as long as you like. You pay only for your TenaFi device.
+[v2-hosts/faq] items.11.question
+  - (new field)
+  + What happens after 3 months?
+[v2-hosts/faq] items.11.answer
+  - (new field)
+  + Choose Basic, Starter or Growth, month to month. Or stay on Free: your WiFi page keeps collecting guests and the list stays yours.
+[v2-hosts/faq] items.12.question
+  - (new field)
+  + Do I keep the device?
+[v2-hosts/faq] items.12.answer
+  - (new field)
+  + Yes. You buy it once, and it’s yours.
+[v2-hosts/faq] items.13.question
+  - (new field)
+  + What’s the difference between Free and Basic?
+[v2-hosts/faq] items.13.answer
+  - (new field)
+  + Free collects your guest list. Basic puts it to work: guest homepage, review requests, monthly email campaigns and a report.
+[v2-hosts/faq] items.14.question
+  - (new field)
+  + Can I start on Starter or Growth?
+[v2-hosts/faq] items.14.answer
+  - (new field)
+  + Yes. For your first 3 months you pay only the difference from Basic.
+[v2-hosts/faq] items.15.question
+  - (new field)
+  + How do I pay for the device?
+[v2-hosts/faq] items.15.answer
+  - (new field)
+  + By M-Pesa.
+[v2-hosts/faq] items.6.answer
+  - No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+  + Yes. You buy your TenaFi device once and it’s yours, and your first 3 months of Basic are free.
+[v2-hosts/faq] items.8.answer
+  - It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+  + After your free months it’s month to month with 30 days’ notice. The device stays yours.
+[business/faq] items.10.question
+  - (new field)
+  + What’s free?
+[business/faq] items.10.answer
+  - (new field)
+  + Your first 3 months of Basic, and the Free plan for as long as you like. You pay only for your TenaFi device.
+[business/faq] items.11.question
+  - (new field)
+  + What happens after 3 months?
+[business/faq] items.11.answer
+  - (new field)
+  + Choose Basic, Starter or Growth, month to month. Or stay on Free: your WiFi page keeps collecting customers and the list stays yours.
+[business/faq] items.12.question
+  - (new field)
+  + Do I keep the device?
+[business/faq] items.12.answer
+  - (new field)
+  + Yes. You buy it once, and it’s yours.
+[business/faq] items.13.question
+  - (new field)
+  + What’s the difference between Free and Basic?
+[business/faq] items.13.answer
+  - (new field)
+  + Free collects your customer list. Basic puts it to work: customer homepage, review requests, monthly email campaigns and a report.
+[business/faq] items.14.question
+  - (new field)
+  + Can I start on Starter or Growth?
+[business/faq] items.14.answer
+  - (new field)
+  + Yes. For your first 3 months you pay only the difference from Basic.
+[business/faq] items.15.question
+  - (new field)
+  + How do I pay for the device?
+[business/faq] items.15.answer
+  - (new field)
+  + By M-Pesa.
+[business/faq] items.6.answer
+  - No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+  + Yes. You buy your TenaFi device once and it’s yours, and your first 3 months of Basic are free.
+[business/faq] items.8.answer
+  - It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+  + After your free months it’s month to month with 30 days’ notice. The device stays yours.
+[v2-business/faq] items.10.question
+  - (new field)
+  + What’s free?
+[v2-business/faq] items.10.answer
+  - (new field)
+  + Your first 3 months of Basic, and the Free plan for as long as you like. You pay only for your TenaFi device.
+[v2-business/faq] items.11.question
+  - (new field)
+  + What happens after 3 months?
+[v2-business/faq] items.11.answer
+  - (new field)
+  + Choose Basic, Starter or Growth, month to month. Or stay on Free: your WiFi page keeps collecting customers and the list stays yours.
+[v2-business/faq] items.12.question
+  - (new field)
+  + Do I keep the device?
+[v2-business/faq] items.12.answer
+  - (new field)
+  + Yes. You buy it once, and it’s yours.
+[v2-business/faq] items.13.question
+  - (new field)
+  + What’s the difference between Free and Basic?
+[v2-business/faq] items.13.answer
+  - (new field)
+  + Free collects your customer list. Basic puts it to work: customer homepage, review requests, monthly email campaigns and a report.
+[v2-business/faq] items.14.question
+  - (new field)
+  + Can I start on Starter or Growth?
+[v2-business/faq] items.14.answer
+  - (new field)
+  + Yes. For your first 3 months you pay only the difference from Basic.
+[v2-business/faq] items.15.question
+  - (new field)
+  + How do I pay for the device?
+[v2-business/faq] items.15.answer
+  - (new field)
+  + By M-Pesa.
+[v2-business/faq] items.6.answer
+  - No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.
+  + Yes. You buy your TenaFi device once and it’s yours, and your first 3 months of Basic are free.
+[v2-business/faq] items.8.answer
+  - It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.
+  + After your free months it’s month to month with 30 days’ notice. The device stays yours.
+[home/hero] free_price_line
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours. Then from {price}/month.
+[home/hero] device_line
+  - Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+  + TenaFi devices from {device_price}.
+[home/cta_banner__founding] device_line
+  - Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+  + TenaFi devices from {device_price}.
+[home/cta_banner__founding] pricing_note
+  - A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.
+  + A month, per unit for rentals. Pay yearly and get 2 months free, from month 4. Events are quoted per event.
+[v2/hero] free_price_line
+  - (new field)
+  + TenaFi free for {free_months} months, and the device is yours. Then from {price}/month.
+[v2/hero] device_line
+  - Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+  + TenaFi devices from {device_price}.
+[v2/cta_banner__founding] device_line
+  - Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.
+  + TenaFi devices from {device_price}.
+[v2/cta_banner__founding] pricing_note
+  - A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.
+  + A month, per unit for rentals. Pay yearly and get 2 months free, from month 4. Events are quoted per event.
+[pricing/seo] meta_title
+  - TenaFi devices and pricing: buy once or pay monthly
+  + TenaFi pricing: free for 3 months, and the device is yours
+[pricing/seo] meta_description
+  - TenaFi Lite, Pro and Outdoor: one device for every size of space, installed and managed for you. Buy upfront, or pay monthly with nothing upfront.
+  + TenaFi Lite, Pro and Outdoor: one device for every size of space, set up and managed for you. Pay once for your device and your first 3 months of Basi...
+[pricing/devices] subtitle
+  - Every TenaFi device runs your branded WiFi page, captures your guest list and is installed, set up and managed by our team. Pick the one that fits you...
+  + Every TenaFi device runs your branded WiFi page, captures your guest list and is set up and managed by our team. Pick the one that fits your space.
+[pricing/devices] upfront_label
+  - Buy upfront, installed
+  + Pay once
+[pricing/devices] perks.0.title
+  - Installed for you
+  + Set up for you
+[pricing/pay_options] badge
+  - Two ways to pay
+  + Good to know
+[pricing/pay_options] title
+  - Buy your device once, or spread it out.
+  + Pay once for your device. Your first 3 months of Basic are free.
+[pricing/pay_options] subtitle
+  - Same device, same plans, same service. Buying upfront is the best value; paying monthly spreads the device over your first 12 months.
+  + Then stay on Free, or pick Basic, Starter or Growth, month to month. The device is yours.
+[pricing/pay_options] notes.0.text
+  - On a call, a video call or a visit, we show you TenaFi and survey your space. Your device payment or first monthly charge starts after installation.
+  + On a call, a video call or a visit, we show you TenaFi and look at your space. Your device payment starts once it’s set up.
+[pricing/pay_options] notes.2.title
+  - Leaving early on monthly
+  + After your free months
+[pricing/pay_options] notes.2.text
+  - Pay off the rest of the device or return it. Upfront: 30 days’ notice.
+  + Choose Basic, Starter or Growth, month to month with 30 days’ notice, or stay on Free.
+[pricing/pay_options] footnote
+  - Prices in KES. Paying yearly on the upfront option: 2 months free.
+  + Prices in KES. Paying yearly: 2 months free, from month 4.
+[pricing/pay_options] cta_text
+  - Book a demo and our team will survey your space and recommend the right devices.
+  + Book a demo and our team will look at your space and recommend the right devices.
+[hosts/signup] steps.1.fields
+  - [{"key":"units","label":"How many units?","type":"select","required":true,"options":["1|1 unit","2-4|2 to 4","5-9|5 to 9","10-49|10 to 49","50+|50 or...
+  + [{"key":"units","label":"How many units?","type":"select","required":true,"options":["1|1 unit","2-4|2 to 4","5-9|5 to 9","10-49|10 to 49","50+|50 or...
+[business/signup] steps.1.fields
+  - [{"key":"businessName","label":"Business name","type":"text","required":true,"options":[],"placeholder":"","hint":""},{"key":"businessType","label":"T...
+  + [{"key":"businessName","label":"Business name","type":"text","required":true,"options":[],"placeholder":"","hint":""},{"key":"businessType","label":"T...
+
+Prices
+  [hosts/pricing] plans.0.price_kes: 3000 -> 1500
+  [hosts/pricing] plans.0.price: KES 3,000 -> KES 1,500
+  [hosts/pricing] plans.1.price_kes: 4500 -> 3000
+  [hosts/pricing] plans.1.price: KES 4,500 -> KES 3,000
+  [hosts/pricing] plans.2.price_kes: 6000 -> 4500
+  [hosts/pricing] plans.2.price: KES 6,000 -> KES 4,500
+  [business/pricing] plans.0.price_kes: 3000 -> 1500
+  [business/pricing] plans.0.price: KES 3,000 -> KES 1,500
+  [business/pricing] plans.1.price_kes: 4500 -> 3000
+  [business/pricing] plans.1.price: KES 4,500 -> KES 3,000
+  [business/pricing] plans.2.price_kes: 6000 -> 4500
+  [business/pricing] plans.2.price: KES 6,000 -> KES 4,500
+  [v2/pricing] plans.0.price_kes: 3000 -> 1500
+  [v2/pricing] plans.0.price: KES 3,000 -> KES 1,500
+  [v2/pricing] plans.1.price_kes: 4500 -> 3000
+  [v2/pricing] plans.1.price: KES 4,500 -> KES 3,000
+  [v2/pricing] plans.2.price_kes: 6000 -> 4500
+  [v2/pricing] plans.2.price: KES 6,000 -> KES 4,500
+  [v2-hosts/pricing] plans.0.price_kes: 3000 -> 1500
+  [v2-hosts/pricing] plans.0.price: KES 3,000 -> KES 1,500
+  [v2-hosts/pricing] plans.1.price_kes: 4500 -> 3000
+  [v2-hosts/pricing] plans.1.price: KES 4,500 -> KES 3,000
+  [v2-hosts/pricing] plans.2.price_kes: 6000 -> 4500
+  [v2-hosts/pricing] plans.2.price: KES 6,000 -> KES 4,500
+  [v2-business/pricing] plans.0.price_kes: 3000 -> 1500
+  [v2-business/pricing] plans.0.price: KES 3,000 -> KES 1,500
+  [v2-business/pricing] plans.1.price_kes: 4500 -> 3000
+  [v2-business/pricing] plans.1.price: KES 4,500 -> KES 3,000
+  [v2-business/pricing] plans.2.price_kes: 6000 -> 4500
+  [v2-business/pricing] plans.2.price: KES 6,000 -> KES 4,500
+
+Admin checklist: check or edit these by hand in Admin -> Public Pages
+  [ ] hosts/signup: the “How would you like to pay for it?” question is no longer shown (the device is bought once); delete it from the form when convenient.
+  [ ] business/signup: the “How would you like to pay for it?” question is no longer shown (the device is bought once); delete it from the form when convenient.
+  [ ] Message top-ups: what does an extra bundle cost? Fill messages_topup_note on each pricing section (empty = not shown). [open decision]
+  [ ] Dollar rate: Admin -> Settings -> Shillings per US dollar (129 until set) drives every “(about $X)”.
+  [ ] TrialSlots counter (show_slots, Site-wide -> Slot counter): keep it, relabel it, or turn it off? It is left as it is. [open decision]
+  [ ] VAT: are prices incl. or excl. 16% VAT? Fill vat_note on each pricing section (empty = not shown). [open decision]
+  [ ] Device payment terms: all at booking, all at installation, or half and half? Then complete the FAQ “How do I pay for the device?”. [open decision]
+  [ ] Multi-unit discount: does it start at 5 or 10 units? /hosts FAQ “I manage lots of units.” says 10. [open decision]
+
+339 field(s) to fill or update, 1 section(s) to add.
+Dry run: nothing was saved. Run without --dry-run to back up and apply.
