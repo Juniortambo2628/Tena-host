@@ -25,18 +25,19 @@ it('offers a demo, not the December free trial, on every audience page', functio
 
     expect($banner['badge'])->toBe('Book a demo')
         ->and($banner['body'])->toContain('call or video')->toContain('30 days')->toContain('2 months free')
-        ->and($pricing['subtitle'])->toContain('Month to month')
+        ->and(strtolower($pricing['subtitle']))->toContain('month to month')
         ->and($pricing['footnote'])->toContain('30 days')->not->toContain('16 November')
         ->and($signup['submit_label'])->toBe('Book my demo')
         ->and($signup['badge'])->toBe('Book a demo')
         ->and(json_encode($pages[$slug], JSON_UNESCAPED_UNICODE))->not->toContain('free trial')->not->toContain('Free trial');
 })->with(['hosts', 'business']);
 
-it('leaves the undecided installation fee and discount threshold as marked TODOs', function () {
+it('leaves the discount threshold as a marked TODO, and never mentions installation next to a price', function () {
     $source = file_get_contents(database_path('blueprints/public_pages.php'));
 
-    expect($source)->toContain('TODO(Glen): is there a KES 2,500 installation fee?')
-        ->toContain('TODO(Glen): does the multi-unit discount start at 5 or 10 units?')
+    expect($source)->toContain('TODO(Glen): does the multi-unit discount start at 5 or 10 units?')
+        // Device prices stay as they are; installation isn't itemised (Nov 2026).
+        ->toContain('Installation isn\'t itemised')
         // No copy announces a fee nobody has decided on.
         ->and(json_encode(PageBlueprint::definitions()))->not->toContain('2,500');
 });

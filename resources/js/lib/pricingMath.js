@@ -1,26 +1,47 @@
 /**
- * TenaFi pricing sums, shared by the pricing sections (/hosts, /business,
- * /pricing) and the sign-up summary. Pure functions with no imports, so
- * tests can run them under plain Node (tests/Feature/PricingOptionsTest.php).
+ * TenaFi pricing sums, shared by every pricing on the site (/pricing, /hosts,
+ * /business, the homepage) and the sign-up summary, so no two places can
+ * quote different numbers. Pure functions with no imports, so tests can run
+ * them under plain Node (tests/Feature/PricingOfferTest.php).
  *
- * A device has `price_kes` (bought upfront, installed), `monthly_kes` (the
- * add-on while paying monthly) and `months` (how long the add-on lasts).
+ * The offer: buy your TenaFi device once; your first `freeMonths` months of
+ * the base plan (Basic) are free; then choose Free, Basic, Starter or Growth.
+ * During the free months a bigger plan costs only the difference from the
+ * base plan. There is no paying for the device monthly.
  */
 
 /** "KES 9,500" */
 export const formatKes = (n) => `KES ${Math.round(Number(n) || 0).toLocaleString('en-KE')}`;
 
-/** A plan's monthly price on each way to pay; on "monthly", for the add-on months. */
-export function planMonthly(planKes, pay, device) {
-    return pay === 'monthly' && device ? planKes + (device.monthly_kes || 0) : planKes;
+/** A KES amount from a CMS value ("4,500", "KES 4500", 4500); 0 when none. */
+export const kesOf = (value) => Number(String(value ?? '').replace(/<[^>]*>/g, '').replace(/[^\d]/g, '')) || 0;
+
+/** The free months a pricing section offers: a whole number from 0 (no offer) to 12. */
+export function clampFree(freeMonths) {
+    const n = Math.floor(Number(String(freeMonths ?? '').replace(/[^\d.]/g, '')) || 0);
+    return Math.max(0, Math.min(12, n));
 }
 
-/** First-year cost buying the device (device + 12 x plan) versus paying monthly (12 x (plan + add-on)). */
-export function yearOne(planKes, device) {
-    const months = Math.min(device?.months || 12, 12);
-    const buy = (device?.price_kes || 0) + planKes * 12;
-    const monthly = (planKes + (device?.monthly_kes || 0)) * months + planKes * (12 - months);
-    return { buy, monthly, saving: monthly - buy };
+/**
+ * A plan's monthly price during the free months: what's left after the base
+ * plan (Basic) is free, so max(plan - base, 0). An admin's intro_price_kes
+ * overrides it; with no free months it's the plan's price.
+ */
+export function introPrice(planKes, baseKes, freeMonths, override = '') {
+    if (clampFree(freeMonths) === 0) return planKes;
+    if (String(override ?? '').trim() !== '') return kesOf(override);
+    return Math.max(planKes - baseKes, 0);
+}
+
+/** Year one: the device once, the intro price for the free months, then the plan. */
+export function yearOne(planKes, introKes, deviceKes, freeMonths) {
+    const free = clampFree(freeMonths);
+    return deviceKes + free * introKes + (12 - free) * planKes;
+}
+
+/** The cheapest plan you pay for (Free and KES 0 plans don't count), or null. */
+export function cheapestPaid(plans) {
+    return [...plans].filter((p) => kesOf(p.price_kes) > 0).sort((a, b) => kesOf(a.price_kes) - kesOf(b.price_kes))[0] || null;
 }
 
 /**
@@ -33,33 +54,66 @@ export function kesPerUsd(planKes, unitText) {
     return usd > 0 && planKes > 0 ? planKes / usd : null;
 }
 
-/** "(about $73)" for a KES amount at that rate, or ''. */
-export const aboutUsd = (kes, rate) => (rate ? `(about $${Math.round(kes / rate)})` : '');
+/** "(about $73)" for a KES amount at that rate, or '' (and never "(about $0)"). */
+export const aboutUsd = (kes, rate) => (rate && kes > 0 ? `(about $${Math.round(kes / rate)})` : '');
+
+/**
+ * "{free_months} months" in a sentence, for one month or several:
+ * "Your first {free_months} months are free" -> "Your first month is free".
+ */
+export function fillFree(template, freeMonths) {
+    let text = String(template || '');
+    if (clampFree(freeMonths) === 1) {
+        text = text
+            .replace(/first \{free_months\} months are/g, 'first month is')
+            .replace(/first \{free_months\} months/g, 'first month')
+            .replace(/\{free_months\} months/g, '1 month');
+    }
+    return text.replace(/\{free_months\}/g, String(clampFree(freeMonths)));
+}
+
+/** "{name}" placeholders in CMS text; unknown ones are left as they are. */
+export const fill = (template, values) => String(template || '').replace(/\{(\w+)\}/g, (m, key) => (key in values ? values[key] : m));
 
 /**
  * Splits a multi-line CMS field into its lines: plain newlines (\n, \r\n),
- * <br>, </p>, </div> and </li> from the rich-text editor, and their escaped
- * forms (&lt;br&gt;). Tags are left for the caller to strip.
+ * <br>, </p>, </div> and </li> from the rich-text editor, their escaped
+ * forms (&lt;br&gt;), and Unicode line separators. Tags are left for the
+ * caller to strip.
  */
 export function splitLines(text) {
     return String(text || '')
         .replace(/&lt;br\s*\/?&gt;/gi, '\n')
         .replace(/<br\s*\/?>|<\/p>|<\/div>|<\/li>/gi, '\n')
-        .split(/\r\n|\r|\n/);
+        .split(/\r\n|\r|\n|\u2028|\u2029|\u0085/);
 }
 
-/** ?pay=monthly&device=pro from a URL's query, falling back to the defaults. */
-export function readChoice(search, deviceIds = []) {
-    const query = new URLSearchParams(search || '');
-    const pay = query.get('pay') === 'monthly' ? 'monthly' : 'buy';
-    const device = deviceIds.includes(query.get('device')) ? query.get('device') : deviceIds[0] || null;
-    return { pay, device };
+/** ?device=pro from a URL's query, else the first device. Anything else (?pay=monthly) is ignored. */
+export function readDevice(search, deviceIds = []) {
+    const wanted = new URLSearchParams(search || '').get('device');
+    return deviceIds.includes(wanted) ? wanted : deviceIds[0] || null;
 }
 
-/** A plan button's link: the page's sign-up form, with the plan and the choice. */
-export function planHref(joinHref, planId, pay, device) {
+/** A plan button's link: the page's sign-up form, with the plan, the device and the free months. */
+export function planHref(joinHref, planId, device, freeMonths = 0) {
     if (!planId || !String(joinHref).includes('#')) return joinHref;
-    const params = new URLSearchParams({ plan: planId, pay });
-    if (pay === 'monthly' && device) params.set('device', device);
+    const params = new URLSearchParams({ plan: planId });
+    if (device) params.set('device', device);
+    const free = clampFree(freeMonths);
+    if (free > 0) params.set('free_months', String(free));
     return `${joinHref}?${params}`;
+}
+
+/**
+ * The plans to show, cheapest first (Free, Basic, Starter, Growth). With no
+ * free months, Free shows only when the admin turns it on (show_free_plan).
+ * `plans` are CMS rows ({ id, label, price_kes, ... }).
+ */
+export function visiblePlans(plans, freeMonths, showFree = false) {
+    const strip = (v) => String(v ?? '').replace(/<[^>]*>/g, '').trim();
+    return plans
+        .map((p, index) => ({ ...p, index, priceKes: kesOf(p.price_kes), isFree: strip(p.id) === 'free' }))
+        .filter((p) => strip(p.label))
+        .filter((p) => !p.isFree || clampFree(freeMonths) > 0 || showFree)
+        .sort((a, b) => a.priceKes - b.priceKes || a.index - b.index);
 }

@@ -27,7 +27,7 @@ it('keeps /pricing hidden from visitors and the sitemap until it is switched on'
         ->assertSee('content="noindex, nofollow"', false)
         ->assertInertia(fn ($page) => $page
             ->component('Public/V2/Pricing')
-            ->where('sections', fn ($s) => collect($s)->pluck('section_key')->all() === ['seo', 'devices', 'pay_options'])
+            ->where('sections', fn ($s) => collect($s)->pluck('section_key')->all() === ['seo', 'devices', 'pay_options', 'faq'])
             ->where('pricingPage', null));
 });
 
@@ -35,9 +35,9 @@ it('shows /pricing to everyone once switched on, with the three devices and live
     Setting::setValue('pricing_page_enabled', '1');
 
     $this->get('/pricing')->assertOk()->assertInertia(fn ($page) => $page
-        ->where('sections.1.content', fn ($c) => $c['items.0.name'] === 'TenaFi Lite' && $c['items.1.price_kes'] === '42000' && $c['items.2.monthly_kes'] === '5500')
+        ->where('sections.1.content', fn ($c) => $c['items.0.name'] === 'TenaFi Lite' && $c['items.1.price_kes'] === '42000' && $c['items.2.price_kes'] === '48000' && ! isset($c['items.2.monthly_kes']))
         ->where('sections.1.media.device_1_image', '/images/devices/photos/tenafi-pro.webp')
-        ->where('plans', fn ($plans) => collect($plans)->pluck('price_kes')->all() === [3000, 4500, 6000])
+        ->where('plans', fn ($plans) => collect($plans)->pluck('price_kes')->all() === [3000, 4500, 6000, 0])
         ->where('pricingPage', '/pricing')
         // The plans as each audience page shows them, for the switch at the top.
         ->where('planSections.hosts.section_key', 'pricing')

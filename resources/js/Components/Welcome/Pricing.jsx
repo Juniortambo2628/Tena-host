@@ -8,16 +8,19 @@ import { ArrowRight, Check, ChevronDown, Sparkles, Zap, Award, Clock } from 'luc
 import LineList from '@/Components/Public/LineList';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import ContactForm from './ContactForm';
-import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces } from '@/Components/Public/PayOptions';
+import {
+    useSectionDevices, useDeviceChoice, offerOf, offerPlans, offerPrice, PricingSteps, sectionSteps, DevicePicker,
+    OfferExample, OfferNote, DevicesRow, BiggerSpaces, PLAN_FIELDS,
+} from '@/Components/Public/PlanOffer';
 import { planHref } from '@/lib/pricingMath';
 import './Pricing.css';
 
-function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
+function PricingPlanCard({ plan, price, device = null, freeMonths = 0 }) {
     const { joinHref } = usePublic();
     const [expanded, setExpanded] = useState(false);
     const descId = `pricing-desc-${String(plan.label).replace(/\s+/g, '-').toLowerCase()}`;
-    // "#join?plan=growth&pay=monthly&device=pro" pre-selects them in this page's sign-up form.
-    const href = planHref(joinHref, stripHtml(plan.id), pay, device?.id);
+    // "#join?plan=growth&device=pro&free_months=3" pre-selects them in this page's sign-up form.
+    const href = planHref(joinHref, stripHtml(plan.id), device?.id, freeMonths);
 
     return (
         <div className={`pricing-card ${plan.badge ? 'pricing-card--featured' : ''}`}>
@@ -26,11 +29,12 @@ function PricingPlanCard({ plan, monthly = null, pay = 'buy', device = null }) {
                 <span className="pricing-card-label">{plan.label}</span>
                 {stripHtml(plan.tagline) && <p className="pricing-card-tagline">{stripHtml(plan.tagline)}</p>}
                 <div className="pricing-card-price">
-                    {monthly ? monthly.amount : plan.price}{' '}
-                    <span className="pricing-card-price-unit">{monthly ? stripHtml(plan.unit).replace(/\(about \$[\d,.]+\)/i, monthly.usd).trim() : plan.unit}</span>
-                    {monthly && <span className="pay-price-then">{monthly.then}</span>}
+                    {price.amount}{' '}
+                    {price.under && <span className="pricing-card-price-unit">{price.under}</span>}
+                    {price.lines.map((line) => <span key={line} className="pay-price-then">{line}</span>)}
                 </div>
                 <LineList text={plan.features} className="pricing-card-features" icon={<Check size={16} className="pricing-card-feature-icon" />} />
+                {stripHtml(plan.note) && <p className="pricing-plan-note">{stripHtml(plan.note)}</p>}
                 {stripHtml(plan.description) && (
                     <>
                         <button
@@ -75,9 +79,8 @@ export default function Pricing({ section }) {
 
     // Plans are shared site-wide (Site-wide -> Plans) so every page quotes
     // the same prices; a page may still override them with its own rows.
-    const planFields = ['id', 'label', 'tagline', 'badge', 'price', 'price_kes', 'unit', 'features', 'description', 'cta', 'variant'];
-    const ownPlans = extractItems(section, 'plans', planFields);
-    const plans = ownPlans.length > 0 ? ownPlans : extractItems(site?.plans, 'plans', planFields);
+    const ownPlans = extractItems(section, 'plans', PLAN_FIELDS);
+    const plans = ownPlans.length > 0 ? ownPlans : extractItems(site?.plans, 'plans', PLAN_FIELDS);
     const currencyNote = stripHtml(getContent(site?.plans, 'currency_note', ''));
     const perks = extractItems(section, 'perks', ['symbol', 'label', 'text']);
     const footnote = getContent(section, 'footnote', '');
@@ -89,11 +92,11 @@ export default function Pricing({ section }) {
     const ctaClosing = getText(section, 'cta_closing', '');
     const ctaButton = getText(section, 'cta_button', 'Join');
 
-    // The two ways to pay, once the section has its words and there are devices.
+    // TenaFi's offer: the device once, the free months, then Free / Basic / Starter / Growth.
     const devices = useSectionDevices(section);
-    const withOptions = devices.length > 0 && Boolean(getText(section, 'pay_buy_label', ''));
-    const choice = usePayChoice(devices);
-    const pay = withOptions ? choice.pay : 'buy';
+    const choice = useDeviceChoice(devices);
+    const offer = offerOf(section);
+    const shown = offerPlans(section, plans, offer);
 
     return (
         <SectionWrapper bg={section.bg || 'gray'}>
@@ -103,27 +106,25 @@ export default function Pricing({ section }) {
 
             {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
 
-            {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} />}
+            <PricingSteps steps={sectionSteps(section)} freeMonths={offer.free} />
+            <DevicePicker section={section} devices={devices} choice={choice} />
 
-            <div className="pricing-cards-grid">
-                {plans.map((plan, index) => (
+            <div className={`pricing-cards-grid ${shown.length > 3 ? 'pricing-cards-grid--four' : ''}`}>
+                {shown.map((plan) => (
                     <PricingPlanCard
-                        key={index}
+                        key={plan.index}
                         plan={plan}
-                        pay={pay}
                         device={choice.device}
-                        monthly={withOptions ? planPrice(section, plan, pay, choice.device) : null}
+                        freeMonths={offer.free}
+                        price={offerPrice(section, plan, plans, choice.device, offer)}
                     />
                 ))}
             </div>
 
-            {withOptions && (
-                <>
-                    <WorkedExample section={section} plans={plans} devices={devices} />
-                    <DevicesRow section={section} devices={devices} />
-                    <BiggerSpaces section={section} site={site} />
-                </>
-            )}
+            <OfferNote section={section} offer={offer} />
+            <OfferExample section={section} plans={plans} devices={devices} offer={offer} />
+            <DevicesRow section={section} devices={devices} />
+            <BiggerSpaces section={section} site={site} />
 
             {ctaHeadline && <div className="pricing-cta-section">
                 <div className="pricing-cta-card">

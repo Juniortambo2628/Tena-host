@@ -5,7 +5,7 @@ import { ArrowLeft, Check } from 'lucide-react';
 import V2Site from '@/Components/V2/V2Site';
 import InstallSteps from '@/Components/V2/InstallSteps';
 import { extractItems, stripHtml, textLines } from '@/lib/cms';
-import { devicesFrom, formatKes, fill, contentText as text } from '@/lib/devices';
+import { devicesFrom, formatKes, contentText as text } from '@/lib/devices';
 import './Pricing.css';
 import './Device.css';
 
@@ -25,7 +25,6 @@ export default function V2Device({ section, index, pay = null, seo = {} }) {
     const others = devices.filter((d) => d.id !== device.id);
     const buttons = extractItems(pay, 'buttons', ['label', 'href']).filter((b) => stripHtml(b.label) && stripHtml(b.href));
     const included = textLines(section?.content?.included ?? '');
-    const monthlyLine = text(section, 'monthly_line', 'or {monthly} a month for {months} months');
 
     return (
         <V2Site joinHref={stripHtml(buttons[0]?.href ?? '') || '/hosts#join'}>
@@ -52,13 +51,8 @@ export default function V2Device({ section, index, pay = null, seo = {} }) {
                                     {device.capacity && <div><dt>{device.capacityLabel}</dt><dd>{device.capacity}</dd></div>}
                                 </dl>
                                 <div className="pricing-device__price">
-                                    <span className="pricing-label">{text(section, 'upfront_label', 'Buy upfront, installed')}</span>
+                                    <span className="pricing-label">{text(section, 'upfront_label', 'Pay once')}</span>
                                     <b>{formatKes(device.price)}</b>
-                                    {device.monthly > 0 && (
-                                        <span className="pricing-device__monthly">
-                                            {fill(monthlyLine, { monthly: `+${formatKes(device.monthly)}`, months: device.months })}
-                                        </span>
-                                    )}
                                 </div>
                                 {buttons.length > 0 && (
                                     <div className="device-hero__buttons">

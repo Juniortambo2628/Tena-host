@@ -24,18 +24,22 @@ function signupFields(string $slug): LandingContent
         ->where('content_key', 'steps.1.fields')->firstOrFail();
 }
 
-it('asks which device and how to pay, just before the plan, on both sign-up forms', function (string $slug) {
-    $keys = array_column(json_decode(signupFields($slug)->value, true), 'key');
+it('asks which device just before the plan, with no "how to pay" (it is bought once), on both sign-up forms', function (string $slug) {
+    $fields = collect(json_decode(signupFields($slug)->value, true));
+    $keys = $fields->pluck('key')->all();
 
-    expect(array_slice($keys, array_search('device', $keys, true), 3))->toBe(['device', 'devicePayment', 'plan']);
+    expect(array_slice($keys, array_search('device', $keys, true), 2))->toBe(['device', 'plan'])
+        ->and($keys)->not->toContain('devicePayment')
+        // Free is a plan you can start on.
+        ->and($fields->firstWhere('key', 'plan')['options'])->toContain('free|Free');
 })->with(['hosts', 'business']);
 
-it('stores the device and how they will pay for it', function () {
+it('stores the device and the plan', function () {
     Mail::fake();
 
-    $this->postJson(route('signups.store'), deviceSignup(['device' => 'pro', 'devicePayment' => 'monthly']))->assertCreated();
+    $this->postJson(route('signups.store'), deviceSignup(['device' => 'pro']))->assertCreated();
 
-    expect(Registration::first()->answers)->toMatchArray(['device' => 'pro', 'devicePayment' => 'monthly', 'plan' => 'starter']);
+    expect(Registration::first()->answers)->toMatchArray(['device' => 'pro', 'plan' => 'starter']);
 });
 
 it('leaves the device questions optional, and refuses a device that is not offered', function () {
@@ -48,13 +52,14 @@ it('leaves the device questions optional, and refuses a device that is not offer
 
 it('gives the sign-up form the device prices from /pricing', function () {
     $this->get('/business')->assertInertia(fn ($page) => $page->where('devices', function ($devices) {
-        $prices = collect($devices)->map(fn ($d) => collect($d)->only(['id', 'name', 'price_kes', 'monthly_kes', 'months'])->all())->values()->all();
+        $prices = collect($devices)->map(fn ($d) => collect($d)->only(['id', 'name', 'price_kes'])->all())->values()->all();
 
+        // Paid once: no monthly add-on is shared any more.
         return $prices === [
-            ['id' => 'lite', 'name' => 'TenaFi Lite', 'price_kes' => 25000, 'monthly_kes' => 3000, 'months' => 12],
-            ['id' => 'pro', 'name' => 'TenaFi Pro', 'price_kes' => 42000, 'monthly_kes' => 5000, 'months' => 12],
-            ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'price_kes' => 48000, 'monthly_kes' => 5500, 'months' => 12],
-        ] && collect($devices)->every(fn ($d) => str_starts_with($d['image'], '/images/devices/photos/tenafi-'));
+            ['id' => 'lite', 'name' => 'TenaFi Lite', 'price_kes' => 25000],
+            ['id' => 'pro', 'name' => 'TenaFi Pro', 'price_kes' => 42000],
+            ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'price_kes' => 48000],
+        ] && collect($devices)->every(fn ($d) => ! isset($d['monthly_kes']) && str_starts_with($d['image'], '/images/devices/photos/tenafi-'));
     }));
 });
 
@@ -70,17 +75,17 @@ it('adds the device questions to a live form that lacks them, keeping its other 
 
     $this->artisan('tenafi:pricing-devices --dry-run')
         ->expectsOutputToContain('[business/signup] steps.1.fields')
-        ->expectsOutputToContain('Which TenaFi device? / How would you like to pay for it?')
+        ->expectsOutputToContain('Which TenaFi device?')
         ->assertSuccessful();
 
     $this->artisan('tenafi:pricing-devices')->assertSuccessful();
     $keys = array_column(json_decode($row->fresh()->value, true), 'key');
-    expect(array_slice($keys, array_search('device', $keys, true), 3))->toBe(['device', 'devicePayment', 'plan'])
+    expect(array_slice($keys, array_search('device', $keys, true), 2))->toBe(['device', 'plan'])
         ->and($keys)->toContain('parking');
 
     // Signing up now accepts the device.
     Mail::fake();
-    $this->postJson(route('signups.store'), deviceSignup(['device' => 'lite', 'devicePayment' => 'upfront']))->assertCreated();
+    $this->postJson(route('signups.store'), deviceSignup(['device' => 'lite']))->assertCreated();
 
     $backup = basename(Storage::disk('local')->files('cms-backups')[0]);
     $this->artisan("tenafi:pricing-devices --restore={$backup}")->assertSuccessful();

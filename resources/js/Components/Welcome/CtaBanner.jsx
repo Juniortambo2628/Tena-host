@@ -8,6 +8,7 @@ import CtaLink from '@/Components/Public/CtaLink';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import './CtaBanner.css';
 import { useDeviceLine } from './Hero';
+import { PricingSteps } from '@/Components/Public/PlanOffer';
 
 /** "whatsapp:Hi TenaFi…" opens WhatsApp on the Site-wide number with that message. */
 function useHref() {
@@ -27,7 +28,7 @@ function useHref() {
  */
 export default function CtaBanner({ section }) {
     const { site } = usePublic();
-    const { plans = [] } = usePage().props;
+    const { plans = [], offer = { freeMonths: 0, steps: [] } } = usePage().props;
     const deviceLine = useDeviceLine(section);
     const resolve = useHref();
     if (!section) return null;
@@ -83,9 +84,14 @@ export default function CtaBanner({ section }) {
                     {priced.length > 0 && (
                         <div className="cta-trial__pricing" id={stripHtml(getContent(section, 'pricing_anchor', '')) || undefined}>
                             <b>{stripHtml(getContent(section, 'pricing_title', 'Pricing'))}</b>
-                            <ul>
-                                {priced.map(plan => <li key={plan.id || plan.label}><span>{plan.label}</span><strong>{plan.price}</strong></li>)}
-                            </ul>
+                            {/* While /hosts has free months: its three steps instead of the plan list. */}
+                            {offer.freeMonths > 0 && offer.steps.length > 0
+                                ? <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} compact className="cta-trial__steps" />
+                                : (
+                                    <ul>
+                                        {priced.map(plan => <li key={plan.id || plan.label}><span>{plan.label}</span><strong>{plan.price}</strong></li>)}
+                                    </ul>
+                                )}
                             {deviceLine && <p className="cta-trial__device-line">{deviceLine}</p>}
                             <small>
                                 {stripHtml(getContent(section, 'pricing_note', ''))}{' '}
