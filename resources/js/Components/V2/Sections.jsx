@@ -10,8 +10,12 @@ import {
     textLines, baseSectionKey, comingSoonBadge,
 } from '@/lib/cms';
 import { v2Link } from '@/Components/V2/V2Site';
-import { useSectionDevices, usePayChoice, planPrice, PaySwitch, DevicesRow, WorkedExample, BiggerSpaces } from '@/Components/Public/PayOptions';
+import {
+    useSectionDevices, useDeviceChoice, offerOf, offerPlans, offerPrice, PricingSteps, sectionSteps, DevicePicker,
+    OfferExample, OfferNote, DevicesRow, BiggerSpaces, PLAN_FIELDS,
+} from '@/Components/Public/PlanOffer';
 import { planHref } from '@/lib/pricingMath';
+import { useDeviceLine } from '@/Components/Welcome/Hero';
 
 /**
  * The v2 public pages' sections (OKJT kit design), shared by the v2 homepage
@@ -346,6 +350,7 @@ export function Showcase({ section, id }) {
 
 /** How it works: four numbered steps, and the cards under them. */
 export function HowItWorks({ section, site, id }) {
+    const { offer = { freeMonths: 0, steps: [] } } = usePage().props;
     const steps = extractItems(section, 'steps', ['step', 'title', 'description', 'feature']).filter((s) => stripHtml(s.title));
     const cards = extractItems(section, 'cards', ['title', 'text']).filter((c) => stripHtml(c.title));
 
@@ -382,6 +387,12 @@ export function HowItWorks({ section, site, id }) {
                                 <p className="mt-2 text-sm leading-relaxed text-white/75">{stripHtml(c.text)}</p>
                             </div>
                         ))}
+                    </div>
+                )}
+                {/* Getting started: the offer's three steps, from the live /hosts pricing. */}
+                {offer.freeMonths > 0 && offer.steps.length > 0 && (
+                    <div className="mt-10">
+                        <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} />
                     </div>
                 )}
             </Container>
@@ -468,55 +479,39 @@ export function Credibility({ section, id }) {
     );
 }
 
-/** A page's plans (on /v2, the rentals plans copied from the live /hosts page). */
 /**
- * A page's plans, with the two ways to pay (buy the device, or pay monthly
- * with a device add-on), the TenaFi devices, a worked example and bigger
- * spaces. The extras show once the section has its "Two ways to pay" words
- * (`tenafi:pricing-options` fills them on live pages) and there are devices.
- * On /pricing (devicesLink off) the switch shows above the plans, but not the
- * devices, example and bigger spaces: that page has its own.
+ * A page's plans (on /v2, the rentals plans copied from the live /hosts page),
+ * with TenaFi's offer: the three steps, the device picker, Free / Basic /
+ * Starter / Growth with their prices for the free months, the worked example,
+ * the note, the devices and bigger spaces (PlanOffer.jsx). On /pricing
+ * (devicesLink off) the devices and bigger spaces are left out: that page has its own.
  */
 export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
     // Once /pricing is switched on (Admin -> Settings), each page's plans link to it.
     const { pricingPage: devicesPage } = usePage().props;
     const pricingPage = devicesLink ? devicesPage : null;
     const devices = useSectionDevices(section);
-    const withOptions = devices.length > 0 && Boolean(stripHtml(getContent(section, 'pay_buy_label', '')));
-    const choice = usePayChoice(devices);
-    const pay = withOptions ? choice.pay : 'buy';
+    const choice = useDeviceChoice(devices);
+    const offer = offerOf(section);
 
-    const rows = extractItems(section, 'plans', ['id', 'label', 'tagline', 'price', 'price_kes', 'unit', 'features', 'cta', 'variant'])
-        .filter((p) => stripHtml(p.label));
-    const plans = rows.map((p, i) => {
-        const monthly = withOptions ? planPrice(section, p, pay, choice.device) : null;
+    const rows = extractItems(section, 'plans', PLAN_FIELDS);
+    const plans = offerPlans(section, rows, offer).map((p) => {
+        const price = offerPrice(section, p, rows, choice.device, offer);
         return {
-            id: stripHtml(p.id) || String(i),
+            id: stripHtml(p.id) || String(p.index),
             name: stripHtml(p.label),
-            price: monthly ? (
-                <>
-                    {monthly.amount}
-                    <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">
-                        {stripHtml(p.unit).replace(/\(about \$[\d,.]+\)/i, monthly.usd).trim()}
-                    </span>
-                    <span className="pay-price-then">{monthly.then}</span>
-                </>
-            ) : (
-                <>
-                    {stripHtml(p.price)}
-                    {stripHtml(p.unit) && <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">{stripHtml(p.unit)}</span>}
-                </>
-            ),
+            price,
             tagline: stripHtml(p.tagline),
             lines: textLines(p.features, site).map((l) => (l.badge ? `${l.text} (${l.badge})` : l.text)),
-            cta: { to: planHref(joinHref, stripHtml(p.id), pay, choice.device?.id), label: stripHtml(p.cta) || 'Book a demo' },
+            note: stripHtml(p.note),
+            cta: { to: planHref(joinHref, stripHtml(p.id), choice.device?.id, offer.free), label: stripHtml(p.cta) || 'Book a demo' },
             highlight: stripHtml(p.variant) === 'dark',
         };
     });
     if (!plans.length) return null;
 
     return (
-        <div className={plans.length > 2 ? 'v2-pricing v2-pricing--wide' : 'v2-pricing'}>
+        <div className="v2-pricing">
             <section id={id} className={`${SECTION_OFFSET} py-24`}>
                 <Container>
                     <SectionHeading
@@ -525,15 +520,20 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                         text={stripHtml(getContent(section, 'subtitle', ''))}
                     />
                     <div className="mt-10">
-                        {withOptions && <PaySwitch section={section} devices={devices} choice={choice} site={site} />}
+                        <PricingSteps steps={sectionSteps(section)} freeMonths={offer.free} />
+                        <DevicePicker section={section} devices={devices} choice={choice} />
                     </div>
-                    {/* The kit's plan cards (PricingSection), drawn here so the switch sits above them. */}
-                    <div className="mx-auto mt-4 grid max-w-5xl gap-6 md:grid-cols-2">
+                    {/* The kit's plan cards (PricingSection), drawn here so the steps and picker sit above them. */}
+                    <div className={`v2-pricing__grid ${plans.length > 3 ? 'v2-pricing__grid--4' : 'v2-pricing__grid--3'}`}>
                         {plans.map((plan) => (
-                            <div key={plan.id} className={`relative flex flex-col overflow-hidden rounded-[2rem] p-8 sm:p-10 ${plan.highlight ? 'bg-ink text-white shadow-[0_40px_80px_-40px_color-mix(in_srgb,var(--color-ink)_80%,transparent)]' : 'border border-line bg-white'}`}>
+                            <div key={plan.id} className={`relative flex min-w-0 flex-col overflow-hidden rounded-[2rem] p-8 ${plan.highlight ? 'bg-ink text-white shadow-[0_40px_80px_-40px_color-mix(in_srgb,var(--color-ink)_80%,transparent)]' : 'border border-line bg-white'}`}>
                                 {plan.highlight && <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent-soft/20 blur-2xl" aria-hidden="true" />}
                                 <div className={`text-xs font-semibold uppercase tracking-[0.2em] ${plan.highlight ? 'text-accent-soft' : 'text-accent'}`}>{plan.name}</div>
-                                <div className={`mt-3 font-display text-3xl font-light tracking-tight sm:text-4xl ${plan.highlight ? 'text-white' : 'text-ink'}`}>{plan.price}</div>
+                                <div className={`mt-3 font-display text-3xl font-light tracking-tight sm:text-4xl ${plan.highlight ? 'text-white' : 'text-ink'}`}>
+                                    {plan.price.amount}
+                                    {plan.price.under && <span className="mt-1 block font-sans text-sm font-normal tracking-normal opacity-70">{plan.price.under}</span>}
+                                    {plan.price.lines.map((line) => <span key={line} className="pay-price-then">{line}</span>)}
+                                </div>
                                 <div className={`mt-2 text-sm ${plan.highlight ? 'text-white/70' : 'text-soft'}`}>{plan.tagline}</div>
                                 <ul className="mt-8 flex-1 space-y-3 text-sm">
                                     {plan.lines.map((feature) => (
@@ -543,13 +543,15 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
                                         </li>
                                     ))}
                                 </ul>
+                                {plan.note && <p className="pricing-plan-note">{plan.note}</p>}
                                 <PillLink to={plan.cta.to} variant={plan.highlight ? 'light' : 'dark'} className="mt-10">{plan.cta.label}</PillLink>
                             </div>
                         ))}
                     </div>
-                    {withOptions && devicesLink && (
+                    <OfferNote section={section} offer={offer} />
+                    <OfferExample section={section} plans={rows} devices={devices} offer={offer} />
+                    {devicesLink && (
                         <>
-                            <WorkedExample section={section} plans={rows} devices={devices} />
                             <DevicesRow section={section} devices={devices} />
                             <BiggerSpaces section={section} site={site} />
                         </>
@@ -561,7 +563,7 @@ export function Pricing({ section, site, id, joinHref, devicesLink = true }) {
             </section>
             {pricingPage && (
                 <div className="v2-pricing__devices">
-                    <PillLink to={pricingPage} variant="outline" arrow>See the devices and both ways to pay</PillLink>
+                    <PillLink to={pricingPage} variant="outline" arrow>See the devices and how pricing works</PillLink>
                 </div>
             )}
         </div>
@@ -588,6 +590,11 @@ export function Faq({ section, id }) {
 
 /** The "Book a demo" band: words and ticks over a photo, a button per audience. */
 export function Trial({ section, site, id, joinHref }) {
+    // The homepage's banner (it has a pricing card): the offer's three steps and
+    // "TenaFi devices from KES 25,000", from the live /hosts pricing and /pricing devices.
+    const { offer = { freeMonths: 0, steps: [] } } = usePage().props;
+    const deviceLine = useDeviceLine(section);
+    const showOffer = offer.freeMonths > 0 && offer.steps.length > 0 && Boolean(stripHtml(getContent(section, 'pricing_title', '')));
     const whatsapp = getText(site.whatsapp_button, 'number').replace(/\D/g, '');
     const ticks = textLines(getContent(section, 'ticks', ''), site);
     const buttons = extractItems(section, 'buttons', ['label', 'href'])
@@ -611,6 +618,12 @@ export function Trial({ section, site, id, joinHref }) {
                         {stripHtml(getContent(section, 'title', ''))}
                     </h2>
                     <p className="mx-auto mt-4 max-w-xl text-soft">{stripHtml(getContent(section, 'body', ''))}</p>
+                    {showOffer && (
+                        <div className="mx-auto mt-8 max-w-3xl rounded-[1.75rem] bg-white/90 p-6 text-left text-ink shadow-[0_20px_60px_-30px_color-mix(in_srgb,var(--color-ink)_40%,transparent)] sm:p-8">
+                            <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} compact className="sm:!grid-cols-3" />
+                            {deviceLine && <p className="mt-5 text-sm font-semibold text-ink">{deviceLine}</p>}
+                        </div>
+                    )}
                     {ticks.length > 0 && (
                         <ul className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-body">
                             {ticks.map((t, i) => <li key={i} className="inline-flex items-center gap-1.5"><Check className="h-4 w-4 text-positive" aria-hidden="true" />{t.text}</li>)}

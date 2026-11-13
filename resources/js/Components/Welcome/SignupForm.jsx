@@ -156,7 +156,10 @@ export default function SignupForm({ section }) {
     const { page, sections } = usePublic();
     const { devices = [] } = usePage().props;
     const steps = useMemo(
-        () => extractItems(section, 'steps', ['title', 'heading', 'description', 'fields']).map((s) => ({ ...s, fields: parseFields(s.fields) })),
+        // "How would you like to pay for it?" (devicePayment) is no longer asked: the
+        // device is bought once (Nov 2026). A live form that still has it skips it.
+        () => extractItems(section, 'steps', ['title', 'heading', 'description', 'fields'])
+            .map((s) => ({ ...s, fields: parseFields(s.fields).filter((f) => f.key !== 'devicePayment') })),
         [section],
     );
     const allFields = steps.flatMap((s) => s.fields);
@@ -182,14 +185,12 @@ export default function SignupForm({ section }) {
             const match = window.location.hash.match(/plan=(\w+)/);
             const wanted = match && parseOptions(planField.options).find((o) => o.value.toLowerCase() === match[1].toLowerCase());
             if (wanted) setValues((v) => ({ ...v, [planField.key]: wanted.value }));
-            // "&pay=monthly&device=pro" from a pricing card: the device questions, when the form has them.
+            // "&device=pro" from a pricing card: the device question, when the form has it.
             const pick = (key, value) => {
                 const field = allFields.find((f) => f.key === key);
                 const option = field && value && parseOptions(field.options).find((o) => o.value === value);
                 if (option) setValues((v) => ({ ...v, [key]: option.value }));
             };
-            const pay = window.location.hash.match(/pay=(\w+)/)?.[1];
-            pick('devicePayment', pay === 'monthly' ? 'monthly' : pay === 'buy' ? 'upfront' : null);
             pick('device', window.location.hash.match(/device=(\w+)/)?.[1]);
         };
         fromHash();
@@ -218,18 +219,9 @@ export default function SignupForm({ section }) {
     const basePrice = Number(plans[selectedPlan]?.price_kes) || 0;
     const estimatedPrice = basePrice ? Math.round(basePrice * (1 - discount / 100)) : null;
 
-    // The device they picked (prices from /pricing) and how they'll pay for it.
+    // The device they picked (prices from /pricing), paid once.
     const device = devices.find((d) => d.id === values.device);
-    const deviceRows = device ? (() => {
-        const once = `${formatKes(device.price_kes)} once, installed`;
-        const spread = `+${formatKes(device.monthly_kes)} a month for ${device.months} months`;
-        if (values.devicePayment === 'upfront') return [['Device', `${device.name}: ${once}`]];
-        if (values.devicePayment === 'monthly') {
-            return [['Device', `${device.name}: ${spread}, then it’s yours`]]
-                .concat(estimatedPrice ? [[`Monthly, months 1–${device.months}`, `${formatKes(estimatedPrice + device.monthly_kes)} ${planProps.suffix}`]] : []);
-        }
-        return [['Device', `${device.name}: ${once}, or ${spread}`]];
-    })() : [];
+    const deviceRows = device ? [['Device', `${device.name}: ${formatKes(device.price_kes)} once`]] : [];
 
     const setValue = (key, value) => {
         setValues((v) => ({ ...v, [key]: value }));

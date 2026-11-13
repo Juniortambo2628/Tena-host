@@ -4,6 +4,11 @@
     @apply grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch;
 }
 
+/* Free, Basic, Starter and Growth: 2 x 2 on tablets, four in a row from 1280px. */
+.pricing-cards-grid--four {
+    @apply md:grid-cols-2 xl:grid-cols-4 gap-6;
+}
+
 .pricing-card {
     @apply bg-white/90 rounded-2xl;
     width: 100%;

@@ -79,7 +79,7 @@ it('quotes plans from the live /hosts pricing, never a second copy', function ()
 
     $this->get('/')->assertInertia(fn ($page) => $page
         ->where('plans.0', ['id' => 'basic', 'label' => 'Basic', 'price' => 'KES 2,800', 'price_kes' => 2800])
-        ->has('plans', 3)
+        ->has('plans', 4) // Basic, Starter, Growth and Free (the hero's "from" price skips Free's KES 0)
         ->where('sections', fn ($s) => str_contains(json_encode(collect($s)->firstWhere('section_key', 'hero')), '{price}')));
 });
 

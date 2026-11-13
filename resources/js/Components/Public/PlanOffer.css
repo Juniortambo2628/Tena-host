@@ -1,0 +1,175 @@
+@reference "../../../css/theme.css";
+
+/* The offer on a pricing section (PlanOffer.jsx): the three steps, the device
+   picker, the card lines, the example, the device row and bigger spaces.
+   Text stays at 12px or more (CLAUDE.md). */
+
+/* 1. Get your device  2. 3 months of Basic, free  3. Then choose */
+.pricing-steps {
+    @apply mx-auto mb-8 grid w-full max-w-5xl gap-3 text-left sm:grid-cols-3;
+    list-style: none;
+    padding: 0;
+}
+
+.pricing-steps__step {
+    @apply flex min-w-0 items-start gap-3 rounded-3xl border border-dark/10 bg-white p-5;
+}
+
+.pricing-steps__number {
+    @apply grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-dark;
+}
+
+.pricing-steps__body {
+    @apply flex min-w-0 flex-col gap-1;
+}
+
+.pricing-steps__title {
+    @apply text-base font-semibold leading-snug text-dark;
+}
+
+.pricing-steps__text {
+    @apply text-sm leading-relaxed text-muted;
+}
+
+/* On a dark or narrow card (homepage): one column, no boxes. */
+.pricing-steps--compact {
+    @apply mb-0 max-w-none gap-3 sm:grid-cols-1;
+}
+
+.pricing-steps--compact .pricing-steps__step {
+    @apply border-0 bg-transparent p-0;
+}
+
+.pricing-steps--compact .pricing-steps__number {
+    @apply h-7 w-7 text-xs;
+}
+
+.pricing-steps--compact .pricing-steps__title {
+    @apply text-sm;
+    color: inherit;
+}
+
+.pricing-steps--compact .pricing-steps__text {
+    @apply text-xs;
+    color: inherit;
+    opacity: .75;
+}
+
+/* Lite / Pro / Outdoor */
+.pricing-picker {
+    @apply mx-auto mb-8 flex w-full max-w-3xl flex-col items-center gap-2;
+}
+
+.pricing-picker__label {
+    @apply text-xs font-semibold uppercase tracking-widest text-muted;
+}
+
+.pricing-picker__chips {
+    @apply flex flex-wrap justify-center gap-2;
+}
+
+.pricing-picker__chips button {
+    @apply flex min-w-0 flex-col items-center justify-center rounded-full border border-dark/10 bg-white px-4 py-1.5 text-center transition-colors;
+    min-height: 2.75rem;
+}
+
+.pricing-picker__chips button[aria-checked="true"] {
+    @apply bg-dark text-white;
+}
+
+.pricing-picker__chips button:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+}
+
+.pricing-picker__chips small {
+    @apply text-xs opacity-75;
+}
+
+/* A plan's note ("One WiFi page design. Support by WhatsApp.") */
+.pricing-plan-note {
+    @apply mt-4 text-xs leading-relaxed opacity-75;
+}
+
+/* Under the cards */
+.pricing-offer-note {
+    @apply mx-auto mt-6 max-w-3xl text-center text-sm text-dark;
+}
+
+.pricing-offer-note__vat {
+    @apply mt-1 text-xs text-muted;
+}
+
+/* A plan card's lines under its price: "then KES 4,500/month", the device once. */
+.pay-price-then {
+    @apply mt-1 block text-xs font-normal normal-case tracking-normal opacity-75;
+}
+
+/* Choose your TenaFi device */
+.pay-devices {
+    @apply mx-auto mt-14 w-full max-w-5xl;
+}
+
+.pay-devices__title {
+    @apply mb-6 text-center text-2xl font-semibold text-dark;
+}
+
+.pay-devices__list {
+    @apply grid gap-4 sm:grid-cols-3;
+}
+
+.pay-device {
+    @apply flex min-w-0 flex-col gap-1 rounded-3xl border border-dark/10 bg-white p-5 text-sm;
+}
+
+.pay-device img {
+    @apply mb-2 block h-auto w-full;
+    max-width: 100%;
+}
+
+.pay-device__name {
+    @apply text-lg text-dark;
+}
+
+.pay-device__specs,
+.pay-device__for,
+.pay-device__monthly {
+    @apply text-muted;
+}
+
+.pay-device__price {
+    @apply mt-2 text-xl font-semibold tabular-nums text-dark;
+}
+
+.pay-devices__note {
+    @apply mt-3 text-center text-xs text-muted;
+}
+
+/* Worked example */
+.pay-example {
+    @apply mx-auto mt-8 max-w-3xl rounded-2xl bg-primary/20 px-5 py-4 text-center text-sm text-dark;
+}
+
+/* Bigger space? */
+.pay-bigger {
+    @apply mx-auto mt-8 grid max-w-3xl gap-3 rounded-3xl bg-dark p-6 text-white;
+}
+
+.pay-bigger h3 {
+    @apply text-lg font-semibold text-primary;
+}
+
+.pay-bigger ul {
+    @apply grid gap-2;
+}
+
+.pay-bigger li {
+    @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-xl bg-white/5 px-4 py-2.5 text-sm;
+}
+
+.pay-bigger b {
+    @apply font-semibold text-primary;
+}
+
+.pay-bigger__cta {
+    @apply justify-self-start rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-dark;
+}

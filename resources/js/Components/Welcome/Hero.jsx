@@ -8,6 +8,7 @@ import Mockup from '@/Components/Public/Mockup';
 import EditablePicture from '@/Components/Public/EditablePicture';
 import CallbackForm from './CallbackForm';
 import { SkeletonHero } from './Skeleton';
+import { fillFree } from '@/lib/pricingMath';
 import CtaLink from '@/Components/Public/CtaLink';
 import FitText from '@/Components/Public/FitText';
 import './Hero.css';
@@ -25,6 +26,21 @@ export function useDeviceLine(section) {
     return line.replace('{device_price}', cheapest ? `KES ${cheapest.price_kes.toLocaleString('en-KE')}` : '');
 }
 
+/**
+ * "3 months free with your TenaFi device. Then from KES 3,000/month.": the
+ * free months and cheapest paid plan (Free doesn't count) on the live /hosts
+ * pricing; '' when /hosts has no free months or the line is empty, so the
+ * usual price line shows.
+ */
+export function useFreePriceLine(section) {
+    const { offer = { freeMonths: 0 } } = usePage().props;
+    const cheapest = useCheapestPrice();
+    const line = stripHtml(getContent(section, 'free_price_line', ''));
+    if (!offer.freeMonths || !line || (line.includes('{price}') && !cheapest)) return '';
+    return fillFree(line, offer.freeMonths).replace('{price}', cheapest);
+}
+
+/** "From KES 3,000": the cheapest paid plan on the live /hosts pricing (Free, at KES 0, doesn't count). */
 export function useCheapestPrice() {
     const { plans = [] } = usePage().props;
     const priced = plans.filter(p => p.price_kes > 0).sort((a, b) => a.price_kes - b.price_kes);
@@ -60,6 +76,8 @@ function HeroVisual({ section }) {
 export default function Hero({ section }) {
     const { site } = usePublic();
     const cheapest = useCheapestPrice();
+    // While /hosts has free months, "3 months free with your TenaFi device. Then from ..." replaces the price line.
+    const freeLine = useFreePriceLine(section);
     if (!section) return <SkeletonHero />;
 
     const badge = getText(section, 'badge', "Africa's guest relationship platform");
@@ -76,7 +94,7 @@ export default function Hero({ section }) {
 
     // Optional extras (the homepage uses them; other pages leave them empty).
     const audiences = extractItems(section, 'audiences', ['label', 'href']).filter(a => stripHtml(a.label));
-    const priceLine = stripHtml(getContent(section, 'price_line', ''));
+    const priceLine = freeLine || stripHtml(getContent(section, 'price_line', ''));
     const priceLink = stripHtml(getContent(section, 'price_link', ''));
     const ticks = textLines(getContent(section, 'ticks', ''), site);
     const showSlots = isTruthy(getContent(section, 'show_slots', '0'));

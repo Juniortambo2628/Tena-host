@@ -47,41 +47,52 @@ $detailsStep = fn (array $extra = []) => [
 // Book a demo: how they'd like it (on the details step of the rentals and business forms).
 $demoField = ['key' => 'demoType', 'label' => 'How would you like your demo?', 'type' => 'singleSelect', 'required' => false, 'options' => ['call|A call or video call', 'visit|A visit to my place'], 'placeholder' => '', 'hint' => ''];
 
-// The device and how to pay for it (the /pricing page's devices; ids match its cards).
+// The device (the /pricing page's devices; ids match its cards). It is bought
+// once, so there is no "how would you like to pay" question any more (Nov 2026).
 $deviceFields = fn (string $unit) => [
     ['key' => 'device', 'label' => 'Which TenaFi device?', 'type' => 'select', 'required' => false, 'options' => ['lite|TenaFi Lite (small spaces)', 'pro|TenaFi Pro (busy spaces)', 'outdoor|TenaFi Outdoor (outdoor & events)', 'notSure|Not sure, help me choose'], 'placeholder' => '', 'hint' => "(one per {$unit}; we confirm after a site survey)"],
-    ['key' => 'devicePayment', 'label' => 'How would you like to pay for it?', 'type' => 'singleSelect', 'required' => false, 'options' => ['upfront|Buy it upfront (best value)', 'monthly|Pay monthly (nothing upfront)'], 'placeholder' => '', 'hint' => ''],
 ];
 
-// The two ways to pay, the device row, the worked example and bigger spaces
-// on a pricing section (Pricing.jsx / V2 Sections Pricing). Device prices are
-// kept once, on the /pricing page's devices section (LandingPage::liveDevices);
-// a pricing section can override them with its own devices.{i}.* rows.
+// The offer (Nov 2026), on every pricing section (Pricing.jsx / V2 Sections
+// Pricing, PlanOffer.jsx): 1. get your TenaFi device, pay once; 2. your first
+// free_months months of the base plan (Basic) are free; 3. then choose Free,
+// Basic, Starter or Growth. A bigger plan costs only the difference from Basic
+// during the free months. Every price is worked out from the plans' price_kes,
+// the devices (kept once on /pricing's devices section) and free_months;
+// nothing here types a price. free_months 0 turns the offer off: the paid plans
+// show at full price and Free only if show_free_plan is 1. Pay monthly is gone.
 // TODO(Glen): are prices incl. or excl. 16% VAT? Fill vat_note once decided.
-// TODO(Glen): on Pay monthly, does the client own the device after month 12, or does TenaFi keep it?
 // TODO(Glen): extra devices: one-off purchases, or does each carry a plan?
 // TODO(Glen): TenaFi Outdoor may move from KES 48,000 to about 52,000 (one field on /pricing's devices).
-$payOptions = fn (string $example, string $plan, string $device) => [
-    'pay_label' => 'Two ways to pay',
-    'pay_buy_label' => 'Buy the device',
-    'pay_buy_badge' => 'Best value',
-    'pay_buy_text' => 'Pay once for the device and installation, then your plan each month.',
-    'pay_buy_terms' => "Month to month, 30 days\u{2019} notice\nPay yearly and get 2 months free",
-    'pay_monthly_label' => 'Pay monthly',
-    'pay_monthly_badge' => 'KES 0 upfront',
-    'pay_monthly_text' => 'Nothing upfront. For your first 12 months you pay your plan plus a device add-on; from month 13 it drops to the plan price.',
-    'pay_monthly_terms' => "Month to month, 30 days\u{2019} notice\nLeaving in the first 12 months: pay off the rest of the device, or return it",
-    // {months} and {plan} are filled in per plan.
-    'monthly_price_line' => 'for {months} months, then {plan}/month',
+$offer = fn (string $unit, string $example, string $plan, string $device) => [
+    'free_months' => '3',
+    'base_free_plan' => 'basic',
+    'show_free_plan' => '0',
+    'price_unit' => "per {$unit}",
+    // The three steps, at the top of the pricing (and on the homepage and How it works).
+    'steps' => [
+        ['title' => 'Get your TenaFi device', 'text' => 'Pay once. We set it up for you.'],
+        ['title' => '{free_months} months of Basic, free', 'text' => 'Your WiFi page, '.($unit === 'unit' ? 'guest' : 'customer').' homepage, review requests and email campaigns.'],
+        ['title' => 'Then choose', 'text' => 'Stay on Free, or pick Basic, Starter or Growth. The device is yours.'],
+    ],
+    'devices_picker_label' => 'Your TenaFi device',
+    // A paid plan's card: the price for the free months, then the plan, then the device.
+    'intro_line' => 'a month for your first {free_months} months',
+    'then_line' => 'then {plan}/month',
+    'device_line_card' => 'plus {device}, {device_price} once',
+    'free_plan_line' => 'forever',
     'devices_title' => 'Choose your TenaFi device',
-    // {addon} and {months} per device.
-    'device_price_line' => 'or +{addon}/month for {months} months',
-    'devices_note' => 'Coverage is for open space. Walls and floors reduce it, so we check your space at installation.',
-    // Worked out from the plan and device ids: {buy}, {monthly} and {saving}.
+    'devices_note' => 'Coverage is for open space. Walls and floors reduce it, so we check your space before we set it up.',
+    // Worked out from the plan and device ids: year one = device + free months x intro + the rest x plan.
     'example_label' => $example,
     'example_plan' => $plan,
     'example_device' => $device,
-    'example_text' => '{label} pays {buy} in year one buying the device, or {monthly} paying monthly. Buying saves {saving}.',
+    'example_text' => '{label}: {device_price} once, {intro_phrase}, then {plan}. Year one: {year_one}.',
+    // With free_months 0: the device once, then the plan.
+    'example_full_text' => '{label}: {device_price} once, then {plan}/month. Year one: {year_one}.',
+    'intro_free_phrase' => '{free_months} months free',
+    'intro_paid_phrase' => '{intro}/month for {free_months} months',
+    'offer_note' => "Month to month after your free months, 30 days\u{2019} notice. Your device is yours.",
     'bigger_title' => 'Bigger space? Add more devices.',
     // One per line: "Space | Devices".
     'bigger_spaces' => "Restaurant with a terrace | 1 TenaFi Pro + 1 TenaFi Outdoor\nBoutique hotel on 3 floors | 3 TenaFi Pro\nStadiums and large events | Quoted after a site visit",
@@ -91,28 +102,38 @@ $payOptions = fn (string $example, string $plan, string $device) => [
     'vat_note' => '',
 ];
 
-// FAQs about devices and paying (both audience pages).
-$deviceFaqs = [
-    ['question' => 'Do I have to buy the device?', 'answer' => 'No. Choose Pay monthly and pay KES 0 upfront. Buying the device upfront costs less over your first year.'],
-    ['question' => 'Which device do I need?', 'answer' => 'TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm at installation.'],
-    ['question' => 'What if I leave?', 'answer' => 'It’s month to month with 30 days’ notice. On Pay monthly, if you leave in the first 12 months you pay off the rest of the device or return it.'],
+// FAQs about the offer and the device (both audience pages, and /pricing).
+$offerFaqs = fn (string $who) => [
+    ['question' => 'What’s free?', 'answer' => 'Your first 3 months of Basic, and the Free plan for as long as you like. You pay only for your TenaFi device.'],
+    ['question' => 'What happens after 3 months?', 'answer' => "Choose Basic, Starter or Growth, month to month. Or stay on Free: your WiFi page keeps collecting {$who}s and the list stays yours."],
+    ['question' => 'Do I keep the device?', 'answer' => 'Yes. You buy it once, and it’s yours.'],
+    ['question' => 'What’s the difference between Free and Basic?', 'answer' => "Free collects your {$who} list. Basic puts it to work: {$who} homepage, review requests, monthly email campaigns and a report."],
+    ['question' => 'Can I start on Starter or Growth?', 'answer' => 'Yes. For your first 3 months you pay only the difference from Basic.'],
+    // TODO(Glen): device payment terms: all at booking, all at installation, or half and half?
+    ['question' => 'How do I pay for the device?', 'answer' => 'By M-Pesa.'],
+    ['question' => 'Which device do I need?', 'answer' => 'TenaFi Lite for small spaces up to about 115 m², TenaFi Pro for busy indoor spaces, and TenaFi Outdoor for gardens and terraces. We confirm when we look at your space.'],
     ['question' => 'Do I need more than one device?', 'answer' => 'Bigger spaces get more devices, for example one for a terrace and one for the dining room. We tell you how many after looking at your space.'],
 ];
 
-$planField = fn (string $unit) => ['key' => 'plan', 'label' => 'Pick a starting plan', 'type' => 'planCards', 'required' => true, 'options' => ['basic|Basic', 'starter|Starter', 'growth|Growth', 'notSure|Not sure yet'], 'placeholder' => 'starter', 'hint' => "(per {$unit}, per month)"];
+$planField = fn (string $unit) => ['key' => 'plan', 'label' => 'Pick a starting plan', 'type' => 'planCards', 'required' => true, 'options' => ['free|Free', 'basic|Basic', 'starter|Starter', 'growth|Growth', 'notSure|Not sure yet'], 'placeholder' => 'basic', 'hint' => "(per {$unit}, per month)"];
 
+// Basic, Starter (featured), Growth and Free. Free is last here, as on live
+// sections (the command adds it after the existing plans); the cards sort by
+// price, so it shows first. intro_price_kes overrides the computed price for
+// the free months (empty: max(plan - Basic, 0)).
 $plans = fn (string $unit, array $features) => [
-    ['id' => 'basic', 'label' => 'Basic', 'tagline' => $features['basic'][0], 'badge' => '', 'price' => 'KES 3,000', 'price_kes' => '3000', 'unit' => "per {$unit}, per month (about \$23)", 'features' => $features['basic'][1], 'cta' => 'Choose Basic', 'variant' => 'outline'],
-    ['id' => 'starter', 'label' => 'Starter', 'tagline' => $features['starter'][0], 'badge' => 'Most popular', 'price' => 'KES 4,500', 'price_kes' => '4500', 'unit' => "per {$unit}, per month (about \$35)", 'features' => $features['starter'][1], 'cta' => 'Choose Starter', 'variant' => 'dark'],
-    ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 6,000', 'price_kes' => '6000', 'unit' => "per {$unit}, per month (about \$47)", 'features' => $features['growth'][1], 'cta' => 'Choose Growth', 'variant' => 'outline'],
+    ['id' => 'basic', 'label' => 'Basic', 'tagline' => $features['basic'][0], 'badge' => '', 'price' => 'KES 3,000', 'price_kes' => '3000', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month (about \$23)", 'features' => $features['basic'][1], 'note' => '', 'cta' => 'Start 3 months free', 'variant' => 'outline'],
+    ['id' => 'starter', 'label' => 'Starter', 'tagline' => $features['starter'][0], 'badge' => 'Most popular', 'price' => 'KES 4,500', 'price_kes' => '4500', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month (about \$35)", 'features' => $features['starter'][1], 'note' => '', 'cta' => 'Choose Starter', 'variant' => 'dark'],
+    ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 6,000', 'price_kes' => '6000', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month (about \$47)", 'features' => $features['growth'][1], 'note' => '', 'cta' => 'Choose Growth', 'variant' => 'outline'],
+    ['id' => 'free', 'label' => 'Free', 'tagline' => $features['free'][0], 'badge' => '', 'price' => 'KES 0', 'price_kes' => '0', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month", 'features' => $features['free'][1], 'note' => 'One WiFi page design. Support by WhatsApp.', 'cta' => 'Get your device', 'variant' => 'outline'],
 ];
 
 // Book a demo (Nov 2026): the free trial is over. New customers book a demo
 // (a call or video call, or a visit to their place); after that it's month to
 // month (cancel with 30 days' notice), and paying yearly gives 2 months free.
 //
-// TODO(Glen): is there a KES 2,500 installation fee?
-//   Undecided, so no copy mentions it yet.
+// Installation isn't itemised or mentioned next to prices: device prices stay
+// as they are (Nov 2026). "We set it up for you" is fine in how-it-works copy.
 // TODO(Glen): does the multi-unit discount start at 5 or 10 units?
 //   Undecided; the copy and the signup discounts below still say 10.
 $founding = fn (string $who) => [
@@ -373,8 +394,10 @@ return [
                 'callback_thanks' => 'Thanks! We’ll call or WhatsApp you within one working day.',
                 // {price} is the cheapest plan on the live /hosts pricing section.
                 'price_line' => 'Plans from {price} a month, plus your TenaFi device.',
+                // While /hosts has free months: shown instead of price_line. {price}: the cheapest paid plan on /hosts.
+                'free_price_line' => '{free_months} months free with your TenaFi device. Then from {price}/month.',
                 // {device_price}: the cheapest device on /pricing. Empty hides the line.
-                'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
+                'device_line' => 'TenaFi devices from {device_price}.',
                 'price_link_label' => 'See pricing',
                 'price_link' => '#pricing',
                 'ticks' => "Book a call, video or visit\nInstalled for you\nCancel with 30 days’ notice",
@@ -666,9 +689,10 @@ return [
                 // Plans come from the live /hosts pricing section, never typed twice.
                 'pricing_anchor' => 'pricing',
                 'pricing_title' => 'Pricing',
+                // While /hosts has free months the card shows /hosts' three steps instead of the plan list.
                 // {device_price}: the cheapest device on /pricing. Empty hides the line.
-                'device_line' => 'Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.',
-                'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.',
+                'device_line' => 'TenaFi devices from {device_price}.',
+                'pricing_note' => 'A month, per unit for rentals. Pay yearly and get 2 months free, from month 4. Events are quoted per event.',
                 'pricing_links' => [
                     ['label' => 'Rental pricing', 'href' => '/hosts#h-pricing'],
                     ['label' => 'Business pricing', 'href' => '/business#b-pricing'],
@@ -996,17 +1020,20 @@ return [
                 'anchor' => 'h-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per unit. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, guest list and support. Month to month.',
-                // TODO(Glen): multi-unit discount from 5 or 10 units? Installation fee?
-                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+                // TODO(Glen): "Installations from Monday 16 November" dates this line; update it once that has passed.
+                'subtitle' => 'Your WiFi page, guest list and support, month to month. Get your TenaFi device and your first 3 months of Basic are free. Installations from Monday 16 November, in time for the December high season.',
+                // TODO(Glen): multi-unit discount from 5 or 10 units?
+                'footnote' => "Month to month after your free months; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free, from month 4. Multi-unit operators: 20% off from 10 units, 30% off from 50. Your TenaFi device is yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
+                // TODO(Glen): keep, relabel or turn off the TrialSlots counter (show_slots)?
                 'show_slots' => '0',
                 'cta_headline' => '',
-                ...$payOptions('A one-bedroom rental on Starter with TenaFi Lite', 'starter', 'lite'),
+                ...$offer('unit', 'A one-bedroom rental on Basic with TenaFi Lite', 'basic', 'lite'),
                 'plans' => $plans('unit', [
-                    'basic' => ['Capture guests and collect reviews', "Branded WiFi page and guest list\nA review request to every guest, by SMS and email\nA campaign every quarter"],
-                    'starter' => ['A campaign every month to fill empty dates', "Everything in Basic\nA campaign and results report every month [[monthly_report]]\nUpsells, and your Tena Direct page at 0% commission [[tena_direct]]"],
-                    'growth' => ['Full done-for-you marketing', "Everything in Starter\n2 to 4 campaigns a month\nFeatured on Tena Direct, plus VIP WiFi tiers [[vip_wifi]]"],
+                    'free' => ['Your guest list, forever', "Branded WiFi page that captures every guest\nYour guest list, export it any time\nGuest count in your dashboard"],
+                    'basic' => ['Put your guest list to work', "Everything in Free\nGuest homepage: house guide, local tips, contact host\nA review request after every stay, by email and SMS\n1 email campaign a month\nA monthly results report [[monthly_report]]"],
+                    'starter' => ['A campaign every month to fill empty dates', "Everything in Basic\n1 direct-booking campaign a month, by WhatsApp or SMS\nPaid extras by M-Pesa: late checkout, extra nights, transfers [[mpesa_extras]]\nYour Tena Direct booking page at 0% commission [[tena_direct]]"],
+                    'growth' => ['Full done-for-you marketing', "Everything in Starter\n2 to 4 campaigns a month, timed to your gaps and the holidays\nBirthday and anniversary offers\nFeatured on Tena Direct [[tena_direct]], plus VIP WiFi tiers [[vip_wifi]]"],
                 ]),
             ],
         ],
@@ -1023,7 +1050,7 @@ return [
                     ['question' => 'Do I have to write the messages?', 'answer' => 'No. We write, schedule and send every campaign, and you approve anything that goes out under your name.'],
                     // TODO(Glen): 5 or 10 units for the multi-unit discount? (20% off from 10 units, 30% from 50 until decided.)
                     ['question' => 'I manage lots of units.', 'answer' => 'You get 20% off from 10 units and 30% off from 50, and we install building by building. One report covers every unit.'],
-                    ...$deviceFaqs,
+                    ...$offerFaqs('guest'),
                 ],
             ],
         ],
@@ -1357,17 +1384,18 @@ return [
                 'anchor' => 'b-pricing',
                 'menu_label' => 'Pricing',
                 'title' => 'One price per location. Everything included.',
-                'subtitle' => 'The device, installation, WiFi page, customer list and support. Month to month.',
-                // TODO(Glen): installation fee?
-                'footnote' => "Month to month; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is bought upfront or over your first 12 months, and then it\u{2019}s yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
+                'subtitle' => 'Your WiFi page, customer list and support, month to month. Get your TenaFi device and your first 3 months of Basic are free.',
+                'footnote' => "Month to month after your free months; cancel with 30 days\u{2019} notice. Pay yearly and get 2 months free, from month 4. Several locations? We\u{2019}ll quote group pricing. Your TenaFi device is yours. WhatsApp and SMS allowances included; heavy use billed at cost.",
                 'show_contact_form' => '0',
+                // TODO(Glen): keep, relabel or turn off the TrialSlots counter (show_slots)?
                 'show_slots' => '0',
                 'cta_headline' => '',
-                ...$payOptions('A café on Starter with one TenaFi Pro', 'starter', 'pro'),
+                ...$offer('location', 'A café on Starter with one TenaFi Pro', 'starter', 'pro'),
                 'plans' => $plans('location', [
-                    'basic' => ['Google reviews from every customer', "A Google review request to every customer\nBy SMS and email\nA campaign every quarter"],
-                    'starter' => ['A campaign every month', "Everything in Basic\nA campaign every month on WhatsApp, SMS and email\nA monthly report on reviews and return visits [[monthly_report]]"],
-                    'growth' => ['Full done-for-you marketing', "Everything in Starter\n2 to 4 campaigns a month\nFree and VIP WiFi tiers [[vip_wifi]]"],
+                    'free' => ['Your customer list, forever', "Branded WiFi page that captures every customer\nYour customer list, export it any time\nCustomer count in your dashboard"],
+                    'basic' => ['Google reviews from every customer', "Everything in Free\nCustomer homepage: your menu, today’s offer, events\nA Google review request after every visit, by email and SMS\n1 email campaign a month\nA monthly results report [[monthly_report]]"],
+                    'starter' => ['A campaign every month', "Everything in Basic\n1 campaign a month by WhatsApp or SMS, to fill quiet days\nBirthday treats sent for you\nPaid extras and pre-orders by M-Pesa [[mpesa_extras]]"],
+                    'growth' => ['Full done-for-you marketing', "Everything in Starter\n2 to 4 campaigns a month, timed to your gaps and the holidays\nBirthday and anniversary offers\nFeatured on Tena Direct [[tena_direct]], plus VIP WiFi tiers [[vip_wifi]]"],
                 ]),
             ],
         ],
@@ -1383,7 +1411,7 @@ return [
                     ['question' => 'Do I have to write the messages?', 'answer' => 'No. We draft, schedule and send every campaign, and you approve anything that goes out under your name.'],
                     ['question' => 'How long does setup take?', 'answer' => 'About a week. We build your WiFi page from your logo, our installer plugs in and tests the device, and your first customers join by day seven.'],
                     ['question' => 'I have more than one location.', 'answer' => 'Each location gets its own device and page, and you see every location in one report. Talk to us about group pricing.'],
-                    ...$deviceFaqs,
+                    ...$offerFaqs('customer'),
                 ],
             ],
         ],
@@ -1715,8 +1743,8 @@ return [
         'seo' => [
             'title' => 'SEO & social',
             'content' => [
-                'meta_title' => 'TenaFi devices and pricing: buy once or pay monthly',
-                'meta_description' => 'TenaFi Lite, Pro and Outdoor: one device for every size of space, installed and managed for you. Buy upfront, or pay monthly with nothing upfront.',
+                'meta_title' => 'TenaFi devices and pricing: pay once, 3 months of Basic free',
+                'meta_description' => 'TenaFi Lite, Pro and Outdoor: one device for every size of space, set up and managed for you. Pay once for your device and your first 3 months of Basic are free.',
             ],
         ],
         'devices' => [
@@ -1725,16 +1753,15 @@ return [
                 'anchor' => 'devices',
                 'badge' => 'TenaFi devices',
                 'title' => 'One TenaFi device for every size of space.',
-                'subtitle' => 'Every TenaFi device runs your branded WiFi page, captures your guest list and is installed, set up and managed by our team. Pick the one that fits your space.',
-                'upfront_label' => 'Buy upfront, installed',
-                // {monthly} and {months} come from each device's prices below.
-                'monthly_line' => 'or {monthly} a month for {months} months',
-                // price_kes: bought upfront, installed. monthly_kes: added to the plan for `months` months.
+                'subtitle' => 'Every TenaFi device runs your branded WiFi page, captures your guest list and is set up and managed by our team. Pick the one that fits your space.',
+                // Over each device's price. No "installed" next to prices (Nov 2026).
+                'upfront_label' => 'Pay once',
+                // price_kes: the device, paid once. (Pay monthly is gone: no monthly_kes / months.)
                 // style: light | yellow | dark (the card's picture background).
                 'items' => [
-                    ['id' => 'lite', 'name' => 'TenaFi Lite', 'badge' => 'Small spaces', 'best_for' => 'Apartments, salons, barbershops, small cafés and shops', 'coverage' => '115 m²', 'coverage_label' => 'coverage', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '25000', 'monthly_kes' => '3000', 'months' => '12', 'style' => 'light', 'tagline' => 'A small, quiet ceiling device for one room or a small shop.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 115 m²\nDevices at once | 200+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Small and discreet: it blends into the ceiling\nEnough for an apartment, salon or small café\nRuns your branded WiFi page and guest list"],
-                    ['id' => 'pro', 'name' => 'TenaFi Pro', 'badge' => 'Busy spaces', 'best_for' => 'Restaurants, busy cafés, villas, clinics, gyms and lounges', 'coverage' => '140 m²', 'coverage_label' => 'coverage', 'capacity' => '300+', 'capacity_label' => 'devices at once', 'price_kes' => '42000', 'monthly_kes' => '5000', 'months' => '12', 'style' => 'yellow', 'tagline' => 'For busy indoor spaces: restaurants, lounges, clinics and villas.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz, 5 GHz and 6 GHz\nCoverage | About 140 m²\nDevices at once | 300+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Handles a full restaurant at dinner time\nThree bands keep phones fast when it’s busy\nRuns your branded WiFi page and guest list"],
-                    ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'badge' => 'Outdoor & events', 'best_for' => 'Gardens, terraces, events, weddings and large venues', 'coverage' => '465 m²', 'coverage_label' => 'open space', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '48000', 'monthly_kes' => '5500', 'months' => '12', 'style' => 'dark', 'tagline' => 'Weatherproof WiFi for gardens, terraces and events.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 465 m² of open space\nDevices at once | 200+\nWhere it goes | Pole or wall, outdoors\nWeather | Built for sun, dust and rain\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Covers a garden, terrace or event lawn\nWeatherproof, so it stays up all year\nWorks with a Lite or Pro indoors on one network"],
+                    ['id' => 'lite', 'name' => 'TenaFi Lite', 'badge' => 'Small spaces', 'best_for' => 'Apartments, salons, barbershops, small cafés and shops', 'coverage' => '115 m²', 'coverage_label' => 'coverage', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '25000', 'style' => 'light', 'tagline' => 'A small, quiet ceiling device for one room or a small shop.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 115 m²\nDevices at once | 200+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Small and discreet: it blends into the ceiling\nEnough for an apartment, salon or small café\nRuns your branded WiFi page and guest list"],
+                    ['id' => 'pro', 'name' => 'TenaFi Pro', 'badge' => 'Busy spaces', 'best_for' => 'Restaurants, busy cafés, villas, clinics, gyms and lounges', 'coverage' => '140 m²', 'coverage_label' => 'coverage', 'capacity' => '300+', 'capacity_label' => 'devices at once', 'price_kes' => '42000', 'style' => 'yellow', 'tagline' => 'For busy indoor spaces: restaurants, lounges, clinics and villas.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz, 5 GHz and 6 GHz\nCoverage | About 140 m²\nDevices at once | 300+\nWhere it goes | Ceiling or wall, indoors\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Handles a full restaurant at dinner time\nThree bands keep phones fast when it’s busy\nRuns your branded WiFi page and guest list"],
+                    ['id' => 'outdoor', 'name' => 'TenaFi Outdoor', 'badge' => 'Outdoor & events', 'best_for' => 'Gardens, terraces, events, weddings and large venues', 'coverage' => '465 m²', 'coverage_label' => 'open space', 'capacity' => '200+', 'capacity_label' => 'devices at once', 'price_kes' => '48000', 'style' => 'dark', 'tagline' => 'Weatherproof WiFi for gardens, terraces and events.', 'specs' => "WiFi standard | WiFi 7\nBands | 2.4 GHz and 5 GHz\nCoverage | About 465 m² of open space\nDevices at once | 200+\nWhere it goes | Pole or wall, outdoors\nWeather | Built for sun, dust and rain\nPower and internet | One network cable from your router\nManaged by | TenaFi, remotely", 'highlights' => "Covers a garden, terrace or event lawn\nWeatherproof, so it stays up all year\nWorks with a Lite or Pro indoors on one network"],
                 ],
                 'more_title' => 'Bigger space? Add more devices.',
                 'more_text' => 'Devices link into one network and one WiFi page. Our team surveys your space and tells you how many you need.',
@@ -1745,7 +1772,7 @@ return [
                     ['label' => 'Stadiums & large events', 'value' => 'Quoted on site'],
                 ],
                 'perks' => [
-                    ['title' => 'Installed for you', 'text' => 'Our team fits and tests it.'],
+                    ['title' => 'Set up for you', 'text' => 'Our team fits and tests it.'],
                     ['title' => 'Your brand', 'text' => 'Your logo and colours on the WiFi page.'],
                     ['title' => 'Managed by us', 'text' => 'Monitored and updated from TenaFi.'],
                     ['title' => 'Works with your internet', 'text' => 'Plugs into your existing router.'],
@@ -1793,46 +1820,37 @@ return [
                 'install_4_image' => '/images/devices/photos/install-ceiling-mounting.webp',
             ],
         ],
+        // Section key kept as pay_options so live content stays attached; the two ways
+        // to pay are gone (Nov 2026). The plans, steps and example sit at the top of
+        // the page (the audience switch); this section keeps the notes and buttons.
         'pay_options' => [
-            'title' => 'Two ways to pay',
+            'title' => 'Good to know',
             'bg' => 'gray',
             'content' => [
                 'anchor' => 'ways-to-pay',
-                'badge' => 'Two ways to pay',
-                'title' => 'Buy your device once, or spread it out.',
-                'subtitle' => 'Same device, same plans, same service. Buying upfront is the best value; paying monthly spreads the device over your first 12 months.',
-                // {cheapest} is the cheapest plan on the live /hosts pricing section.
-                'options' => [
-                    ['badge' => 'Best value', 'title' => 'Buy the device', 'text' => 'Pay for your TenaFi device and installation once, and it’s yours. Then just your monthly plan.', 'steps' => "One-off: device + installation\nMonthly: your plan from {cheapest}\nMonth to month, 30 days’ notice", 'style' => 'dark'],
-                    ['badge' => 'Nothing upfront', 'title' => 'Pay monthly', 'text' => 'No upfront cost. Your device is spread over 12 months on top of your plan, then your price drops.', 'steps' => "KES 0 upfront\nPlan + device, months 1–12\nFrom month 13: plan price only, and the device is yours", 'style' => 'light'],
-                ],
-                // The table: one row for upfront, one per device, a column per live plan.
-                'table_label' => 'Monthly price',
-                'row_upfront' => 'Bought the device upfront',
-                'row_upfront_note' => 'every month',
-                'row_monthly' => 'Paying monthly with {device}',
-                'row_monthly_note' => 'months 1–{months}, then as above',
-                // The worked example: a plan id from /hosts and a device id from above.
-                'example_plan' => 'starter',
-                'example_device' => 'pro',
-                'example_title' => 'Example: a café on Starter with one TenaFi Pro',
-                'example_text' => 'What the first year costs each way.',
-                'example_upfront' => 'Buy the device',
-                'example_monthly' => 'Pay monthly',
-                'example_saving' => 'Buying upfront saves this café in year one',
+                'badge' => 'Good to know',
+                'title' => 'Pay once for your device. Your first 3 months of Basic are free.',
+                'subtitle' => 'Then stay on Free, or pick Basic, Starter or Growth, month to month. The device is yours.',
                 'notes' => [
-                    ['title' => 'Book a demo first', 'text' => 'On a call, a video call or a visit, we show you TenaFi and survey your space. Your device payment or first monthly charge starts after installation.'],
+                    ['title' => 'Book a demo first', 'text' => 'On a call, a video call or a visit, we show you TenaFi and look at your space. Your device payment starts once it’s set up.'],
                     ['title' => 'Short-term rentals', 'text' => 'Priced per unit, with one device per unit.'],
-                    ['title' => 'Leaving early on monthly', 'text' => 'Pay off the rest of the device or return it. Upfront: 30 days’ notice.'],
+                    ['title' => 'After your free months', 'text' => 'Choose Basic, Starter or Growth, month to month with 30 days’ notice, or stay on Free.'],
                 ],
-                'footnote' => 'Prices in KES. Paying yearly on the upfront option: 2 months free.',
+                'footnote' => 'Prices in KES. Paying yearly: 2 months free, from month 4.',
                 'cta_title' => 'Not sure which device you need?',
-                'cta_text' => 'Book a demo and our team will survey your space and recommend the right devices.',
+                'cta_text' => 'Book a demo and our team will look at your space and recommend the right devices.',
                 'buttons' => [
                     ['label' => 'Book for my rentals', 'href' => '/hosts#join'],
                     ['label' => 'Book for my business', 'href' => '/business#signup'],
                     ['label' => 'Plan event WiFi', 'href' => '/events#enquire'],
                 ],
+            ],
+        ],
+        'faq' => [
+            'title' => 'FAQ',
+            'content' => [
+                'title' => 'Questions about pricing',
+                'items' => $offerFaqs('guest'),
             ],
         ],
     ],

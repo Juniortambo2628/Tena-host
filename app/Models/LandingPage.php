@@ -148,6 +148,27 @@ class LandingPage extends Model
     }
 
     /**
+     * The offer on a live pricing section, for the homepage and How it works:
+     * its free months (0 to 12; 0 when it has none, so pages without the offer
+     * look as before) and its three steps.
+     *
+     * @return array{freeMonths: int, steps: list<array{title: string, text: string}>}
+     */
+    public static function liveOffer(string $slug = 'hosts'): array
+    {
+        $content = collect(static::publicSections($slug))->firstWhere('section_key', 'pricing')['content'] ?? [];
+        $steps = [];
+        for ($i = 0; isset($content["steps.{$i}.title"]); $i++) {
+            $steps[] = ['title' => strip_tags((string) $content["steps.{$i}.title"]), 'text' => strip_tags((string) ($content["steps.{$i}.text"] ?? ''))];
+        }
+
+        return [
+            'freeMonths' => max(0, min(12, (int) preg_replace('/\D/', '', strip_tags((string) ($content['free_months'] ?? ''))))),
+            'steps' => $steps,
+        ];
+    }
+
+    /**
      * The TenaFi devices on the /pricing page's "devices" section (Admin ->
      * Public Pages -> Devices & pricing), so the sign-up form quotes the
      * same prices as the page.
@@ -155,7 +176,7 @@ class LandingPage extends Model
      * They are kept once, on that section, and shared with every page's
      * pricing (/hosts, /business) the way the plans are.
      *
-     * @return list<array{id: string, name: string, price_kes: int, monthly_kes: int, months: int, image: string, best_for: string, coverage: string, coverage_label: string, capacity: string, capacity_label: string}>
+     * @return list<array{id: string, name: string, price_kes: int, image: string, best_for: string, coverage: string, coverage_label: string, capacity: string, capacity_label: string}>
      */
     public static function liveDevices(): array
     {
@@ -171,8 +192,7 @@ class LandingPage extends Model
                 'id' => $id,
                 'name' => $text("items.{$i}.name"),
                 'price_kes' => $kes($content["items.{$i}.price_kes"] ?? ''),
-                'monthly_kes' => $kes($content["items.{$i}.monthly_kes"] ?? ''),
-                'months' => $kes($content["items.{$i}.months"] ?? '') ?: 12,
+                // Paid once: Pay monthly is gone, so stored monthly_kes / months aren't shared any more.
                 // The uploaded picture, else TenaFi's own drawing of that device.
                 'image' => $section['media']["device_{$i}_image"] ?? (in_array($id, ['lite', 'pro', 'outdoor'], true) ? "/images/devices/photos/tenafi-{$id}.webp" : ''),
                 'best_for' => $text("items.{$i}.best_for"),

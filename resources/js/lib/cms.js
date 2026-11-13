@@ -197,9 +197,9 @@ export function baseSectionKey(sectionKey) {
 }
 
 /**
- * Split a multi-line CMS field into list items. A line ending in
- * [[feature_key]] gets that feature's "Coming soon" badge (or none once
- * the feature is live).
+ * Split a multi-line CMS field into list items. A line with a
+ * [[feature_key]] marker gets that feature's "Coming soon" badge (or none
+ * once the feature is live).
  */
 export function textLines(text, site) {
     // U+E000 marks line breaks through stripHtml, which collapses whitespace
@@ -212,10 +212,13 @@ export function textLines(text, site) {
         .map((line) => line.trim())
         .filter(Boolean)
         .map((line) => {
-            const match = line.match(/^(.*?)\s*\[\[([a-z0-9_]+)\]\]$/);
-            return match
-                ? { text: match[1], badge: comingSoonBadge(site, match[2]) }
-                : { text: line, badge: null };
+            // [[feature_key]] markers anywhere in the line ("Featured on Tena Direct
+            // [[tena_direct]], plus VIP WiFi tiers [[vip_wifi]]"): taken out, and the
+            // line gets a badge while any of them isn't live.
+            const keys = [...line.matchAll(/\[\[([a-z0-9_]+)\]\]/g)].map((m) => m[1]);
+            if (!keys.length) return { text: line, badge: null };
+            const text = line.replace(/\s*\[\[[a-z0-9_]+\]\]/g, '').replace(/\s+([,.;:])/g, '$1').trim();
+            return { text, badge: keys.map((key) => comingSoonBadge(site, key)).find(Boolean) || null };
         });
 }
 

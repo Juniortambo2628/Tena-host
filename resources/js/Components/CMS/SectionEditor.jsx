@@ -12,10 +12,24 @@ import { getExpectedMediaSlots, isSchemaKey, slotNotice, slotTitle } from '@/lib
 import './SectionEditor.css';
 import { useConfirm } from '@/hooks/useConfirm';
 
+/**
+ * Fields the site no longer shows (Pay monthly and the two ways to pay, Nov
+ * 2026). They're hidden from the forms but kept in the database: saving a
+ * section sends them back unchanged.
+ */
+const RETIRED_FIELD = /^(pay_(label|buy_\w+|monthly_\w+)|monthly_price_line|device_price_line|monthly_line|example_upfront|example_monthly|example_saving|table_label|row_upfront\w*|row_monthly\w*)$/;
+const RETIRED_ITEM_FIELD = /^(monthly_kes|months|monthly_addon_kes|addon_months)$/;
+const RETIRED_LIST = /^options$/;
+export const isRetiredField = (key) => {
+    const match = key.match(/^([^.]+)\.(\d+)\.(.+)$/);
+    return match ? RETIRED_ITEM_FIELD.test(match[3]) || RETIRED_LIST.test(match[1]) : RETIRED_FIELD.test(key);
+};
+
 function groupContentKeys(content) {
     const simple = {};
     const arrays = {};
     Object.entries(content).forEach(([key, value]) => {
+        if (isRetiredField(key)) return;
         const match = key.match(/^([^.]+)\.(\d+)\.(.+)$/);
         if (match) {
             const [, arrName, idx, field] = match;
