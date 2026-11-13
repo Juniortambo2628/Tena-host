@@ -44,18 +44,21 @@ export function cheapestPaid(plans) {
     return [...plans].filter((p) => kesOf(p.price_kes) > 0).sort((a, b) => kesOf(a.price_kes) - kesOf(b.price_kes))[0] || null;
 }
 
-/**
- * KES per US dollar implied by a plan's own "(about $23)" unit text, so new
- * prices get the same conversion the admin chose; null when there is none.
- */
-export function kesPerUsd(planKes, unitText) {
-    const match = String(unitText || '').match(/about\s*\$\s*([\d,.]+)/i);
-    const usd = match ? Number(match[1].replace(/,/g, '')) : 0;
-    return usd > 0 && planKes > 0 ? planKes / usd : null;
-}
+/** KES per US dollar until Admin -> Settings says otherwise. */
+export const DEFAULT_KES_PER_USD = 129;
 
-/** "(about $73)" for a KES amount at that rate, or '' (and never "(about $0)"). */
-export const aboutUsd = (kes, rate) => (rate && kes > 0 ? `(about $${Math.round(kes / rate)})` : '');
+/**
+ * "(about $12)" for a KES amount, from the one site-wide rate (Admin ->
+ * Settings -> Shillings per US dollar), rounded to the nearest dollar.
+ * '' for KES 0 (never "(about $0)").
+ */
+export const aboutUsd = (kes, rate = DEFAULT_KES_PER_USD) => {
+    const perUsd = Number(rate) > 0 ? Number(rate) : DEFAULT_KES_PER_USD;
+    return kes > 0 ? `(about $${Math.round(kes / perUsd)})` : '';
+};
+
+/** A plan's unit text without a typed "(about $23)": the dollars are worked out instead. */
+export const withoutTypedUsd = (text) => String(text || '').replace(/\s*\(about\s*\$\s*[\d,.]+\)/gi, '').trim();
 
 /**
  * "{free_months} months" in a sentence, for one month or several:

@@ -67,8 +67,13 @@ $deviceFields = fn (string $unit) => [
 $offer = fn (string $unit, string $example, string $plan, string $device) => [
     'free_months' => '3',
     'base_free_plan' => 'basic',
-    'show_free_plan' => '0',
+    // The Free card is part of the offer: shown (with free_months 0 too, unless set to 0).
+    'show_free_plan' => '1',
     'price_unit' => "per {$unit}",
+    // In front of the steps (and on the homepage and How it works, from /hosts).
+    'offer_headline' => 'TenaFi free for {free_months} months, and the device is yours.',
+    // TODO(Glen): message top-ups. Empty: not shown.
+    'messages_topup_note' => '',
     // The three steps, at the top of the pricing (and on the homepage and How it works).
     'steps' => [
         ['title' => 'Get your TenaFi device', 'text' => 'Pay once. We set it up for you.'],
@@ -120,12 +125,15 @@ $planField = fn (string $unit) => ['key' => 'plan', 'label' => 'Pick a starting 
 // Basic, Starter (featured), Growth and Free. Free is last here, as on live
 // sections (the command adds it after the existing plans); the cards sort by
 // price, so it shows first. intro_price_kes overrides the computed price for
-// the free months (empty: max(plan - Basic, 0)).
+// the free months (empty: max(plan - Basic, 0)). Prices in KES only: every
+// "(about $X)" is worked out from Admin -> Settings -> Shillings per US dollar.
+// messages_note: the plan's message allowance.
+// TODO(Glen): top-ups beyond the allowance (price per extra 100 messages?). messages_topup_note shows under the cards once filled.
 $plans = fn (string $unit, array $features) => [
-    ['id' => 'basic', 'label' => 'Basic', 'tagline' => $features['basic'][0], 'badge' => '', 'price' => 'KES 3,000', 'price_kes' => '3000', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month (about \$23)", 'features' => $features['basic'][1], 'note' => '', 'cta' => 'Start 3 months free', 'variant' => 'outline'],
-    ['id' => 'starter', 'label' => 'Starter', 'tagline' => $features['starter'][0], 'badge' => 'Most popular', 'price' => 'KES 4,500', 'price_kes' => '4500', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month (about \$35)", 'features' => $features['starter'][1], 'note' => '', 'cta' => 'Choose Starter', 'variant' => 'dark'],
-    ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 6,000', 'price_kes' => '6000', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month (about \$47)", 'features' => $features['growth'][1], 'note' => '', 'cta' => 'Choose Growth', 'variant' => 'outline'],
-    ['id' => 'free', 'label' => 'Free', 'tagline' => $features['free'][0], 'badge' => '', 'price' => 'KES 0', 'price_kes' => '0', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month", 'features' => $features['free'][1], 'note' => 'One WiFi page design. Support by WhatsApp.', 'cta' => 'Get your device', 'variant' => 'outline'],
+    ['id' => 'basic', 'label' => 'Basic', 'tagline' => $features['basic'][0], 'badge' => '', 'price' => 'KES 1,500', 'price_kes' => '1500', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month", 'features' => $features['basic'][1], 'messages_note' => 'Email campaigns included. 100 SMS review requests a month.', 'note' => '', 'cta' => 'Start 3 months free', 'variant' => 'outline'],
+    ['id' => 'starter', 'label' => 'Starter', 'tagline' => $features['starter'][0], 'badge' => 'Most popular', 'price' => 'KES 3,000', 'price_kes' => '3000', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month", 'features' => $features['starter'][1], 'messages_note' => '300 WhatsApp or SMS messages a month.', 'note' => '', 'cta' => 'Choose Starter', 'variant' => 'dark'],
+    ['id' => 'growth', 'label' => 'Growth', 'tagline' => $features['growth'][0], 'badge' => '', 'price' => 'KES 4,500', 'price_kes' => '4500', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month", 'features' => $features['growth'][1], 'messages_note' => '700 WhatsApp or SMS messages a month.', 'note' => '', 'cta' => 'Choose Growth', 'variant' => 'outline'],
+    ['id' => 'free', 'label' => 'Free', 'tagline' => $features['free'][0], 'badge' => '', 'price' => 'KES 0', 'price_kes' => '0', 'intro_price_kes' => '', 'unit' => "per {$unit}, per month", 'features' => $features['free'][1], 'messages_note' => '', 'note' => 'One WiFi page design. Support by WhatsApp.', 'cta' => 'Get your device', 'variant' => 'outline'],
 ];
 
 // Book a demo (Nov 2026): the free trial is over. New customers book a demo
@@ -395,7 +403,7 @@ return [
                 // {price} is the cheapest plan on the live /hosts pricing section.
                 'price_line' => 'Plans from {price} a month, plus your TenaFi device.',
                 // While /hosts has free months: shown instead of price_line. {price}: the cheapest paid plan on /hosts.
-                'free_price_line' => '{free_months} months free with your TenaFi device. Then from {price}/month.',
+                'free_price_line' => 'TenaFi free for {free_months} months, and the device is yours. Then from {price}/month.',
                 // {device_price}: the cheapest device on /pricing. Empty hides the line.
                 'device_line' => 'TenaFi devices from {device_price}.',
                 'price_link_label' => 'See pricing',
@@ -747,7 +755,7 @@ return [
                 'cta_primary_url' => '#join',
                 'cta_secondary' => 'See how it works',
                 'cta_secondary_url' => '#h-how',
-                'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 per unit a month.",
+                'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. TenaFi free for 3 months, and the device is yours.",
                 // "Get a call back" (shown while Admin -> Settings has the call-back form on).
                 'callback_title' => 'Get a call back',
                 'callback_options' => 'hosts|I run rentals',
@@ -1136,7 +1144,7 @@ return [
                 'cta_primary_url' => '#signup',
                 'cta_secondary' => 'Learn how it works',
                 'cta_secondary_url' => '#b-how',
-                'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 a month.",
+                'note' => "Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. TenaFi free for 3 months, and the device is yours.",
                 // "Get a call back" (shown while Admin -> Settings has the call-back form on).
                 'callback_title' => 'Get a call back',
                 'callback_options' => 'business|I own a business',
@@ -1743,7 +1751,7 @@ return [
         'seo' => [
             'title' => 'SEO & social',
             'content' => [
-                'meta_title' => 'TenaFi devices and pricing: pay once, 3 months of Basic free',
+                'meta_title' => 'TenaFi pricing: free for 3 months, and the device is yours',
                 'meta_description' => 'TenaFi Lite, Pro and Outdoor: one device for every size of space, set up and managed for you. Pay once for your device and your first 3 months of Basic are free.',
             ],
         ],

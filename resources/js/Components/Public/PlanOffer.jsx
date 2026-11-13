@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { getContent, extractItems, stripHtml, textLines } from '@/lib/cms';
 import {
-    formatKes, kesOf, clampFree, introPrice, yearOne, kesPerUsd, aboutUsd, fillFree, fill, readDevice, visiblePlans,
+    formatKes, kesOf, clampFree, introPrice, yearOne, aboutUsd, withoutTypedUsd, fillFree, fill, readDevice, visiblePlans,
 } from '@/lib/pricingMath';
 import './PlanOffer.css';
 
@@ -17,7 +17,7 @@ import './PlanOffer.css';
 
 const text = (section, key, fallback = '') => stripHtml(getContent(section, key, fallback));
 
-export const PLAN_FIELDS = ['id', 'label', 'tagline', 'badge', 'price', 'price_kes', 'intro_price_kes', 'unit', 'features', 'note', 'description', 'cta', 'variant'];
+export const PLAN_FIELDS = ['id', 'label', 'tagline', 'badge', 'price', 'price_kes', 'intro_price_kes', 'unit', 'features', 'messages_note', 'note', 'description', 'cta', 'variant'];
 
 /** The offer's settings on a pricing section; free_months 0 (or none) means no offer. */
 export function offerOf(section) {
@@ -27,7 +27,7 @@ export function offerOf(section) {
         baseId: text(section, 'base_free_plan', 'basic') || 'basic',
         showFree: ['1', 'true', 'yes', 'on'].includes(text(section, 'show_free_plan', '0').toLowerCase()),
         // "per unit" / "per location": the field, else the start of the first plan's unit ("per unit, per month").
-        unit: text(section, 'price_unit') || (stripHtml(plans[0]?.unit).match(/^per [^,]+/i)?.[0] ?? ''),
+        unit: text(section, 'price_unit') || (withoutTypedUsd(stripHtml(plans[0]?.unit)).match(/^per [^,]+/i)?.[0] ?? ''),
     };
 }
 
@@ -39,21 +39,12 @@ export function offerPlans(section, plans, offer = offerOf(section)) {
     return visiblePlans(plans, offer.free, offer.showFree);
 }
 
-/** KES per dollar from the section's first plan with an "(about $X)", so one amount reads the same everywhere. */
-function sectionRate(plans) {
-    for (const p of plans) {
-        const rate = kesPerUsd(kesOf(p.price_kes), stripHtml(p.unit));
-        if (rate) return rate;
-    }
-    return null;
-}
-
 /**
  * One card's price: the big amount, the line under it, then the "then" and
  * device lines, each amount with its "(about $X)".
  */
-export function offerPrice(section, plan, plans, device, offer = offerOf(section)) {
-    const rate = sectionRate(plans);
+export function offerPrice(section, plan, plans, device, offer = offerOf(section), rate = undefined) {
+    // One site-wide rate (Admin -> Settings), so the same amount reads the same everywhere.
     const usd = (kes) => aboutUsd(kes, rate);
     const money = (kes) => `${formatKes(kes)} ${usd(kes)}`.trim();
     // "{plan}/month" -> "KES 4,500/month (about $35)"; "{device_price}" -> "KES 42,000 (about $322)".
@@ -78,8 +69,8 @@ export function offerPrice(section, plan, plans, device, offer = offerOf(section
     }
     if (offer.free === 0) {
         return {
-            amount: stripHtml(plan.price) || formatKes(planKes),
-            under: stripHtml(plan.unit),
+            amount: formatKes(planKes),
+            under: `${withoutTypedUsd(stripHtml(plan.unit))} ${usd(planKes)}`.trim(),
             lines: [deviceLine].filter(Boolean),
         };
     }
@@ -143,12 +134,16 @@ export function useDeviceChoice(devices) {
 }
 
 /** The offer's three steps; {free_months} in a title becomes the number. */
-export function PricingSteps({ steps = [], freeMonths = 0, compact = false, className = '' }) {
+export function PricingSteps({ steps = [], freeMonths = 0, compact = false, className = '', headline = '' }) {
     const rows = steps.map((s) => ({ title: fillFree(stripHtml(s.title), freeMonths), text: fillFree(stripHtml(s.text), freeMonths) })).filter((s) => s.title);
     if (!freeMonths || !rows.length) return null;
+    // "TenaFi free for 3 months, and the device is yours." in front of the steps.
+    const lead = fillFree(stripHtml(headline), freeMonths);
 
     return (
-        <ol className={`pricing-steps ${compact ? 'pricing-steps--compact' : ''} ${className}`.trim()}>
+        <>
+            {lead && <p className={`pricing-steps__headline ${compact ? 'pricing-steps__headline--compact' : ''}`}>{lead}</p>}
+            <ol className={`pricing-steps ${compact ? 'pricing-steps--compact' : ''} ${className}`.trim()}>
             {rows.map((s, i) => (
                 <li key={i} className="pricing-steps__step">
                     <span className="pricing-steps__number" aria-hidden="true">{i + 1}</span>
@@ -158,12 +153,16 @@ export function PricingSteps({ steps = [], freeMonths = 0, compact = false, clas
                     </span>
                 </li>
             ))}
-        </ol>
+            </ol>
+        </>
     );
 }
 
 /** The section's own steps (steps.{i}.title / text). */
 export const sectionSteps = (section) => extractItems(section, 'steps', ['title', 'text']);
+
+/** The section's headline in front of the steps (offer_headline). */
+export const sectionHeadline = (section) => text(section, 'offer_headline');
 
 /** Device chips (Lite / Pro / Outdoor) with each price once; a radio group operated with the arrow keys. */
 export function DevicePicker({ section, devices, choice }) {
@@ -239,11 +238,13 @@ export function OfferExample({ section, plans, devices, offer = offerOf(section)
 /** "Month to month after your free months, 30 days' notice. Your device is yours." */
 export function OfferNote({ section, offer = offerOf(section) }) {
     const note = offer.free > 0 ? fillFree(text(section, 'offer_note'), offer.free) : '';
+    const topup = text(section, 'messages_topup_note');
     const vat = text(section, 'vat_note');
-    if (!note && !vat) return null;
+    if (!note && !topup && !vat) return null;
     return (
         <div className="pricing-offer-note">
             {note && <p>{note}</p>}
+            {topup && <p className="pricing-offer-note__topup">{topup}</p>}
             {vat && <p className="pricing-offer-note__vat">{vat}</p>}
         </div>
     );

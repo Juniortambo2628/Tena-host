@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import { SectionWrapper, SectionHeader } from './layouts';
 import { getContent, extractItems, sanitizeHtml, stripHtml, isTruthy, getText } from '@/lib/cms';
 import { usePublic } from '@/Components/Public/PublicContext';
@@ -9,7 +10,7 @@ import LineList from '@/Components/Public/LineList';
 import TrialSlots from '@/Components/Public/TrialSlots';
 import ContactForm from './ContactForm';
 import {
-    useSectionDevices, useDeviceChoice, offerOf, offerPlans, offerPrice, PricingSteps, sectionSteps, DevicePicker,
+    useSectionDevices, useDeviceChoice, offerOf, offerPlans, offerPrice, PricingSteps, sectionSteps, sectionHeadline, DevicePicker,
     OfferExample, OfferNote, DevicesRow, BiggerSpaces, PLAN_FIELDS,
 } from '@/Components/Public/PlanOffer';
 import { planHref } from '@/lib/pricingMath';
@@ -34,6 +35,7 @@ function PricingPlanCard({ plan, price, device = null, freeMonths = 0 }) {
                     {price.lines.map((line) => <span key={line} className="pay-price-then">{line}</span>)}
                 </div>
                 <LineList text={plan.features} className="pricing-card-features" icon={<Check size={16} className="pricing-card-feature-icon" />} />
+                {stripHtml(plan.messages_note) && <p className="pricing-plan-messages">{stripHtml(plan.messages_note)}</p>}
                 {stripHtml(plan.note) && <p className="pricing-plan-note">{stripHtml(plan.note)}</p>}
                 {stripHtml(plan.description) && (
                     <>
@@ -64,6 +66,7 @@ const PERK_ICONS = { sparkles: Sparkles, zap: Zap, award: Award, clock: Clock };
 
 export default function Pricing({ section }) {
     const { site } = usePublic();
+    const { kesPerUsd } = usePage().props;
 
     if (!section) {
         return (
@@ -106,7 +109,7 @@ export default function Pricing({ section }) {
 
             {currencyNote && <p className="pricing-currency-note">{currencyNote}</p>}
 
-            <PricingSteps steps={sectionSteps(section)} freeMonths={offer.free} />
+            <PricingSteps steps={sectionSteps(section)} freeMonths={offer.free} headline={sectionHeadline(section)} />
             <DevicePicker section={section} devices={devices} choice={choice} />
 
             <div className={`pricing-cards-grid ${shown.length > 3 ? 'pricing-cards-grid--four' : ''}`}>
@@ -116,7 +119,7 @@ export default function Pricing({ section }) {
                         plan={plan}
                         device={choice.device}
                         freeMonths={offer.free}
-                        price={offerPrice(section, plan, plans, choice.device, offer)}
+                        price={offerPrice(section, plan, plans, choice.device, offer, kesPerUsd)}
                     />
                 ))}
             </div>

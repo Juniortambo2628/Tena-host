@@ -145,6 +145,7 @@ export default function Index({ settings, logos = [] }) {
             signup_alert_emails: flattened.signup_alert_emails || '',
             signup_alert_webhook_url: flattened.signup_alert_webhook_url || '',
             trial_slots_total: flattened.trial_slots_total ?? '50',
+            kes_per_usd: flattened.kes_per_usd ?? '129',
             trial_slots_since: flattened.trial_slots_since || '',
             callbacks_enabled: flattened.callbacks_enabled || '0',
             demo_enabled: flattened.demo_enabled || '0',
@@ -337,6 +338,16 @@ export default function Index({ settings, logos = [] }) {
                                             value={data.settings.signup_alert_webhook_url}
                                             placeholder="https://hooks.zapier.com/..."
                                             onChange={(e) => updateSetting('signup_alert_webhook_url', e.target.value)}
+                                        />
+                                    </FormField>
+
+                                    <FormField label="Shillings per US dollar" hint="Every “(about $X)” on the pricing is worked out from this, rounded to the nearest dollar. Prices themselves stay in KES.">
+                                        <TextInput
+                                            type="number"
+                                            min="1"
+                                            step="0.01"
+                                            value={data.settings.kes_per_usd}
+                                            onChange={(e) => updateSetting('kes_per_usd', e.target.value)}
                                         />
                                     </FormField>
 

@@ -150,9 +150,9 @@ class LandingPage extends Model
     /**
      * The offer on a live pricing section, for the homepage and How it works:
      * its free months (0 to 12; 0 when it has none, so pages without the offer
-     * look as before) and its three steps.
+     * look as before), its headline and its three steps.
      *
-     * @return array{freeMonths: int, steps: list<array{title: string, text: string}>}
+     * @return array{freeMonths: int, headline: string, steps: list<array{title: string, text: string}>}
      */
     public static function liveOffer(string $slug = 'hosts'): array
     {
@@ -164,6 +164,8 @@ class LandingPage extends Model
 
         return [
             'freeMonths' => max(0, min(12, (int) preg_replace('/\D/', '', strip_tags((string) ($content['free_months'] ?? ''))))),
+            // "TenaFi free for {free_months} months, and the device is yours."
+            'headline' => trim(strip_tags((string) ($content['offer_headline'] ?? ''))),
             'steps' => $steps,
         ];
     }

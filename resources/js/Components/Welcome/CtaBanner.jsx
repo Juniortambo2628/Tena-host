@@ -86,7 +86,7 @@ export default function CtaBanner({ section }) {
                             <b>{stripHtml(getContent(section, 'pricing_title', 'Pricing'))}</b>
                             {/* While /hosts has free months: its three steps instead of the plan list. */}
                             {offer.freeMonths > 0 && offer.steps.length > 0
-                                ? <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} compact className="cta-trial__steps" />
+                                ? <PricingSteps steps={offer.steps} freeMonths={offer.freeMonths} headline={offer.headline} compact className="cta-trial__steps" />
                                 : (
                                     <ul>
                                         {priced.map(plan => <li key={plan.id || plan.label}><span>{plan.label}</span><strong>{plan.price}</strong></li>)}

@@ -158,7 +158,7 @@ it('quotes the pitch-deck plans in KES on both audience pages', function () {
         $plans = collect(LandingPage::publicSections($slug))->firstWhere('section_key', 'pricing')['content'];
 
         expect([$plans['plans.0.id'], $plans['plans.1.id'], $plans['plans.2.id'], $plans['plans.3.id']])->toBe(['basic', 'starter', 'growth', 'free'])
-            ->and([$plans['plans.0.price_kes'], $plans['plans.1.price_kes'], $plans['plans.2.price_kes']])->toBe(['3000', '4500', '6000'])
+            ->and([$plans['plans.0.price_kes'], $plans['plans.1.price_kes'], $plans['plans.2.price_kes']])->toBe(['1500', '3000', '4500'])
             ->and($plans['plans.1.badge'])->toBe('Most popular')
             ->and($plans['plans.0.unit'])->toContain($unit);
     }

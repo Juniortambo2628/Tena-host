@@ -7,6 +7,7 @@ use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Services\Cms\PageBlueprint;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -24,7 +25,14 @@ use Illuminate\Support\Str;
  *    shipped before (OLD_DEFAULTS), so an admin's own wording is left alone;
  *  - a plan's features saved as HTML or with tabs/runs of spaces between the
  *    items (the run-on Growth list) become one item per line;
- *  - "Free" is added to the sign-up forms' plan question.
+ *  - "Free" is added to the sign-up forms' plan question;
+ *  - a typed "(about $23)" is taken out of plans' unit text (the dollars are
+ *    worked out from Admin -> Settings -> Shillings per US dollar);
+ *  - Free is shown (show_free_plan 1) and each plan gets its message allowance;
+ *  - the December trial sentence TenaFi wrote is replaced by the offer.
+ * Plan prices change only with --apply-prices (Free 0, Basic 1,500, Starter
+ * 3,000, Growth 4,500 in Nov 2026): the dry run shows every price before and
+ * after either way.
  * Everything else that still mentions Pay monthly, upfront, a trial or
  * installation next to a price is listed in the admin checklist.
  *
@@ -34,7 +42,10 @@ use Illuminate\Support\Str;
  */
 class PricingOfferCommand extends Command
 {
-    protected $signature = 'tenafi:pricing-offer {--dry-run : Show the changes without saving anything} {--restore= : Restore a backup file from storage/app/cms-backups}';
+    protected $signature = 'tenafi:pricing-offer
+        {--dry-run : Show the changes without saving anything}
+        {--apply-prices : Also change the plan prices (the only way live prices change)}
+        {--restore= : Restore a backup file from storage/app/cms-backups}';
 
     protected $description = 'Bring the live pricing to "device once, 3 months of Basic free, then choose" (fills only new or empty fields; --dry-run first)';
 
@@ -51,7 +62,16 @@ class PricingOfferCommand extends Command
         'free_months', 'base_free_plan', 'show_free_plan', 'price_unit', 'devices_picker_label',
         'intro_line', 'then_line', 'device_line_card', 'free_plan_line',
         'intro_free_phrase', 'intro_paid_phrase', 'example_full_text', 'offer_note',
+        'offer_headline',
     ];
+
+    /** The December trial sentences TenaFi wrote, and the offer that replaces them (inside longer texts). */
+    private const TRIAL_SENTENCES = [
+        '/Free trial from 1st December until 4 January 2027[^.]*\./u',
+        '/Free one-month trial for December[^.]*\./ui',
+    ];
+
+    private const OFFER_SENTENCE = 'Get your TenaFi device and your first 3 months of Basic are free. Installations from Monday 16 November, in time for the December high season.';
 
     private const NEW_FAQS = [
         'What’s free?', 'What happens after 3 months?', 'Do I keep the device?',
@@ -76,7 +96,11 @@ class PricingOfferCommand extends Command
         ['home', 'hero', 'device_line', ['Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.']],
         ['home', 'cta_banner__founding', 'device_line', ['Plus a TenaFi device from {device_price}, or KES 0 upfront on monthly.']],
         ['home', 'cta_banner__founding', 'pricing_note', ['A month, per unit for rentals. Pay yearly and get 2 months free. Events are quoted per event.']],
-        ['pricing', 'seo', 'meta_title', ['TenaFi devices and pricing: buy once or pay monthly']],
+        ['pricing', 'seo', 'meta_title', ['TenaFi devices and pricing: buy once or pay monthly', 'TenaFi devices and pricing: pay once, 3 months of Basic free']],
+        ['home', 'hero', 'free_price_line', ['{free_months} months free with your TenaFi device. Then from {price}/month.']],
+        ['home', 'cta_banner__founding', 'free_price_line', ['{free_months} months free with your TenaFi device. Then from {price}/month.']],
+        ['hosts', 'hero', 'note', ["Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 per unit a month."]],
+        ['business', 'hero', 'note', ["Africa\u{2019}s guest relationship platform. No new internet needed. Live in 7 days. From KES 3,000 a month."]],
         ['pricing', 'seo', 'meta_description', ['TenaFi Lite, Pro and Outdoor: one device for every size of space, installed and managed for you. Buy upfront, or pay monthly with nothing upfront.']],
         ['pricing', 'devices', 'subtitle', ['Every TenaFi device runs your branded WiFi page, captures your guest list and is installed, set up and managed by our team. Pick the one that fits your space.']],
         ['pricing', 'devices', 'upfront_label', ['Buy upfront, installed']],
@@ -129,6 +153,9 @@ class PricingOfferCommand extends Command
     /** @var list<array{page: string, key: string}> */
     private array $newSections = [];
 
+    /** Plan price changes, applied only with --apply-prices. @var list<array{section_id: int, key: string, where: string, old: ?string, new: string}> */
+    private array $prices = [];
+
     /** @var list<string> */
     private array $checklist = [];
 
@@ -138,8 +165,9 @@ class PricingOfferCommand extends Command
             return $this->restore($file);
         }
 
-        $this->changes = $this->checklist = $this->newSections = [];
+        $this->changes = $this->checklist = $this->newSections = $this->prices = [];
         $this->plan();
+        $applyPrices = (bool) $this->option('apply-prices');
 
         foreach ($this->newSections as $s) {
             $this->line("<comment>[{$s['page']}]</comment> new section: {$s['key']} (the offer's FAQs)");
@@ -149,6 +177,13 @@ class PricingOfferCommand extends Command
             $this->line('  - '.($c['old'] === null ? '(new field)' : ($c['old'] === '' ? '(empty)' : $this->short($c['old']))));
             $this->line('  + '.$this->short($c['new']));
         }
+        if ($this->prices) {
+            $this->newLine();
+            $this->line('<options=bold>Prices'.($applyPrices ? '' : ' (changed only with --apply-prices)').'</>');
+            foreach ($this->prices as $c) {
+                $this->line("  [{$c['where']}] {$c['key']}: ".($c['old'] ?? '(none)')." -> {$c['new']}");
+            }
+        }
         $this->newLine();
         $this->line('<options=bold>Admin checklist: check or edit these by hand in Admin -> Public Pages</>');
         foreach (array_unique($this->checklist) as $item) {
@@ -156,12 +191,18 @@ class PricingOfferCommand extends Command
         }
         $this->newLine();
 
+        if ($applyPrices) {
+            $this->changes = array_merge($this->changes, $this->prices);
+        }
         if (! $this->changes && ! $this->newSections) {
-            $this->info('Nothing to fill: the live pricing already has the offer.');
+            $this->info($this->prices
+                ? 'Nothing to fill. '.count($this->prices).' price(s) differ: run with --apply-prices to change them.'
+                : 'Nothing to fill: the live pricing already has the offer.');
 
             return self::SUCCESS;
         }
-        $this->info(count($this->changes).' field(s) to fill or update'.($this->newSections ? ', '.count($this->newSections).' section(s) to add' : '').'.');
+        $this->info(count($this->changes).' field(s) to fill or update'.($this->newSections ? ', '.count($this->newSections).' section(s) to add' : '').'.'
+            .(! $applyPrices && $this->prices ? ' '.count($this->prices).' price(s) left as they are (no --apply-prices).' : ''));
 
         if ($this->option('dry-run')) {
             $this->warn('Dry run: nothing was saved. Run without --dry-run to back up and apply.');
@@ -217,7 +258,14 @@ class PricingOfferCommand extends Command
                     }
                 }
             }
+            // The Free card is part of the offer: shown.
+            // (An empty one is filled with the new fields above.)
+            $showFree = trim(strip_tags((string) ($live['show_free_plan'] ?? '')));
+            if (($defaults['show_free_plan'] ?? '') === '1' && $showFree !== '' && $showFree !== '1') {
+                $this->change($pricing, $where, 'show_free_plan', $live['show_free_plan'] ?? null, '1');
+            }
             $this->oldDefaults($pricing, $where, $live, $bp, 'pricing', $defaults);
+            $this->trialSentences($pricing, $where, $live);
             // The hosts example moves to Basic with its label (only while the label is the old one).
             if ($bp === 'hosts' && ($live['example_label'] ?? null) === 'A one-bedroom rental on Starter with TenaFi Lite' && ($live['example_plan'] ?? null) === 'starter') {
                 $this->change($pricing, $where, 'example_plan', 'starter', $defaults['example_plan']);
@@ -225,6 +273,19 @@ class PricingOfferCommand extends Command
             $this->plans($pricing, $where, $live, $bp, $blueprint[$bp]['pricing']['content']['plans'] ?? []);
             $this->scan($pricing, $slug, $live, true);
         }
+
+        // The audience pages' heroes: "From KES 3,000 a month" TenaFi wrote, and the trial sentence.
+        foreach (self::FAQ as $slug => $bp) {
+            if ($hero = $this->section($slug, 'hero')) {
+                $defaults = PageBlueprint::flatten($blueprint[$bp]['hero']['content'] ?? []);
+                $live = $hero->contents->pluck('value', 'content_key')->all();
+                $this->oldDefaults($hero, "{$slug}/hero", $live, $bp, 'hero', $defaults);
+                $this->trialSentences($hero, "{$slug}/hero", $live);
+            }
+        }
+
+        // Every plan list on the site: typed dollars out, and the final prices (with --apply-prices).
+        $this->allPlans(collect($blueprint['hosts']['pricing']['content']['plans'] ?? [])->keyBy('id'));
 
         foreach (self::FAQ as $slug => $bp) {
             if ($faq = $this->section($slug, 'faq')) {
@@ -241,6 +302,7 @@ class PricingOfferCommand extends Command
                 $live = $section->contents->pluck('value', 'content_key')->all();
                 $this->fillEmpty($section, "{$slug}/{$key}", $live, 'free_price_line', $defaults['free_price_line'] ?? '');
                 $this->oldDefaults($section, "{$slug}/{$key}", $live, 'home', $key, $defaults);
+                $this->trialSentences($section, "{$slug}/{$key}", $live);
                 $this->scan($section, $slug, $live);
             }
         }
@@ -272,6 +334,8 @@ class PricingOfferCommand extends Command
                 ->each(fn (LandingSection $s) => $this->scan($s, $slug, $s->contents->pluck('value', 'content_key')->all()));
         }
 
+        $this->checklist[] = 'Message top-ups: what does an extra bundle cost? Fill messages_topup_note on each pricing section (empty = not shown). [open decision]';
+        $this->checklist[] = 'Dollar rate: Admin -> Settings -> Shillings per US dollar (129 until set) drives every “(about $X)”.';
         $this->checklist[] = 'TrialSlots counter (show_slots, Site-wide -> Slot counter): keep it, relabel it, or turn it off? It is left as it is. [open decision]';
         $this->checklist[] = 'VAT: are prices incl. or excl. 16% VAT? Fill vat_note on each pricing section (empty = not shown). [open decision]';
         $this->checklist[] = 'Device payment terms: all at booking, all at installation, or half and half? Then complete the FAQ “How do I pay for the device?”. [open decision]';
@@ -333,10 +397,61 @@ class PricingOfferCommand extends Command
                 $this->checklist[] = "{$where} plan “{$id}” features: suggested for the offer: ".str_replace("\n", ' / ', $default['features']);
             }
 
+            // The plan's message allowance, where it has none.
+            if ($default && ($default['messages_note'] ?? '') !== '') {
+                $this->fillEmpty($section, $where, $live, "plans.{$i}.messages_note", $default['messages_note']);
+            }
+
             if ($default && isset($old['cta']) && ($live["plans.{$i}.cta"] ?? null) === $old['cta']) {
                 $this->change($section, $where, "plans.{$i}.cta", $old['cta'], $default['cta']);
             }
         }
+    }
+
+    /** The December trial sentence TenaFi wrote, inside a longer text, becomes the offer. */
+    private function trialSentences(LandingSection $section, string $where, array $live): void
+    {
+        $changing = collect($this->changes)->where('section_id', $section->id)->pluck('new', 'key');
+        foreach ($live as $key => $value) {
+            $value = (string) ($changing[$key] ?? $value);
+            $new = preg_replace(self::TRIAL_SENTENCES, self::OFFER_SENTENCE, $value);
+            if ($new !== null && $new !== $value) {
+                // Replaces an earlier change of the same field, if any.
+                $this->changes = array_values(array_filter($this->changes, fn ($c) => ! ($c['section_id'] === $section->id && $c['key'] === $key)));
+                $this->change($section, $where, $key, $live[$key], $new);
+            }
+        }
+    }
+
+    /**
+     * Every stored plan list (plans.{i}.* on any page): a typed "(about $X)"
+     * comes out of its unit text, and its prices are compared with the final
+     * ones (applied only with --apply-prices).
+     */
+    private function allPlans(Collection $final): void
+    {
+        LandingSection::with(['contents', 'page'])->whereHas('contents', fn ($q) => $q->where('content_key', 'like', 'plans.%.price_kes'))->get()
+            ->each(function (LandingSection $section) use ($final) {
+                $live = $section->contents->pluck('value', 'content_key')->all();
+                $where = "{$section->page->slug}/{$section->section_key}";
+                for ($i = 0; array_key_exists("plans.{$i}.label", $live) || array_key_exists("plans.{$i}.id", $live); $i++) {
+                    $unit = (string) ($live["plans.{$i}.unit"] ?? '');
+                    $plain = trim(preg_replace('/\s*\(about\s*\$\s*[\d,.]+\)/i', '', $unit));
+                    if ($plain !== $unit) {
+                        $this->change($section, $where, "plans.{$i}.unit", $unit, $plain);
+                    }
+
+                    $plan = $final->get(strtolower(trim(strip_tags((string) ($live["plans.{$i}.id"] ?? '')))));
+                    if (! $plan) {
+                        continue;
+                    }
+                    foreach (['price_kes', 'price'] as $field) {
+                        if (array_key_exists("plans.{$i}.{$field}", $live) && trim(strip_tags((string) $live["plans.{$i}.{$field}"])) !== $plan[$field]) {
+                            $this->prices[] = ['section_id' => $section->id, 'key' => "plans.{$i}.{$field}", 'where' => $where, 'old' => $live["plans.{$i}.{$field}"], 'new' => $plan[$field]];
+                        }
+                    }
+                }
+            });
     }
 
     /** A list saved as HTML, or with tabs or runs of spaces between items, as one item per line; null if fine. */
@@ -472,7 +587,13 @@ class PricingOfferCommand extends Command
     /** @param list<int> $createdSections */
     private function backup(array $createdSections, ?string $path = null): string
     {
-        $path ??= 'cms-backups/pricing-offer-'.now()->format('Ymd-His').'.json';
+        if ($path === null) {
+            // Never overwrite an earlier backup (two runs in the same second).
+            $base = 'cms-backups/pricing-offer-'.now()->format('Ymd-His');
+            for ($n = 1, $path = "{$base}.json"; Storage::disk('local')->exists($path); $n++) {
+                $path = "{$base}-{$n}.json";
+            }
+        }
         Storage::disk('local')->put($path, json_encode([
             'contents' => collect($this->changes)->map(fn ($c) => ['section_id' => $c['section_id'], 'key' => $c['key'], 'value' => $c['old']])->values(),
             'created_sections' => $createdSections,

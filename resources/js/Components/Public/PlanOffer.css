@@ -55,6 +55,21 @@
     opacity: .75;
 }
 
+/* "TenaFi free for 3 months, and the device is yours." in front of the steps. */
+.pricing-steps__headline {
+    @apply mx-auto mb-5 max-w-3xl text-center text-xl font-semibold leading-snug text-dark sm:text-2xl;
+}
+
+.pricing-steps__headline--compact {
+    @apply mb-4 max-w-none text-left text-base sm:text-lg;
+    color: inherit;
+}
+
+/* A plan's message allowance ("300 WhatsApp or SMS messages a month."). */
+.pricing-plan-messages {
+    @apply mt-4 rounded-xl bg-primary/15 px-3 py-2 text-xs font-medium leading-relaxed;
+}
+
 /* Lite / Pro / Outdoor */
 .pricing-picker {
     @apply mx-auto mb-8 flex w-full max-w-3xl flex-col items-center gap-2;
@@ -93,6 +108,10 @@
 /* Under the cards */
 .pricing-offer-note {
     @apply mx-auto mt-6 max-w-3xl text-center text-sm text-dark;
+}
+
+.pricing-offer-note__topup {
+    @apply mt-1 text-sm text-muted;
 }
 
 .pricing-offer-note__vat {

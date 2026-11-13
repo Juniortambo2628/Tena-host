@@ -215,6 +215,8 @@ class PublicPageController extends Controller
             'plans' => LandingPage::livePlans('hosts'),
             // The offer on /hosts (free months and its three steps), for the homepage and How it works.
             'offer' => LandingPage::liveOffer('hosts'),
+            // KES per US dollar (Admin -> Settings), for every "(about $X)" on the pricing.
+            'kesPerUsd' => static::kesPerUsd(),
             // The hero's call-back form shows only when switched on in Settings.
             'callbacks' => CallbackController::enabled(),
             // The homepage "Try it yourself" section links to /demo only while it's on.
@@ -225,6 +227,14 @@ class PublicPageController extends Controller
             'devices' => LandingPage::liveDevices(),
             'seo' => $this->seo($site['seo'] ?? null, $pageSeo, $path, $index),
         ]);
+    }
+
+    /** KES per US dollar (Admin -> Settings -> Shillings per US dollar), 129 until set. */
+    public static function kesPerUsd(): float
+    {
+        $rate = (float) Setting::getValue('kes_per_usd', 129);
+
+        return $rate > 0 ? $rate : 129.0;
     }
 
     /**
