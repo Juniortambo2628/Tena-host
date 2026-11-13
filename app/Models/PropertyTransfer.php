@@ -21,12 +21,16 @@ class PropertyTransfer extends Model
     /** After a transfer, the new owner waits this long before messaging the guests who came with it. */
     public const CAMPAIGN_HOLD_DAYS = 14;
 
+    /** For this long after the hand-over, an admin can reverse it (both owners agreeing in writing). */
+    public const REVERSE_DAYS = 30;
+
     protected $fillable = [
         'property_id', 'from_user_id', 'to_user_id', 'to_email', 'status',
         'expires_at', 'decided_at', 'from_ip', 'decided_ip', 'moved',
         'notice_status', 'notice_cursor', 'notice_total', 'notice_sent', 'hold_until',
         'completes_at', 'completed_at', 'cancelled_at', 'cancelled_by', 'held_at', 'held_by', 'admin_note',
         'device_takeover', 'device_count', 'device_balance_kes', 'device_monthly_kes',
+        'reversed_at', 'reversed_by',
     ];
 
     protected $casts = [
@@ -42,6 +46,7 @@ class PropertyTransfer extends Model
         'device_count' => 'integer',
         'device_balance_kes' => 'integer',
         'device_monthly_kes' => 'integer',
+        'reversed_at' => 'datetime',
     ];
 
     public function property(): BelongsTo
@@ -74,6 +79,12 @@ class PropertyTransfer extends Model
     public function isOpen(): bool
     {
         return $this->isPending() || $this->isCoolingOff();
+    }
+
+    /** Completed, and still within the days an admin can reverse it. */
+    public function canBeReversed(): bool
+    {
+        return $this->status === 'completed' && $this->completed_at && $this->completed_at->gt(now()->subDays(self::REVERSE_DAYS));
     }
 
     /** Whether this user is the one invited (signed in with the invited email). */

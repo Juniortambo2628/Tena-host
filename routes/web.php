@@ -130,11 +130,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::post('/devices/{agreement}/instalments/{instalment}/pay', [DeviceAgreementController::class, 'pay'])->name('devices.pay');
     Route::put('/devices/{agreement}/status', [DeviceAgreementController::class, 'status'])->name('devices.status');
 
-    // Property transfers: see every transfer; hold, release or cancel one during its cooling-off
+    // Property transfers: see every transfer; hold, release or cancel one during its cooling-off; reverse a completed one
     Route::get('/transfers', [AdminTransferController::class, 'index'])->name('transfers.index');
     Route::post('/transfers/{transfer}/hold', [AdminTransferController::class, 'hold'])->name('transfers.hold');
     Route::post('/transfers/{transfer}/release', [AdminTransferController::class, 'release'])->name('transfers.release');
     Route::post('/transfers/{transfer}/cancel', [AdminTransferController::class, 'cancel'])->name('transfers.cancel');
+    Route::post('/transfers/{transfer}/reverse', [AdminTransferController::class, 'reverse'])->name('transfers.reverse');
 
     // Payments
     Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');

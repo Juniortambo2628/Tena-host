@@ -166,6 +166,19 @@ A transfer never silently moves a debt. The options:
    same instalment dates, and each logs "Moved to a new owner". It refuses
    to go ahead if a device was added or more is owed than when it was
    offered.
+5. Admin undo. **Built (November 2026):** for 30 days after the hand-over,
+   Admin → Transfers shows **Reverse** on a completed transfer. The admin
+   says where both owners agreed (e.g. the support ticket) and ticks that
+   they agreed in writing. In one transaction the property goes back to the
+   previous owner with its guests, devices, campaigns and events, and any
+   device payments taken over with it (each logs "Moved back to the previous
+   owner"); the new owner's team loses access; the guests' 14-day hold is
+   lifted and "new owner" notices still waiting are stopped. Both owners get
+   a notification and an email. It refuses if the property has changed
+   hands again or another transfer of it is under way. Not restored: the
+   previous owner's team members (they add them again) and a PMS connection
+   (reconnected). Guests who were already told about the new owner aren't
+   sent a second note.
 
 ## 8. Open questions
 

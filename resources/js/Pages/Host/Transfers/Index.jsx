@@ -13,7 +13,7 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { notify } from '@/Components/Toast';
 import './Index.css';
 
-const STATUS = { pending: 'Waiting', accepted: 'Cooling off', completed: 'Completed', declined: 'Declined', cancelled: 'Cancelled', expired: 'Expired' };
+const STATUS = { pending: 'Waiting', accepted: 'Cooling off', completed: 'Completed', declined: 'Declined', cancelled: 'Cancelled', expired: 'Expired', reversed: 'Reversed' };
 const COLORS = {
     waiting: 'bg-primary/20 text-dark',
     'cooling off': 'bg-amber-100 text-amber-700',
@@ -21,6 +21,7 @@ const COLORS = {
     declined: 'bg-black/5 text-muted',
     cancelled: 'bg-black/5 text-muted',
     expired: 'bg-black/5 text-muted',
+    reversed: 'bg-black/5 text-muted',
 };
 const day = (iso) => (iso ? new Date(iso).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : '—');
 const kes = (n) => `KES ${Number(n || 0).toLocaleString()}`;
@@ -102,6 +103,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
                 <span className="transfers__stack">
                     <StatusBadge status={STATUS[x.status] || x.status} colors={COLORS} />
                     {x.status === 'accepted' && <small>{x.held ? 'Paused by TenaFi' : `Hand-over ${when(x.completes_at)}`}</small>}
+                    {x.status === 'reversed' && <small>Undone by TenaFi {day(x.reversed_at)}, as both owners agreed</small>}
                 </span>
             ),
         },
@@ -129,7 +131,7 @@ export default function Transfers({ properties, outgoing, incoming, validDays, h
         {
             id: 'notice',
             header: `${t('Guests')} told`,
-            accessorFn: (x) => (x.notice ? (x.notice.status === 'none' ? 'Nobody to tell' : `${x.notice.sent} of ${x.notice.total}${x.notice.status === 'pending' ? ' so far' : ''}`) : '—'),
+            accessorFn: (x) => (x.notice ? (x.notice.status === 'none' ? 'Nobody to tell' : `${x.notice.sent} of ${x.notice.total}${x.notice.status === 'pending' ? ' so far' : ''}${x.notice.status === 'stopped' ? ' (stopped when it was reversed)' : ''}`) : '—'),
             meta: { detailOnly: true },
         },
         {
