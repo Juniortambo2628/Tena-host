@@ -1,0 +1,32 @@
+# Kit releases only: when a new version of the OKJT kit (@okjt/*,
+# okjt/laravel-kit) is published, open one pull request that raises it.
+# Other dependencies are updated by hand, as before. Claude Code builds on
+# these pull requests: it follows the release's entry in OKJT
+# packages/UPGRADING.md and removes this project's own copies the kit
+# replaces (see CLAUDE.md, "The OKJT kit").
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    target-branch: "master"
+    schedule:
+      interval: daily
+    allow:
+      - dependency-name: "@okjt/*"
+    groups:
+      okjt-kit:
+        patterns: ["@okjt/*"]
+    commit-message:
+      prefix: "OKJT kit"
+    open-pull-requests-limit: 2
+
+  - package-ecosystem: composer
+    directory: "/"
+    target-branch: "master"
+    schedule:
+      interval: daily
+    allow:
+      - dependency-name: "okjt/laravel-kit"
+    commit-message:
+      prefix: "OKJT kit"
+    open-pull-requests-limit: 2
