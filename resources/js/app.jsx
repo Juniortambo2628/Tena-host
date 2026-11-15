@@ -6,6 +6,14 @@ import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ToastProvider, notify } from '@/Components/Toast';
 import { BRAND_COLORS } from '@/constants';
+import { installChunkReload } from '@okjt/ui/helpers';
+
+// Every merge to master deploys, and a deploy replaces every built file, so a
+// tab left open from before it asks for files that are gone ("Failed to fetch
+// dynamically imported module") when it opens a page it hasn't loaded yet.
+// Reload once into the new build (the OKJT kit's handler, shared with Naoa).
+// Does nothing during server rendering.
+installChunkReload();
 
 // Pages in these folders share one persistent DashboardLayout, so navigating between
 // them swaps only the page. A page can opt out with `Page.layout = null`.
