@@ -20,6 +20,10 @@
   --color-surface: #ffffff;
   --color-contrast: #000000;
   --color-action: var(--color-accent);
+  --color-fill: var(--color-ink);
+  --color-fill-hover: var(--color-body);
+  --color-on-ink: #ffffff;
+  --color-panel: var(--color-ink);
   --color-tone-50: oklch(98.5% 0.001 106.423);
   --color-tone-100: oklch(97% 0.001 106.424);
   --color-tone-200: oklch(92.3% 0.003 48.717);
