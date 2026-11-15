@@ -129,3 +129,34 @@ Laravel 12 + Inertia 2 + React 18, Tailwind CSS v4, Vite. Pages live in
 Most public page text, images, FAQs and plans are edited in the admin dashboard
 (Public Pages), not in code. Change code only when the page's structure or a
 new section is needed; the page blueprint is `app/Services/Cms/PageBlueprint.php`.
+
+## The OKJT kit (shared with the other OKJTech projects)
+
+The v2 public pages use the OKJT kit's `@okjt/site` and `@okjt/ui` (from
+`packages/` in Juniortambo2628/OKJT), through the Inertia bridge in
+`resources/js/Components/V2/V2Site.jsx`. The dashboard is TenaFi's own. A fix
+made in the kit reaches every OKJTech project, so:
+
+- **Use the kit before writing your own.** Before adding a component, hook,
+  middleware or service, check whether the kit has it (each package's README,
+  and `packages/UPGRADING.md` for what's new). The kit's components take
+  options for how they look; set those rather than restyling the kit's
+  classes with `!important` or `:has()`.
+- **Never edit kit code** in `node_modules/` or `vendor/`, and never copy a
+  kit piece into this project to change it.
+- **Kit candidates.** When the kit is missing something or has a bug, make
+  the smallest change here (an option, a thin wrapper) and add a line to the
+  pull request: `Kit candidate: <what the kit should gain>`. Do the same when
+  you build something here that isn't specific to this product and another
+  OKJTech project could use. These lines are how fixes get back into the kit
+  (OKJT `packages/CONSOLIDATION_PLAN.md`) instead of staying in one project.
+- **Kit updates.** Dependabot opens a pull request when a kit version is
+  released. Building on it: follow that release's entry in OKJT
+  `packages/UPGRADING.md`, delete this project's own copy of anything the kit
+  now provides, run the checks and the visual tests, and put desktop and
+  390 px screenshots in the pull request.
+
+The kit is gaining Inertia support (an `@okjt/inertia` adapter, replacing the
+bridge) and pieces TenaFi already has (`DataTable`'s card view on phones,
+`TabbedModal`). When those land, moving to them is a separate pull request,
+one screen at a time.
