@@ -5,7 +5,8 @@
     "scripts": {
         "build": "vite build && vite build --ssr",
         "dev": "vite",
-        "theme": "okjt-theme --out resources/css/okjt-theme.css"
+        "theme": "okjt-theme --out resources/css/okjt-theme.css",
+        "check:contrast": "okjt-theme --out resources/css/okjt-theme.css --check-contrast"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",
