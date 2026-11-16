@@ -37,3 +37,7 @@
   --color-tone-950: oklch(14.7% 0.004 49.25);
   --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
+
+:root {
+  --okjt-min-text: 12px;
+}
