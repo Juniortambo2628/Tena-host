@@ -65,6 +65,9 @@ jobs:
       - name: Install NPM Dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Check colour contrast (WCAG AA, OKJT kit)
+        run: npm run check:contrast
+
       - name: Build Frontend Assets
         run: npm run build
 

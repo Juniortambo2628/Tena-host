@@ -15,6 +15,9 @@
  */
 export default {
     theme: {
+        // TenaFi's rule: no text smaller than 12px. The kit's small labels
+        // (11px on the public pages) draw at this size instead.
+        type: { minText: '12px' },
         colors: {
             ink: '#1B1B1B',
             inkDeep: '#0E0E0E',
