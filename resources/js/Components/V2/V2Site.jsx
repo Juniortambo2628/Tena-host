@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { router, usePage } from '@inertiajs/react';
-import { Router, createPath } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { usePage } from '@inertiajs/react';
+import { InertiaRouter } from '@okjt/inertia';
 import { SiteProvider } from '@okjt/site';
 import { ShieldCheck, Wifi, Sparkles } from 'lucide-react';
 import { getContent, extractItems, stripHtml } from '@/lib/cms';
@@ -12,9 +12,10 @@ import './V2Site.css';
  * (@okjt/site). Two jobs:
  *
  * 1. The kit's links and nav use React Router; TenaFi navigates with Inertia.
- *    A Router with our own navigator bridges them: a link to another page is
- *    an Inertia visit, a link to a section on this page just moves to it, and
- *    links to other sites stay plain links (React Router renders those itself).
+ *    The kit's InertiaRouter (@okjt/inertia, made from this file's own bridge)
+ *    joins them: a link to another page is an Inertia visit, a link to a
+ *    section on this page just moves to it, and links to other sites stay
+ *    plain links.
  * 2. The kit's words, links and logos come from the same CMS as the live
  *    pages (Admin -> Public Pages -> Site-wide), so header, footer and SEO are
  *    edited in one place for both.
@@ -23,59 +24,15 @@ export default function V2Site({ places, media, joinHref = '#paths', children })
     const { url, props } = usePage();
     // Set before the sections render, so their links follow the current address.
     v2Base = props.v2Base ?? (url.startsWith('/v2') ? '/v2' : '');
-    const location = useInertiaLocation(url);
-    const navigator = useMemo(() => ({
-        createHref: (to) => (typeof to === 'string' ? to : createPath(to)),
-        encodeLocation: (to) => to,
-        go: (delta) => window.history.go(delta),
-        push: (to) => navigate(to, false),
-        replace: (to) => navigate(to, true),
-    }), []);
     const site = useV2SiteConfig({ places, media, joinHref });
 
     return (
-        <Router location={location} navigator={navigator}>
+        <InertiaRouter>
             <SiteProvider site={site}>
                 <div className="v2-site">{children}</div>
             </SiteProvider>
-        </Router>
+        </InertiaRouter>
     );
-}
-
-/** The current address as React Router expects it, following #section changes too. */
-function useInertiaLocation(url) {
-    const [hash, setHash] = useState(() => (typeof window === 'undefined' ? '' : window.location.hash));
-    useEffect(() => {
-        const sync = () => setHash(window.location.hash);
-        sync();
-        window.addEventListener('hashchange', sync);
-        window.addEventListener('popstate', sync);
-        return () => {
-            window.removeEventListener('hashchange', sync);
-            window.removeEventListener('popstate', sync);
-        };
-    }, [url]);
-
-    const [path, search = ''] = url.split('#')[0].split('?');
-    return { pathname: path || '/', search: search ? `?${search}` : '', hash, state: null, key: hash || 'default' };
-}
-
-/** A kit link was followed: stay on the page for #sections, otherwise visit through Inertia. */
-function navigate(to, replace) {
-    const target = typeof to === 'string' ? to : createPath(to);
-    const next = new URL(target, window.location.href);
-
-    if (next.origin !== window.location.origin) {
-        window.location.assign(next.href);
-        return;
-    }
-    if (next.pathname === window.location.pathname && next.search === window.location.search) {
-        // Same page: change the #hash; the kit's layout scrolls to it.
-        window.history[replace ? 'replaceState' : 'pushState'](window.history.state, '', next.hash || next.pathname);
-        window.dispatchEvent(new HashChangeEvent('hashchange'));
-        return;
-    }
-    router.visit(next.pathname + next.search + next.hash, { replace });
 }
 
 // "/v2" while previewing the v2 pages, "" once they're the live site (the page's v2Base prop).
