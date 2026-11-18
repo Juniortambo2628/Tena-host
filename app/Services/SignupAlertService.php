@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Mail\SignupAlertMail;
-use App\Mail\WaitlistConfirmationMail;
+use App\Mail\SignupConfirmationMail;
 use App\Models\Registration;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
@@ -82,19 +82,8 @@ class SignupAlertService
             return; // Email is optional; the team follows up on WhatsApp.
         }
 
-        $answers = $registration->answers ?? [];
-
-        $this->attempt('applicant confirmation', fn () => Mail::to($registration->email)->send(
-            new WaitlistConfirmationMail(
-                firstName: (string) $registration->first_name,
-                lastName: (string) $registration->last_name,
-                email: $registration->email,
-                propertyType: (string) ($answers['businessType'] ?? ($registration->property_type !== 'other' ? $registration->property_type : '')),
-                units: (string) ($registration->units ?: ($answers['locations'] ?? '')),
-                primaryPlatform: implode(', ', (array) ($answers['platforms'] ?? $registration->primary_platform)),
-                biggestChallenge: (string) $registration->biggest_challenge,
-            )
-        ));
+        // "Welcome to TenaFi." (SignupConfirmationMail), which replaced the old waitlist email.
+        $this->attempt('applicant confirmation', fn () => Mail::to($registration->email)->send(new SignupConfirmationMail($registration)));
     }
 
     private function attempt(string $channel, callable $callback): void

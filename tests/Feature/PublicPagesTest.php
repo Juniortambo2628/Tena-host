@@ -1,7 +1,7 @@
 <?php
 
 use App\Mail\SignupAlertMail;
-use App\Mail\WaitlistConfirmationMail;
+use App\Mail\SignupConfirmationMail;
 use App\Models\Analytics;
 use App\Models\LandingContent;
 use App\Models\LandingPage;
@@ -255,7 +255,7 @@ it('stores a host sign-up in Glen\'s spec format and alerts the team', function 
 
     // Glen is the default recipient (SIGNUP-FIELDS.md: "alert glen@tena.host").
     Mail::assertSent(SignupAlertMail::class, fn ($mail) => $mail->hasTo('glen@tena.host'));
-    Mail::assertSent(WaitlistConfirmationMail::class, fn ($mail) => $mail->hasTo('wanjiru@example.com'));
+    Mail::assertSent(SignupConfirmationMail::class, fn ($mail) => $mail->hasTo('wanjiru@example.com'));
     $this->assertDatabaseHas('app_notifications', ['user_id' => $admin->id, 'type' => 'signup_received']);
 });
 
@@ -280,7 +280,7 @@ it('accepts a business sign-up without an email address', function () {
         ->and($registration->answers)->toMatchArray(['role' => 'Owner', 'businessType' => 'Café', 'locations' => '1 location', 'googleProfile' => 'Not sure', 'plan' => 'basic']);
 
     Mail::assertSent(SignupAlertMail::class);
-    Mail::assertNotSent(WaitlistConfirmationMail::class);
+    Mail::assertNotSent(SignupConfirmationMail::class);
 });
 
 it('validates sign-ups against the CMS field definitions', function () {

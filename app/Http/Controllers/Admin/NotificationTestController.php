@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\OtpMail;
 use App\Mail\PasswordChangedMail;
+use App\Mail\SignupConfirmationMail;
 use App\Mail\TestPaymentReceiptMail;
-use App\Mail\WaitlistConfirmationMail;
 use App\Mail\WaitlistWelcomeMail;
 use App\Mail\WelcomeMail;
+use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -52,15 +53,10 @@ class NotificationTestController extends Controller
                 break;
 
             case 'waitlist_confirmation':
-                Mail::to($email)->send(new WaitlistConfirmationMail(
-                    firstName: 'Test',
-                    lastName: 'User',
-                    email: $email,
-                    propertyType: 'Vacation Rental',
-                    units: '5',
-                    primaryPlatform: 'Airbnb',
-                    biggestChallenge: 'Managing multiple platforms',
-                ));
+                // What a website sign-up gets now: "Welcome to TenaFi." (an unsaved sample sign-up).
+                Mail::to($email)->send(new SignupConfirmationMail(new Registration([
+                    'type' => 'hosts', 'first_name' => 'Test', 'last_name' => 'User', 'email' => $email,
+                ])));
                 break;
 
             case 'waitlist_welcome':
