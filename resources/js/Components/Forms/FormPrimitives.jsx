@@ -81,10 +81,18 @@ export function ToggleField({ label, checked, onChange, children }) {
 }
 
 export function CheckboxField({ label, checked, onChange }) {
+    // A real (visually hidden) checkbox inside the label: clicking the label's
+    // text ticks it, and it can be reached with Tab and ticked with Space.
     return (
         <label className="form-checkbox">
-            <div
-                onClick={onChange}
+            <input
+                type="checkbox"
+                className="form-checkbox__input"
+                checked={!!checked}
+                onChange={onChange}
+            />
+            <span
+                aria-hidden="true"
                 className={`form-checkbox__box ${checked ? 'form-checkbox__box--checked' : 'form-checkbox__box--unchecked'}`}
             >
                 {checked && (
@@ -92,7 +100,7 @@ export function CheckboxField({ label, checked, onChange }) {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M5 13l4 4L19 7" />
                     </svg>
                 )}
-            </div>
+            </span>
             <span className="form-checkbox__label">{label}</span>
         </label>
     );
