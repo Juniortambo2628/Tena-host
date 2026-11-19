@@ -4,6 +4,7 @@ import { Laptop, Smartphone, Mail, ChevronLeft, ChevronRight } from 'lucide-reac
 import { useBrand } from '@/Components/BrandLogo';
 import './EmailPreview.css';
 import { BRAND_COLORS } from '@/constants';
+import { safeRoute } from '@/lib/route';
 
 const emailComponents = {
     welcome: () => import('@/Emails/WelcomeEmail'),
@@ -47,9 +48,15 @@ export default function EmailPreview({ settings }) {
         { id: 'receipt', name: 'Receipt' },
         { id: 'reset', name: 'Password Reset' },
         { id: 'waitlist_confirmation', name: 'Waitlist Confirmation' },
+        { id: 'signup_welcome', name: 'Welcome to TenaFi' },
         { id: 'waitlist_welcome', name: 'Waitlist Welcome' },
         { id: 'contact_enquiry', name: 'Contact Enquiry' },
     ];
+
+    // Rendered by the server as it is sent (no React copy of its design).
+    const serverPreviewUrl = activeTemplate === 'signup_welcome'
+        ? safeRoute('admin.notifications.preview.signup-welcome', { type: 'hosts' }, null)
+        : null;
 
     const emailProps = useMemo(() => ({
         primaryColor: settings.email_primary_color || '#000000',
@@ -87,6 +94,7 @@ export default function EmailPreview({ settings }) {
         activeTemplate]);
 
     useEffect(() => {
+        if (serverPreviewUrl || !emailComponents[activeTemplate]) return;
         if (!iframeRef.current) return;
         const doc = iframeRef.current.contentDocument;
         if (!doc) return;
@@ -116,7 +124,7 @@ export default function EmailPreview({ settings }) {
 
         renderEmail();
         return () => { cancelled = true; };
-    }, [activeTemplate, emailProps]);
+    }, [activeTemplate, emailProps, serverPreviewUrl]);
 
     return (
         <div className="email-preview">
@@ -180,7 +188,9 @@ export default function EmailPreview({ settings }) {
                     {/* Email Content Frame */}
                     <div className="email-preview__content-frame">
                         <iframe
+                            key={serverPreviewUrl ? 'server' : 'client'}
                             ref={iframeRef}
+                            src={serverPreviewUrl || undefined}
                             title="Email Preview"
                             className="email-preview__iframe"
                         />

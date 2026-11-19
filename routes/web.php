@@ -158,6 +158,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 
     // Notification Test
     Route::post('/notifications/test', [NotificationTestController::class, 'send'])->name('notifications.test');
+    // "Welcome to TenaFi." as sent, for Settings -> Preview Emails (?type=hosts|business).
+    Route::get('/notifications/preview/signup-welcome', [NotificationTestController::class, 'previewSignupWelcome'])->name('notifications.preview.signup-welcome');
 
     // Email Image Upload
     Route::post('/email-images/upload', [EmailImageController::class, 'upload'])->name('email-images.upload');

@@ -18,7 +18,8 @@ use Illuminate\Queue\SerializesModels;
  *
  * The three WiFi pages are the screenshots uploaded to the homepage's
  * "Trusted by" section (partner_{i}_logo), so the email shows what the site
- * shows; the free months come from the live /hosts pricing (0 hides them).
+ * shows; the free months come from the sign-up's own page's live pricing
+ * (/hosts or /business; 0 hides them).
  */
 class SignupConfirmationMail extends Mailable
 {
@@ -43,7 +44,9 @@ class SignupConfirmationMail extends Mailable
      */
     public static function viewData(Registration $registration): array
     {
-        $offer = LandingPage::liveOffer('hosts');
+        // The offer on their own page's pricing (/business for businesses, /hosts
+        // otherwise); with no free months there, the box is left out.
+        $offer = LandingPage::liveOffer($registration->type === 'business' ? 'business' : 'hosts');
         $audiences = [
             'hosts' => [
                 'title' => 'Short-term rental operators',
@@ -70,6 +73,7 @@ class SignupConfirmationMail extends Mailable
             'yellow' => Brand::YELLOW,
             'pages' => static::wifiPages(),
             'freeMonths' => $offer['freeMonths'],
+            'basePlan' => $offer['basePlan'],
             'audiences' => $audiences,
             'howUrl' => url('/#how'),
             'siteUrl' => url('/'),

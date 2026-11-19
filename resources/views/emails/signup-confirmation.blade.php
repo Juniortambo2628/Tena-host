@@ -80,13 +80,13 @@
         </table>
     </td></tr>
 
-    {{-- On us: the free months (from the live /hosts pricing; hidden when it offers none) --}}
+    {{-- On us: the free months (from their own page's live pricing; hidden when it offers none) --}}
     @if($freeMonths > 0)
     <tr><td style="padding:14px 32px 6px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:{{ $ink }};border-radius:16px;">
             <tr><td style="padding:22px 22px;">
                 <p style="margin:0;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:{{ $yellow }};">On us</p>
-                <p style="margin:8px 0 0;font-family:{{ $serif }};font-size:20px;line-height:1.3;font-weight:700;color:#ffffff;">Your first {{ $freeMonths === 1 ? 'month' : $freeMonths.' months' }} of the Basic plan {{ $freeMonths === 1 ? 'is' : 'are' }} free.</p>
+                <p style="margin:8px 0 0;font-family:{{ $serif }};font-size:20px;line-height:1.3;font-weight:700;color:#ffffff;">Your first {{ $freeMonths === 1 ? 'month' : $freeMonths.' months' }} of the {{ $basePlan }} plan {{ $freeMonths === 1 ? 'is' : 'are' }} free.</p>
                 <p style="margin:8px 0 0;font-size:14px;line-height:1.55;color:#d9d7cf;">Branded splash page, guest list and Google review requests by email, from the day you go live.</p>
             </td></tr>
         </table>

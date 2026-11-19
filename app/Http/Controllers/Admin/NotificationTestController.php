@@ -16,6 +16,19 @@ use Illuminate\Support\Facades\Mail;
 
 class NotificationTestController extends Controller
 {
+    /**
+     * The new sign-up email exactly as it is sent, from an unsaved sample
+     * sign-up, so Preview Emails shows the real thing rather than a copy.
+     */
+    public function previewSignupWelcome(Request $request)
+    {
+        $type = $request->query('type') === 'business' ? 'business' : 'hosts';
+
+        return response((new SignupConfirmationMail(new Registration([
+            'type' => $type, 'first_name' => 'Test', 'last_name' => 'User', 'email' => 'test@example.com',
+        ])))->render());
+    }
+
     public function send(Request $request)
     {
         $validated = $request->validate([
