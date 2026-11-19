@@ -76,6 +76,7 @@ class SettingsController extends Controller
             'event_billing_enabled' => 'sometimes|in:0,1',
             'device_financing_enabled' => 'sometimes|in:0,1',
             'property_transfers_enabled' => 'sometimes|in:0,1',
+            'signup_welcome_email_enabled' => 'sometimes|in:0,1',
         ];
 
         $types = [

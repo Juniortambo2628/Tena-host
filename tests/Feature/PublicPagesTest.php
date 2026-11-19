@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\SignupAlertMail;
+use App\Mail\SignupConfirmationMail;
 use App\Mail\WaitlistConfirmationMail;
 use App\Models\Analytics;
 use App\Models\LandingContent;
@@ -255,7 +256,9 @@ it('stores a host sign-up in Glen\'s spec format and alerts the team', function 
 
     // Glen is the default recipient (SIGNUP-FIELDS.md: "alert glen@tena.host").
     Mail::assertSent(SignupAlertMail::class, fn ($mail) => $mail->hasTo('glen@tena.host'));
+    // The waitlist email until Admin -> Settings -> "New sign-up email" is on (SignupConfirmationEmailTest).
     Mail::assertSent(WaitlistConfirmationMail::class, fn ($mail) => $mail->hasTo('wanjiru@example.com'));
+    Mail::assertNotSent(SignupConfirmationMail::class);
     $this->assertDatabaseHas('app_notifications', ['user_id' => $admin->id, 'type' => 'signup_received']);
 });
 
@@ -280,6 +283,7 @@ it('accepts a business sign-up without an email address', function () {
         ->and($registration->answers)->toMatchArray(['role' => 'Owner', 'businessType' => 'Café', 'locations' => '1 location', 'googleProfile' => 'Not sure', 'plan' => 'basic']);
 
     Mail::assertSent(SignupAlertMail::class);
+    Mail::assertNotSent(SignupConfirmationMail::class);
     Mail::assertNotSent(WaitlistConfirmationMail::class);
 });
 

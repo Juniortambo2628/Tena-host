@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Mail\SignupAlertMail;
+use App\Mail\SignupConfirmationMail;
 use App\Mail\WaitlistConfirmationMail;
 use App\Models\Registration;
 use App\Models\Setting;
+use Illuminate\Mail\Mailable;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -82,19 +84,30 @@ class SignupAlertService
             return; // Email is optional; the team follows up on WhatsApp.
         }
 
+        $this->attempt('applicant confirmation', fn () => Mail::to($registration->email)->send(static::confirmationFor($registration)));
+    }
+
+    /**
+     * "Welcome to TenaFi." (SignupConfirmationMail) when Admin -> Settings ->
+     * "New sign-up email" is on; the "You're on the list!" waitlist email until then.
+     */
+    public static function confirmationFor(Registration $registration): Mailable
+    {
+        if (filter_var(Setting::getValue('signup_welcome_email_enabled', '0'), FILTER_VALIDATE_BOOLEAN)) {
+            return new SignupConfirmationMail($registration);
+        }
+
         $answers = $registration->answers ?? [];
 
-        $this->attempt('applicant confirmation', fn () => Mail::to($registration->email)->send(
-            new WaitlistConfirmationMail(
-                firstName: (string) $registration->first_name,
-                lastName: (string) $registration->last_name,
-                email: $registration->email,
-                propertyType: (string) ($answers['businessType'] ?? ($registration->property_type !== 'other' ? $registration->property_type : '')),
-                units: (string) ($registration->units ?: ($answers['locations'] ?? '')),
-                primaryPlatform: implode(', ', (array) ($answers['platforms'] ?? $registration->primary_platform)),
-                biggestChallenge: (string) $registration->biggest_challenge,
-            )
-        ));
+        return new WaitlistConfirmationMail(
+            firstName: (string) $registration->first_name,
+            lastName: (string) $registration->last_name,
+            email: $registration->email,
+            propertyType: (string) ($answers['businessType'] ?? ($registration->property_type !== 'other' ? $registration->property_type : '')),
+            units: (string) ($registration->units ?: ($answers['locations'] ?? '')),
+            primaryPlatform: implode(', ', (array) ($answers['platforms'] ?? $registration->primary_platform)),
+            biggestChallenge: (string) $registration->biggest_challenge,
+        );
     }
 
     private function attempt(string $channel, callable $callback): void
