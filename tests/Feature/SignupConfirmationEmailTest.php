@@ -1,11 +1,14 @@
 <?php
 
 use App\Mail\SignupConfirmationMail;
+use App\Mail\WaitlistConfirmationMail;
 use App\Models\LandingContent;
 use App\Models\LandingMedia;
 use App\Models\LandingPage;
 use App\Models\LandingSection;
 use App\Models\Registration;
+use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 
 /** A sign-up like the website's: hosts or business, with an email. */
@@ -71,13 +74,43 @@ it('leaves out the free months when /hosts offers none', function () {
     expect((new SignupConfirmationMail(welcomeFor()))->render())->not->toContain('of the Basic plan');
 });
 
-it('is what a website sign-up gets', function () {
-    Mail::fake();
-
-    $this->postJson(route('signups.store'), [
+/** A website business sign-up with an email. */
+function postWelcomeSignup($test): void
+{
+    $test->postJson(route('signups.store'), [
         'type' => 'business', 'firstName' => 'Otieno', 'email' => 'otieno@example.com', 'phone' => '+254722000111',
         'businessName' => 'Kahawa House', 'plan' => 'starter', 'consent' => true,
     ])->assertCreated();
+}
+
+it('is what a website sign-up gets once "New sign-up email" is switched on', function () {
+    Mail::fake();
+    Setting::setValue('signup_welcome_email_enabled', '1');
+
+    postWelcomeSignup($this);
 
     Mail::assertSent(SignupConfirmationMail::class, fn ($mail) => $mail->hasTo('otieno@example.com'));
+    Mail::assertNotSent(WaitlistConfirmationMail::class);
+});
+
+it('keeps sending the waitlist email while the switch is off, as it starts', function () {
+    Mail::fake();
+
+    postWelcomeSignup($this);
+
+    Mail::assertSent(WaitlistConfirmationMail::class, fn ($mail) => $mail->hasTo('otieno@example.com'));
+    Mail::assertNotSent(SignupConfirmationMail::class);
+});
+
+it('lets an admin switch it on in Settings and send themselves a test copy', function () {
+    Mail::fake();
+    $admin = User::factory()->admin()->create();
+
+    $this->actingAs($admin)->post(route('admin.settings.update'), ['settings' => ['signup_welcome_email_enabled' => '1']])
+        ->assertSessionHasNoErrors();
+    expect(Setting::getValue('signup_welcome_email_enabled'))->toBe('1');
+
+    $this->actingAs($admin)->post(route('admin.notifications.test'), ['email' => 'admin@example.com', 'template' => 'signup_welcome'])
+        ->assertSessionHasNoErrors();
+    Mail::assertSent(SignupConfirmationMail::class, fn ($mail) => $mail->hasTo('admin@example.com'));
 });

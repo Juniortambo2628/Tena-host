@@ -7,6 +7,7 @@ use App\Mail\OtpMail;
 use App\Mail\PasswordChangedMail;
 use App\Mail\SignupConfirmationMail;
 use App\Mail\TestPaymentReceiptMail;
+use App\Mail\WaitlistConfirmationMail;
 use App\Mail\WaitlistWelcomeMail;
 use App\Mail\WelcomeMail;
 use App\Models\Registration;
@@ -19,7 +20,7 @@ class NotificationTestController extends Controller
     {
         $validated = $request->validate([
             'email' => 'required|email',
-            'template' => 'required|string|in:welcome,password_changed,otp,receipt,waitlist_confirmation,waitlist_welcome',
+            'template' => 'required|string|in:welcome,password_changed,otp,receipt,waitlist_confirmation,signup_welcome,waitlist_welcome',
         ]);
 
         $email = $validated['email'];
@@ -53,7 +54,19 @@ class NotificationTestController extends Controller
                 break;
 
             case 'waitlist_confirmation':
-                // What a website sign-up gets now: "Welcome to TenaFi." (an unsaved sample sign-up).
+                Mail::to($email)->send(new WaitlistConfirmationMail(
+                    firstName: 'Test',
+                    lastName: 'User',
+                    email: $email,
+                    propertyType: 'Vacation Rental',
+                    units: '5',
+                    primaryPlatform: 'Airbnb',
+                    biggestChallenge: 'Managing multiple platforms',
+                ));
+                break;
+
+            case 'signup_welcome':
+                // "Welcome to TenaFi." from an unsaved sample sign-up, so it can be checked before it's switched on.
                 Mail::to($email)->send(new SignupConfirmationMail(new Registration([
                     'type' => 'hosts', 'first_name' => 'Test', 'last_name' => 'User', 'email' => $email,
                 ])));

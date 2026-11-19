@@ -161,6 +161,7 @@ export default function Index({ settings, logos = [] }) {
             event_billing_enabled: flattened.event_billing_enabled || '0',
             device_financing_enabled: flattened.device_financing_enabled || '0',
             property_transfers_enabled: flattened.property_transfers_enabled || '0',
+            signup_welcome_email_enabled: flattened.signup_welcome_email_enabled || '0',
             email_primary_color: flattened.email_primary_color || '#000000',
             email_accent_color: flattened.email_accent_color || BRAND_COLORS.primary,
             business_address: flattened.business_address || 'Nairobi, Kenya',
@@ -453,6 +454,12 @@ export default function Index({ settings, logos = [] }) {
                                     />
 
                                     <CheckboxField
+                                        label="New sign-up email: people who sign up on /hosts or /business get “Welcome to TenaFi.” instead of “You're on the list!”. Send yourself the “Welcome to TenaFi (new sign-up email)” test (Branding → Preview & Test) first."
+                                        checked={data.settings.signup_welcome_email_enabled === '1'}
+                                        onChange={() => updateSetting('signup_welcome_email_enabled', data.settings.signup_welcome_email_enabled === '1' ? '0' : '1')}
+                                    />
+
+                                    <CheckboxField
                                         label="Maintenance Mode"
                                         checked={data.settings.maintenance_mode === '1'}
                                         onChange={() => updateSetting('maintenance_mode', data.settings.maintenance_mode === '1' ? '0' : '1')}
@@ -630,6 +637,7 @@ export default function Index({ settings, logos = [] }) {
                                                     {EMAIL_TEMPLATES.map((t) => (
                                                         <option key={t.id} value={t.id}>{t.name}</option>
                                                     ))}
+                                                    <option value="signup_welcome">Welcome to TenaFi (new sign-up email)</option>
                                                 </select>
                                             </FormField>
                                             <PillButton variant="black" onClick={sendTestEmail}>
