@@ -74,6 +74,24 @@ it('leaves out the free months when /hosts offers none', function () {
     expect((new SignupConfirmationMail(welcomeFor()))->render())->not->toContain('of the Basic plan');
 });
 
+it('quotes a business sign-up the free months on /business, not /hosts', function () {
+    $setMonths = function (string $slug, string $months) {
+        $pricing = LandingSection::where('section_key', 'pricing')->whereHas('page', fn ($q) => $q->where('slug', $slug))->firstOrFail();
+        LandingContent::where('section_id', $pricing->id)->where('content_key', 'free_months')->update(['value' => $months]);
+    };
+    $setMonths('hosts', '3');
+    $setMonths('business', '2');
+    LandingPage::clearCache();
+
+    expect((new SignupConfirmationMail(welcomeFor('business')))->render())->toContain('Your first 2 months of the Basic plan are free.')
+        ->and((new SignupConfirmationMail(welcomeFor('hosts')))->render())->toContain('Your first 3 months of the Basic plan are free.');
+
+    // No free months on /business: the box is left out for businesses, even though /hosts has some.
+    $setMonths('business', '0');
+    LandingPage::clearCache();
+    expect((new SignupConfirmationMail(welcomeFor('business')))->render())->not->toContain('of the Basic plan');
+});
+
 /** A website business sign-up with an email. */
 function postWelcomeSignup($test): void
 {

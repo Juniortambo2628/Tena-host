@@ -152,7 +152,9 @@ class LandingPage extends Model
      * its free months (0 to 12; 0 when it has none, so pages without the offer
      * look as before), its headline and its three steps.
      *
-     * @return array{freeMonths: int, headline: string, steps: list<array{title: string, text: string}>}
+     * The base plan is the one the free months are of (base_free_plan; "Basic").
+     *
+     * @return array{freeMonths: int, basePlan: string, headline: string, steps: list<array{title: string, text: string}>}
      */
     public static function liveOffer(string $slug = 'hosts'): array
     {
@@ -164,6 +166,7 @@ class LandingPage extends Model
 
         return [
             'freeMonths' => max(0, min(12, (int) preg_replace('/\D/', '', strip_tags((string) ($content['free_months'] ?? ''))))),
+            'basePlan' => collect(static::livePlans($slug))->firstWhere('id', strip_tags((string) ($content['base_free_plan'] ?? 'basic')))['label'] ?? 'Basic',
             // "TenaFi free for {free_months} months, and the device is yours."
             'headline' => trim(strip_tags((string) ($content['offer_headline'] ?? ''))),
             'steps' => $steps,
