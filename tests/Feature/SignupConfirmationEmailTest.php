@@ -132,3 +132,14 @@ it('lets an admin switch it on in Settings and send themselves a test copy', fun
         ->assertSessionHasNoErrors();
     Mail::assertSent(SignupConfirmationMail::class, fn ($mail) => $mail->hasTo('admin@example.com'));
 });
+
+it('shows admins the email as it is sent in Preview Emails, and nobody else', function () {
+    $url = route('admin.notifications.preview.signup-welcome', ['type' => 'business']);
+
+    $this->actingAs(User::factory()->admin()->create())->get($url)
+        ->assertOk()
+        ->assertSee('Welcome to TenaFi.')
+        ->assertSee('Thanks for signing up, Test.', false);
+
+    $this->actingAs(User::factory()->create())->get($url)->assertForbidden();
+});
