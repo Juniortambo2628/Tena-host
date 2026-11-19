@@ -578,6 +578,11 @@ export default function Index({ settings, logos = [] }) {
                                         {/* Active Template Fields */}
                                         {activeTemplateConfig && (
                                             <div className="settings-page__template-fields" key={activeTemplateConfig.id}>
+                                                {activeTemplateConfig.id === 'waitlist_confirmation' && data.settings.signup_welcome_email_enabled === '1' && (
+                                                    <p className="settings-page__hint">
+                                                        Not sent while “New sign-up email” is on (General): sign-ups get “Welcome to TenaFi.” instead, whose wording is fixed in its design. These fields apply again if you switch it off.
+                                                    </p>
+                                                )}
                                                 {activeTemplateConfig.subjectKey && (
                                                     <FormField label="Subject">
                                                         <TextInput
