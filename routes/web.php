@@ -342,9 +342,11 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-// M-Pesa Callback (public)
-Route::post('/api/mpesa/callback', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');
-Route::post('/api/mpesa/extras/callback', [MpesaCallbackController::class, 'extras'])->name('mpesa.extras.callback');
+// M-Pesa STK callbacks (public). Each prompt carries its own token in the URL;
+// the token-less URL only answers prompts sent before tokens existed, for
+// MpesaService::LEGACY_CALLBACK_MINUTES.
+Route::post('/api/mpesa/callback/{token?}', [MpesaCallbackController::class, 'handle'])->name('mpesa.callback');
+Route::post('/api/mpesa/extras/callback/{token?}', [MpesaCallbackController::class, 'extras'])->name('mpesa.extras.callback');
 
 // An event's sponsor report, opened from a signed link the organiser shares (no login).
 Route::get('/events/{event}/sponsor-report', [EventController::class, 'sponsorReport'])->middleware('signed')->name('events.sponsor-report');

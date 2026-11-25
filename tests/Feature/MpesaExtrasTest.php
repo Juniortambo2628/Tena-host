@@ -63,6 +63,11 @@ class MpesaExtrasTest extends TestCase
         return $this->actingAs($this->guestUser)->post(route('guest.orders.store'), ['amenity_id' => $this->lateCheckout->id] + $data);
     }
 
+    private function callbackUrl(): string
+    {
+        return route('mpesa.extras.callback', Order::sole()->mpesa_callback_token);
+    }
+
     private function stkCallback(int $amount, int $resultCode = 0): array
     {
         return ['Body' => ['stkCallback' => [
@@ -91,8 +96,9 @@ class MpesaExtrasTest extends TestCase
             && $r['BusinessShortCode'] === '600100' && $r['TransactionType'] === 'CustomerPayBillOnline'
             && $r['Amount'] === 1500 && $r['PhoneNumber'] === '254712345678'
             && $r['AccountReference'] === 'TF'.Order::sole()->id
-            && $r['CallBackURL'] === route('mpesa.extras.callback'));
+            && $r['CallBackURL'] === route('mpesa.extras.callback', Order::sole()->mpesa_callback_token));
         $this->assertSame(['pending', 'ws_CO_1'], [Order::sole()->payment_status, Order::sole()->mpesa_checkout_request_id]);
+        $this->assertSame(64, strlen(Order::sole()->mpesa_callback_token));
     }
 
     public function test_till_numbers_use_buy_goods(): void
@@ -109,8 +115,8 @@ class MpesaExtrasTest extends TestCase
         $this->configureMpesa();
         $this->order();
 
-        $this->postJson(route('mpesa.extras.callback'), $this->stkCallback(1500))->assertJson(['ResultCode' => 0]);
-        $this->postJson(route('mpesa.extras.callback'), $this->stkCallback(1500));
+        $this->postJson($this->callbackUrl(), $this->stkCallback(1500))->assertJson(['ResultCode' => 0]);
+        $this->postJson($this->callbackUrl(), $this->stkCallback(1500));
 
         $order = Order::sole();
         $this->assertSame('paid', $order->payment_status);
@@ -125,11 +131,11 @@ class MpesaExtrasTest extends TestCase
     {
         $this->configureMpesa();
         $this->order();
-        $this->postJson(route('mpesa.extras.callback'), $this->stkCallback(1500, resultCode: 1032));
+        $this->postJson($this->callbackUrl(), $this->stkCallback(1500, resultCode: 1032));
         $this->assertSame('failed', Order::sole()->payment_status);
 
         Order::sole()->update(['payment_status' => 'pending']);
-        $this->postJson(route('mpesa.extras.callback'), $this->stkCallback(100));
+        $this->postJson($this->callbackUrl(), $this->stkCallback(100));
         $this->assertSame('failed', Order::sole()->payment_status);
     }
 

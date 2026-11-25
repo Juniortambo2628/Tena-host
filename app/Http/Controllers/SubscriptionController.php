@@ -77,10 +77,12 @@ class SubscriptionController extends Controller
         $quote = $this->quoteFor($data);
         $phone = Phone::toE164($data['phone_number']);
 
-        $response = $mpesa->initiateStkPush($phone, $quote['total'], 'TenaFi', 'Subscription');
+        $token = MpesaService::newCallbackToken();
+        $response = $mpesa->initiateStkPush($phone, $quote['total'], MpesaService::callbackUrl('mpesa.callback', $token), 'TenaFi', 'Subscription');
 
         if ($response['success']) {
             MpesaTransaction::create([
+                'callback_token' => $token,
                 'user_id' => $request->user()->id,
                 'MerchantRequestID' => $response['data']['MerchantRequestID'],
                 'CheckoutRequestID' => $response['data']['CheckoutRequestID'],
