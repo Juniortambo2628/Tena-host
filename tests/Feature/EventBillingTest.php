@@ -90,13 +90,14 @@ it('runs a quote from request to price to M-Pesa payment', function () {
 
     // The STK push charges the server's price, and the callback marks the event paid (no plan extended).
     $this->mock(MpesaService::class, fn ($m) => $m->shouldReceive('initiateStkPush')->once()
-        ->withArgs(fn ($phone, $amount) => $phone === '+254712345678' && (int) $amount === 15000)
+        ->withArgs(fn ($phone, $amount, $callbackUrl) => $phone === '+254712345678' && (int) $amount === 15000
+            && preg_match('#/api/mpesa/callback/[0-9a-f]{64}$#', $callbackUrl) === 1)
         ->andReturn(['success' => true, 'data' => ['MerchantRequestID' => 'MR-1', 'CheckoutRequestID' => 'CR-1']]));
     $this->actingAs($this->organiser)->post(route('host.events.pay.mpesa', $this->event), ['phone_number' => '0712 345 678'])
         ->assertSessionHasNoErrors();
 
-    $this->postJson(route('mpesa.callback'), ['Body' => ['stkCallback' => [
-        'MerchantRequestID' => 'MR-1', 'ResultCode' => 0, 'ResultDesc' => 'OK',
+    $this->postJson(route('mpesa.callback', MpesaTransaction::sole()->callback_token), ['Body' => ['stkCallback' => [
+        'MerchantRequestID' => 'MR-1', 'CheckoutRequestID' => 'CR-1', 'ResultCode' => 0, 'ResultDesc' => 'OK',
         'CallbackMetadata' => ['Item' => [['Name' => 'Amount', 'Value' => 15000], ['Name' => 'MpesaReceiptNumber', 'Value' => 'RCPT1']]],
     ]]])->assertOk();
 
@@ -107,10 +108,10 @@ it('runs a quote from request to price to M-Pesa payment', function () {
 
 it('does not mark the event paid when the M-Pesa amount falls short', function () {
     quoteEvent();
-    MpesaTransaction::create(['user_id' => $this->organiser->id, 'MerchantRequestID' => 'MR-2', 'CheckoutRequestID' => 'CR-2', 'Amount' => 15000, 'PhoneNumber' => '+254712345678', 'Status' => 'pending', 'meta' => ['type' => 'event', 'event_id' => $this->event->id]]);
+    MpesaTransaction::create(['user_id' => $this->organiser->id, 'MerchantRequestID' => 'MR-2', 'CheckoutRequestID' => 'CR-2', 'Amount' => 15000, 'PhoneNumber' => '+254712345678', 'Status' => 'pending', 'meta' => ['type' => 'event', 'event_id' => $this->event->id], 'callback_token' => 'tok-2']);
 
-    $this->postJson(route('mpesa.callback'), ['Body' => ['stkCallback' => [
-        'MerchantRequestID' => 'MR-2', 'ResultCode' => 0, 'ResultDesc' => 'OK',
+    $this->postJson(route('mpesa.callback', 'tok-2'), ['Body' => ['stkCallback' => [
+        'MerchantRequestID' => 'MR-2', 'CheckoutRequestID' => 'CR-2', 'ResultCode' => 0, 'ResultDesc' => 'OK',
         'CallbackMetadata' => ['Item' => [['Name' => 'Amount', 'Value' => 10], ['Name' => 'MpesaReceiptNumber', 'Value' => 'RCPT2']]],
     ]]])->assertOk();
 

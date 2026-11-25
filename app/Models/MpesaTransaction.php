@@ -20,7 +20,11 @@ class MpesaTransaction extends Model
         'Status',
         'ResultDesc',
         'meta',
+        'callback_token',
     ];
+
+    /** The callback token is a secret: it never goes to the browser. */
+    protected $hidden = ['callback_token'];
 
     protected $casts = [
         'meta' => 'array',

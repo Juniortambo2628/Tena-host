@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Services\Messaging\Messenger;
 use App\Support\Brand;
 use App\Support\Phone;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -54,12 +55,13 @@ class ExtrasPaymentService
         }
 
         $phone = Phone::toE164($phone);
+        $token = MpesaService::newCallbackToken();
         $response = $this->mpesa->initiateStkPush(
             $phone,
             $order->total,
+            MpesaService::callbackUrl('mpesa.extras.callback', $token),
             'TF'.$order->id,
             'TenaFi extra',
-            route('mpesa.extras.callback'),
         );
 
         if (! $response['success']) {
@@ -72,52 +74,103 @@ class ExtrasPaymentService
             'payment_status' => 'pending',
             'payer_phone' => $phone,
             'mpesa_checkout_request_id' => $response['data']['CheckoutRequestID'] ?? null,
+            'mpesa_callback_token' => $token,
         ]);
 
         return ['status' => 'pending', 'message' => 'Check your phone and enter your M-Pesa PIN to pay KES '.number_format((float) $order->total).'.'];
     }
 
     /**
-     * Apply Safaricom's STK callback. Repeated callbacks are ignored.
+     * Apply Safaricom's STK callback. It is applied only when the URL's token
+     * and the CheckoutRequestID both match a pending order, and only once.
+     * The paid amount must equal the prompt; anything else marks the order
+     * failed. Returns the order it applied to, or null.
      *
      * @param  array<string, mixed>  $callback  Body.stkCallback
      */
-    public function handleCallback(array $callback): ?Order
+    public function handleCallback(array $callback, ?string $token = null): ?Order
     {
-        $order = Order::with(['guest', 'amenity', 'property.host'])
-            ->where('mpesa_checkout_request_id', $callback['CheckoutRequestID'] ?? '')
-            ->first();
+        $resultCode = isset($callback['ResultCode']) ? (int) $callback['ResultCode'] : null;
+        $order = $this->findOrder($callback, $token);
 
-        if (! $order || $order->payment_status !== 'pending') {
-            return $order;
+        if (! $order) {
+            Log::warning('M-Pesa extras callback ignored', ['result_code' => $resultCode]);
+
+            return null;
         }
 
-        if ((int) ($callback['ResultCode'] ?? 1) !== 0) {
-            $order->update(['payment_status' => 'failed']);
+        $outcome = DB::transaction(function () use ($order, $callback, $resultCode) {
+            // A repeated callback waits on the row lock, then finds the order settled.
+            $locked = Order::whereKey($order->getKey())->lockForUpdate()->first();
+            if (! $locked || $locked->payment_status !== 'pending') {
+                return 'duplicate';
+            }
 
-            return $order;
+            if ($resultCode !== 0) {
+                $locked->update(['payment_status' => 'failed']);
+
+                return 'failed';
+            }
+
+            $items = MpesaService::callbackItems($callback);
+            $receipt = isset($items['MpesaReceiptNumber']) ? (string) $items['MpesaReceiptNumber'] : null;
+
+            if (! MpesaService::amountMatches($items['Amount'] ?? null, $locked->total)) {
+                // Keep the receipt so the payment can be found and refunded.
+                $locked->update(['payment_status' => 'failed', 'mpesa_receipt' => $receipt]);
+
+                return 'amount_mismatch';
+            }
+
+            $locked->update([
+                'payment_status' => 'paid',
+                'mpesa_receipt' => $receipt,
+                'paid_at' => now(),
+                'platform_fee' => round((float) $locked->total * self::feePercent() / 100, 2),
+            ]);
+
+            return 'paid';
+        });
+
+        Log::info('M-Pesa extras callback', ['result_code' => $resultCode, 'order' => $order->id, 'outcome' => $outcome]);
+
+        $order->refresh();
+        if ($outcome === 'paid') {
+            $this->notifyHost($order);
         }
-
-        $items = collect($callback['CallbackMetadata']['Item'] ?? [])->pluck('Value', 'Name');
-        $paid = (float) ($items['Amount'] ?? 0);
-
-        if ($paid < (float) $order->total) {
-            Log::warning('M-Pesa extras payment below order total', ['order' => $order->id, 'paid' => $paid]);
-            $order->update(['payment_status' => 'failed', 'mpesa_receipt' => $items['MpesaReceiptNumber'] ?? null]);
-
-            return $order;
-        }
-
-        $order->update([
-            'payment_status' => 'paid',
-            'mpesa_receipt' => $items['MpesaReceiptNumber'] ?? null,
-            'paid_at' => now(),
-            'platform_fee' => round((float) $order->total * self::feePercent() / 100, 2),
-        ]);
-
-        $this->notifyHost($order);
 
         return $order;
+    }
+
+    /**
+     * The pending order this callback answers, or null.
+     *
+     * @param  array<string, mixed>  $callback
+     */
+    protected function findOrder(array $callback, ?string $token): ?Order
+    {
+        $checkoutId = (string) ($callback['CheckoutRequestID'] ?? '');
+        if ($checkoutId === '') {
+            return null;
+        }
+
+        $query = Order::with(['guest', 'amenity', 'property.host']);
+
+        if ($token !== null) {
+            $order = $query->where('mpesa_callback_token', $token)->first();
+
+            return $order
+                && MpesaService::tokenMatches($order->mpesa_callback_token, $token)
+                && hash_equals((string) $order->mpesa_checkout_request_id, $checkoutId)
+                ? $order : null;
+        }
+
+        // The old token-less URL: only prompts sent before tokens existed, for a short while.
+        return $query->whereNull('mpesa_callback_token')
+            ->where('payment_status', 'pending')
+            ->where('mpesa_checkout_request_id', $checkoutId)
+            ->where('updated_at', '>=', now()->subMinutes(MpesaService::LEGACY_CALLBACK_MINUTES))
+            ->first();
     }
 
     protected function notifyHost(Order $order): void

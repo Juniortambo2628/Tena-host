@@ -6,6 +6,7 @@ use App\Models\MpesaTransaction;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Billing\PlanPricing;
+use App\Services\MpesaService;
 use App\Services\SubscriptionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
@@ -71,6 +72,7 @@ class BillingTest extends TestCase
         Http::assertSent(fn (Request $r) => str_contains($r->url(), 'stkpush') && $r['Amount'] === 12000 && $r['PhoneNumber'] === '254712345678');
         $transaction = MpesaTransaction::sole();
         $this->assertEquals(12000, $transaction->Amount);
+        Http::assertSent(fn (Request $r) => str_contains($r->url(), 'stkpush') && $r['CallBackURL'] === 'https://x/cb/'.$transaction->callback_token);
         $this->assertSame('growth', $transaction->meta['plan']);
     }
 
@@ -85,8 +87,8 @@ class BillingTest extends TestCase
     {
         $transaction = $this->pendingTransaction('quarterly');
 
-        $this->postJson('/api/mpesa/callback', $this->stkCallback($transaction, 12825))->assertOk();
-        $this->postJson('/api/mpesa/callback', $this->stkCallback($transaction, 12825))->assertOk();
+        $this->postJson(route('mpesa.callback', $transaction->callback_token), $this->stkCallback($transaction, 12825))->assertOk();
+        $this->postJson(route('mpesa.callback', $transaction->callback_token), $this->stkCallback($transaction, 12825))->assertOk();
 
         $this->host->refresh();
         $this->assertTrue($this->host->subscribed('default'));
@@ -99,7 +101,7 @@ class BillingTest extends TestCase
     {
         $transaction = $this->pendingTransaction('monthly');
 
-        $this->postJson('/api/mpesa/callback', $this->stkCallback($transaction, 100))->assertOk();
+        $this->postJson(route('mpesa.callback', $transaction->callback_token), $this->stkCallback($transaction, 100))->assertOk();
 
         $this->assertFalse($this->host->fresh()->subscribed('default'));
     }
@@ -158,7 +160,8 @@ class BillingTest extends TestCase
         $quote = app(PlanPricing::class)->quote('starter', 1, 0, $cycle);
 
         return MpesaTransaction::create([
-            'user_id' => $this->host->id, 'MerchantRequestID' => 'M-'.$cycle, 'CheckoutRequestID' => 'C',
+            'user_id' => $this->host->id, 'MerchantRequestID' => 'M-'.$cycle, 'CheckoutRequestID' => 'C-'.$cycle,
+            'callback_token' => MpesaService::newCallbackToken(),
             'Amount' => $quote['total'], 'PhoneNumber' => '254712345678', 'Status' => 'pending', 'meta' => $quote,
         ]);
     }
@@ -167,6 +170,7 @@ class BillingTest extends TestCase
     {
         return ['Body' => ['stkCallback' => [
             'MerchantRequestID' => $transaction->MerchantRequestID,
+            'CheckoutRequestID' => $transaction->CheckoutRequestID,
             'ResultCode' => 0,
             'ResultDesc' => 'The service request is processed successfully.',
             'CallbackMetadata' => ['Item' => [

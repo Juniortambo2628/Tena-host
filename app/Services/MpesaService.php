@@ -26,6 +26,14 @@ class MpesaService
 
     public const TILL = 'CustomerBuyGoodsOnline';
 
+    /**
+     * Prompts sent before callback tokens existed have no token. Their
+     * callbacks are still taken on the old URL for this many minutes after the
+     * prompt (an STK prompt expires long before then); after that the old URL
+     * applies nothing.
+     */
+    public const LEGACY_CALLBACK_MINUTES = 10;
+
     protected string $baseUrl;
 
     /**
@@ -90,13 +98,70 @@ class MpesaService
     }
 
     /**
+     * A fresh random token for one STK prompt's CallBackURL.
+     */
+    public static function newCallbackToken(): string
+    {
+        return bin2hex(random_bytes(32));
+    }
+
+    /**
+     * The CallBackURL for one prompt: the subscription or extras callback with
+     * the prompt's token on the end. MPESA_CALLBACK_URL, when set, replaces the
+     * subscription callback's base (e.g. a tunnel in development).
+     *
+     * @param  'mpesa.callback'|'mpesa.extras.callback'  $route
+     */
+    public static function callbackUrl(string $route, string $token): string
+    {
+        $base = $route === 'mpesa.callback' ? (config('services.mpesa.callback_url') ?: route($route)) : route($route);
+
+        return rtrim((string) $base, '/').'/'.$token;
+    }
+
+    /**
+     * True when a token from a callback URL is the one stored for the prompt.
+     */
+    public static function tokenMatches(?string $stored, ?string $given): bool
+    {
+        return filled($stored) && filled($given) && hash_equals((string) $stored, (string) $given);
+    }
+
+    /**
+     * The CallbackMetadata items of an stkCallback, by name (Amount, MpesaReceiptNumber, ...).
+     *
+     * @param  array<string, mixed>  $callback
+     * @return array<string, mixed>
+     */
+    public static function callbackItems(array $callback): array
+    {
+        $items = [];
+        foreach ((array) ($callback['CallbackMetadata']['Item'] ?? []) as $item) {
+            if (is_array($item) && isset($item['Name'])) {
+                $items[(string) $item['Name']] = $item['Value'] ?? null;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * The payer can't change the amount on an STK prompt, so a paid amount must
+     * equal what was prompted (the push rounds up to whole shillings).
+     */
+    public static function amountMatches(mixed $paid, float|int|string $prompted): bool
+    {
+        return is_numeric($paid) && abs((float) $paid - ceil((float) $prompted)) < 0.005;
+    }
+
+    /**
      * Send the "enter your M-Pesa PIN" prompt to a phone.
      *
+     * @param  string  $callbackUrl  where Safaricom posts the result; build it with callbackUrl()
      * @param  string  $reference  shown to the payer as the account (max 12 chars)
-     * @param  string|null  $callbackUrl  where Safaricom posts the result
      * @return array{success: bool, data?: array, message?: string}
      */
-    public function initiateStkPush($phoneNumber, $amount, $reference = 'Subscription', string $description = 'TenaFi', ?string $callbackUrl = null): array
+    public function initiateStkPush($phoneNumber, $amount, string $callbackUrl, $reference = 'TenaFi', string $description = 'TenaFi'): array
     {
         $token = $this->getAccessToken();
         if (! $token) {
@@ -116,7 +181,7 @@ class MpesaService
             'PartyA' => $phone,
             'PartyB' => $shortcode,
             'PhoneNumber' => $phone,
-            'CallBackURL' => $callbackUrl ?? $this->config['callback_url'] ?? route('mpesa.callback'),
+            'CallBackURL' => $callbackUrl,
             'AccountReference' => mb_substr($reference, 0, 12),
             'TransactionDesc' => mb_substr($description, 0, 13),
         ];

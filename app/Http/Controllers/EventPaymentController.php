@@ -50,13 +50,15 @@ class EventPaymentController extends Controller
         ]);
         $phone = Phone::toE164($data['phone_number']);
 
-        $response = $mpesa->initiateStkPush($phone, $event->quote_amount, 'TenaFi', 'Event');
+        $token = MpesaService::newCallbackToken();
+        $response = $mpesa->initiateStkPush($phone, $event->quote_amount, MpesaService::callbackUrl('mpesa.callback', $token), 'TenaFi', 'Event');
 
         if (! $response['success']) {
             return back()->with('error', $response['message'] ?? 'Failed to start the M-Pesa payment.');
         }
 
         MpesaTransaction::create([
+            'callback_token' => $token,
             'user_id' => $request->user()->id,
             'MerchantRequestID' => $response['data']['MerchantRequestID'],
             'CheckoutRequestID' => $response['data']['CheckoutRequestID'],

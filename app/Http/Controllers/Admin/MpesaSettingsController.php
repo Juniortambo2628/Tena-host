@@ -38,8 +38,9 @@ class MpesaSettingsController extends Controller
             'configured' => MpesaService::fromSettings()->isConfigured(),
             'isPlaceholder' => $current['shortcode'] === MpesaService::SANDBOX_SHORTCODE,
             'callbacks' => [
-                'subscriptions' => route('mpesa.callback'),
-                'extras' => route('mpesa.extras.callback'),
+                // Each payment request adds its own token on the end.
+                'subscriptions' => MpesaService::callbackUrl('mpesa.callback', '{token}'),
+                'extras' => MpesaService::callbackUrl('mpesa.extras.callback', '{token}'),
             ],
             'payouts' => $this->payouts(),
         ]);

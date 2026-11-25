@@ -20,11 +20,15 @@ class Order extends Model
         'payment_status',
         'payer_phone',
         'mpesa_checkout_request_id',
+        'mpesa_callback_token',
         'mpesa_receipt',
         'paid_at',
         'platform_fee',
         'settled_at',
     ];
+
+    /** The M-Pesa callback token is a secret: it never goes to the browser or the API. */
+    protected $hidden = ['mpesa_callback_token'];
 
     protected $casts = [
         'total' => 'decimal:2',
